@@ -1,0 +1,522 @@
+import nodemailer from 'nodemailer'
+import { Resend } from 'resend'
+import dotenv from 'dotenv'
+
+dotenv.config()
+
+// Initialize Resend if API key is provided
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
+
+// Log Resend initialization status
+if (process.env.RESEND_API_KEY) {
+  console.log('✅ Resend initialized with API key:', process.env.RESEND_API_KEY.substring(0, 10) + '...')
+} else {
+  console.log('⚠️  Resend not initialized - RESEND_API_KEY not found in environment')
+}
+
+// Create reusable transporter
+const createTransporter = () => {
+  // Option 1: Gmail (requires app password)
+  if (process.env.EMAIL_SERVICE === 'gmail') {
+    return nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD // App password, not regular password
+      }
+    })
+  }
+
+  // Option 2: SMTP (works with most email providers)
+  if (process.env.SMTP_HOST) {
+    return nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT || '587'),
+      secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD
+      }
+    })
+  }
+
+  // Option 3: Development - log emails to console
+  return nodemailer.createTransport({
+    streamTransport: true,
+    newline: 'unix',
+    buffer: true
+  })
+}
+
+// Get transporter (lazy initialization)
+const getTransporter = () => {
+  return createTransporter()
+}
+
+// Email templates
+const orderConfirmationTemplate = (order, trackingUrl) => {
+  const itemsList = (order.items || []).map(item => 
+    `  • ${item.name || 'Item'} (${item.variant || 'N/A'}) - Qty: ${item.quantity || 1} - $${(item.total || 0).toFixed(2)}`
+  ).join('\n')
+  
+  const customerName = order.customer?.name || 'Customer'
+  const customerEmail = order.customer?.email || ''
+  const shippingName = order.shipping?.name || customerName
+  const shippingAddress = order.shipping?.address || {}
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+    .content { background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; }
+    .order-info { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #f59e0b; }
+    .items { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; }
+    .total { background: #fef3c7; padding: 20px; margin: 20px 0; border-radius: 8px; text-align: right; }
+    .button { display: inline-block; padding: 12px 24px; background: #f59e0b; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; }
+    .footer { text-align: center; padding: 20px; color: #6b7280; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🍁 Order Confirmed!</h1>
+      <p>Thank you for your order with Pure Peel Co.</p>
+    </div>
+    
+    <div class="content">
+      <p>Hi ${customerName},</p>
+      
+      <p>We're excited to let you know that we've received your order and payment has been confirmed!</p>
+      
+      <div class="order-info">
+        <h2 style="margin-top: 0;">Order Details</h2>
+        <p><strong>Order Number:</strong> ${order.id || 'N/A'}</p>
+        <p><strong>Order Date:</strong> ${order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }) : new Date().toLocaleDateString()}</p>
+        <p><strong>Status:</strong> <span style="color: #f59e0b; font-weight: bold;">${(order.status || 'pending').charAt(0).toUpperCase() + (order.status || 'pending').slice(1)}</span></p>
+      </div>
+
+      <div class="items">
+        <h3 style="margin-top: 0;">Items Ordered:</h3>
+        <pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${itemsList}</pre>
+      </div>
+
+      <div class="total">
+        <p style="margin: 5px 0;"><strong>Subtotal:</strong> $${(order.subtotal || 0).toFixed(2)} ${order.currency || 'CAD'}</p>
+        <p style="margin: 5px 0;"><strong>Shipping:</strong> $${(order.shippingCost || 0).toFixed(2)} ${order.currency || 'CAD'}</p>
+        <p style="margin: 5px 0;"><strong>Tax:</strong> $${(order.tax || 0).toFixed(2)} ${order.currency || 'CAD'}</p>
+        <p style="margin: 10px 0 0 0; font-size: 18px; font-weight: bold;">Total: $${(order.total || 0).toFixed(2)} ${order.currency || 'CAD'}</p>
+      </div>
+
+      <div style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px;">
+        <h3 style="margin-top: 0;">Shipping Address:</h3>
+        <p>
+          ${shippingName}<br>
+          ${shippingAddress.line1 || ''}<br>
+          ${shippingAddress.line2 ? shippingAddress.line2 + '<br>' : ''}
+          ${shippingAddress.city || ''}${shippingAddress.city && shippingAddress.state ? ',' : ''} ${shippingAddress.state || ''} ${shippingAddress.postal_code || ''}<br>
+          ${shippingAddress.country || ''}
+        </p>
+        <p><strong>Shipping Method:</strong> ${order.shipping?.method || 'Standard Shipping'}</p>
+      </div>
+
+      ${trackingUrl ? `
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${trackingUrl}" class="button">Track Your Order</a>
+      </div>
+      ` : ''}
+
+      <p>We'll send you another email when your order ships with tracking information.</p>
+      
+      <p>If you have any questions, please don't hesitate to reach out to us.</p>
+      
+      <p>Thank you for choosing Pure Peel Co. 🍁</p>
+    </div>
+
+    <div class="footer">
+      <p>Pure Peel Co. | Made in Canada</p>
+      <p>This is an automated email. Please do not reply directly to this message.</p>
+    </div>
+  </div>
+</body>
+</html>
+  `
+}
+
+const shippingNotificationTemplate = (order, trackingNumber) => {
+  const customerName = order.customer?.name || 'Customer'
+  const customerEmail = order.customer?.email || ''
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+    .content { background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; }
+    .info-box { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #10b981; }
+    .button { display: inline-block; padding: 12px 24px; background: #10b981; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; }
+    .footer { text-align: center; padding: 20px; color: #6b7280; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📦 Your Order Has Shipped!</h1>
+    </div>
+    
+    <div class="content">
+      <p>Hi ${customerName},</p>
+      
+      <p>Great news! Your order has been shipped and is on its way to you.</p>
+      
+      <div class="info-box">
+        <h2 style="margin-top: 0;">Shipping Information</h2>
+        <p><strong>Order Number:</strong> ${order.id || 'N/A'}</p>
+        ${trackingNumber ? `<p><strong>Tracking Number:</strong> ${trackingNumber}</p>` : ''}
+        <p><strong>Estimated Delivery:</strong> 3-5 business days</p>
+      </div>
+
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/order-tracking?orderId=${order.id || ''}&email=${encodeURIComponent(customerEmail)}" class="button">Track Your Order</a>
+      </div>
+
+      <p>You can track your order status at any time using the link above.</p>
+      
+      <p>Thank you for your purchase!</p>
+    </div>
+
+    <div class="footer">
+      <p>Pure Peel Co. | Made in Canada</p>
+    </div>
+  </div>
+</body>
+</html>
+  `
+}
+
+const adminNotificationTemplate = (order) => {
+  const itemsList = (order.items || []).map(item => 
+    `  • ${item.name || 'Item'} (${item.variant || 'N/A'}) - Qty: ${item.quantity || 1} - $${(item.total || 0).toFixed(2)}`
+  ).join('\n')
+  
+  const customerName = order.customer?.name || 'N/A'
+  const customerEmail = order.customer?.email || 'N/A'
+  const customerPhone = order.customer?.phone || 'N/A'
+  const shippingName = order.shipping?.name || customerName
+  const shippingAddress = order.shipping?.address || {}
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+    .content { background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; }
+    .alert { background: #fef3c7; padding: 15px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #f59e0b; }
+    .info-box { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🛒 New Order Received</h1>
+    </div>
+    
+    <div class="content">
+      <div class="alert">
+        <strong>New Order Alert!</strong> A new order has been placed and payment has been confirmed.
+      </div>
+      
+      <div class="info-box">
+        <h2 style="margin-top: 0;">Order Summary</h2>
+        <p><strong>Order Number:</strong> ${order.id || 'N/A'}</p>
+        <p><strong>Customer:</strong> ${customerName}</p>
+        <p><strong>Email:</strong> ${customerEmail}</p>
+        <p><strong>Phone:</strong> ${customerPhone}</p>
+        <p><strong>Total:</strong> $${(order.total || 0).toFixed(2)} ${order.currency || 'CAD'}</p>
+      </div>
+
+      <div class="info-box">
+        <h3 style="margin-top: 0;">Items:</h3>
+        <pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${itemsList}</pre>
+      </div>
+
+      <div class="info-box">
+        <h3 style="margin-top: 0;">Shipping Address:</h3>
+        <p>
+          ${shippingName}<br>
+          ${shippingAddress.line1 || ''}<br>
+          ${shippingAddress.line2 ? shippingAddress.line2 + '<br>' : ''}
+          ${shippingAddress.city || ''}${shippingAddress.city && shippingAddress.state ? ',' : ''} ${shippingAddress.state || ''} ${shippingAddress.postal_code || ''}<br>
+          ${shippingAddress.country || ''}
+        </p>
+      </div>
+
+      <p style="text-align: center; margin-top: 30px;">
+        <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/admin" style="display: inline-block; padding: 12px 24px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px;">
+          View Order in Admin Dashboard
+        </a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>
+  `
+}
+
+// Send order confirmation email to customer
+export const sendOrderConfirmation = async (order) => {
+  try {
+    const customerEmail = order.customer?.email || ''
+    const trackingUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/order-tracking?orderId=${order.id || ''}&email=${encodeURIComponent(customerEmail)}`
+    const htmlContent = orderConfirmationTemplate(order, trackingUrl)
+    const subject = `Order Confirmation - ${order.id} | Pure Peel Co.`
+    
+    // Use Resend if configured
+    if (resend && process.env.RESEND_FROM_EMAIL) {
+      try {
+        console.log('📧 Attempting to send email via Resend...')
+        console.log('   From:', process.env.RESEND_FROM_EMAIL)
+        const customerEmail = order.customer?.email || 'unknown'
+        console.log('   To:', customerEmail)
+        
+            const { data, error } = await resend.emails.send({
+          from: process.env.RESEND_FROM_EMAIL,
+          to: customerEmail,
+          replyTo: process.env.ADMIN_EMAIL || process.env.RESEND_FROM_EMAIL,
+          subject: subject,
+          html: htmlContent,
+          headers: {
+            'X-Entity-Ref-ID': order.id || 'unknown',
+            'List-Unsubscribe': `<mailto:${process.env.ADMIN_EMAIL || 'support@purepeelco.com'}?subject=Unsubscribe>`,
+            'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+            'Precedence': 'bulk',
+            'X-Auto-Response-Suppress': 'All'
+          },
+          tags: [
+            { name: 'order-confirmation', value: order.id || 'unknown' }
+          ]
+        })
+
+        if (error) {
+          console.error('❌ Resend error:', JSON.stringify(error, null, 2))
+          return { success: false, error: error.message || JSON.stringify(error) }
+        }
+
+        console.log('✅ Order confirmation email sent via Resend to:', customerEmail)
+        console.log('   Message ID:', data?.id)
+        console.log('   Check delivery status at: https://resend.com/emails')
+        
+        // Return more details for debugging
+        return { 
+          success: true, 
+          messageId: data?.id,
+          resendData: data,
+          note: 'Check your spam folder. If using onboarding@resend.dev, verify your domain in Resend for better delivery.'
+        }
+      } catch (err) {
+        console.error('❌ Exception sending email via Resend:', err)
+        return { success: false, error: err.message }
+      }
+    }
+
+    // Fallback to nodemailer (Gmail/SMTP)
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+      const customerEmail = order.customer?.email || 'unknown'
+      console.log('⚠️  Email not configured. Order confirmation email would be sent to:', customerEmail)
+      console.log('   To enable emails, add RESEND_API_KEY and RESEND_FROM_EMAIL to your .env file')
+      console.log('   Or use Gmail/SMTP with EMAIL_USER and EMAIL_PASSWORD')
+      console.log('   See README_EMAIL_SETUP.md for instructions')
+      return { success: false, reason: 'Email not configured' }
+    }
+
+    const mailOptions = {
+      from: `"Pure Peel Co." <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
+      to: order.customer.email,
+      subject: subject,
+      html: htmlContent
+    }
+
+    const transporter = getTransporter()
+    const info = await transporter.sendMail(mailOptions)
+    
+    // In development mode with streamTransport, log the email
+    if (process.env.EMAIL_SERVICE !== 'gmail' && !process.env.SMTP_HOST) {
+      console.log('📧 Email would be sent (email not configured):')
+      console.log('To:', mailOptions.to)
+      console.log('Subject:', mailOptions.subject)
+      const previewUrl = nodemailer.getTestMessageUrl(info)
+      if (previewUrl) {
+        console.log('Preview URL:', previewUrl)
+      }
+    } else {
+      console.log('✅ Order confirmation email sent to:', customerEmail)
+    }
+
+    return { success: true, messageId: info.messageId }
+  } catch (error) {
+    console.error('Error sending order confirmation email:', error)
+    return { success: false, error: error.message }
+  }
+}
+
+// Send shipping notification to customer
+export const sendShippingNotification = async (order, trackingNumber = null) => {
+  try {
+    const htmlContent = shippingNotificationTemplate(order, trackingNumber)
+    const subject = `Your Order Has Shipped - ${order.id} | Pure Peel Co.`
+    
+    // Use Resend if configured
+    if (resend && process.env.RESEND_FROM_EMAIL) {
+      const customerEmail = order.customer?.email || ''
+      if (!customerEmail) {
+        console.error('❌ No customer email found in order')
+        return { success: false, error: 'Customer email is required' }
+      }
+      
+      const { data, error } = await resend.emails.send({
+        from: process.env.RESEND_FROM_EMAIL,
+        to: customerEmail,
+        replyTo: process.env.ADMIN_EMAIL || process.env.RESEND_FROM_EMAIL,
+        subject: subject,
+        html: htmlContent,
+        headers: {
+          'X-Entity-Ref-ID': order.id || 'unknown',
+          'List-Unsubscribe': `<mailto:${process.env.ADMIN_EMAIL || 'support@purepeelco.com'}?subject=Unsubscribe>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+          'Precedence': 'bulk',
+          'X-Auto-Response-Suppress': 'All'
+        },
+        tags: [
+          { name: 'shipping-notification', value: order.id || 'unknown' }
+        ]
+      })
+
+      if (error) {
+        console.error('❌ Resend error:', error)
+        return { success: false, error: error.message }
+      }
+
+      console.log('✅ Shipping notification email sent via Resend to:', customerEmail)
+      return { success: true, messageId: data?.id }
+    }
+
+    // Fallback to nodemailer
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+      console.log('Email not configured. Shipping notification would be sent to:', customerEmail)
+      return { success: false, reason: 'Email not configured' }
+    }
+
+    const mailOptions = {
+      from: `"Pure Peel Co." <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
+      to: customerEmail,
+      subject: subject,
+      html: htmlContent
+    }
+
+    const transporter = getTransporter()
+    const info = await transporter.sendMail(mailOptions)
+    
+    if (process.env.EMAIL_SERVICE !== 'gmail' && !process.env.SMTP_HOST) {
+      console.log('📧 Shipping notification would be sent (email not configured)')
+    } else {
+      console.log('✅ Shipping notification email sent to:', customerEmail)
+    }
+    return { success: true, messageId: info.messageId }
+  } catch (error) {
+    console.error('Error sending shipping notification:', error)
+    return { success: false, error: error.message }
+  }
+}
+
+// Send admin notification for new order
+export const sendAdminNotification = async (order) => {
+  try {
+    const adminEmail = process.env.ADMIN_EMAIL || process.env.RESEND_FROM_EMAIL?.split('<')[1]?.replace('>', '') || process.env.EMAIL_USER
+    
+    if (!adminEmail) {
+      console.log('Admin email not configured. New order notification would be sent.')
+      return { success: false, reason: 'Admin email not configured' }
+    }
+
+    const htmlContent = adminNotificationTemplate(order)
+    const subject = `🛒 New Order: ${order.id} - $${order.total.toFixed(2)} ${order.currency}`
+    
+    // Use Resend if configured
+    if (resend && process.env.RESEND_FROM_EMAIL) {
+      try {
+        console.log('📧 Attempting to send admin notification via Resend...')
+        console.log('   From:', process.env.RESEND_FROM_EMAIL)
+        console.log('   To:', adminEmail)
+        
+        const { data, error } = await resend.emails.send({
+          from: process.env.RESEND_FROM_EMAIL,
+          to: adminEmail,
+          subject: subject,
+          html: htmlContent,
+          headers: {
+            'X-Entity-Ref-ID': order.id || 'unknown'
+          },
+          tags: [
+            { name: 'admin-notification', value: order.id || 'unknown' }
+          ]
+        })
+
+        if (error) {
+          console.error('❌ Resend error:', JSON.stringify(error, null, 2))
+          return { success: false, error: error.message || JSON.stringify(error) }
+        }
+
+        console.log('✅ Admin notification email sent via Resend to:', adminEmail)
+        console.log('   Message ID:', data?.id)
+        return { success: true, messageId: data?.id }
+      } catch (err) {
+        console.error('❌ Exception sending admin email via Resend:', err)
+        return { success: false, error: err.message }
+      }
+    }
+
+    // Fallback to nodemailer
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+      console.log('Admin email not configured. New order notification would be sent.')
+      return { success: false, reason: 'Admin email not configured' }
+    }
+
+    const mailOptions = {
+      from: `"Pure Peel Co. Orders" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
+      to: adminEmail,
+      subject: subject,
+      html: htmlContent
+    }
+
+    const transporter = getTransporter()
+    const info = await transporter.sendMail(mailOptions)
+    
+    if (process.env.EMAIL_SERVICE !== 'gmail' && !process.env.SMTP_HOST) {
+      console.log('📧 Admin notification would be sent (email not configured)')
+    } else {
+      console.log('✅ Admin notification email sent to:', adminEmail)
+    }
+    return { success: true, messageId: info.messageId }
+  } catch (error) {
+    console.error('Error sending admin notification:', error)
+    return { success: false, error: error.message }
+  }
+}
+

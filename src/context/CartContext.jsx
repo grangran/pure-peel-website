@@ -1,0 +1,202 @@
+import { createContext, useContext, useState, useEffect, useRef } from "react"
+import { trackAddToCart, trackRemoveFromCart, trackEvent } from "../utils/analytics"
+
+const CartContext = createContext()
+
+// Global reference to addToast function (set by ToastProvider)
+let globalAddToast = null
+
+export function setAddToastFunction(addToastFn) {
+  globalAddToast = addToastFn
+}
+
+export function CartProvider({ children }) {
+  const [cartItems, setCartItems] = useState([])
+  const [cartCount, setCartCount] = useState(0)
+  const [isCartOpen, setIsCartOpen] = useState(false)
+  const lastToastRef = useRef({ productId: null, variant: null, timestamp: 0 })
+
+  // Load cart from localStorage on mount
+  useEffect(() => {
+    const savedCart = localStorage.getItem("purePeelCart")
+    if (savedCart) {
+      try {
+        const parsed = JSON.parse(savedCart)
+        setCartItems(parsed)
+        setCartCount(parsed.reduce((sum, item) => sum + item.quantity, 0))
+      } catch (error) {
+        console.error("Error loading cart from localStorage:", error)
+      }
+    }
+  }, [])
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    if (cartItems.length > 0) {
+      localStorage.setItem("purePeelCart", JSON.stringify(cartItems))
+    } else {
+      localStorage.removeItem("purePeelCart")
+    }
+    setCartCount(cartItems.reduce((sum, item) => sum + item.quantity, 0))
+  }, [cartItems])
+
+  // Track cart view when cart is opened
+  useEffect(() => {
+    if (isCartOpen && cartItems.length > 0) {
+      const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+      trackEvent('view_cart', {
+        currency: 'CAD',
+        value: total,
+        items: cartItems.map(item => ({
+          item_id: item.id,
+          item_name: `${item.name} - ${item.variant || ''}`,
+          item_category: 'Dehydrated Citrus',
+          item_brand: 'Pure Peel Co.',
+          price: item.price || 0,
+          quantity: item.quantity || 1
+        }))
+      })
+    }
+  }, [isCartOpen, cartItems])
+
+  const addToCart = (product) => {
+    const quantityToAdd = product.quantity || 1
+    const productToTrack = { ...product, quantity: quantityToAdd }
+    
+    // Prevent duplicate toasts for the same product within 1000ms
+    const now = Date.now()
+    const isDuplicate = 
+      lastToastRef.current.productId === product.id &&
+      lastToastRef.current.variant === product.variant &&
+      (now - lastToastRef.current.timestamp) < 1000
+    
+    let finalQuantity = quantityToAdd
+    let shouldShowToast = !isDuplicate
+    
+    setCartItems((prevItems) => {
+      const existingItem = prevItems.find(
+        (item) => item.id === product.id && item.variant === product.variant
+      )
+
+      if (existingItem) {
+        finalQuantity = existingItem.quantity + quantityToAdd
+        trackAddToCart(productToTrack)
+        return prevItems.map((item) =>
+          item.id === product.id && item.variant === product.variant
+            ? { ...item, quantity: item.quantity + quantityToAdd }
+            : item
+        )
+      } else {
+        finalQuantity = quantityToAdd
+        trackAddToCart(productToTrack)
+        return [...prevItems, { ...product, quantity: quantityToAdd }]
+      }
+    })
+    
+    // Show toast notification outside of setState to prevent duplicates
+    if (shouldShowToast && globalAddToast) {
+      // Update the ref to prevent future duplicates
+      lastToastRef.current = {
+        productId: product.id,
+        variant: product.variant,
+        timestamp: now
+      }
+      
+      globalAddToast({
+        type: 'success',
+        message: 'Added to cart!',
+        product: {
+          name: product.name,
+          variant: product.variant,
+          image: product.image,
+          quantity: finalQuantity
+        }
+      })
+    }
+  }
+
+  const removeFromCart = (productId, variant) => {
+    setCartItems((prevItems) => {
+      const itemToRemove = prevItems.find(
+        (item) => item.id === productId && item.variant === variant
+      )
+      
+      // Track remove from cart event
+      if (itemToRemove) {
+        trackRemoveFromCart(itemToRemove)
+      }
+      
+      return prevItems.filter(
+        (item) => !(item.id === productId && item.variant === variant)
+      )
+    })
+  }
+
+  const updateQuantity = (productId, variant, quantity) => {
+    if (quantity <= 0) {
+      removeFromCart(productId, variant)
+      return
+    }
+
+    setCartItems((prevItems) => {
+      const existingItem = prevItems.find(
+        (item) => item.id === productId && item.variant === variant
+      )
+      
+      if (existingItem) {
+        const oldQuantity = existingItem.quantity
+        const quantityDiff = quantity - oldQuantity
+        
+        // Track add or remove based on quantity change
+        if (quantityDiff > 0) {
+          // Quantity increased - track as add to cart
+          trackAddToCart({ ...existingItem, quantity: quantityDiff })
+        } else if (quantityDiff < 0) {
+          // Quantity decreased - track as remove from cart
+          trackRemoveFromCart({ ...existingItem, quantity: Math.abs(quantityDiff) })
+        }
+      }
+      
+      return prevItems.map((item) =>
+        item.id === productId && item.variant === variant
+          ? { ...item, quantity }
+          : item
+      )
+    })
+  }
+
+  const clearCart = () => {
+    setCartItems([])
+  }
+
+  const getCartTotal = () => {
+    return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  }
+
+  return (
+    <CartContext.Provider
+      value={{
+        cartItems,
+        cartCount,
+        isCartOpen,
+        setIsCartOpen,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        getCartTotal,
+      }}
+    >
+      {children}
+    </CartContext.Provider>
+  )
+}
+
+export function useCart() {
+  const context = useContext(CartContext)
+  if (!context) {
+    throw new Error("useCart must be used within a CartProvider")
+  }
+  return context
+}
+

@@ -1,0 +1,14 @@
+# robots.txt for Pure Peel Co.
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /checkout
+
+# Sitemap location
+Sitemap: https://purepeelco.com/sitemap.xml
+
+# Crawl-delay (optional, helps prevent server overload)
+# Crawl-delay: 1
+
