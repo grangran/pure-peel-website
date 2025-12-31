@@ -130,13 +130,11 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Refined scroll indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-2 opacity-70 animate-fadeInUp">
-        <div className="flex flex-col items-center gap-2">
-          <span className="text-xs text-white/80 uppercase tracking-wider font-medium">Scroll</span>
-          <div className="w-5 h-8 border-2 border-white/60 rounded-full flex justify-center p-1">
-            <div className="w-1 h-2 bg-white/60 rounded-full animate-scrollBounce"></div>
-          </div>
+      {/* Refined scroll indicator - Hidden on mobile */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-2 opacity-70 animate-fadeInUp hidden md:flex flex-col items-center gap-2">
+        <span className="text-xs text-white/80 uppercase tracking-wider font-medium">Scroll</span>
+        <div className="w-5 h-8 border-2 border-white/60 rounded-full flex justify-center p-1">
+          <div className="w-1 h-2 bg-white/60 rounded-full animate-scrollBounce"></div>
         </div>
       </div>
     </section>

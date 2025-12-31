@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useCart } from "../context/CartContext"
 import { useLanguage } from "../context/LanguageContext"
 import { getTranslation, translateVariantLabel } from "../utils/translations"
@@ -14,8 +14,20 @@ export default function ProductPage({ product }) {
   const [quantity, setQuantity] = useState(1)
   const [ripples, setRipples] = useState({})
   const [isAboutExpanded, setIsAboutExpanded] = useState(false)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const { addToCart } = useCart()
   const { language } = useLanguage()
+
+  // Get all images for the selected variant (variant image + gallery images)
+  const getVariantImages = () => {
+    const images = [selectedVariant.image]
+    if (product.galleryImages && product.galleryImages.length > 0) {
+      images.push(...product.galleryImages)
+    }
+    return images
+  }
+
+  const variantImages = getVariantImages()
 
   useEffect(() => {
     // Reset all state when product changes (e.g., navigating back/forward)
@@ -25,15 +37,63 @@ export default function ProductPage({ product }) {
     setQuantity(1)
     setAddingToCart(false)
     setRipples({})
+    setCurrentImageIndex(0)
   }, [product])
+
+  // Reset image index when variant changes
+  useEffect(() => {
+    setCurrentImageIndex(0)
+  }, [selectedVariant.id])
 
   const handleVariantChange = (variant) => {
     setIsImageFading(true)
     setImageLoading(true)
+    setCurrentImageIndex(0) // Reset to first image when variant changes
     setTimeout(() => {
       setSelectedVariant(variant)
       setIsImageFading(false)
     }, 180)
+  }
+
+  const handleNextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % variantImages.length)
+  }
+
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + variantImages.length) % variantImages.length)
+  }
+
+  const handleImageSelect = (index) => {
+    setCurrentImageIndex(index)
+  }
+
+  // Touch/swipe support for mobile
+  const touchStartRef = useRef({ x: 0, y: 0 })
+  const touchEndRef = useRef({ x: 0, y: 0 })
+
+  const handleTouchStart = (e) => {
+    touchStartRef.current.x = e.touches[0].clientX
+    touchStartRef.current.y = e.touches[0].clientY
+  }
+
+  const handleTouchEnd = (e) => {
+    touchEndRef.current.x = e.changedTouches[0].clientX
+    touchEndRef.current.y = e.changedTouches[0].clientY
+    handleSwipe()
+  }
+
+  const handleSwipe = () => {
+    const deltaX = touchStartRef.current.x - touchEndRef.current.x
+    const deltaY = touchStartRef.current.y - touchEndRef.current.y
+    const minSwipeDistance = 50
+
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
+      if (deltaX > 0) {
+        handleNextImage()
+      } else {
+        handlePrevImage()
+      }
+    }
   }
 
   const createRipple = (event, buttonId) => {
@@ -89,27 +149,102 @@ export default function ProductPage({ product }) {
           {/* Image Section */}
           <div className="flex justify-center items-start lg:sticky lg:top-20">
             <div className="relative w-full max-w-md mx-auto lg:max-w-md">
-              <div className="relative bg-white rounded-xl md:rounded-2xl overflow-hidden mb-4 md:mb-5 shadow-xl md:shadow-2xl border-2 border-stone-300/60">
+              {/* Image Carousel */}
+              <div 
+                className="relative bg-white rounded-xl md:rounded-2xl overflow-hidden mb-4 md:mb-5 shadow-xl md:shadow-2xl border-2 border-stone-300/60"
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+              >
                 {imageLoading && !isImageFading && (
                   <div className="absolute inset-0 flex items-center justify-center bg-stone-100 z-10">
                     <Skeleton type="image" width="100%" height="100%" />
                   </div>
                 )}
-                <div className="aspect-square flex items-center justify-center p-4 md:p-5 bg-linear-to-br from-stone-50 to-white">
-                  <img
-                    key={selectedVariant.id}
-                    src={selectedVariant.image}
-                    alt={`${product.name} slices`}
-                    className={`w-full h-full object-contain transition-all duration-500 drop-shadow-md ${
-                      isImageFading || imageLoading ? "opacity-0 scale-95" : "opacity-100 scale-100"
-                    }`}
-                    onLoad={() => setImageLoading(false)}
-                    onError={(e) => {
-                      console.error("Image failed to load:", selectedVariant.image);
-                      setImageLoading(false);
-                    }}
-                  />
+                
+                {/* Main Image Container */}
+                <div className="aspect-square relative overflow-hidden bg-linear-to-br from-stone-50 to-white">
+                  {variantImages.map((image, index) => (
+                    <div
+                      key={`${selectedVariant.id}-${index}`}
+                      className={`absolute inset-0 flex items-center justify-center p-4 md:p-5 transition-all duration-500 ${
+                        index === currentImageIndex
+                          ? "opacity-100 z-1 scale-100"
+                          : "opacity-0 z-0 scale-95"
+                      }`}
+                    >
+                      <img
+                        src={image}
+                        alt={`${product.name} - Image ${index + 1}`}
+                        className={`w-full h-full object-contain drop-shadow-md ${
+                          isImageFading || imageLoading ? "opacity-0" : "opacity-100"
+                        }`}
+                        onLoad={() => {
+                          if (index === currentImageIndex) {
+                            setImageLoading(false)
+                          }
+                        }}
+                        onError={(e) => {
+                          console.error("Image failed to load:", image);
+                          if (index === currentImageIndex) {
+                            setImageLoading(false);
+                          }
+                        }}
+                        loading={index === 0 ? "eager" : "lazy"}
+                      />
+                    </div>
+                  ))}
                 </div>
+
+                {/* Navigation Arrows - Only show if more than one image */}
+                {variantImages.length > 1 && (
+                  <>
+                    <button
+                      onClick={handlePrevImage}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 bg-white/90 hover:bg-white backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg border border-stone-200/50 transition-all duration-200 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2"
+                      aria-label="Previous image"
+                    >
+                      <svg className="w-5 h-5 md:w-6 md:h-6 text-stone-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={handleNextImage}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 bg-white/90 hover:bg-white backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg border border-stone-200/50 transition-all duration-200 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2"
+                      aria-label="Next image"
+                    >
+                      <svg className="w-5 h-5 md:w-6 md:h-6 text-stone-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </>
+                )}
+
+                {/* Image Counter - Only show if more than one image */}
+                {variantImages.length > 1 && (
+                  <div className="absolute bottom-3 right-3 z-20 bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full">
+                    <span className="text-white text-xs md:text-sm font-medium">
+                      {currentImageIndex + 1} / {variantImages.length}
+                    </span>
+                  </div>
+                )}
+
+                {/* Thumbnail Dots - Only show if more than one image */}
+                {variantImages.length > 1 && (
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+                    {variantImages.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleImageSelect(index)}
+                        className={`w-2 h-2 rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 ${
+                          index === currentImageIndex
+                            ? "bg-amber-500 w-6"
+                            : "bg-white/60 hover:bg-white/80"
+                        }`}
+                        aria-label={`Go to image ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
               
               {/* About This Product - Accordion */}
