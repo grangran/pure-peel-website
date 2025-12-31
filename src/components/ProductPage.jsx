@@ -89,18 +89,18 @@ export default function ProductPage({ product }) {
           {/* Image Section */}
           <div className="flex justify-center items-start lg:sticky lg:top-20">
             <div className="relative w-full max-w-md mx-auto lg:max-w-md">
-              <div className="relative bg-white rounded-xl md:rounded-2xl overflow-hidden mb-4 md:mb-5 shadow-lg md:shadow-xl border border-stone-200/40">
+              <div className="relative bg-white rounded-xl md:rounded-2xl overflow-hidden mb-4 md:mb-5 shadow-xl md:shadow-2xl border-2 border-stone-300/60">
                 {imageLoading && !isImageFading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-stone-50 z-10">
+                  <div className="absolute inset-0 flex items-center justify-center bg-stone-100 z-10">
                     <Skeleton type="image" width="100%" height="100%" />
                   </div>
                 )}
-                <div className="aspect-square flex items-center justify-center p-4 md:p-5">
+                <div className="aspect-square flex items-center justify-center p-4 md:p-5 bg-linear-to-br from-stone-50 to-white">
                   <img
                     key={selectedVariant.id}
                     src={selectedVariant.image}
                     alt={`${product.name} slices`}
-                    className={`w-full h-full object-contain transition-all duration-500 ${
+                    className={`w-full h-full object-contain transition-all duration-500 drop-shadow-md ${
                       isImageFading || imageLoading ? "opacity-0 scale-95" : "opacity-100 scale-100"
                     }`}
                     onLoad={() => setImageLoading(false)}
