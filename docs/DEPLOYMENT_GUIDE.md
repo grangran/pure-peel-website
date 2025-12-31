@@ -108,14 +108,21 @@ STRIPE_WEBHOOK_SECRET=whsec_... (your Stripe webhook secret)
 RESEND_API_KEY=re_... (your Resend API key)
 RESEND_FROM_EMAIL=orders@purepeelco.com
 ADMIN_EMAIL=purepeel11@gmail.com
-CANADA_POST_USERNAME=your_username (if you have it)
-CANADA_POST_PASSWORD=your_password (if you have it)
+CANADA_POST_USERNAME=e66359fc2eb7d4c2
+CANADA_POST_PASSWORD=14d81da04ebb17bb918d48
+CANADA_POST_CUSTOMER_NUMBER=0001238590
+CANADA_POST_USE_PRODUCTION=true
+SHIPPING_ORIGIN_POSTAL_CODE=YOUR_POSTAL_CODE (e.g., M5H 2N2)
+SHIPPING_ORIGIN_CITY=YOUR_CITY (e.g., Toronto)
+SHIPPING_ORIGIN_PROVINCE=YOUR_PROVINCE (e.g., ON)
 PORT=3001 (Railway will set this automatically, but good to have)
 ```
 
 **Important:**
 - Use **LIVE** Stripe keys (not test keys)
 - Make sure your domain is verified in Resend before using `orders@purepeelco.com`
+- **Canada Post credentials above are for PRODUCTION** - these will enable real-time shipping rates
+- Replace `YOUR_POSTAL_CODE`, `YOUR_CITY`, and `YOUR_PROVINCE` with your actual shipping origin address
 
 ### 3.4 Deploy
 
@@ -197,6 +204,7 @@ Before going live, verify:
 - [ ] Test email delivery
 - [ ] Test order tracking
 - [ ] Test admin panel
+- [ ] Test Canada Post shipping rates (enter a Canadian address in checkout)
 
 ---
 
@@ -233,6 +241,19 @@ If you prefer Render over Railway:
 - Verify Resend domain is verified
 - Check `RESEND_FROM_EMAIL` matches verified domain
 - Check backend logs for email errors
+
+### "Canada Post shipping rates not working"
+- Verify all Canada Post environment variables are set in Railway/Render:
+  - `CANADA_POST_USERNAME=e66359fc2eb7d4c2`
+  - `CANADA_POST_PASSWORD=14d81da04ebb17bb918d48`
+  - `CANADA_POST_CUSTOMER_NUMBER=0001238590`
+  - `CANADA_POST_USE_PRODUCTION=true`
+- Check backend logs for "Canada Post API error" messages
+- If API fails, the system will fall back to estimated rates (shipping will still work)
+- Verify your shipping origin address is set correctly:
+  - `SHIPPING_ORIGIN_POSTAL_CODE`
+  - `SHIPPING_ORIGIN_CITY`
+  - `SHIPPING_ORIGIN_PROVINCE`
 
 ### "Domain not working"
 - Wait for DNS propagation (can take up to 48 hours)
