@@ -332,30 +332,98 @@ export default function ProductPage({ product }) {
               </p>
             </div>
 
-            {/* Variants - Cleaner design */}
+            {/* Variants - Mobile: 2-2-1 layout, Desktop: 3-2 layout */}
             <div className="mb-6 md:mb-8">
               <label className="block text-xs md:text-sm font-semibold text-stone-700 mb-3 md:mb-4 uppercase tracking-wider">
                 Select Size
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 md:gap-3">
-                {product.variants.map((variant) => (
-                  <button
-                    key={variant.id}
-                    onClick={() => handleVariantChange(variant)}
-                    className={`px-3 md:px-4 py-2.5 md:py-3 text-xs md:text-sm font-medium rounded-lg border transition-all duration-200 min-h-[44px] focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-1 ${
-                      selectedVariant.id === variant.id
-                        ? "bg-amber-500 border-amber-500 text-stone-900 shadow-sm"
-                        : "bg-white border-stone-200 text-stone-700 hover:border-amber-300 hover:bg-stone-50 active:scale-[0.98]"
-                    }`}
-                  >
-                    <div className="text-center">
-                      <div className="font-medium text-xs md:text-sm">{translateVariantLabel(language, variant.label).split("—")[0].trim()}</div>
-                      <div className="text-[10px] md:text-[11px] text-stone-600/70 mt-0.5">
-                        {translateVariantLabel(language, variant.label).split("—")[1]?.trim() || ''}
+              <div className="flex flex-col gap-2 md:gap-3">
+                {/* First row: 2 buttons on mobile, 3 on desktop */}
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
+                  {product.variants.slice(0, 2).map((variant) => (
+                    <button
+                      key={variant.id}
+                      onClick={() => handleVariantChange(variant)}
+                      className={`px-3 md:px-4 py-2.5 md:py-3 text-xs md:text-sm font-medium rounded-lg border transition-all duration-200 min-h-[44px] focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-1 ${
+                        selectedVariant.id === variant.id
+                          ? "bg-amber-500 border-amber-500 text-stone-900 shadow-sm"
+                          : "bg-white border-stone-200 text-stone-700 hover:border-amber-300 hover:bg-stone-50 active:scale-[0.98]"
+                      }`}
+                    >
+                      <div className="text-center">
+                        <div className="font-medium text-xs md:text-sm">{translateVariantLabel(language, variant.label).split("—")[0].trim()}</div>
+                        <div className="text-[10px] md:text-[11px] text-stone-600/70 mt-0.5">
+                          {translateVariantLabel(language, variant.label).split("—")[1]?.trim() || ''}
+                        </div>
                       </div>
-                    </div>
-                  </button>
-                ))}
+                    </button>
+                  ))}
+                  {/* Third button only on desktop */}
+                  {product.variants.length > 2 && (
+                    <button
+                      key={product.variants[2].id}
+                      onClick={() => handleVariantChange(product.variants[2])}
+                      className={`hidden md:block px-4 py-3 text-sm font-medium rounded-lg border transition-all duration-200 min-h-[44px] focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-1 ${
+                        selectedVariant.id === product.variants[2].id
+                          ? "bg-amber-500 border-amber-500 text-stone-900 shadow-sm"
+                          : "bg-white border-stone-200 text-stone-700 hover:border-amber-300 hover:bg-stone-50 active:scale-[0.98]"
+                      }`}
+                    >
+                      <div className="text-center">
+                        <div className="font-medium text-sm">{translateVariantLabel(language, product.variants[2].label).split("—")[0].trim()}</div>
+                        <div className="text-[11px] text-stone-600/70 mt-0.5">
+                          {translateVariantLabel(language, product.variants[2].label).split("—")[1]?.trim() || ''}
+                        </div>
+                      </div>
+                    </button>
+                  )}
+                </div>
+                {/* Second row: 2 buttons on mobile, 2 centered on desktop */}
+                {product.variants.length > 2 && (
+                  <div className="grid grid-cols-2 md:flex md:justify-center gap-2 md:gap-3">
+                    {product.variants.slice(2, 4).map((variant) => (
+                      <button
+                        key={variant.id}
+                        onClick={() => handleVariantChange(variant)}
+                        className={`px-3 md:px-4 py-2.5 md:py-3 text-xs md:text-sm font-medium rounded-lg border transition-all duration-200 min-h-[44px] focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-1 ${
+                          selectedVariant.id === variant.id
+                            ? "bg-amber-500 border-amber-500 text-stone-900 shadow-sm"
+                            : "bg-white border-stone-200 text-stone-700 hover:border-amber-300 hover:bg-stone-50 active:scale-[0.98]"
+                        }`}
+                        style={{ width: product.variants.length === 5 ? undefined : 'calc(33.333% - 0.5rem)' }}
+                      >
+                        <div className="text-center">
+                          <div className="font-medium text-xs md:text-sm">{translateVariantLabel(language, variant.label).split("—")[0].trim()}</div>
+                          <div className="text-[10px] md:text-[11px] text-stone-600/70 mt-0.5">
+                            {translateVariantLabel(language, variant.label).split("—")[1]?.trim() || ''}
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {/* Third row (mobile only): Last button centered if there are 5 variants */}
+                {product.variants.length === 5 && (
+                  <div className="flex justify-center md:hidden">
+                    <button
+                      key={product.variants[4].id}
+                      onClick={() => handleVariantChange(product.variants[4])}
+                      className={`px-3 py-2.5 text-xs font-medium rounded-lg border transition-all duration-200 min-h-[44px] focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-1 ${
+                        selectedVariant.id === product.variants[4].id
+                          ? "bg-amber-500 border-amber-500 text-stone-900 shadow-sm"
+                          : "bg-white border-stone-200 text-stone-700 hover:border-amber-300 hover:bg-stone-50 active:scale-[0.98]"
+                      }`}
+                      style={{ width: 'calc(50% - 0.25rem)' }}
+                    >
+                      <div className="text-center">
+                        <div className="font-medium text-xs">{translateVariantLabel(language, product.variants[4].label).split("—")[0].trim()}</div>
+                        <div className="text-[10px] text-stone-600/70 mt-0.5">
+                          {translateVariantLabel(language, product.variants[4].label).split("—")[1]?.trim() || ''}
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
