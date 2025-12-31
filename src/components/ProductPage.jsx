@@ -390,7 +390,7 @@ export default function ProductPage({ product }) {
                             ? "bg-amber-500 border-amber-500 text-stone-900 shadow-sm"
                             : "bg-white border-stone-200 text-stone-700 hover:border-amber-300 hover:bg-stone-50 active:scale-[0.98]"
                         }`}
-                        style={{ width: product.variants.length === 5 ? undefined : 'calc(33.333% - 0.5rem)' }}
+                        style={{ width: 'calc(33.333% - 0.5rem)' }}
                       >
                         <div className="text-center">
                           <div className="font-medium text-xs md:text-sm">{translateVariantLabel(language, variant.label).split("—")[0].trim()}</div>
