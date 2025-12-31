@@ -1,5 +1,7 @@
 import { createContext, useContext, useState, useEffect, useRef } from "react"
 import { trackAddToCart, trackRemoveFromCart, trackEvent } from "../utils/analytics"
+import { getTranslation, translateVariantLabel } from "../utils/translations"
+import { useLanguage } from "./LanguageContext"
 
 const CartContext = createContext()
 
@@ -11,10 +13,14 @@ export function setAddToastFunction(addToastFn) {
 }
 
 export function CartProvider({ children }) {
+  const { language } = useLanguage()
   const [cartItems, setCartItems] = useState([])
   const [cartCount, setCartCount] = useState(0)
   const [isCartOpen, setIsCartOpen] = useState(false)
   const lastToastRef = useRef({ productId: null, variant: null, timestamp: 0 })
+  
+  // Safety check for language
+  const currentLanguage = language || 'en'
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -102,11 +108,30 @@ export function CartProvider({ children }) {
         timestamp: now
       }
       
+      // Use the translated product name passed from ProductPage, or translate it here if not already translated
+      let productName = product.name
+      if (product.productId) {
+        // ProductPage passed productId, use it to get translation
+        const translatedName = getTranslation(currentLanguage, `products.${product.productId}.name`)
+        if (translatedName !== `products.${product.productId}.name`) {
+          productName = translatedName
+        }
+      } else {
+        // Fallback: extract product ID from variant ID (e.g., "orange-mini" -> "orange")
+        const productId = product.id?.split('-').slice(0, -1).join('-') || product.id?.replace(/-mini|-small|-medium|-large|-clearbox/, '') || ''
+        if (productId) {
+          const translatedName = getTranslation(currentLanguage, `products.${productId}.name`)
+          if (translatedName !== `products.${productId}.name`) {
+            productName = translatedName
+          }
+        }
+      }
+      
       globalAddToast({
         type: 'success',
-        message: 'Added to cart!',
+        message: getTranslation(currentLanguage, 'toast.addedToCart'),
         product: {
-          name: product.name,
+          name: productName,
           variant: product.variant,
           image: product.image,
           quantity: finalQuantity

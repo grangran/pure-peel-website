@@ -1,24 +1,33 @@
 import { useState, useEffect, useRef } from "react"
 import { useScrollReveal } from "../hooks/useScrollReveal"
+import { useLanguage } from "../context/LanguageContext"
+import { getTranslation } from "../utils/translations"
 
 const lifestyleItems = [
   {
     id: 1,
-    image: "/images/drinks.jpg",
-    caption: "Perfect for Cocktails",
-    description: "Elevate your drinks with natural citrus flavor and beautiful presentation."
+    image: "/images/moscow-mule.jpg",
+    key: "cocktails"
   },
   {
     id: 2,
-    image: "/images/orangeinglass.jpg",
-    caption: "Ideal for Teas",
-    description: "Add a refreshing citrus touch to your favorite teas and beverages."
+    image: "/images/drinks.jpg",
+    key: "drinks"
   },
   {
     id: 3,
-    image: "/images/doublemule.jpg",
-    caption: "Charcuterie Boards",
-    description: "Beautiful decoration and flavor enhancement for your boards."
+    image: "/images/charcuterie-board.png",
+    key: "charcuterie"
+  },
+  {
+    id: 4,
+    image: "/images/decorated-lime-box.jpg",
+    key: "gift"
+  },
+  {
+    id: 5,
+    image: "/images/decorated-orange-box.jpg",
+    key: "giftOrange"
   }
 ]
 
@@ -29,6 +38,7 @@ export default function Lifestyle() {
   const intervalRef = useRef(null)
   const progressIntervalRef = useRef(null)
   const [sectionRef, isSectionVisible] = useScrollReveal({ threshold: 0.2 })
+  const { language } = useLanguage()
   const SLIDE_DURATION = 4000 // 4 seconds per slide
   const PROGRESS_UPDATE_INTERVAL = 50
 
@@ -133,18 +143,23 @@ export default function Lifestyle() {
   return (
     <section 
       ref={sectionRef}
-      className="relative py-20 px-5 bg-white overflow-hidden"
+      className="relative py-16 md:py-24 px-4 sm:px-5 bg-white overflow-hidden"
     >
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Section Header */}
-        <div className={`text-center mb-12 transition-all duration-800 ${
+        <div className={`text-center mb-12 md:mb-16 transition-all duration-800 ease-out ${
           isSectionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
-          <h2 className="text-[clamp(1.75rem,4vw,2.5rem)] font-semibold mb-4 text-gray-900 tracking-tight">
-            Perfect for Every Occasion
+          <div className="text-center mb-6">
+            <span className="inline-block px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-amber-700 bg-amber-50 rounded-full mb-6">
+              Lifestyle
+            </span>
+          </div>
+          <h2 className="text-[clamp(1.75rem,5vw,3.5rem)] font-bold mb-4 md:mb-6 text-stone-900 tracking-tight">
+            {getTranslation(language, 'lifestyle.title')}
           </h2>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            From cocktails and teas to charcuterie boards and decoration — discover endless ways to use our dehydrated citrus slices.
+          <p className="text-stone-600 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed px-4">
+            {getTranslation(language, 'lifestyle.subtitle')}
           </p>
         </div>
 
@@ -156,26 +171,26 @@ export default function Lifestyle() {
           onTouchEnd={onTouchEnd}
         >
           {/* Image Frame - Responsive aspect ratio */}
-          <div className="relative w-full aspect-4/3 sm:aspect-16/10 md:aspect-video lg:aspect-5/3 rounded-2xl overflow-hidden bg-gray-100 shadow-[0_20px_60px_rgba(0,0,0,0.1)]">
-            {/* Images with responsive sizing */}
+          <div className="relative w-full aspect-4/3 sm:aspect-16/10 md:aspect-video lg:aspect-5/3 rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl border border-stone-200/50">
+            {/* Images with cover sizing */}
             {lifestyleItems.map((item, index) => (
               <div
                 key={item.id}
-                className={`absolute inset-0 transition-all duration-1200 ease-in-out ${
+                className={`absolute inset-0 transition-all duration-1200 ease-out ${
                   index === currentIndex 
                     ? 'opacity-100 z-1 scale-100' 
                     : 'opacity-0 z-0 scale-105'
                 }`}
               >
+                {/* Main image - covers container */}
                 <img
                   src={item.image}
-                  alt={item.caption}
-                  className="w-full h-full object-cover sm:object-contain md:object-cover scale-105 sm:scale-100 md:scale-[0.98]"
+                  alt={getTranslation(language, `lifestyle.slides.${item.key}.caption`)}
+                  className="w-full h-full object-cover object-center"
                   loading={index === 0 ? 'eager' : 'lazy'}
-                  style={{ objectPosition: 'center center' }}
                 />
                 {/* Enhanced Gradient Overlay */}
-                <div className="absolute inset-0 bg-linear-to-b from-black/30 via-transparent to-black/70"></div>
+                <div className="absolute inset-0 bg-linear-to-b from-black/30 via-transparent to-black/70 z-2"></div>
               </div>
             ))}
 
@@ -184,13 +199,13 @@ export default function Lifestyle() {
               <div className={`transition-all duration-700 ease-out ${
                 captionVisible && isSectionVisible 
                   ? 'opacity-100 translate-y-0' 
-                  : 'opacity-0 translate-y-6'
+                  : 'opacity-0 translate-y-4'
               }`}>
                 <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 sm:mb-3 drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
-                  {currentItem.caption}
+                  {getTranslation(language, `lifestyle.slides.${currentItem.key}.caption`)}
                 </h3>
                 <p className="text-white/90 text-base sm:text-lg md:text-xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
-                  {currentItem.description}
+                  {getTranslation(language, `lifestyle.slides.${currentItem.key}.description`)}
                 </p>
               </div>
             </div>
@@ -213,21 +228,6 @@ export default function Lifestyle() {
                 {currentIndex + 1} / {lifestyleItems.length}
               </span>
             </div>
-          </div>
-
-          {/* Minimal Slide Indicators */}
-          <div className="flex justify-center items-center gap-2 mt-6">
-            {lifestyleItems.map((item, index) => (
-              <div
-                key={item.id}
-                className={`transition-all duration-500 rounded-full ${
-                  index === currentIndex
-                    ? 'w-2.5 h-2.5 bg-amber-500'
-                    : 'w-2 h-2 bg-gray-300'
-                }`}
-                aria-label={`Slide ${index + 1} of ${lifestyleItems.length}`}
-              />
-            ))}
           </div>
         </div>
       </div>

@@ -1,7 +1,10 @@
 import { useScrollReveal } from "../hooks/useScrollReveal"
+import { useLanguage } from "../context/LanguageContext"
+import { getTranslation } from "../utils/translations"
 
 export default function ShippingReturns() {
   const [sectionRef, isSectionVisible] = useScrollReveal({ threshold: 0.1 })
+  const { language } = useLanguage()
 
   return (
     <section 
@@ -13,214 +16,214 @@ export default function ShippingReturns() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Shipping & Returns</h1>
-          <p className="text-gray-600">Information about our shipping methods and return policy</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">{getTranslation(language, 'shipping.title')}</h1>
+          <p className="text-gray-600">{getTranslation(language, 'shipping.subtitle')}</p>
         </div>
 
         {/* Shipping Information */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Shipping Information</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">{getTranslation(language, 'shipping.shippingInfo.title')}</h2>
           
           {/* Shipping Methods */}
           <div className="mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Shipping Methods</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">{getTranslation(language, 'shipping.shippingInfo.methods.title')}</h3>
             <div className="space-y-4">
               <div className="border border-gray-200 rounded-lg p-4">
                 <div className="flex items-start justify-between mb-2">
-                  <h4 className="font-semibold text-gray-900">Regular Parcel</h4>
-                  <span className="text-sm font-medium text-gray-600">5-7 business days</span>
+                  <h4 className="font-semibold text-gray-900">{getTranslation(language, 'shipping.shippingInfo.methods.regular.name')}</h4>
+                  <span className="text-sm font-medium text-gray-600">{getTranslation(language, 'shipping.shippingInfo.methods.regular.time')}</span>
                 </div>
-                <p className="text-gray-700 text-sm">Standard delivery within Canada with tracking</p>
+                <p className="text-gray-700 text-sm">{getTranslation(language, 'shipping.shippingInfo.methods.regular.description')}</p>
               </div>
               
               <div className="border border-gray-200 rounded-lg p-4">
                 <div className="flex items-start justify-between mb-2">
-                  <h4 className="font-semibold text-gray-900">Expedited Parcel</h4>
-                  <span className="text-sm font-medium text-gray-600">3-5 business days</span>
+                  <h4 className="font-semibold text-gray-900">{getTranslation(language, 'shipping.shippingInfo.methods.expedited.name')}</h4>
+                  <span className="text-sm font-medium text-gray-600">{getTranslation(language, 'shipping.shippingInfo.methods.expedited.time')}</span>
                 </div>
-                <p className="text-gray-700 text-sm">Faster delivery with tracking and signature confirmation</p>
+                <p className="text-gray-700 text-sm">{getTranslation(language, 'shipping.shippingInfo.methods.expedited.description')}</p>
               </div>
               
               <div className="border border-gray-200 rounded-lg p-4">
                 <div className="flex items-start justify-between mb-2">
-                  <h4 className="font-semibold text-gray-900">Xpresspost</h4>
-                  <span className="text-sm font-medium text-gray-600">2-3 business days</span>
+                  <h4 className="font-semibold text-gray-900">{getTranslation(language, 'shipping.shippingInfo.methods.xpresspost.name')}</h4>
+                  <span className="text-sm font-medium text-gray-600">{getTranslation(language, 'shipping.shippingInfo.methods.xpresspost.time')}</span>
                 </div>
-                <p className="text-gray-700 text-sm">Express delivery with signature confirmation and priority handling</p>
+                <p className="text-gray-700 text-sm">{getTranslation(language, 'shipping.shippingInfo.methods.xpresspost.description')}</p>
               </div>
             </div>
           </div>
 
           {/* Shipping Times */}
           <div className="mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Shipping Times</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">{getTranslation(language, 'shipping.shippingTimes.title')}</h3>
             <p className="text-gray-700 mb-3">
-              Orders are typically processed within 1-2 business days (Monday-Friday, excluding holidays). Orders placed after 2:00 PM EST may be processed the next business day.
+              {getTranslation(language, 'shipping.shippingTimes.text1')}
             </p>
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-3">
-              <p className="text-gray-900 font-semibold mb-1">Processing Schedule</p>
+              <p className="text-gray-900 font-semibold mb-1">{getTranslation(language, 'shipping.shippingTimes.processingSchedule')}</p>
               <ul className="list-disc list-inside space-y-1 text-gray-700 text-sm ml-4">
-                <li>Orders placed Monday-Thursday before 2:00 PM EST: Processed within 24 hours</li>
-                <li>Orders placed Friday-Sunday: Processed the following Monday</li>
-                <li>Holiday orders: May experience additional processing delays</li>
+                <li>{getTranslation(language, 'shipping.shippingTimes.schedule1')}</li>
+                <li>{getTranslation(language, 'shipping.shippingTimes.schedule2')}</li>
+                <li>{getTranslation(language, 'shipping.shippingTimes.schedule3')}</li>
               </ul>
             </div>
             <p className="text-gray-700 mb-3">
-              Shipping times are calculated from the date your order ships, not from the date you place your order. You will receive a shipping confirmation email with a tracking number once your order has been shipped.
+              {getTranslation(language, 'shipping.shippingTimes.text2')}
             </p>
             <p className="text-gray-700">
-              <strong>Note:</strong> Shipping times may be longer during peak seasons (holidays, special promotions) or due to weather conditions, postal service delays, or remote locations. We will notify you via email if there are any significant delays.
+              <strong>{getTranslation(language, 'shipping.shippingTimes.note')}</strong>
             </p>
           </div>
 
           {/* Shipping Costs */}
           <div className="mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Shipping Costs</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">{getTranslation(language, 'shipping.shippingCosts.title')}</h3>
             <p className="text-gray-700 mb-3">
-              Shipping costs are calculated based on your location, package weight, and selected shipping method. Rates are displayed at checkout before you complete your purchase.
+              {getTranslation(language, 'shipping.shippingCosts.text1')}
             </p>
             <p className="text-gray-700 text-sm">
-              All orders require shipping fees. Rates start from approximately $10 CAD for Regular Parcel within Canada.
+              {getTranslation(language, 'shipping.shippingCosts.text2')}
             </p>
           </div>
 
           {/* Order Tracking */}
           <div className="mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Order Tracking</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">{getTranslation(language, 'shipping.orderTracking.title')}</h3>
             <p className="text-gray-700 mb-3">
-              Once your order ships, you will receive an email with a tracking number. You can track your package using:
+              {getTranslation(language, 'shipping.orderTracking.text1')}
             </p>
             <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
-              <li>The tracking link provided in your shipping confirmation email</li>
-              <li>Canada Post's website: <a href="https://www.canadapost.ca/trackweb" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:text-amber-700">canadapost.ca/trackweb</a></li>
-              <li>Our order tracking page: <a href="/order-tracking" className="text-amber-600 hover:text-amber-700">Track Your Order</a></li>
+              <li>{getTranslation(language, 'shipping.orderTracking.item1')}</li>
+              <li>{getTranslation(language, 'shipping.orderTracking.item2')} <a href="https://www.canadapost.ca/trackweb" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:text-amber-700">canadapost.ca/trackweb</a></li>
+              <li>{getTranslation(language, 'shipping.orderTracking.item3')} <a href="/order-tracking" className="text-amber-600 hover:text-amber-700">{getTranslation(language, 'shipping.orderTracking.trackYourOrder')}</a></li>
             </ul>
             <p className="text-gray-700 mt-4">
-              Tracking information is typically available within 24 hours of shipment. If you don't receive a tracking number within 3 business days, please contact us.
+              {getTranslation(language, 'shipping.orderTracking.text2')}
             </p>
           </div>
 
           {/* Damaged or Lost Packages */}
           <div className="mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Damaged or Lost Packages</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">{getTranslation(language, 'shipping.damagedOrLost.title')}</h3>
             <p className="text-gray-700 mb-3">
-              If your package arrives damaged or is lost in transit, please contact us immediately:
+              {getTranslation(language, 'shipping.damagedOrLost.text1')}
             </p>
             <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
-              <li><strong>Damaged Items:</strong> Take photos of the damaged package and items, then contact us within 48 hours of delivery</li>
-              <li><strong>Lost Packages:</strong> Contact us if your package hasn't arrived within 10 business days of the expected delivery date</li>
-              <li><strong>Incorrect Items:</strong> Contact us immediately if you received the wrong items</li>
+              <li><strong>{getTranslation(language, 'shipping.damagedOrLost.damagedItems')}</strong></li>
+              <li><strong>{getTranslation(language, 'shipping.damagedOrLost.lostPackages')}</strong></li>
+              <li><strong>{getTranslation(language, 'shipping.damagedOrLost.incorrectItems')}</strong></li>
             </ul>
             <p className="text-gray-700 mt-4">
-              We will work with Canada Post to resolve the issue and will replace or refund your order as appropriate. We may require photos or additional information to process your claim.
+              {getTranslation(language, 'shipping.damagedOrLost.text2')}
             </p>
           </div>
 
           {/* International Shipping */}
           <div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">International Shipping</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">{getTranslation(language, 'shipping.internationalShipping.title')}</h3>
             <p className="text-gray-700 mb-3">
-              Currently, we only ship within Canada. If you're interested in international shipping, please contact us at <a href="mailto:shipping@purepeelco.com" className="text-amber-600 hover:text-amber-700">shipping@purepeelco.com</a>.
+              {getTranslation(language, 'shipping.internationalShipping.text1')} <a href="mailto:shipping@purepeelco.com" className="text-amber-600 hover:text-amber-700">shipping@purepeelco.com</a>.
             </p>
             <p className="text-gray-700">
-              We're working on expanding our shipping options. Sign up for our newsletter to be notified when international shipping becomes available.
+              {getTranslation(language, 'shipping.internationalShipping.text2')}
             </p>
           </div>
         </div>
 
         {/* Issue Resolution & Product Replacement */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Issue Resolution & Product Replacement</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">{getTranslation(language, 'shipping.returns.title')}</h2>
           
           {/* No Returns Policy */}
           <div className="mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Our Policy</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">{getTranslation(language, 'shipping.returns.policy.title')}</h3>
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
-              <p className="text-gray-900 font-semibold mb-2">No Returns on Food Products</p>
+              <p className="text-gray-900 font-semibold mb-2">{getTranslation(language, 'shipping.returns.policy.noReturns')}</p>
               <p className="text-gray-700 text-sm">
-                Due to health and safety regulations, we cannot accept returns on food products once they have been shipped. This policy ensures the safety and quality of our products for all customers.
+                {getTranslation(language, 'shipping.returns.policy.noReturnsText')}
               </p>
             </div>
             <p className="text-gray-700 mb-3">
-              We are committed to your satisfaction. If you experience any issues with your order, we will work with you to resolve the problem and send a replacement product at no additional cost.
+              {getTranslation(language, 'shipping.returns.policy.commitment')}
             </p>
           </div>
 
           {/* Issue Resolution Process */}
           <div className="mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">How We Resolve Issues</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">{getTranslation(language, 'shipping.returns.howWeResolve.title')}</h3>
             <p className="text-gray-700 mb-4">
-              If you encounter any problems with your order, please contact us immediately. We will investigate the issue and send you a replacement product right away.
+              {getTranslation(language, 'shipping.returns.howWeResolve.text1')}
             </p>
             <ol className="list-decimal list-inside space-y-3 text-gray-700 ml-4">
               <li>
-                <strong>Contact Us:</strong> Email us at <a href="mailto:support@purepeelco.com" className="text-amber-600 hover:text-amber-700">support@purepeelco.com</a> with your order number and a description of the issue
+                <strong>{getTranslation(language, 'shipping.returns.howWeResolve.step1')}</strong> <a href="mailto:support@purepeelco.com" className="text-amber-600 hover:text-amber-700">support@purepeelco.com</a> {getTranslation(language, 'shipping.returns.howWeResolve.step1Text')}
               </li>
               <li>
-                <strong>We Investigate:</strong> Our team will review your concern and may request photos or additional information
+                <strong>{getTranslation(language, 'shipping.returns.howWeResolve.step2')}</strong>
               </li>
               <li>
-                <strong>Replacement Sent:</strong> Once we confirm the issue, we'll immediately send you a replacement product at no charge
+                <strong>{getTranslation(language, 'shipping.returns.howWeResolve.step3')}</strong>
               </li>
               <li>
-                <strong>You Keep the Original:</strong> Since we cannot accept returns, you may keep or dispose of the original product as needed
+                <strong>{getTranslation(language, 'shipping.returns.howWeResolve.step4')}</strong>
               </li>
             </ol>
           </div>
 
           {/* Common Issues We Resolve */}
           <div className="mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Issues We Resolve</h3>
-            <p className="text-gray-700 mb-3">We will send a replacement product for the following situations:</p>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">{getTranslation(language, 'shipping.returns.issuesWeResolve.title')}</h3>
+            <p className="text-gray-700 mb-3">{getTranslation(language, 'shipping.returns.issuesWeResolve.text1')}</p>
             <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
-              <li><strong>Damaged Packaging:</strong> If your product arrives with damaged or compromised packaging</li>
-              <li><strong>Quality Issues:</strong> If the product quality doesn't meet our standards</li>
-              <li><strong>Incorrect Items:</strong> If you received the wrong product or variant</li>
-              <li><strong>Missing Items:</strong> If items are missing from your order</li>
-              <li><strong>Shipping Damage:</strong> If products are damaged during transit</li>
+              <li><strong>{getTranslation(language, 'shipping.returns.issuesWeResolve.damagedPackaging')}</strong></li>
+              <li><strong>{getTranslation(language, 'shipping.returns.issuesWeResolve.qualityIssues')}</strong></li>
+              <li><strong>{getTranslation(language, 'shipping.returns.issuesWeResolve.incorrectItems')}</strong></li>
+              <li><strong>{getTranslation(language, 'shipping.returns.issuesWeResolve.missingItems')}</strong></li>
+              <li><strong>{getTranslation(language, 'shipping.returns.issuesWeResolve.shippingDamage')}</strong></li>
             </ul>
           </div>
 
           {/* Replacement Process */}
           <div className="mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Replacement Process</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">{getTranslation(language, 'shipping.returns.replacementProcess.title')}</h3>
             <p className="text-gray-700 mb-3">
-              When we send a replacement product:
+              {getTranslation(language, 'shipping.returns.replacementProcess.text1')}
             </p>
             <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
-              <li>Replacement products are shipped at no cost to you</li>
-              <li>You will receive a new tracking number for your replacement order</li>
-              <li>Replacements are processed within 1-2 business days</li>
-              <li>You will receive email confirmation when your replacement ships</li>
+              <li>{getTranslation(language, 'shipping.returns.replacementProcess.item1')}</li>
+              <li>{getTranslation(language, 'shipping.returns.replacementProcess.item2')}</li>
+              <li>{getTranslation(language, 'shipping.returns.replacementProcess.item3')}</li>
+              <li>{getTranslation(language, 'shipping.returns.replacementProcess.item4')}</li>
             </ul>
             <p className="text-gray-700 mt-4">
-              <strong>Note:</strong> We may ask you to provide photos of the issue to help us improve our packaging and quality control processes.
+              <strong>{getTranslation(language, 'shipping.returns.replacementProcess.note')}</strong>
             </p>
           </div>
 
           {/* Satisfaction Guarantee */}
           <div className="mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Our Commitment</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">{getTranslation(language, 'shipping.returns.commitment.title')}</h3>
             <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <p className="text-gray-900 font-semibold mb-2">100% Satisfaction Guarantee</p>
+              <p className="text-gray-900 font-semibold mb-2">{getTranslation(language, 'shipping.returns.commitment.guarantee')}</p>
               <p className="text-gray-700 text-sm">
-                Your satisfaction is our priority. If you're not happy with your purchase for any reason, contact us and we will work with you to make it right. We stand behind the quality of our products and will ensure you receive exactly what you ordered in perfect condition.
+                {getTranslation(language, 'shipping.returns.commitment.text')}
               </p>
             </div>
           </div>
 
           {/* Contact for Issues */}
           <div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Need Help?</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">{getTranslation(language, 'shipping.returns.needHelp.title')}</h3>
             <p className="text-gray-700 mb-3">
-              If you have any concerns about your order, please don't hesitate to reach out:
+              {getTranslation(language, 'shipping.returns.needHelp.text1')}
             </p>
             <div className="bg-gray-50 rounded-lg p-4">
               <p className="text-gray-700 mb-2">
-                <strong>Email:</strong> <a href="mailto:support@purepeelco.com" className="text-amber-600 hover:text-amber-700">support@purepeelco.com</a>
+                <strong>{getTranslation(language, 'shipping.returns.needHelp.email')}</strong> <a href="mailto:support@purepeelco.com" className="text-amber-600 hover:text-amber-700">support@purepeelco.com</a>
               </p>
               <p className="text-gray-700 text-sm">
-                Include your order number and a description of the issue. We typically respond within 24-48 hours during business days.
+                {getTranslation(language, 'shipping.returns.needHelp.text2')}
               </p>
             </div>
           </div>
@@ -228,72 +231,72 @@ export default function ShippingReturns() {
 
         {/* Additional Information */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mt-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Additional Information</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">{getTranslation(language, 'shipping.additionalInfo.title')}</h2>
           
           {/* Business Hours */}
           <div className="mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Business Hours</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">{getTranslation(language, 'shipping.additionalInfo.businessHours.title')}</h3>
             <p className="text-gray-700 mb-3">
-              Our customer service team is available to assist you:
+              {getTranslation(language, 'shipping.additionalInfo.businessHours.text1')}
             </p>
             <div className="bg-gray-50 rounded-lg p-4">
-              <p className="text-gray-700"><strong>Monday - Friday:</strong> 9:00 AM - 5:00 PM EST</p>
-              <p className="text-gray-700 mt-2"><strong>Saturday - Sunday:</strong> Closed</p>
-              <p className="text-gray-700 mt-2 text-sm">We respond to emails within 24-48 hours during business days.</p>
+              <p className="text-gray-700"><strong>{getTranslation(language, 'shipping.additionalInfo.businessHours.mondayFriday')}</strong> 9:00 AM - 5:00 PM EST</p>
+              <p className="text-gray-700 mt-2"><strong>{getTranslation(language, 'shipping.additionalInfo.businessHours.saturdaySunday')}</strong> {getTranslation(language, 'shipping.additionalInfo.businessHours.closed')}</p>
+              <p className="text-gray-700 mt-2 text-sm">{getTranslation(language, 'shipping.additionalInfo.businessHours.responseTime')}</p>
             </div>
           </div>
 
           {/* Packaging */}
           <div className="mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Packaging</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">{getTranslation(language, 'shipping.additionalInfo.packaging.title')}</h3>
             <p className="text-gray-700 mb-3">
-              All orders are carefully packaged to ensure your products arrive in perfect condition:
+              {getTranslation(language, 'shipping.additionalInfo.packaging.text1')}
             </p>
             <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
-              <li>Products are sealed in airtight packaging to maintain freshness</li>
-              <li>Orders are shipped in sturdy boxes with protective padding</li>
-              <li>Fragile items are marked and handled with extra care</li>
+              <li>{getTranslation(language, 'shipping.additionalInfo.packaging.item1')}</li>
+              <li>{getTranslation(language, 'shipping.additionalInfo.packaging.item2')}</li>
+              <li>{getTranslation(language, 'shipping.additionalInfo.packaging.item3')}</li>
             </ul>
           </div>
 
           {/* Special Orders */}
           <div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Special Orders & Bulk Purchases</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">{getTranslation(language, 'shipping.additionalInfo.specialOrders.title')}</h3>
             <p className="text-gray-700 mb-3">
-              Need a large quantity for an event or business? We offer special pricing for bulk orders:
+              {getTranslation(language, 'shipping.additionalInfo.specialOrders.text1')}
             </p>
             <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
-              <li>Bulk orders (10+ units) may qualify for discounted pricing</li>
-              <li>Custom packaging options available for corporate gifts</li>
-              <li>Extended processing times may apply for large orders</li>
+              <li>{getTranslation(language, 'shipping.additionalInfo.specialOrders.item1')}</li>
+              <li>{getTranslation(language, 'shipping.additionalInfo.specialOrders.item2')}</li>
+              <li>{getTranslation(language, 'shipping.additionalInfo.specialOrders.item3')}</li>
             </ul>
             <p className="text-gray-700 mt-4">
-              Contact us at <a href="mailto:orders@purepeelco.com" className="text-amber-600 hover:text-amber-700">orders@purepeelco.com</a> to discuss your needs.
+              {getTranslation(language, 'shipping.additionalInfo.specialOrders.text2')} <a href="mailto:orders@purepeelco.com" className="text-amber-600 hover:text-amber-700">orders@purepeelco.com</a> {getTranslation(language, 'shipping.additionalInfo.specialOrders.text3')}
             </p>
           </div>
         </div>
 
         {/* Contact Information */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mt-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Questions About Shipping or Returns?</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'shipping.contact.title')}</h2>
           <p className="text-gray-700 mb-4">
-            If you have any questions about our shipping or return policies, please don't hesitate to contact us:
+            {getTranslation(language, 'shipping.contact.text1')}
           </p>
           <div className="bg-gray-50 rounded-lg p-4 space-y-2">
             <p className="text-gray-700">
-              <strong>Shipping Inquiries:</strong> <a href="mailto:shipping@purepeelco.com" className="text-amber-600 hover:text-amber-700">shipping@purepeelco.com</a>
+              <strong>{getTranslation(language, 'shipping.contact.shippingInquiries')}</strong> <a href="mailto:shipping@purepeelco.com" className="text-amber-600 hover:text-amber-700">shipping@purepeelco.com</a>
             </p>
             <p className="text-gray-700">
-              <strong>Product Issues & Support:</strong> <a href="mailto:support@purepeelco.com" className="text-amber-600 hover:text-amber-700">support@purepeelco.com</a>
+              <strong>{getTranslation(language, 'shipping.contact.productIssues')}</strong> <a href="mailto:support@purepeelco.com" className="text-amber-600 hover:text-amber-700">support@purepeelco.com</a>
             </p>
             <p className="text-gray-700">
-              <strong>General Inquiries:</strong> <a href="mailto:info@purepeelco.com" className="text-amber-600 hover:text-amber-700">info@purepeelco.com</a>
+              <strong>{getTranslation(language, 'shipping.contact.generalInquiries')}</strong> <a href="mailto:info@purepeelco.com" className="text-amber-600 hover:text-amber-700">info@purepeelco.com</a>
             </p>
             <p className="text-gray-700">
-              <strong>Bulk Orders:</strong> <a href="mailto:orders@purepeelco.com" className="text-amber-600 hover:text-amber-700">orders@purepeelco.com</a>
+              <strong>{getTranslation(language, 'shipping.contact.bulkOrders')}</strong> <a href="mailto:orders@purepeelco.com" className="text-amber-600 hover:text-amber-700">orders@purepeelco.com</a>
             </p>
             <p className="text-gray-700 mt-3 text-sm">
-              <strong>Response Time:</strong> We typically respond within 24-48 hours during business days (Monday-Friday, 9 AM - 5 PM EST).
+              <strong>{getTranslation(language, 'shipping.contact.responseTime')}</strong>
             </p>
           </div>
         </div>

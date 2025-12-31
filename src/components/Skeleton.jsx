@@ -5,7 +5,7 @@ const Skeleton = ({
   lines = 1,
   className = '' 
 }) => {
-  const baseClasses = 'animate-pulse bg-gray-200 rounded'
+  const baseClasses = 'animate-pulse bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded bg-[length:200%_100%] animate-shimmer'
   
   if (type === 'text') {
     const textHeights = {
@@ -86,4 +86,5 @@ const Skeleton = ({
 }
 
 export default Skeleton
+
 

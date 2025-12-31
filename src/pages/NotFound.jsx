@@ -5,14 +5,14 @@ export default function NotFound() {
 
   const handleGoHome = (e) => {
     e.preventDefault()
-    window.history.pushState({}, "", "/")
-    window.dispatchEvent(new PopStateEvent("popstate"))
+    window.history.pushState({ page: "/" }, "", "/")
+    window.dispatchEvent(new Event("hashchange"))
   }
 
   const handleBrowseProducts = (e) => {
     e.preventDefault()
-    window.history.pushState({}, "", "/")
-    window.dispatchEvent(new PopStateEvent("popstate"))
+    window.history.pushState({ page: "/" }, "", "/")
+    window.dispatchEvent(new Event("hashchange"))
     // Scroll to products section after navigation
     setTimeout(() => {
       const productsSection = document.getElementById("products") || document.querySelector(".products-section")
@@ -96,8 +96,8 @@ export default function NotFound() {
                   href="/orange"
                   onClick={(e) => {
                     e.preventDefault()
-                    window.history.pushState({}, "", "/orange")
-                    window.dispatchEvent(new PopStateEvent("popstate"))
+                    window.history.pushState({ page: "/orange" }, "", "/orange")
+                    window.dispatchEvent(new Event("hashchange"))
                   }}
                   className="text-amber-600 hover:text-amber-700 underline text-sm"
                 >
@@ -107,8 +107,8 @@ export default function NotFound() {
                   href="/pink-orange"
                   onClick={(e) => {
                     e.preventDefault()
-                    window.history.pushState({}, "", "/pink-orange")
-                    window.dispatchEvent(new PopStateEvent("popstate"))
+                    window.history.pushState({ page: "/pink-orange" }, "", "/pink-orange")
+                    window.dispatchEvent(new Event("hashchange"))
                   }}
                   className="text-amber-600 hover:text-amber-700 underline text-sm"
                 >
@@ -118,8 +118,8 @@ export default function NotFound() {
                   href="/lime"
                   onClick={(e) => {
                     e.preventDefault()
-                    window.history.pushState({}, "", "/lime")
-                    window.dispatchEvent(new PopStateEvent("popstate"))
+                    window.history.pushState({ page: "/lime" }, "", "/lime")
+                    window.dispatchEvent(new Event("hashchange"))
                   }}
                   className="text-amber-600 hover:text-amber-700 underline text-sm"
                 >
@@ -129,8 +129,8 @@ export default function NotFound() {
                   href="/order-tracking"
                   onClick={(e) => {
                     e.preventDefault()
-                    window.history.pushState({}, "", "/order-tracking")
-                    window.dispatchEvent(new PopStateEvent("popstate"))
+                    window.history.pushState({ page: "/order-tracking" }, "", "/order-tracking")
+                    window.dispatchEvent(new Event("hashchange"))
                   }}
                   className="text-amber-600 hover:text-amber-700 underline text-sm"
                 >
@@ -144,4 +144,5 @@ export default function NotFound() {
     </section>
   )
 }
+
 

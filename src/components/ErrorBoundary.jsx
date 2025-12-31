@@ -25,8 +25,8 @@ class ErrorBoundary extends React.Component {
   }
 
   handleGoHome = () => {
-    window.history.pushState({}, "", "/")
-    window.dispatchEvent(new PopStateEvent("popstate"))
+    window.history.pushState({ page: "/" }, "", "/")
+    window.dispatchEvent(new Event("hashchange"))
     this.handleReset()
   }
 
@@ -112,4 +112,5 @@ class ErrorBoundary extends React.Component {
 }
 
 export default ErrorBoundary
+
 

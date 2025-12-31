@@ -5,43 +5,47 @@ import { productSEO, organizationData } from "../utils/seoData"
 import { trackProductView } from "../utils/analytics"
 
 const limeProduct = {
+  id: "lime",
   name: "Lime",
-  description: "Bright, crisp, and refreshing. Perfect for cocktails, tea, and charcuterie boards.",
+  description: "Bright, crisp, and refreshing. Essential for margaritas, mojitos, and gin & tonics. Adds a zesty kick to iced tea and cuts through rich flavors on charcuterie boards.",
+  galleryImages: [
+    "/images/freshlimes.jpg"
+  ],
   variants: [
     {
       id: "lime-mini",
-      label: "Mini Bag — 10 pcs",
-      option: "Mini Bag (10 pcs)",
+      label: "Mini Bag — 20 pcs",
+      option: "Mini Bag (20 pcs)",
       price: 6,
-      image: "/images/lime-mini.jpg"
+      image: "/images/lime-product.jpg?v=professional"
     },
     {
       id: "lime-small",
-      label: "Small Bag — 20 pcs",
-      option: "Small Bag (20 pcs)",
-      price: 13,
-      image: "/images/lime-small.jpg"
+      label: "Small Bag — 50 pcs",
+      option: "Small Bag (50 pcs)",
+      price: 12,
+      image: "/images/lime-product.jpg?v=professional"
     },
     {
       id: "lime-medium",
-      label: "Medium Bag — 40 pcs",
-      option: "Medium Bag (40 pcs)",
-      price: 20,
-      image: "/images/lime-medium.jpg"
+      label: "Medium Bag — 100 pcs",
+      option: "Medium Bag (100 pcs)",
+      price: 23,
+      image: "/images/lime-product.jpg?v=professional"
     },
     {
       id: "lime-large",
-      label: "Large Bag — 75 pcs",
-      option: "Large Bag (75 pcs)",
-      price: 30,
-      image: "/images/lime-large.jpg"
+      label: "Large Bag — 250 pcs",
+      option: "Large Bag (250 pcs)",
+      price: 58,
+      image: "/images/lime-product.jpg?v=professional"
     },
     {
       id: "lime-clearbox",
-      label: "Clear Box — 40 pcs",
-      option: "Clear Box (40 pcs)",
-      price: 20,
-      image: "/images/lime.jpg"
+      label: "Clear Box — 100 pcs",
+      option: "Clear Box (100 pcs)",
+      price: 23,
+      image: "/images/lime-box.jpg"
     }
   ]
 }

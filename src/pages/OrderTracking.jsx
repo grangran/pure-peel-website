@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react"
 import { useScrollReveal } from "../hooks/useScrollReveal"
+import { useLanguage } from "../context/LanguageContext"
+import { getTranslation } from "../utils/translations"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Skeleton from "../components/Skeleton"
 
@@ -10,6 +12,7 @@ export default function OrderTracking() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [searched, setSearched] = useState(false)
+  const { language } = useLanguage()
 
   const [sectionRef, isSectionVisible] = useScrollReveal({ threshold: 0.1 })
 
@@ -69,7 +72,7 @@ export default function OrderTracking() {
     const lookupEmail = prefillEmail || email.trim()
 
     if (!lookupOrderId || !lookupEmail) {
-      setError('Please enter both order number and email address')
+      setError(getTranslation(language, 'orderTracking.checkInfo'))
       setLoading(false)
       return
     }
@@ -142,8 +145,8 @@ export default function OrderTracking() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Track Your Order</h1>
-          <p className="text-gray-600">Enter your order number and email to view order status</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">{getTranslation(language, 'orderTracking.title')}</h1>
+          <p className="text-gray-600">{getTranslation(language, 'orderTracking.subtitle')}</p>
         </div>
 
         {/* Search Form */}
@@ -151,7 +154,7 @@ export default function OrderTracking() {
           <form onSubmit={handleLookup} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Order Number
+                {getTranslation(language, 'orderTracking.orderNumber')}
               </label>
               <input
                 type="text"
@@ -165,7 +168,7 @@ export default function OrderTracking() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
+                {getTranslation(language, 'orderTracking.emailAddress')}
               </label>
               <input
                 type="email"
@@ -189,9 +192,9 @@ export default function OrderTracking() {
               className="w-full py-4 px-6 text-base font-bold rounded-xl border-0 cursor-pointer transition-all duration-300 uppercase tracking-wide font-sans bg-linear-to-br from-amber-500 to-amber-600 text-black shadow-[0_4px_20px_rgba(245,158,11,0.4)] hover:from-amber-400 hover:to-amber-500 hover:-translate-y-0.5 hover:shadow-[0_6px_25px_rgba(245,158,11,0.5)] active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading ? (
-                <LoadingSpinner size="md" color="black" text="Searching..." />
+                <LoadingSpinner size="md" color="black" text={getTranslation(language, 'orderTracking.searching')} />
               ) : (
-                'Track Order'
+                getTranslation(language, 'orderTracking.trackOrder')
               )}
             </button>
           </form>
@@ -250,7 +253,7 @@ export default function OrderTracking() {
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 mb-2">Order {order.id}</h2>
                   <p className="text-sm text-gray-600">
-                    Placed on {new Date(order.createdAt).toLocaleDateString('en-US', {
+                    {getTranslation(language, 'orderTracking.placedOn')} {new Date(order.createdAt).toLocaleDateString(language === 'fr' ? 'fr-CA' : 'en-US', {
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric',
@@ -270,14 +273,14 @@ export default function OrderTracking() {
 
             {/* Order Items */}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Items Ordered</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">{getTranslation(language, 'orderTracking.itemsOrdered')}</h3>
               <div className="space-y-3">
                 {order.items?.map((item, index) => (
                   <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                     <div>
                       <p className="font-medium text-gray-900">{item.name}</p>
                       <p className="text-sm text-gray-600">{item.variant}</p>
-                      <p className="text-sm text-gray-500 mt-1">Quantity: {item.quantity}</p>
+                      <p className="text-sm text-gray-500 mt-1">{getTranslation(language, 'orderTracking.quantity')} {item.quantity}</p>
                     </div>
                     <p className="font-semibold text-gray-900">${item.total.toFixed(2)}</p>
                   </div>
@@ -289,19 +292,19 @@ export default function OrderTracking() {
             <div className="border-t border-gray-200 pt-6">
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Subtotal</span>
+                  <span className="text-gray-600">{getTranslation(language, 'orderTracking.subtotal')}</span>
                   <span className="text-gray-900">${order.subtotal?.toFixed(2)} {order.currency}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Shipping</span>
+                  <span className="text-gray-600">{getTranslation(language, 'orderTracking.shipping')}</span>
                   <span className="text-gray-900">${order.shippingCost?.toFixed(2)} {order.currency}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Tax</span>
+                  <span className="text-gray-600">{getTranslation(language, 'orderTracking.tax')}</span>
                   <span className="text-gray-900">${order.tax?.toFixed(2)} {order.currency}</span>
                 </div>
                 <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray-200">
-                  <span className="text-gray-900">Total</span>
+                  <span className="text-gray-900">{getTranslation(language, 'orderTracking.total')}</span>
                   <span className="text-gray-900">${order.total?.toFixed(2)} {order.currency}</span>
                 </div>
               </div>
@@ -310,7 +313,7 @@ export default function OrderTracking() {
             {/* Shipping Information */}
             {order.shipping && (
               <div className="border-t border-gray-200 pt-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Shipping Information</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">{getTranslation(language, 'orderTracking.shippingInfo')}</h3>
                 <div className="bg-gray-50 rounded-lg p-4">
                   <p className="font-medium text-gray-900 mb-2">{order.shipping.name}</p>
                   {order.shipping.address && (
@@ -324,7 +327,7 @@ export default function OrderTracking() {
                     </div>
                   )}
                   <p className="text-sm text-gray-600 mt-2">
-                    <strong>Shipping Method:</strong> {order.shipping.method}
+                    <strong>{getTranslation(language, 'orderTracking.shippingMethod')}</strong> {order.shipping.method}
                   </p>
                 </div>
               </div>
@@ -332,7 +335,7 @@ export default function OrderTracking() {
 
             {/* Status Timeline */}
             <div className="border-t border-gray-200 pt-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Status</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">{getTranslation(language, 'orderTracking.orderStatus')}</h3>
               <div className="space-y-4">
                 {['pending', 'processing', 'shipped', 'delivered'].map((status, index) => {
                   const isActive = ['pending', 'processing', 'shipped', 'delivered'].indexOf(order.status) >= index
@@ -350,7 +353,7 @@ export default function OrderTracking() {
                           {status.charAt(0).toUpperCase() + status.slice(1)}
                         </p>
                         {isCurrent && (
-                          <p className="text-sm text-gray-600 mt-1">Current status</p>
+                          <p className="text-sm text-gray-600 mt-1">{getTranslation(language, 'orderTracking.currentStatus')}</p>
                         )}
                       </div>
                     </div>
@@ -362,7 +365,7 @@ export default function OrderTracking() {
             {/* Help Text */}
             <div className="border-t border-gray-200 pt-6">
               <p className="text-sm text-gray-600 text-center">
-                Questions about your order? Contact us at{' '}
+                {getTranslation(language, 'orderTracking.questions')}{' '}
                 <a href="mailto:support@purepeelco.com" className="text-amber-600 hover:text-amber-700">
                   support@purepeelco.com
                 </a>
@@ -374,9 +377,9 @@ export default function OrderTracking() {
         {/* No Order Found Message */}
         {searched && !order && !loading && !error && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center">
-            <p className="text-gray-600">No order found with the provided information.</p>
+            <p className="text-gray-600">{getTranslation(language, 'orderTracking.orderNotFound')}</p>
             <p className="text-sm text-gray-500 mt-2">
-              Please check your order number and email address, or contact us for assistance.
+              {getTranslation(language, 'orderTracking.checkInfo')}
             </p>
           </div>
         )}

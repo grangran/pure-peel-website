@@ -14,7 +14,7 @@ export const seoData = {
   },
   orange: {
     title: 'Dehydrated Orange Slices | Pure Peel Co.',
-    description: 'Sweet, zesty, and aromatic dehydrated orange slices. Perfect for cocktails, tea, and charcuterie boards. Made in Canada with 100% natural ingredients. Available in multiple sizes.',
+    description: 'Sweet, zesty, and aromatic dehydrated orange slices. Ideal for classic cocktails like Old Fashioneds and mimosas, adds natural sweetness to tea, and pairs beautifully with cheeses on charcuterie boards. Made in Canada with 100% natural ingredients. Available in multiple sizes.',
     keywords: 'dehydrated orange, dried orange slices, orange garnish, cocktail garnish, natural orange, Canadian made',
     image: '/images/orange.jpg',
     url: '/orange',
@@ -22,7 +22,7 @@ export const seoData = {
   },
   pinkOrange: {
     title: 'Dehydrated Pink Orange Slices | Pure Peel Co.',
-    description: 'Beautiful pink orange slices, dehydrated to preserve color and flavor. Perfect for cocktails, tea, and gourmet presentations. Made in Canada, 100% natural.',
+    description: 'Beautiful pink orange slices, dehydrated to preserve color and flavor. Perfect for premium cocktails and spritzes, elevates tea presentations with stunning color, and creates eye-catching gourmet displays. Made in Canada, 100% natural.',
     keywords: 'dehydrated pink orange, pink orange slices, pink orange garnish, cocktail garnish, natural pink orange',
     image: '/images/pink-orange.jpg',
     url: '/pink-orange',
@@ -30,10 +30,26 @@ export const seoData = {
   },
   lime: {
     title: 'Dehydrated Lime Slices | Pure Peel Co.',
-    description: 'Tart and refreshing dehydrated lime slices. Ideal for cocktails, tea, and culinary garnishes. Made in Canada with 100% natural ingredients. Available in multiple sizes.',
+    description: 'Bright, crisp, and refreshing dehydrated lime slices. Essential for margaritas, mojitos, and gin & tonics. Adds a zesty kick to iced tea and cuts through rich flavors on charcuterie boards. Made in Canada with 100% natural ingredients. Available in multiple sizes.',
     keywords: 'dehydrated lime, dried lime slices, lime garnish, cocktail garnish, natural lime, Canadian made',
     image: '/images/lime.jpg',
     url: '/lime',
+    type: 'product'
+  },
+  lemon: {
+    title: 'Dehydrated Lemon Slices | Pure Peel Co.',
+    description: 'Tart, zesty, and refreshing dehydrated lemon slices. Perfect for lemon drops, whiskey sours, and classic tea pairings. Brightens charcuterie boards and complements creamy cheeses. Made in Canada with 100% natural ingredients. Available in multiple sizes.',
+    keywords: 'dehydrated lemon, dried lemon slices, lemon garnish, cocktail garnish, natural lemon, Canadian made',
+    image: '/images/lemon-product.jpg',
+    url: '/lemon',
+    type: 'product'
+  },
+  apple: {
+    title: 'Dehydrated Apple Slices | Pure Peel Co.',
+    description: 'Crisp, sweet, and aromatic dehydrated apple slices. Perfect for snacks and charcuterie boards. Made in Canada with 100% natural ingredients. Available in multiple sizes.',
+    keywords: 'dehydrated apple, dried apple slices, apple garnish, cocktail garnish, natural apple, Canadian made',
+    image: '/images/apple-product.jpg',
+    url: '/apple',
     type: 'product'
   },
   checkout: {
@@ -69,6 +85,14 @@ export const seoData = {
     url: '/shipping-returns',
     type: 'website'
   },
+  terms: {
+    title: 'Terms of Service | Pure Peel Co.',
+    description: 'Terms of Service for Pure Peel Co. Learn about our policies regarding orders, payments, shipping, returns, and customer rights.',
+    keywords: 'terms of service, terms and conditions, user agreement, legal terms',
+    image: defaultImage,
+    url: '/terms',
+    type: 'website'
+  },
   admin: {
     title: 'Admin Dashboard | Pure Peel Co.',
     description: 'Admin dashboard for order management.',
@@ -92,7 +116,7 @@ export const seoData = {
 export const productSEO = {
   orange: {
     name: 'Dehydrated Orange Slices',
-    description: 'Sweet, zesty, and aromatic dehydrated orange slices. Perfect for cocktails, tea, and charcuterie boards.',
+    description: 'Sweet, zesty, and aromatic dehydrated orange slices. Ideal for classic cocktails like Old Fashioneds and mimosas, adds natural sweetness to hot or iced tea, and pairs beautifully with cheeses and cured meats on charcuterie boards.',
     brand: 'Pure Peel Co.',
     category: 'Food & Beverage > Gourmet Foods > Dehydrated Fruits',
     availability: 'https://schema.org/InStock',
@@ -100,7 +124,7 @@ export const productSEO = {
   },
   pinkOrange: {
     name: 'Dehydrated Pink Orange Slices',
-    description: 'Beautiful pink orange slices, dehydrated to preserve color and flavor. Perfect for cocktails, tea, and gourmet presentations.',
+    description: 'Beautiful pink orange slices, dehydrated to preserve color and flavor. Perfect for premium cocktails and spritzes, elevates tea presentations with stunning color, and creates eye-catching gourmet displays on charcuterie boards.',
     brand: 'Pure Peel Co.',
     category: 'Food & Beverage > Gourmet Foods > Dehydrated Fruits',
     availability: 'https://schema.org/InStock',
@@ -108,7 +132,23 @@ export const productSEO = {
   },
   lime: {
     name: 'Dehydrated Lime Slices',
-    description: 'Tart and refreshing dehydrated lime slices. Ideal for cocktails, tea, and culinary garnishes.',
+    description: 'Bright, crisp, and refreshing dehydrated lime slices. Essential for margaritas, mojitos, and gin & tonics. Adds a zesty kick to iced tea and cuts through rich flavors on charcuterie boards.',
+    brand: 'Pure Peel Co.',
+    category: 'Food & Beverage > Gourmet Foods > Dehydrated Fruits',
+    availability: 'https://schema.org/InStock',
+    priceRange: '$6 - $30 CAD'
+  },
+  lemon: {
+    name: 'Dehydrated Lemon Slices',
+    description: 'Tart, zesty, and refreshing dehydrated lemon slices. Perfect for lemon drops, whiskey sours, and classic tea pairings. Brightens charcuterie boards and complements creamy cheeses.',
+    brand: 'Pure Peel Co.',
+    category: 'Food & Beverage > Gourmet Foods > Dehydrated Fruits',
+    availability: 'https://schema.org/InStock',
+    priceRange: '$6 - $30 CAD'
+  },
+  apple: {
+    name: 'Dehydrated Apple Slices',
+    description: 'Crisp, sweet, and aromatic dehydrated apple slices. Perfect for snacks and charcuterie boards.',
     brand: 'Pure Peel Co.',
     category: 'Food & Beverage > Gourmet Foods > Dehydrated Fruits',
     availability: 'https://schema.org/InStock',

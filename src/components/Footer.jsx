@@ -1,8 +1,11 @@
 import { useScrollReveal } from "../hooks/useScrollReveal"
+import { useLanguage } from "../context/LanguageContext"
+import { getTranslation } from "../utils/translations"
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
   const [footerRef, isFooterVisible] = useScrollReveal({ threshold: 0.1, delay: 0 })
+  const { language } = useLanguage()
 
   const handleLinkClick = (e, targetId) => {
     e.preventDefault()
@@ -18,16 +21,16 @@ export default function Footer() {
   return (
     <footer 
       ref={footerRef}
-      className={`relative bg-linear-to-b from-gray-900 via-gray-900 to-black text-gray-300 mt-0 transition-all duration-800 ${
+      className={`relative bg-linear-to-b from-stone-900 via-stone-900 to-stone-950 text-stone-300 mt-0 transition-all duration-800 ease-out ${
         isFooterVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}
     >
       {/* Top border */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-amber-500/40 to-transparent"></div>
+      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-amber-500/50 to-transparent"></div>
       
-      <div className="relative max-w-6xl mx-auto px-6 md:px-8 py-14 md:py-18">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-12 md:py-16 lg:py-20">
         {/* Main Footer Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 md:gap-12 lg:gap-16 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8 md:gap-10 lg:gap-16 mb-8 md:mb-10">
           {/* Brand Column */}
           <div className="sm:col-span-2 lg:col-span-1">
             <div className="mb-5">
@@ -37,107 +40,153 @@ export default function Footer() {
                 className="w-[120px] h-auto opacity-95 transition-opacity duration-300 hover:opacity-100" 
               />
             </div>
-            <p className="text-gray-400 text-sm mb-2">
-              Made in Canada 🍁
+            <p className="text-stone-400 text-sm mb-4 font-medium">
+              {getTranslation(language, 'productPage.trustBadges.madeInCanada')}
+            </p>
+            <p className="text-stone-500 text-xs leading-relaxed max-w-xs">
+              Premium dehydrated citrus slices for cocktails, teas, and culinary creations.
             </p>
           </div>
 
           {/* Shop Column */}
           <div>
-            <h4 className="text-white mb-5 text-xs font-semibold tracking-wider uppercase">
-              Shop
+            <h4 className="text-white mb-6 text-xs font-bold tracking-wider uppercase">
+              {getTranslation(language, 'footer.citrusCollection')}
             </h4>
-            <nav className="flex flex-col space-y-3">
+            <nav className="flex flex-col space-y-3.5">
               <a 
                 href="/orange" 
-                className="text-gray-400 no-underline text-sm transition-colors duration-200 hover:text-amber-500"
+                className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
                 onClick={(e) => {
+                  // Let App.jsx handle navigation via its click interceptor
                   e.preventDefault()
-                  window.history.pushState({}, "", "/orange")
-                  window.dispatchEvent(new PopStateEvent("popstate"))
                 }}
               >
-                Orange
+                {getTranslation(language, 'products.orange.name')}
               </a>
               <a 
                 href="/pink-orange" 
-                className="text-gray-400 no-underline text-sm transition-colors duration-200 hover:text-amber-500"
+                className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
                 onClick={(e) => {
+                  // Let App.jsx handle navigation via its click interceptor
                   e.preventDefault()
-                  window.history.pushState({}, "", "/pink-orange")
-                  window.dispatchEvent(new PopStateEvent("popstate"))
                 }}
               >
-                Pink Orange
+                {getTranslation(language, 'products.pink-orange.name')}
               </a>
               <a 
                 href="/lime" 
-                className="text-gray-400 no-underline text-sm transition-colors duration-200 hover:text-amber-500"
+                className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
                 onClick={(e) => {
+                  // Let App.jsx handle navigation via its click interceptor
                   e.preventDefault()
-                  window.history.pushState({}, "", "/lime")
-                  window.dispatchEvent(new PopStateEvent("popstate"))
                 }}
               >
-                Lime
+                {getTranslation(language, 'products.lime.name')}
+              </a>
+              <a 
+                href="/lemon" 
+                className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
+                onClick={(e) => {
+                  // Let App.jsx handle navigation via its click interceptor
+                  e.preventDefault()
+                }}
+              >
+                {getTranslation(language, 'products.lemon.name')}
+              </a>
+            </nav>
+          </div>
+
+          {/* Fruit Collection Column */}
+          <div>
+            <h4 className="text-white mb-6 text-xs font-bold tracking-wider uppercase">
+              {getTranslation(language, 'footer.fruitCollection')}
+            </h4>
+            <nav className="flex flex-col space-y-3.5">
+              <a 
+                href="/apple" 
+                className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
+                onClick={(e) => {
+                  // Let App.jsx handle navigation via its click interceptor
+                  e.preventDefault()
+                }}
+              >
+                {getTranslation(language, 'products.apple.name')}
               </a>
             </nav>
           </div>
 
           {/* Info Column */}
           <div>
-            <h4 className="text-white mb-5 text-xs font-semibold tracking-wider uppercase">
-              Info
+            <h4 className="text-white mb-6 text-xs font-bold tracking-wider uppercase">
+              {getTranslation(language, 'footer.info')}
             </h4>
-                  <nav className="flex flex-col space-y-3">
+                  <nav className="flex flex-col space-y-3.5">
                     <a 
-                      href="/order-tracking" 
-                      className="text-gray-400 no-underline text-sm transition-colors duration-200 hover:text-amber-500"
+                      href="/contact" 
+                      className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
                       onClick={(e) => {
+                        // Let App.jsx handle navigation via its click interceptor
                         e.preventDefault()
-                        window.history.pushState({}, "", "/order-tracking")
-                        window.dispatchEvent(new PopStateEvent("popstate"))
                       }}
                     >
-                      Track Your Order
+                      {getTranslation(language, 'footer.contact')}
+                    </a>
+                    <a 
+                      href="/order-tracking" 
+                      className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
+                      onClick={(e) => {
+                        // Let App.jsx handle navigation via its click interceptor
+                        e.preventDefault()
+                      }}
+                    >
+                      {getTranslation(language, 'footer.trackOrder')}
                     </a>
                     <a 
                       href="/shipping-returns" 
-                      className="text-gray-400 no-underline text-sm transition-colors duration-200 hover:text-amber-500"
+                      className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
                       onClick={(e) => {
+                        // Let App.jsx handle navigation via its click interceptor
                         e.preventDefault()
-                        window.history.pushState({}, "", "/shipping-returns")
-                        window.dispatchEvent(new PopStateEvent("popstate"))
                       }}
                     >
-                      Shipping & Returns
+                      {getTranslation(language, 'footer.shippingReturns')}
                     </a>
                     <a 
                       href="/privacy" 
-                      className="text-gray-400 no-underline text-sm transition-colors duration-200 hover:text-amber-500"
+                      className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
                       onClick={(e) => {
+                        // Let App.jsx handle navigation via its click interceptor
                         e.preventDefault()
-                        window.history.pushState({}, "", "/privacy")
-                        window.dispatchEvent(new PopStateEvent("popstate"))
                       }}
                     >
-                      Privacy Policy
+                      {getTranslation(language, 'footer.privacyPolicy')}
+                    </a>
+                    <a 
+                      href="/terms" 
+                      className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
+                      onClick={(e) => {
+                        // Let App.jsx handle navigation via its click interceptor
+                        e.preventDefault()
+                      }}
+                    >
+                      {getTranslation(language, 'footer.termsOfService')}
                     </a>
                   </nav>
           </div>
 
           {/* Social Column */}
           <div>
-            <h4 className="text-white mb-5 text-xs font-semibold tracking-wider uppercase">
-              Follow Us
+            <h4 className="text-white mb-6 text-xs font-bold tracking-wider uppercase">
+              {getTranslation(language, 'footer.followUs')}
             </h4>
             <a 
               href="https://www.instagram.com/purepeelco/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 text-gray-400 no-underline text-sm transition-colors duration-200 hover:text-amber-500 group"
+              className="inline-flex items-center gap-3 text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 group font-medium active:scale-95"
             >
-              <div className="w-10 h-10 rounded-full bg-gray-800/50 flex items-center justify-center border border-gray-700/50 group-hover:border-amber-500/50 transition-colors duration-200">
+              <div className="w-11 h-11 rounded-xl bg-stone-800/60 flex items-center justify-center border border-stone-700/50 group-hover:border-amber-500/50 group-hover:bg-stone-800 transition-all duration-200">
                 <svg
                   className="w-5 h-5 transition-transform duration-200 group-hover:scale-110"
                   xmlns="http://www.w3.org/2000/svg"
@@ -153,10 +202,10 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-gray-800/50">
+        <div className="pt-10 border-t border-stone-800/50">
           <div className="text-center">
-            <p className="text-xs text-gray-500 m-0">
-              © {currentYear} Pure Peel Co. 🍁
+            <p className="text-sm text-stone-500 m-0 font-medium">
+              © {currentYear} Pure Peel Co. 🍁 All rights reserved.
             </p>
           </div>
         </div>

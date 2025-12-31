@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useCart } from "./context/CartContext"
 import Nav from "./components/Nav"
 import Hero from "./components/Hero"
 import About from "./components/About"
 import Products from "./components/Products"
 import Lifestyle from "./components/Lifestyle"
-import Contact from "./components/Contact"
+import ContactPage from "./pages/Contact"
 import Footer from "./components/Footer"
 import Cart from "./components/Cart"
 import SEO from "./components/SEO"
@@ -13,24 +13,64 @@ import StructuredData from "./components/StructuredData"
 import Orange from "./pages/Orange"
 import PinkOrange from "./pages/PinkOrange"
 import Lime from "./pages/Lime"
+import Lemon from "./pages/Lemon"
+import Apple from "./pages/Apple"
 import Checkout from "./pages/Checkout"
 import Admin from "./pages/Admin"
 import OrderTracking from "./pages/OrderTracking"
 import PrivacyPolicy from "./pages/PrivacyPolicy"
 import ShippingReturns from "./pages/ShippingReturns"
+import TermsOfService from "./pages/TermsOfService"
 import NotFound from "./pages/NotFound"
 import { seoData, organizationData } from "./utils/seoData"
 import { trackPageView } from "./utils/analytics"
 
+// Helper function to get initial page from pathname
+const getInitialPage = () => {
+  const path = window.location.pathname.replace(/\/$/, '')
+  if (path === "/" || path === "" || path === "/index.html") {
+    return "home"
+  } else if (path === "/orange" || path === "/orange.html") {
+    return "orange"
+  } else if (path === "/pink-orange" || path === "/pink-orange.html") {
+    return "pink-orange"
+  } else if (path === "/lime" || path === "/lime.html") {
+    return "lime"
+  } else if (path === "/lemon" || path === "/lemon.html") {
+    return "lemon"
+  } else if (path === "/apple" || path === "/apple.html") {
+    return "apple"
+  } else if (path === "/checkout" || path === "/checkout.html") {
+    return "checkout"
+  } else if (path === "/admin" || path === "/admin.html") {
+    return "admin"
+  } else if (path === "/order-tracking" || path === "/order-tracking.html") {
+    return "order-tracking"
+  } else if (path === "/privacy" || path === "/privacy.html") {
+    return "privacy"
+  } else if (path === "/shipping-returns" || path === "/shipping-returns.html") {
+    return "shipping-returns"
+  } else if (path === "/terms" || path === "/terms.html" || path === "/terms-of-service" || path === "/terms-of-service.html") {
+    return "terms"
+  } else if (path === "/contact" || path === "/contact.html") {
+    return "contact"
+  } else {
+    return "not-found"
+  }
+}
+
 export default function App() {
-  const [currentPage, setCurrentPage] = useState("home")
+  const [currentPage, setCurrentPage] = useState(getInitialPage)
+  // Use timestamp instead of counter to ensure unique keys even with rapid navigation
+  const [navigationKey, setNavigationKey] = useState(() => Date.now())
+  const navigationKeyRef = useRef(Date.now())
   const { isCartOpen, setIsCartOpen } = useCart()
 
   useEffect(() => {
     // Handle browser navigation
-    const handleRoute = () => {
+    const handleRoute = (event) => {
       // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.jsx:31',message:'Route handler called',data:{pathname:window.location.pathname,search:window.location.search,historyLength:window.history.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+      fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.jsx:31',message:'Route handler called',data:{pathname:window.location.pathname,search:window.location.search,historyLength:window.history.length,hasState:!!event?.state},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
       // #endregion
       const path = window.location.pathname
       const normalizedPath = path.replace(/\/$/, '') // Remove trailing slash
@@ -41,11 +81,16 @@ export default function App() {
         '/orange',
         '/pink-orange',
         '/lime',
+        '/lemon',
+        '/apple',
         '/checkout',
         '/admin',
         '/order-tracking',
         '/privacy',
-        '/shipping-returns'
+        '/shipping-returns',
+        '/terms',
+        '/terms-of-service',
+        '/contact'
       ]
       
       // Check if path is a valid route (ignore query parameters)
@@ -61,6 +106,10 @@ export default function App() {
         setCurrentPage("pink-orange")
       } else if (normalizedPath === "/lime" || normalizedPath === "/lime.html") {
         setCurrentPage("lime")
+      } else if (normalizedPath === "/lemon" || normalizedPath === "/lemon.html") {
+        setCurrentPage("lemon")
+      } else if (normalizedPath === "/apple" || normalizedPath === "/apple.html") {
+        setCurrentPage("apple")
       } else if (normalizedPath === "/checkout" || normalizedPath === "/checkout.html") {
         // Always set to checkout, regardless of query parameters
         // #region agent log
@@ -75,15 +124,56 @@ export default function App() {
         setCurrentPage("privacy")
       } else if (normalizedPath === "/shipping-returns" || normalizedPath === "/shipping-returns.html") {
         setCurrentPage("shipping-returns")
+      } else if (normalizedPath === "/terms" || normalizedPath === "/terms.html" || normalizedPath === "/terms-of-service" || normalizedPath === "/terms-of-service.html") {
+        setCurrentPage("terms")
+      } else if (normalizedPath === "/contact" || normalizedPath === "/contact.html") {
+        setCurrentPage("contact")
       } else {
         // Invalid route - show 404
         setCurrentPage("not-found")
       }
+      
+      // Scroll to top when page changes
+      window.scrollTo({ top: 0, behavior: 'instant' })
+      
+      // Update navigation key with timestamp + microsecond precision to force complete remount
+      // Using performance.now() for higher precision than Date.now() to ensure uniqueness
+      // even with rapid back/forward navigation
+      // Update ref immediately and state synchronously to ensure React sees the change
+      const newKey = performance.now()
+      navigationKeyRef.current = newKey
+      setNavigationKey(newKey)
     }
 
     // Handle initial route and Stripe redirects
     handleRoute()
-    window.addEventListener("popstate", handleRoute)
+    
+    // Listen for browser back/forward - browser fires popstate automatically
+    // Use a flag to prevent multiple rapid calls from batching
+    let isNavigating = false
+    window.addEventListener("popstate", (e) => {
+      if (isNavigating) return // Prevent rapid-fire calls
+      isNavigating = true
+      // Process immediately - browser has already updated the URL
+      handleRoute(e)
+      // Reset flag after a brief delay to allow next navigation
+      setTimeout(() => {
+        isNavigating = false
+      }, 50)
+    })
+    
+    // Handle browser back/forward cache (bfcache) restoration
+    // When browser restores a page from cache, we need to re-initialize
+    const handlePageShow = (e) => {
+      // If page was restored from bfcache, force a route update
+      if (e.persisted) {
+        // Force remount by updating navigation key with new timestamp
+        setNavigationKey(Date.now())
+        // Re-run route handler to ensure correct page is displayed
+        handleRoute()
+      }
+    }
+    window.addEventListener("pageshow", handlePageShow)
     
     // Also handle hash changes (some redirects use hash)
     window.addEventListener("hashchange", handleRoute)
@@ -95,7 +185,8 @@ export default function App() {
         const url = new URL(link.href)
         if (url.origin === window.location.origin) {
           e.preventDefault()
-          window.history.pushState({}, "", url.pathname)
+          // Push state and update route - browser will handle popstate naturally
+          window.history.pushState({ page: url.pathname }, "", url.pathname)
           handleRoute()
         }
       }
@@ -105,9 +196,16 @@ export default function App() {
 
     return () => {
       window.removeEventListener("popstate", handleRoute)
+      window.removeEventListener("hashchange", handleRoute)
+      window.removeEventListener("pageshow", handlePageShow)
       document.removeEventListener("click", handleClick)
     }
   }, [])
+
+  // Scroll to top when page changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [currentPage])
 
   const CartComponent = <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
 
@@ -120,6 +218,10 @@ export default function App() {
         return seoData.pinkOrange
       case "lime":
         return seoData.lime
+      case "lemon":
+        return seoData.lemon
+      case "apple":
+        return seoData.apple
       case "checkout":
         return seoData.checkout
       case "admin":
@@ -130,6 +232,8 @@ export default function App() {
         return seoData.privacy
       case "shipping-returns":
         return seoData.shippingReturns
+      case "terms":
+        return seoData.terms
       case "not-found":
         return seoData.notFound
       default:
@@ -147,13 +251,14 @@ export default function App() {
   }, [currentPage, currentSEO.title])
 
   // Render based on current page
+  // Use key prop with currentPage to force remount when page changes, ensuring fresh state
   if (currentPage === "orange") {
     return (
       <>
         <SEO {...currentSEO} />
-        <Nav />
-        <Orange />
-        <Footer />
+        <Nav key={`nav-${currentPage}-${navigationKey}`} />
+        <Orange key={`orange-${currentPage}-${navigationKey}`} />
+        <Footer key={`footer-${currentPage}-${navigationKey}`} />
         {CartComponent}
       </>
     )
@@ -163,9 +268,9 @@ export default function App() {
     return (
       <>
         <SEO {...currentSEO} />
-        <Nav />
-        <PinkOrange />
-        <Footer />
+        <Nav key={`nav-${currentPage}-${navigationKey}`} />
+        <PinkOrange key={`pink-orange-${currentPage}-${navigationKey}`} />
+        <Footer key={`footer-${currentPage}-${navigationKey}`} />
         {CartComponent}
       </>
     )
@@ -175,9 +280,33 @@ export default function App() {
     return (
       <>
         <SEO {...currentSEO} />
-        <Nav />
-        <Lime />
-        <Footer />
+        <Nav key={`nav-${currentPage}-${navigationKey}`} />
+        <Lime key={`lime-${currentPage}-${navigationKey}`} />
+        <Footer key={`footer-${currentPage}-${navigationKey}`} />
+        {CartComponent}
+      </>
+    )
+  }
+
+  if (currentPage === "lemon") {
+    return (
+      <>
+        <SEO {...currentSEO} />
+        <Nav key={`nav-${currentPage}-${navigationKey}`} />
+        <Lemon key={`lemon-${currentPage}-${navigationKey}`} />
+        <Footer key={`footer-${currentPage}-${navigationKey}`} />
+        {CartComponent}
+      </>
+    )
+  }
+
+  if (currentPage === "apple") {
+    return (
+      <>
+        <SEO {...currentSEO} />
+        <Nav key={`nav-${currentPage}-${navigationKey}`} />
+        <Apple key={`apple-${currentPage}-${navigationKey}`} />
+        <Footer key={`footer-${currentPage}-${navigationKey}`} />
         {CartComponent}
       </>
     )
@@ -187,9 +316,9 @@ export default function App() {
     return (
       <>
         <SEO {...currentSEO} />
-        <Nav />
-        <Checkout />
-        <Footer />
+        <Nav key={`nav-${currentPage}-${navigationKey}`} />
+        <Checkout key={`checkout-${currentPage}-${navigationKey}`} />
+        <Footer key={`footer-${currentPage}-${navigationKey}`} />
         {CartComponent}
       </>
     )
@@ -199,7 +328,7 @@ export default function App() {
     return (
       <>
         <SEO {...currentSEO} />
-        <Admin />
+        <Admin key={`admin-${currentPage}-${navigationKey}`} />
       </>
     )
   }
@@ -208,9 +337,9 @@ export default function App() {
     return (
       <>
         <SEO {...currentSEO} />
-        <Nav />
-        <OrderTracking />
-        <Footer />
+        <Nav key={`nav-${currentPage}-${navigationKey}`} />
+        <OrderTracking key={`order-tracking-${currentPage}-${navigationKey}`} />
+        <Footer key={`footer-${currentPage}-${navigationKey}`} />
       </>
     )
   }
@@ -219,9 +348,9 @@ export default function App() {
     return (
       <>
         <SEO {...currentSEO} />
-        <Nav />
-        <PrivacyPolicy />
-        <Footer />
+        <Nav key={`nav-${currentPage}-${navigationKey}`} />
+        <PrivacyPolicy key={`privacy-${currentPage}-${navigationKey}`} />
+        <Footer key={`footer-${currentPage}-${navigationKey}`} />
         {CartComponent}
       </>
     )
@@ -231,9 +360,30 @@ export default function App() {
     return (
       <>
         <SEO {...currentSEO} />
-        <Nav />
-        <ShippingReturns />
-        <Footer />
+        <Nav key={`nav-${currentPage}-${navigationKey}`} />
+        <ShippingReturns key={`shipping-returns-${currentPage}-${navigationKey}`} />
+        <Footer key={`footer-${currentPage}-${navigationKey}`} />
+        {CartComponent}
+      </>
+    )
+  }
+
+  if (currentPage === "terms") {
+    return (
+      <>
+        <SEO {...currentSEO} />
+        <Nav key={`nav-${currentPage}-${navigationKey}`} />
+        <TermsOfService key={`terms-${currentPage}-${navigationKey}`} />
+        <Footer key={`footer-${currentPage}-${navigationKey}`} />
+        {CartComponent}
+      </>
+    )
+  }
+
+  if (currentPage === "contact") {
+    return (
+      <>
+        <ContactPage key={`contact-${currentPage}-${navigationKey}`} />
         {CartComponent}
       </>
     )
@@ -243,9 +393,9 @@ export default function App() {
     return (
       <>
         <SEO {...currentSEO} />
-        <Nav />
-        <NotFound />
-        <Footer />
+        <Nav key={`nav-${currentPage}-${navigationKey}`} />
+        <NotFound key={`not-found-${currentPage}-${navigationKey}`} />
+        <Footer key={`footer-${currentPage}-${navigationKey}`} />
         {CartComponent}
       </>
     )
@@ -256,13 +406,12 @@ export default function App() {
     <>
       <SEO {...currentSEO} />
       <StructuredData data={organizationData} />
-      <Nav />
-      <Hero />
-      <Products />
-      <Lifestyle />
-      <About />
-      <Contact />
-      <Footer />
+      <Nav key={`nav-${currentPage}-${navigationKey}`} />
+      <Hero key={`hero-${currentPage}-${navigationKey}`} />
+      <Products key={`products-${currentPage}-${navigationKey}`} />
+      <Lifestyle key={`lifestyle-${currentPage}-${navigationKey}`} />
+      <About key={`about-${currentPage}-${navigationKey}`} />
+      <Footer key={`footer-${currentPage}-${navigationKey}`} />
       {CartComponent}
     </>
   )

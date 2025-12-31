@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react"
+import { useLanguage } from "../context/LanguageContext"
+import { getTranslation, translateVariantLabel } from "../utils/translations"
 
 const Toast = ({ 
   id,
@@ -9,6 +11,7 @@ const Toast = ({
   onClose,
   onViewCart
 }) => {
+  const { language } = useLanguage()
   const [isVisible, setIsVisible] = useState(false)
   const [isExiting, setIsExiting] = useState(false)
 
@@ -73,7 +76,7 @@ const Toast = ({
           <div className="flex-1 min-w-0">
             {/* Message */}
             <p className="text-sm font-semibold text-gray-900 mb-1">
-              {message || 'Added to cart!'}
+              {message || getTranslation(language, 'toast.addedToCart')}
             </p>
 
             {/* Product Details */}
@@ -81,11 +84,11 @@ const Toast = ({
               <div className="text-sm text-gray-600 mb-3">
                 <p className="font-medium text-gray-900">
                   {product.name}
-                  {product.variant && ` - ${product.variant}`}
+                  {product.variant && ` - ${translateVariantLabel(language, product.variant)}`}
                 </p>
                 {product.quantity > 1 && (
                   <p className="text-xs text-gray-500 mt-1">
-                    Quantity: {product.quantity}
+                    {getTranslation(language, 'toast.quantity')} {product.quantity}
                   </p>
                 )}
               </div>
@@ -97,7 +100,7 @@ const Toast = ({
                 onClick={handleViewCart}
                 className="text-xs font-semibold text-amber-600 hover:text-amber-700 transition-colors"
               >
-                View Cart
+                {getTranslation(language, 'toast.viewCart')}
               </button>
             </div>
           </div>

@@ -1,9 +1,11 @@
 import { useState } from "react"
 import { useScrollReveal } from "../hooks/useScrollReveal"
+import { useLanguage } from "../context/LanguageContext"
+import { getTranslation } from "../utils/translations"
 import { trackContactFormSubmit } from "../utils/analytics"
 import LoadingSpinner from "./LoadingSpinner"
 
-export default function Contact() {
+export default function ContactForm() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -15,6 +17,7 @@ export default function Contact() {
   const [sectionRef, isSectionVisible] = useScrollReveal({ threshold: 0.2 })
   const [titleRef, isTitleVisible] = useScrollReveal({ threshold: 0.2, delay: 100 })
   const [formRef, isFormVisible] = useScrollReveal({ threshold: 0.1, delay: 200 })
+  const { language } = useLanguage()
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -67,7 +70,7 @@ export default function Contact() {
             isTitleVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
-          Contact Us
+          {getTranslation(language, 'contact.title')}
         </h2>
         <p 
           className={`text-gray-600 mb-10 text-lg leading-relaxed transition-all duration-800 ${
@@ -75,7 +78,7 @@ export default function Contact() {
           }`}
           style={{ transitionDelay: '100ms' }}
         >
-          Have a question? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+          {getTranslation(language, 'contact.description')}
         </p>
 
         <form 
@@ -89,7 +92,7 @@ export default function Contact() {
             <input
               type="text"
               name="name"
-              placeholder="Your name"
+              placeholder={getTranslation(language, 'contact.name')}
               value={formData.name}
               onChange={handleChange}
               required
@@ -101,7 +104,7 @@ export default function Contact() {
             <input
               type="email"
               name="email"
-              placeholder="Your email"
+              placeholder={getTranslation(language, 'contact.email')}
               value={formData.email}
               onChange={handleChange}
               required
@@ -113,7 +116,7 @@ export default function Contact() {
             <textarea
               name="message"
               rows="5"
-              placeholder="Your message"
+              placeholder={getTranslation(language, 'contact.message')}
               value={formData.message}
               onChange={handleChange}
               required
@@ -127,21 +130,21 @@ export default function Contact() {
             disabled={isSubmitting}
           >
             {isSubmitting ? (
-              <LoadingSpinner size="md" color="black" text="Sending..." />
+              <LoadingSpinner size="md" color="black" text={getTranslation(language, 'contact.sending')} />
             ) : (
-              "Send Message"
+              getTranslation(language, 'contact.sendMessage')
             )}
           </button>
 
           {submitStatus === "success" && (
             <div className="py-3.5 px-4.5 rounded-lg text-sm text-center mt-2.5 animate-[slideIn_0.3s_ease-out] bg-green-100 text-green-800 border border-green-300">
-              ✓ Message sent successfully! We'll get back to you soon.
+              {getTranslation(language, 'contact.success')}
             </div>
           )}
 
           {submitStatus === "error" && (
             <div className="py-3.5 px-4.5 rounded-lg text-sm text-center mt-2.5 animate-[slideIn_0.3s_ease-out] bg-red-100 text-red-800 border border-red-300">
-              ✗ Something went wrong. Please try again or email us directly at purepeel11@gmail.com
+              {getTranslation(language, 'contact.error')}
             </div>
           )}
         </form>

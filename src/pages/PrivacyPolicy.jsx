@@ -1,7 +1,10 @@
 import { useScrollReveal } from "../hooks/useScrollReveal"
+import { useLanguage } from "../context/LanguageContext"
+import { getTranslation } from "../utils/translations"
 
 export default function PrivacyPolicy() {
   const [sectionRef, isSectionVisible] = useScrollReveal({ threshold: 0.1 })
+  const { language } = useLanguage()
 
   return (
     <section 
@@ -13,187 +16,184 @@ export default function PrivacyPolicy() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Privacy Policy</h1>
-          <p className="text-gray-600">Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">{getTranslation(language, 'privacy.title')}</h1>
+          <p className="text-gray-600">{getTranslation(language, 'privacy.lastUpdated')} {new Date().toLocaleDateString(language === 'fr' ? 'fr-CA' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
         </div>
 
         {/* Content */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 space-y-8">
           {/* Introduction */}
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Introduction</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'privacy.introduction.title')}</h2>
             <p className="text-gray-700 leading-relaxed">
-              Pure Peel Co. ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and make purchases. Please read this privacy policy carefully.
+              {getTranslation(language, 'privacy.introduction.text')}
             </p>
           </div>
 
           {/* Information We Collect */}
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Information We Collect</h2>
-            <p className="text-gray-700 mb-3">We collect information that you provide directly to us when you:</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'privacy.informationWeCollect.title')}</h2>
+            <p className="text-gray-700 mb-3">{getTranslation(language, 'privacy.informationWeCollect.text')}</p>
             <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
-              <li><strong>Place an order:</strong> Name, email address, phone number, shipping address, billing address</li>
-              <li><strong>Make a payment:</strong> Payment information is processed securely through Stripe (we do not store your full payment details)</li>
-              <li><strong>Contact us:</strong> Name, email address, and any message content</li>
-              <li><strong>Track your order:</strong> Order number and email address for order lookup</li>
+              <li><strong>{getTranslation(language, 'privacy.informationWeCollect.placeOrder')}</strong></li>
+              <li><strong>{getTranslation(language, 'privacy.informationWeCollect.makePayment')}</strong></li>
+              <li><strong>{getTranslation(language, 'privacy.informationWeCollect.contactUs')}</strong></li>
+              <li><strong>{getTranslation(language, 'privacy.informationWeCollect.trackOrder')}</strong></li>
             </ul>
             <p className="text-gray-700 mt-4">
-              We also automatically collect certain information when you visit our website, such as your IP address, browser type, device information, and pages you visit.
+              {getTranslation(language, 'privacy.informationWeCollect.automatic')}
             </p>
           </div>
 
           {/* How We Use Your Information */}
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">How We Use Your Information</h2>
-            <p className="text-gray-700 mb-3">We use the information we collect to:</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'privacy.howWeUse.title')}</h2>
+            <p className="text-gray-700 mb-3">{getTranslation(language, 'privacy.howWeUse.text')}</p>
             <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
-              <li>Process and fulfill your orders</li>
-              <li>Send you order confirmations and shipping notifications</li>
-              <li>Communicate with you about your orders, products, and services</li>
-              <li>Respond to your inquiries and provide customer support</li>
-              <li>Improve our website and user experience</li>
-              <li>Comply with legal obligations</li>
+              {getTranslation(language, 'privacy.howWeUse.items').map((item, index) => (
+                <li key={index}>{item}</li>
+              ))}
             </ul>
           </div>
 
           {/* Third-Party Services */}
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Third-Party Services</h2>
-            <p className="text-gray-700 mb-3">We use the following third-party services that may collect or process your information:</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'privacy.thirdPartyServices.title')}</h2>
+            <p className="text-gray-700 mb-3">{getTranslation(language, 'privacy.thirdPartyServices.text')}</p>
             <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
-              <li><strong>Stripe:</strong> Payment processing. Stripe handles all payment information securely. See Stripe's privacy policy at <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:text-amber-700">stripe.com/privacy</a></li>
-              <li><strong>Canada Post:</strong> Shipping services. We share your shipping address with Canada Post to fulfill orders. See Canada Post's privacy policy at <a href="https://www.canadapost.ca/cpc/en/privacypolicy.page" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:text-amber-700">canadapost.ca</a></li>
-              <li><strong>Resend:</strong> Email delivery service. We use Resend to send order confirmations and notifications. See Resend's privacy policy at <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:text-amber-700">resend.com</a></li>
+              <li><strong>{getTranslation(language, 'privacy.thirdPartyServices.stripe')}</strong> <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:text-amber-700">stripe.com/privacy</a></li>
+              <li><strong>{getTranslation(language, 'privacy.thirdPartyServices.canadaPost')}</strong> <a href="https://www.canadapost.ca/cpc/en/privacypolicy.page" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:text-amber-700">canadapost.ca</a></li>
+              <li><strong>{getTranslation(language, 'privacy.thirdPartyServices.resend')}</strong> <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:text-amber-700">resend.com</a></li>
             </ul>
           </div>
 
           {/* Cookies and Tracking */}
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Cookies and Tracking</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'privacy.cookiesAndTracking.title')}</h2>
             <p className="text-gray-700 mb-3">
-              We may use cookies and similar tracking technologies to enhance your experience on our website. Cookies are small data files stored on your device that help us remember your preferences and improve site functionality.
+              {getTranslation(language, 'privacy.cookiesAndTracking.text1')}
             </p>
-            <p className="text-gray-700 mb-3">Types of cookies we use:</p>
+            <p className="text-gray-700 mb-3">{getTranslation(language, 'privacy.cookiesAndTracking.text2')}</p>
             <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
-              <li><strong>Essential Cookies:</strong> Required for the website to function properly (e.g., shopping cart, authentication)</li>
-              <li><strong>Analytics Cookies:</strong> Help us understand how visitors interact with our website</li>
-              <li><strong>Preference Cookies:</strong> Remember your settings and preferences</li>
+              <li><strong>{getTranslation(language, 'privacy.cookiesAndTracking.essential')}</strong></li>
+              <li><strong>{getTranslation(language, 'privacy.cookiesAndTracking.analytics')}</strong></li>
+              <li><strong>{getTranslation(language, 'privacy.cookiesAndTracking.preference')}</strong></li>
             </ul>
             <p className="text-gray-700 mt-4">
-              You can control cookies through your browser settings, though disabling cookies may affect website functionality. Most browsers allow you to refuse cookies or alert you when cookies are being sent.
+              {getTranslation(language, 'privacy.cookiesAndTracking.text3')}
             </p>
           </div>
 
           {/* Data Retention */}
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Data Retention</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'privacy.dataRetention.title')}</h2>
             <p className="text-gray-700 mb-3">
-              We retain your personal information only for as long as necessary to fulfill the purposes outlined in this Privacy Policy, unless a longer retention period is required or permitted by law.
+              {getTranslation(language, 'privacy.dataRetention.text1')}
             </p>
             <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
-              <li><strong>Order Information:</strong> Retained for 7 years for tax and accounting purposes</li>
-              <li><strong>Customer Contact Information:</strong> Retained while you have an active account or as needed to provide services</li>
-              <li><strong>Marketing Communications:</strong> Retained until you opt-out or request deletion</li>
+              <li><strong>{getTranslation(language, 'privacy.dataRetention.orderInfo')}</strong></li>
+              <li><strong>{getTranslation(language, 'privacy.dataRetention.customerContact')}</strong></li>
+              <li><strong>{getTranslation(language, 'privacy.dataRetention.marketing')}</strong></li>
             </ul>
             <p className="text-gray-700 mt-4">
-              When we no longer need your personal information, we will securely delete or anonymize it in accordance with our data retention policies.
+              {getTranslation(language, 'privacy.dataRetention.text2')}
             </p>
           </div>
 
           {/* Children's Privacy */}
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Children's Privacy</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'privacy.childrensPrivacy.title')}</h2>
             <p className="text-gray-700 leading-relaxed">
-              Our website is not intended for children under the age of 18. We do not knowingly collect personal information from children. If you are a parent or guardian and believe your child has provided us with personal information, please contact us immediately. If we become aware that we have collected personal information from a child without verification of parental consent, we will take steps to delete that information.
+              {getTranslation(language, 'privacy.childrensPrivacy.text')}
             </p>
           </div>
 
           {/* Canadian Privacy Laws */}
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Canadian Privacy Laws</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'privacy.canadianPrivacyLaws.title')}</h2>
             <p className="text-gray-700 mb-3">
-              As a Canadian business, we comply with the Personal Information Protection and Electronic Documents Act (PIPEDA) and applicable provincial privacy legislation. Under PIPEDA, you have the right to:
+              {getTranslation(language, 'privacy.canadianPrivacyLaws.text1')}
             </p>
             <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
-              <li>Know why we collect, use, or disclose your personal information</li>
-              <li>Expect us to collect, use, or disclose your personal information reasonably and appropriately</li>
-              <li>Access your personal information held by us</li>
-              <li>Challenge the accuracy and completeness of your information</li>
-              <li>Have your information amended if it is inaccurate or incomplete</li>
+              <li>{getTranslation(language, 'privacy.canadianPrivacyLaws.right1')}</li>
+              <li>{getTranslation(language, 'privacy.canadianPrivacyLaws.right2')}</li>
+              <li>{getTranslation(language, 'privacy.canadianPrivacyLaws.right3')}</li>
+              <li>{getTranslation(language, 'privacy.canadianPrivacyLaws.right4')}</li>
+              <li>{getTranslation(language, 'privacy.canadianPrivacyLaws.right5')}</li>
             </ul>
           </div>
 
           {/* Marketing Communications */}
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Marketing Communications</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'privacy.marketingCommunications.title')}</h2>
             <p className="text-gray-700 mb-3">
-              If you have provided your email address, we may send you promotional emails about our products, special offers, and updates. You can opt-out of these communications at any time by:
+              {getTranslation(language, 'privacy.marketingCommunications.text1')}
             </p>
             <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
-              <li>Clicking the "unsubscribe" link in any marketing email</li>
-              <li>Contacting us directly at <a href="mailto:privacy@purepeelco.com" className="text-amber-600 hover:text-amber-700">privacy@purepeelco.com</a></li>
+              <li>{getTranslation(language, 'privacy.marketingCommunications.item1')}</li>
+              <li>{getTranslation(language, 'privacy.marketingCommunications.item2')} <a href="mailto:privacy@purepeelco.com" className="text-amber-600 hover:text-amber-700">privacy@purepeelco.com</a></li>
             </ul>
             <p className="text-gray-700 mt-4">
-              Please note that even if you opt-out of marketing communications, we may still send you transactional emails related to your orders, such as order confirmations and shipping notifications.
+              {getTranslation(language, 'privacy.marketingCommunications.text2')}
             </p>
           </div>
 
           {/* Data Security */}
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Data Security</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'privacy.dataSecurity.title')}</h2>
             <p className="text-gray-700 leading-relaxed">
-              We implement appropriate technical and organizational measures to protect your personal information. However, no method of transmission over the Internet or electronic storage is 100% secure. While we strive to use commercially acceptable means to protect your information, we cannot guarantee absolute security.
+              {getTranslation(language, 'privacy.dataSecurity.text')}
             </p>
           </div>
 
           {/* Your Rights */}
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Your Rights</h2>
-            <p className="text-gray-700 mb-3">You have the right to:</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'privacy.yourRights.title')}</h2>
+            <p className="text-gray-700 mb-3">{getTranslation(language, 'privacy.yourRights.text1')}</p>
             <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
-              <li>Access the personal information we hold about you</li>
-              <li>Request correction of inaccurate or incomplete information</li>
-              <li>Request deletion of your personal information (subject to legal obligations)</li>
-              <li>Opt-out of marketing communications (you can unsubscribe from emails at any time)</li>
-              <li>File a complaint with relevant data protection authorities</li>
+              <li>{getTranslation(language, 'privacy.yourRights.right1')}</li>
+              <li>{getTranslation(language, 'privacy.yourRights.right2')}</li>
+              <li>{getTranslation(language, 'privacy.yourRights.right3')}</li>
+              <li>{getTranslation(language, 'privacy.yourRights.right4')}</li>
+              <li>{getTranslation(language, 'privacy.yourRights.right5')}</li>
             </ul>
             <p className="text-gray-700 mt-4">
-              To exercise these rights, please contact us using the information provided below.
+              {getTranslation(language, 'privacy.yourRights.text2')}
             </p>
           </div>
 
           {/* Changes to Privacy Policy */}
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Changes to This Privacy Policy</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'privacy.changesToPolicy.title')}</h2>
             <p className="text-gray-700 leading-relaxed">
-              We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last updated" date. You are advised to review this Privacy Policy periodically for any changes.
+              {getTranslation(language, 'privacy.changesToPolicy.text')}
             </p>
           </div>
 
           {/* Data Storage and Location */}
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Data Storage and Location</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'privacy.dataStorage.title')}</h2>
             <p className="text-gray-700 leading-relaxed">
-              Your personal information is stored on secure servers located in Canada. We take appropriate measures to ensure that your data is protected and handled in accordance with Canadian privacy laws. Some third-party services we use (such as Stripe and Resend) may process data in other jurisdictions, but they are required to maintain appropriate security measures and comply with applicable privacy laws.
+              {getTranslation(language, 'privacy.dataStorage.text')}
             </p>
           </div>
 
           {/* Contact Information */}
           <div className="border-t border-gray-200 pt-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Contact Us</h2>
-            <p className="text-gray-700 mb-3">If you have any questions, concerns, or requests regarding this Privacy Policy or your personal information, please contact us:</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'privacy.contact.title')}</h2>
+            <p className="text-gray-700 mb-3">{getTranslation(language, 'privacy.contact.text')}</p>
             <div className="bg-gray-50 rounded-lg p-4 space-y-2">
               <p className="text-gray-700">
-                <strong>Privacy Email:</strong> <a href="mailto:privacy@purepeelco.com" className="text-amber-600 hover:text-amber-700">privacy@purepeelco.com</a>
+                <strong>{getTranslation(language, 'privacy.contact.privacyEmail')}</strong> <a href="mailto:privacy@purepeelco.com" className="text-amber-600 hover:text-amber-700">privacy@purepeelco.com</a>
               </p>
               <p className="text-gray-700">
-                <strong>General Email:</strong> <a href="mailto:info@purepeelco.com" className="text-amber-600 hover:text-amber-700">info@purepeelco.com</a>
+                <strong>{getTranslation(language, 'privacy.contact.generalEmail')}</strong> <a href="mailto:info@purepeelco.com" className="text-amber-600 hover:text-amber-700">info@purepeelco.com</a>
               </p>
               <p className="text-gray-700">
-                <strong>Address:</strong> Pure Peel Co., Canada
+                <strong>{getTranslation(language, 'privacy.contact.address')}</strong> Pure Peel Co., Canada
               </p>
               <p className="text-gray-700 text-sm mt-3">
-                <strong>Response Time:</strong> We aim to respond to all privacy-related inquiries within 30 days.
+                <strong>{getTranslation(language, 'privacy.contact.responseTime')}</strong>
               </p>
             </div>
           </div>

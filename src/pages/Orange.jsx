@@ -5,43 +5,44 @@ import { productSEO, organizationData } from "../utils/seoData"
 import { trackProductView } from "../utils/analytics"
 
 const orangeProduct = {
+  id: "orange",
   name: "Orange",
-  description: "Sweet, zesty, and aromatic. Perfect for cocktails, tea, and charcuterie boards.",
+  description: "Sweet, zesty, and aromatic. Ideal for classic cocktails like Old Fashioneds and mimosas, adds natural sweetness to hot or iced tea, and pairs beautifully with cheeses and cured meats on charcuterie boards.",
   variants: [
     {
       id: "orange-mini",
       label: "Mini Bag — 10 pcs",
       option: "Mini Bag (10 pcs)",
-      price: 6,
-      image: "/images/orange-mini.jpg"
+      price: 5,
+      image: "/images/orange-product.jpg?v=professional"
     },
     {
       id: "orange-small",
       label: "Small Bag — 20 pcs",
       option: "Small Bag (20 pcs)",
-      price: 13,
-      image: "/images/orange-small.jpg"
+      price: 9,
+      image: "/images/orange-product.jpg?v=professional"
     },
     {
       id: "orange-medium",
       label: "Medium Bag — 40 pcs",
       option: "Medium Bag (40 pcs)",
-      price: 20,
-      image: "/images/orange-medium.jpg"
+      price: 17,
+      image: "/images/orange-product.jpg?v=professional"
     },
     {
       id: "orange-large",
       label: "Large Bag — 75 pcs",
       option: "Large Bag (75 pcs)",
-      price: 30,
-      image: "/images/orange-large.jpg"
+      price: 32,
+      image: "/images/orange-product.jpg?v=professional"
     },
     {
       id: "orange-clearbox",
       label: "Clear Box — 40 pcs",
       option: "Clear Box (40 pcs)",
-      price: 20,
-      image: "/images/orange.jpg"
+      price: 17,
+      image: "/images/orange-box.jpg"
     }
   ]
 }

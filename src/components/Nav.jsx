@@ -1,11 +1,22 @@
 import { useState, useEffect } from "react"
 import { useCart } from "../context/CartContext"
+import { useLanguage } from "../context/LanguageContext"
+import { getTranslation } from "../utils/translations"
 
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [navHeight, setNavHeight] = useState(72)
-  const { cartCount, isCartOpen, setIsCartOpen } = useCart()
+  const { cartCount, isCartOpen, setIsCartOpen, getCartTotal } = useCart()
   const [badgeUpdated, setBadgeUpdated] = useState(false)
+  const { language, setLanguage } = useLanguage()
+  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  // Reset menu state when component mounts or when route changes
+  useEffect(() => {
+    setIsMenuOpen(false)
+    setIsLangDropdownOpen(false)
+  }, []) // Reset on mount - component will remount with key prop from App.jsx
 
   useEffect(() => {
     const nav = document.querySelector("nav")
@@ -40,6 +51,20 @@ export default function Nav() {
     }
   }, [cartCount])
 
+  // Add scroll effect for nav
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10)
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const handleLanguageChange = (lang) => {
+    setLanguage(lang)
+    setIsLangDropdownOpen(false)
+  }
+
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
   const closeMenu = () => setIsMenuOpen(false)
 
@@ -56,53 +81,113 @@ export default function Nav() {
   }
 
   const handleShopLink = (e, product) => {
+    // Let App.jsx handle navigation via its click interceptor
+    // No need to call pushState here - App.jsx will do it
+    // Just prevent default and close menu
     e.preventDefault()
     closeMenu()
-    window.history.pushState({}, "", `/${product}`)
-    window.dispatchEvent(new PopStateEvent("popstate"))
   }
 
   return (
-    <nav className="sticky top-0 left-0 right-0 z-1000 h-[72px] bg-white border-b border-gray-200 shadow-sm">
-      <div className="h-full max-w-6xl mx-auto px-5 flex items-center justify-between">
-        {/* Logo */}
+    <nav className={`sticky top-0 left-0 right-0 z-1000 h-[72px] bg-[#faf8f5] border-b transition-all duration-300 ${
+      isScrolled 
+        ? 'border-gray-200/80 shadow-md backdrop-blur-sm bg-[#faf8f5]/95' 
+        : 'border-gray-200/50 shadow-sm'
+    }`}>
+      <div className="h-full max-w-7xl mx-auto px-5 flex items-center justify-between relative">
+        {/* Left: Hamburger Menu */}
+        <button 
+          className={`w-11 h-11 p-2 flex flex-col justify-center gap-1.5 bg-transparent border-0 cursor-pointer rounded-lg transition-all duration-150 hover:bg-black/5 active:scale-95 touch-manipulation ${
+            isMenuOpen ? "is-open" : ""
+          }`}
+          onClick={toggleMenu}
+          aria-label="Toggle menu"
+          aria-expanded={isMenuOpen}
+        >
+          <span className={`block w-[22px] h-0.5 bg-gray-900 rounded-sm transition-all duration-250 ${
+            isMenuOpen ? "translate-y-2 rotate-45" : ""
+          }`}></span>
+          <span className={`block w-[22px] h-0.5 bg-gray-900 rounded-sm transition-opacity duration-200 ${
+            isMenuOpen ? "opacity-0" : ""
+          }`}></span>
+          <span className={`block w-[22px] h-0.5 bg-gray-900 rounded-sm transition-all duration-250 ${
+            isMenuOpen ? "-translate-y-2 -rotate-45" : ""
+          }`}></span>
+        </button>
+
+        {/* Center: Logo */}
         <a 
           href="/" 
-          className="flex items-center no-underline transition-all duration-200 hover:opacity-85 hover:scale-105 z-10"
+          className="absolute left-1/2 -translate-x-1/2 flex items-center no-underline transition-all duration-200 hover:opacity-85 hover:scale-105 z-10"
           onClick={(e) => {
+            // Let App.jsx handle navigation via its click interceptor
             e.preventDefault()
-            window.history.pushState({}, "", "/")
-            window.dispatchEvent(new PopStateEvent("popstate"))
           }}
         >
           <img src="/logo.png" alt="Pure Peel Co." className="h-[42px] w-auto max-w-[200px] block object-contain" />
         </a>
 
-        {/* Right-side actions */}
+        {/* Right: Language & Cart */}
         <div className="flex items-center gap-3">
-          {/* Hamburger */}
-          <button 
-            className={`w-11 h-11 p-2 flex flex-col justify-center gap-1.5 bg-transparent border-0 cursor-pointer rounded-lg transition-all duration-150 hover:bg-black/5 active:scale-95 touch-manipulation ${
-              isMenuOpen ? "is-open" : ""
-            }`}
-            onClick={toggleMenu}
-            aria-label="Toggle menu"
-            aria-expanded={isMenuOpen}
-          >
-            <span className={`block w-[22px] h-0.5 bg-gray-900 rounded-sm transition-all duration-250 ${
-              isMenuOpen ? "translate-y-2 rotate-45" : ""
-            }`}></span>
-            <span className={`block w-[22px] h-0.5 bg-gray-900 rounded-sm transition-opacity duration-200 ${
-              isMenuOpen ? "opacity-0" : ""
-            }`}></span>
-            <span className={`block w-[22px] h-0.5 bg-gray-900 rounded-sm transition-all duration-250 ${
-              isMenuOpen ? "-translate-y-2 -rotate-45" : ""
-            }`}></span>
-          </button>
+          {/* Language Selector */}
+          <div className="relative">
+            <button
+              onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
+              className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 rounded-lg hover:bg-white/50 transition-all duration-200 active:scale-95 min-w-[44px] min-h-[44px]"
+              aria-label="Select language"
+            >
+              <span className="text-xs uppercase">{language === 'en' ? 'EN' : 'FR'}</span>
+              <svg 
+                className={`w-4 h-4 transition-transform ${isLangDropdownOpen ? 'rotate-180' : ''}`}
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            
+            {isLangDropdownOpen && (
+              <>
+                <div 
+                  className="fixed inset-0 z-998"
+                  onClick={() => setIsLangDropdownOpen(false)}
+                />
+                <div className="absolute right-0 mt-2 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 z-999 backdrop-blur-sm">
+                  <button
+                    onClick={() => handleLanguageChange('en')}
+                    className={`w-full text-left px-4 py-2.5 text-sm transition-all rounded-lg mx-1 active:scale-95 min-h-[44px] ${
+                      language === 'en' 
+                        ? 'bg-amber-50 text-amber-600 font-semibold' 
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span className="text-xs">🇬🇧</span>
+                      English
+                    </span>
+                  </button>
+                  <button
+                    onClick={() => handleLanguageChange('fr')}
+                    className={`w-full text-left px-4 py-2.5 text-sm transition-all rounded-lg mx-1 active:scale-95 min-h-[44px] ${
+                      language === 'fr' 
+                        ? 'bg-amber-50 text-amber-600 font-semibold' 
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span className="text-xs">🇫🇷</span>
+                      Français
+                    </span>
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
 
           {/* Cart Button */}
           <button 
-            className="relative w-11 h-11 sm:w-14 sm:h-14 flex items-center justify-center bg-transparent border-0 cursor-pointer rounded-lg transition-all duration-150 hover:bg-black/5 active:scale-95 touch-manipulation" 
+            className="relative w-11 h-11 sm:w-14 sm:h-14 flex items-center justify-center bg-transparent border-0 cursor-pointer rounded-lg transition-all duration-200 hover:bg-white/50 active:scale-95 touch-manipulation group" 
             aria-label={`Open cart${cartCount > 0 ? ` (${cartCount} items)` : ""}`}
             onClick={() => {
               setIsCartOpen(true)
@@ -110,24 +195,25 @@ export default function Nav() {
             }}
           >
             <svg
-              className="w-8 h-8 text-gray-900 transition-all duration-250 group-hover:-translate-y-0.5 group-hover:text-amber-500"
+              className="w-7 h-7 sm:w-8 sm:h-8 text-gray-800 transition-all duration-300 group-hover:text-amber-600 group-hover:scale-110"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              strokeWidth="2"
+              strokeWidth="1.5"
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <circle cx="9" cy="21" r="1"></circle>
-              <circle cx="20" cy="21" r="1"></circle>
-              <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"></path>
+              {/* Sleek modern shopping bag */}
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4H6z" />
+              <path d="M3 6h18" />
+              <path d="M16 10a4 4 0 0 1-8 0" />
             </svg>
             {cartCount > 0 && (
-              <span className={`absolute top-1 right-1 min-w-[22px] h-[22px] px-1.5 bg-amber-500 text-gray-900 text-xs font-bold rounded-full flex items-center justify-center pointer-events-none transition-all duration-300 animate-badgeAppear ${
-                badgeUpdated ? "animate-badgeBounce" : ""
+              <span className={`absolute -top-1 -right-1 min-w-[20px] h-[20px] px-1.5 bg-amber-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center pointer-events-none transition-all duration-300 shadow-md ${
+                badgeUpdated ? "animate-badgeBounce scale-110" : ""
               }`}>
-                {cartCount}
+                {cartCount > 99 ? '99+' : cartCount}
               </span>
             )}
           </button>
@@ -142,10 +228,10 @@ export default function Nav() {
         />
       )}
       <div 
-        className={`fixed top-[72px] right-0 sm:right-5 w-full sm:w-[340px] max-h-[calc(100vh-72px)] sm:max-h-[calc(100vh-72px-24px)] bg-white sm:rounded-2xl shadow-2xl overflow-y-auto z-999 transition-all duration-250 ${
+        className={`fixed top-[72px] left-0 sm:left-5 w-full sm:w-[380px] max-h-[calc(100vh-72px)] sm:max-h-[calc(100vh-72px-24px)] bg-[#faf8f5] sm:rounded-2xl shadow-2xl overflow-y-auto z-999 transition-all duration-300 ease-out backdrop-blur-xl ${
           isMenuOpen 
-            ? "opacity-100 pointer-events-auto translate-y-0" 
-            : "opacity-0 pointer-events-none -translate-y-2"
+            ? "opacity-100 pointer-events-auto translate-x-0" 
+            : "opacity-0 pointer-events-none -translate-x-full sm:-translate-x-4"
         }`}
         onClick={(e) => {
           if (e.target === e.currentTarget) {
@@ -154,28 +240,54 @@ export default function Nav() {
         }}
       >
         <div className="p-7">
+          <a 
+            href="#products" 
+            className="block relative py-3 text-gray-900 text-base font-semibold no-underline transition-all hover:text-amber-500 active:scale-95 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100 mb-6"
+            onClick={(e) => handleLinkClick(e, "products")}
+          >
+            {getTranslation(language, 'nav.shop')}
+          </a>
+
           <div className="mb-6">
-            <span className="text-xs uppercase tracking-widest text-gray-400 mb-3.5 block">Shop</span>
+            <span className="text-xs uppercase tracking-widest text-gray-400 mb-3.5 block">{getTranslation(language, 'nav.citrusCollection')}</span>
             <a 
               href="/orange" 
-              className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
+              className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 active:scale-95 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
               onClick={(e) => handleShopLink(e, "orange")}
             >
-              Orange
+              {getTranslation(language, 'products.orange.name')}
             </a>
             <a 
               href="/pink-orange" 
-              className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
+              className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 active:scale-95 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
               onClick={(e) => handleShopLink(e, "pink-orange")}
             >
-              Pink Orange
+              {getTranslation(language, 'products.pinkOrange.name')}
             </a>
             <a 
               href="/lime" 
-              className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
+              className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 active:scale-95 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
               onClick={(e) => handleShopLink(e, "lime")}
             >
-              Lime
+              {getTranslation(language, 'products.lime.name')}
+            </a>
+            <a 
+              href="/lemon" 
+              className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 active:scale-95 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
+              onClick={(e) => handleShopLink(e, "lemon")}
+            >
+              {getTranslation(language, 'products.lemon.name')}
+            </a>
+          </div>
+
+          <div className="mb-6">
+            <span className="text-xs uppercase tracking-widest text-gray-400 mb-3.5 block">{getTranslation(language, 'nav.fruitCollection')}</span>
+            <a 
+              href="/apple" 
+              className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 active:scale-95 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
+              onClick={(e) => handleShopLink(e, "apple")}
+            >
+              {getTranslation(language, 'products.apple.name')}
             </a>
           </div>
 
@@ -183,29 +295,33 @@ export default function Nav() {
 
           <a 
             href="#about" 
-            className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
+            className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 active:scale-95 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
             onClick={(e) => handleLinkClick(e, "about")}
           >
-            About
+            {getTranslation(language, 'nav.about')}
           </a>
           <a 
-            href="#contact" 
-            className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
-            onClick={(e) => handleLinkClick(e, "contact")}
+            href="/contact" 
+            className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 active:scale-95 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
+            onClick={(e) => {
+              // Let App.jsx handle navigation via its click interceptor
+              e.preventDefault()
+              closeMenu()
+            }}
           >
-            Contact
+            {getTranslation(language, 'nav.contact')}
           </a>
 
           <a 
             href="#" 
-            className="mt-6 py-3.5 px-4 rounded-lg bg-amber-500 text-white font-semibold text-center block no-underline transition-colors duration-200 hover:bg-amber-600 after:hidden"
+            className="mt-6 py-3.5 px-4 rounded-lg bg-amber-500 text-white font-semibold text-center block no-underline transition-all duration-200 hover:bg-amber-600 active:scale-95 after:hidden min-h-[44px] flex items-center justify-center"
             onClick={(e) => {
               e.preventDefault()
               closeMenu()
               setIsCartOpen(true)
             }}
           >
-            View Cart
+            {getTranslation(language, 'nav.viewCart')}
           </a>
         </div>
       </div>
