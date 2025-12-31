@@ -18,13 +18,9 @@ export default function ProductPage({ product }) {
   const { addToCart } = useCart()
   const { language } = useLanguage()
 
-  // Get all images for the selected variant (variant image + gallery images)
+  // Get images for the selected variant (only variant image for now)
   const getVariantImages = () => {
-    const images = [selectedVariant.image]
-    if (product.galleryImages && product.galleryImages.length > 0) {
-      images.push(...product.galleryImages)
-    }
-    return images
+    return [selectedVariant.image]
   }
 
   const variantImages = getVariantImages()
