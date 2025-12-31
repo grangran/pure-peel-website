@@ -56,6 +56,35 @@ export default function PrivacyPolicy() {
             </ul>
           </div>
 
+          {/* Limiting Collection */}
+          <div>
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.limitingCollection.title')}</h2>
+            <p className="text-sm md:text-base text-gray-700 mb-3">{getTranslation(language, 'privacy.limitingCollection.text1')}</p>
+            <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 ml-2 md:ml-4">
+              <li>{getTranslation(language, 'privacy.limitingCollection.item1')}</li>
+              <li>{getTranslation(language, 'privacy.limitingCollection.item2')}</li>
+              <li>{getTranslation(language, 'privacy.limitingCollection.item3')}</li>
+              <li>{getTranslation(language, 'privacy.limitingCollection.item4')}</li>
+            </ul>
+            <p className="text-sm md:text-base text-gray-700 mt-4">
+              {getTranslation(language, 'privacy.limitingCollection.text2')}
+            </p>
+          </div>
+
+          {/* Consent */}
+          <div>
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.consent.title')}</h2>
+            <p className="text-sm md:text-base text-gray-700 mb-3">{getTranslation(language, 'privacy.consent.text1')}</p>
+            <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 ml-2 md:ml-4">
+              <li>{getTranslation(language, 'privacy.consent.explicit')}</li>
+              <li>{getTranslation(language, 'privacy.consent.implied')}</li>
+              <li>{getTranslation(language, 'privacy.consent.withdrawal')}</li>
+            </ul>
+            <p className="text-sm md:text-base text-gray-700 mt-4">
+              {getTranslation(language, 'privacy.consent.text2')}
+            </p>
+          </div>
+
           {/* Third-Party Services */}
           <div>
             <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.thirdPartyServices.title')}</h2>
@@ -120,7 +149,42 @@ export default function PrivacyPolicy() {
               <li>{getTranslation(language, 'privacy.canadianPrivacyLaws.right3')}</li>
               <li>{getTranslation(language, 'privacy.canadianPrivacyLaws.right4')}</li>
               <li>{getTranslation(language, 'privacy.canadianPrivacyLaws.right5')}</li>
+              <li>{getTranslation(language, 'privacy.canadianPrivacyLaws.right6')}</li>
             </ul>
+            <p className="text-sm md:text-base text-gray-700 mt-4">
+              {getTranslation(language, 'privacy.canadianPrivacyLaws.text2')}
+            </p>
+          </div>
+
+          {/* Privacy Officer */}
+          <div>
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.privacyOfficer.title')}</h2>
+            <p className="text-sm md:text-base text-gray-700 mb-3">{getTranslation(language, 'privacy.privacyOfficer.text1')}</p>
+            <div className="bg-gray-50 rounded-lg p-3 md:p-4 space-y-2 mb-3">
+              <p className="text-sm md:text-base text-gray-700">
+                <strong>{getTranslation(language, 'privacy.privacyOfficer.email')}</strong> <a href="mailto:privacy@purepeelco.com" className="text-amber-600 hover:text-amber-700">privacy@purepeelco.com</a>
+              </p>
+              <p className="text-sm md:text-base text-gray-700">
+                <strong>{getTranslation(language, 'privacy.privacyOfficer.address')}</strong> {getTranslation(language, 'privacy.privacyOfficer.addressText')}
+              </p>
+            </div>
+            <p className="text-sm md:text-base text-gray-700">
+              {getTranslation(language, 'privacy.privacyOfficer.text2')}
+            </p>
+          </div>
+
+          {/* Data Breach Notification */}
+          <div>
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.dataBreach.title')}</h2>
+            <p className="text-sm md:text-base text-gray-700 mb-3">{getTranslation(language, 'privacy.dataBreach.text1')}</p>
+            <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 ml-2 md:ml-4">
+              <li>{getTranslation(language, 'privacy.dataBreach.step1')}</li>
+              <li>{getTranslation(language, 'privacy.dataBreach.step2')}</li>
+              <li>{getTranslation(language, 'privacy.dataBreach.step3')}</li>
+            </ul>
+            <p className="text-sm md:text-base text-gray-700 mt-4">
+              {getTranslation(language, 'privacy.dataBreach.text2')}
+            </p>
           </div>
 
           {/* Marketing Communications */}
@@ -156,10 +220,25 @@ export default function PrivacyPolicy() {
               <li>{getTranslation(language, 'privacy.yourRights.right3')}</li>
               <li>{getTranslation(language, 'privacy.yourRights.right4')}</li>
               <li>{getTranslation(language, 'privacy.yourRights.right5')}</li>
+              <li>{getTranslation(language, 'privacy.yourRights.right6')}</li>
             </ul>
             <p className="text-sm md:text-base text-gray-700 mt-4">
               {getTranslation(language, 'privacy.yourRights.text2')}
             </p>
+            <p className="text-sm md:text-base text-gray-700 mt-3">
+              {getTranslation(language, 'privacy.yourRights.text3')}
+            </p>
+            <div className="bg-gray-50 rounded-lg p-3 md:p-4 space-y-2 mt-3">
+              <p className="text-sm md:text-base text-gray-700">
+                <strong>{getTranslation(language, 'privacy.yourRights.commissionerWebsite')}</strong> <a href="https://www.priv.gc.ca" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:text-amber-700">www.priv.gc.ca</a>
+              </p>
+              <p className="text-sm md:text-base text-gray-700">
+                <strong>{getTranslation(language, 'privacy.yourRights.commissionerPhone')}</strong>
+              </p>
+              <p className="text-sm md:text-base text-gray-700">
+                <strong>{getTranslation(language, 'privacy.yourRights.commissionerAddress')}</strong>
+              </p>
+            </div>
           </div>
 
           {/* Changes to Privacy Policy */}
@@ -190,12 +269,15 @@ export default function PrivacyPolicy() {
                 <strong>{getTranslation(language, 'privacy.contact.generalEmail')}</strong> <a href="mailto:info@purepeelco.com" className="text-amber-600 hover:text-amber-700">info@purepeelco.com</a>
               </p>
               <p className="text-sm md:text-base text-gray-700">
-                <strong>{getTranslation(language, 'privacy.contact.address')}</strong> Pure Peel Co., Canada
+                <strong>{getTranslation(language, 'privacy.contact.address')}</strong> {getTranslation(language, 'privacy.contact.addressText')}
               </p>
               <p className="text-xs md:text-sm text-gray-700 mt-3">
                 <strong>{getTranslation(language, 'privacy.contact.responseTime')}</strong>
               </p>
             </div>
+            <p className="text-sm md:text-base text-gray-700 mt-4">
+              {getTranslation(language, 'privacy.contact.text2')}
+            </p>
           </div>
         </div>
       </div>

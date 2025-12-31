@@ -186,14 +186,49 @@ export const translations = {
         title: "Children's Privacy",
         text: "Our website is not intended for children under the age of 18. We do not knowingly collect personal information from children. If you are a parent or guardian and believe your child has provided us with personal information, please contact us immediately. If we become aware that we have collected personal information from a child without verification of parental consent, we will take steps to delete that information."
       },
+      consent: {
+        title: "Your Consent",
+        text1: "By using our website and providing your personal information, you consent to the collection, use, and disclosure of your information as described in this Privacy Policy. We obtain your consent in the following ways:",
+        explicit: "Explicit Consent: When you place an order, contact us, or subscribe to our newsletter, you explicitly consent to our collection and use of your information for those specific purposes",
+        implied: "Implied Consent: When you browse our website, we may collect certain technical information (such as IP address) based on your implied consent to improve website functionality",
+        withdrawal: "Withdrawal of Consent: You may withdraw your consent at any time by contacting our Privacy Officer at privacy@purepeelco.com. However, withdrawing consent may limit our ability to provide certain services, such as processing orders or responding to inquiries",
+        text2: "We will only use your personal information for the purposes for which it was collected, unless we obtain your additional consent or as required by law."
+      },
       canadianPrivacyLaws: {
-        title: "Canadian Privacy Laws",
-        text1: "As a Canadian business, we comply with the Personal Information Protection and Electronic Documents Act (PIPEDA) and applicable provincial privacy legislation. Under PIPEDA, you have the right to:",
-        right1: "Know why we collect, use, or disclose your personal information",
-        right2: "Expect us to collect, use, or disclose your personal information reasonably and appropriately",
-        right3: "Access your personal information held by us",
-        right4: "Challenge the accuracy and completeness of your information",
-        right5: "Have your information amended if it is inaccurate or incomplete"
+        title: "Canadian Privacy Laws (PIPEDA Compliance)",
+        text1: "As a Canadian business operating in Ontario, we comply with the Personal Information Protection and Electronic Documents Act (PIPEDA) and applicable provincial privacy legislation. Under PIPEDA, you have the following rights:",
+        right1: "Know why we collect, use, or disclose your personal information and the purposes for which it will be used",
+        right2: "Expect us to collect, use, or disclose your personal information reasonably and appropriately, and only for the purposes identified",
+        right3: "Access your personal information held by us and receive a copy of that information",
+        right4: "Challenge the accuracy and completeness of your information and have it corrected",
+        right5: "Have your information amended if it is inaccurate or incomplete",
+        right6: "File a complaint with the Office of the Privacy Commissioner of Canada if you believe your privacy rights have been violated",
+        text2: "We are committed to upholding these rights and will respond to your requests in accordance with PIPEDA requirements."
+      },
+      privacyOfficer: {
+        title: "Privacy Officer",
+        text1: "Pure Peel Co. has designated a Privacy Officer responsible for ensuring compliance with PIPEDA and handling privacy-related inquiries and complaints. You can contact our Privacy Officer at:",
+        email: "Email:",
+        address: "Mailing Address:",
+        addressText: "Privacy Officer, Pure Peel Co., Ontario, Canada",
+        text2: "Our Privacy Officer will respond to your privacy inquiries within 30 days, as required by PIPEDA."
+      },
+      dataBreach: {
+        title: "Data Breach Notification",
+        text1: "In the event of a data breach that poses a real risk of significant harm to your personal information, we will:",
+        step1: "Notify the Office of the Privacy Commissioner of Canada as soon as feasible",
+        step2: "Notify affected individuals as soon as possible after we become aware of the breach",
+        step3: "Provide information about the breach, including what information was compromised, what we are doing to address it, and steps you can take to protect yourself",
+        text2: "We maintain security measures to prevent unauthorized access, but in the unlikely event of a breach, we will take immediate action to contain the breach and notify affected parties in accordance with PIPEDA requirements."
+      },
+      limitingCollection: {
+        title: "Limiting Collection",
+        text1: "We collect only the personal information that is necessary for the purposes identified in this Privacy Policy. We do not collect personal information indiscriminately or without a clear purpose. The information we collect is limited to:",
+        item1: "Information required to process and fulfill your orders",
+        item2: "Information needed to communicate with you about your orders and our services",
+        item3: "Information necessary to comply with legal obligations (such as tax and accounting requirements)",
+        item4: "Technical information needed to operate and improve our website",
+        text2: "If we need to collect information for a purpose not identified in this policy, we will obtain your consent before doing so."
       },
       marketingCommunications: {
         title: "Marketing Communications",
@@ -207,14 +242,19 @@ export const translations = {
         text: "We implement appropriate technical and organizational measures to protect your personal information. However, no method of transmission over the Internet or electronic storage is 100% secure. While we strive to use commercially acceptable means to protect your information, we cannot guarantee absolute security."
       },
       yourRights: {
-        title: "Your Rights",
-        text1: "You have the right to:",
-        right1: "Access the personal information we hold about you",
-        right2: "Request correction of inaccurate or incomplete information",
-        right3: "Request deletion of your personal information (subject to legal obligations)",
-        right4: "Opt-out of marketing communications (you can unsubscribe from emails at any time)",
-        right5: "File a complaint with relevant data protection authorities",
-        text2: "To exercise these rights, please contact us using the information provided below."
+        title: "Your Rights Under PIPEDA",
+        text1: "Under PIPEDA, you have the following rights:",
+        right1: "Access: Request access to the personal information we hold about you and receive a copy of that information",
+        right2: "Correction: Request correction of inaccurate or incomplete information",
+        right3: "Deletion: Request deletion of your personal information, subject to legal obligations (such as tax and accounting requirements that require us to retain certain records)",
+        right4: "Withdraw Consent: Withdraw your consent to the collection, use, or disclosure of your personal information at any time",
+        right5: "Opt-out: Opt-out of marketing communications (you can unsubscribe from emails at any time)",
+        right6: "Complain: File a complaint with the Office of the Privacy Commissioner of Canada if you believe your privacy rights have been violated",
+        text2: "To exercise these rights, please contact our Privacy Officer using the contact information provided below. We will respond to your request within 30 days, as required by PIPEDA.",
+        text3: "If you are not satisfied with our response, you have the right to file a complaint with the Office of the Privacy Commissioner of Canada at:",
+        commissionerWebsite: "Website:",
+        commissionerPhone: "Phone: 1-800-282-1376",
+        commissionerAddress: "Office of the Privacy Commissioner of Canada, 30 Victoria Street, Gatineau, QC K1A 1H3"
       },
       changesToPolicy: {
         title: "Changes to This Privacy Policy",
@@ -225,12 +265,14 @@ export const translations = {
         text: "Your personal information is stored on secure servers located in Canada. We take appropriate measures to ensure that your data is protected and handled in accordance with Canadian privacy laws. Some third-party services we use (such as Stripe and Resend) may process data in other jurisdictions, but they are required to maintain appropriate security measures and comply with applicable privacy laws."
       },
       contact: {
-        title: "Contact Us",
-        text: "If you have any questions, concerns, or requests regarding this Privacy Policy or your personal information, please contact us:",
-        privacyEmail: "Privacy Email:",
-        generalEmail: "General Email:",
-        address: "Address:",
-        responseTime: "Response Time: We aim to respond to all privacy-related inquiries within 30 days."
+        title: "Contact Us - Privacy Inquiries",
+        text: "If you have any questions, concerns, or requests regarding this Privacy Policy or your personal information, please contact our Privacy Officer:",
+        privacyEmail: "Privacy Officer Email:",
+        generalEmail: "General Inquiries Email:",
+        address: "Business Address:",
+        addressText: "Pure Peel Co., Ontario, Canada",
+        responseTime: "Response Time: We aim to respond to all privacy-related inquiries within 30 days, as required by PIPEDA.",
+        text2: "For general inquiries about our products or services, please contact us at info@purepeelco.com. For privacy-specific concerns, please contact our Privacy Officer at privacy@purepeelco.com."
       }
     },
     shipping: {
@@ -431,8 +473,9 @@ export const translations = {
         limitation: "Our total liability to you for all claims arising from or related to your use of our website or products shall not exceed the amount you paid to us in the 12 months preceding the claim."
       },
       governingLaw: {
-        title: "Governing Law",
-        text: "These Terms shall be governed by and construed in accordance with the laws of Canada and the province in which Pure Peel Co. operates, without regard to its conflict of law provisions. Any disputes arising from these Terms or your use of our website shall be subject to the exclusive jurisdiction of the courts of Canada."
+        title: "Governing Law and Jurisdiction",
+        text: "These Terms shall be governed by and construed in accordance with the laws of the Province of Ontario and the federal laws of Canada applicable therein, without regard to its conflict of law provisions. Any disputes arising from these Terms or your use of our website shall be subject to the exclusive jurisdiction of the courts of Ontario, Canada.",
+        consumerProtection: "Consumer Protection: As a business operating in Ontario, we comply with the Ontario Consumer Protection Act (OCPA). If you are a consumer in Ontario, you have certain rights and protections under OCPA, including the right to receive accurate information about products and services, fair contract terms, and protection against unfair business practices."
       },
       changes: {
         title: "Changes to Terms",
@@ -723,14 +766,76 @@ export const translations = {
         title: "Confidentialité des Enfants",
         text: "Notre site Web n'est pas destiné aux enfants de moins de 18 ans. Nous ne collectons pas sciemment d'informations personnelles auprès d'enfants. Si vous êtes un parent ou un tuteur et croyez que votre enfant nous a fourni des informations personnelles, veuillez nous contacter immédiatement. Si nous apprenons que nous avons collecté des informations personnelles d'un enfant sans vérification du consentement parental, nous prendrons des mesures pour supprimer ces informations."
       },
+      limitingCollection: {
+        title: "Limitation de la Collecte",
+        text1: "Nous collectons uniquement les informations personnelles nécessaires aux fins identifiées dans cette Politique de Confidentialité. Nous ne collectons pas d'informations personnelles de manière indiscriminée ou sans objectif clair. Les informations que nous collectons sont limitées à :",
+        item1: "Informations requises pour traiter et exécuter vos commandes",
+        item2: "Informations nécessaires pour communiquer avec vous concernant vos commandes et nos services",
+        item3: "Informations nécessaires pour se conformer aux obligations légales (telles que les exigences fiscales et comptables)",
+        item4: "Informations techniques nécessaires pour exploiter et améliorer notre site Web",
+        text2: "Si nous devons collecter des informations pour un objectif non identifié dans cette politique, nous obtiendrons votre consentement avant de le faire."
+      },
+      consent: {
+        title: "Votre Consentement",
+        text1: "En utilisant notre site Web et en fournissant vos informations personnelles, vous consentez à la collecte, à l'utilisation et à la divulgation de vos informations telles que décrites dans cette Politique de Confidentialité. Nous obtenons votre consentement de la manière suivante :",
+        explicit: "Consentement Explicite : Lorsque vous passez une commande, nous contactez ou vous abonnez à notre newsletter, vous consentez explicitement à notre collecte et utilisation de vos informations à ces fins spécifiques",
+        implied: "Consentement Implicite : Lorsque vous naviguez sur notre site Web, nous pouvons collecter certaines informations techniques (telles que l'adresse IP) sur la base de votre consentement implicite pour améliorer les fonctionnalités du site Web",
+        withdrawal: "Retrait du Consentement : Vous pouvez retirer votre consentement à tout moment en contactant notre Responsable de la Protection de la Vie Privée à privacy@purepeelco.com. Cependant, le retrait du consentement peut limiter notre capacité à fournir certains services, tels que le traitement des commandes ou la réponse aux demandes",
+        text2: "Nous n'utiliserons vos informations personnelles que pour les fins pour lesquelles elles ont été collectées, sauf si nous obtenons votre consentement supplémentaire ou si la loi l'exige."
+      },
       canadianPrivacyLaws: {
-        title: "Lois Canadiennes sur la Confidentialité",
-        text1: "En tant qu'entreprise canadienne, nous nous conformons à la Loi sur la protection des renseignements personnels et les documents électroniques (LPRPDE) et à la législation provinciale applicable sur la confidentialité. En vertu de la LPRPDE, vous avez le droit de :",
-        right1: "Savoir pourquoi nous collectons, utilisons ou divulguons vos informations personnelles",
-        right2: "Vous attendre à ce que nous collections, utilisions ou divulguions vos informations personnelles de manière raisonnable et appropriée",
-        right3: "Accéder aux informations personnelles que nous détenons sur vous",
-        right4: "Contester l'exactitude et l'exhaustivité de vos informations",
-        right5: "Faire modifier vos informations si elles sont inexactes ou incomplètes"
+        title: "Lois Canadiennes sur la Confidentialité (Conformité LPRPDE)",
+        text1: "En tant qu'entreprise canadienne opérant en Ontario, nous nous conformons à la Loi sur la protection des renseignements personnels et les documents électroniques (LPRPDE) et à la législation provinciale applicable sur la confidentialité. En vertu de la LPRPDE, vous avez les droits suivants :",
+        right1: "Savoir pourquoi nous collectons, utilisons ou divulguons vos informations personnelles et les fins pour lesquelles elles seront utilisées",
+        right2: "Vous attendre à ce que nous collections, utilisions ou divulguions vos informations personnelles de manière raisonnable et appropriée, et uniquement pour les fins identifiées",
+        right3: "Accéder aux informations personnelles que nous détenons sur vous et recevoir une copie de ces informations",
+        right4: "Contester l'exactitude et l'exhaustivité de vos informations et les faire corriger",
+        right5: "Faire modifier vos informations si elles sont inexactes ou incomplètes",
+        right6: "Déposer une plainte auprès du Commissariat à la protection de la vie privée du Canada si vous croyez que vos droits à la vie privée ont été violés",
+        text2: "Nous nous engageons à respecter ces droits et répondrons à vos demandes conformément aux exigences de la LPRPDE."
+      },
+      privacyOfficer: {
+        title: "Responsable de la Protection de la Vie Privée",
+        text1: "Pure Peel Co. a désigné un Responsable de la Protection de la Vie Privée responsable d'assurer la conformité à la LPRPDE et de traiter les demandes et plaintes liées à la vie privée. Vous pouvez contacter notre Responsable de la Protection de la Vie Privée à :",
+        email: "E-mail :",
+        address: "Adresse Postale :",
+        addressText: "Responsable de la Protection de la Vie Privée, Pure Peel Co., Ontario, Canada",
+        text2: "Notre Responsable de la Protection de la Vie Privée répondra à vos demandes de confidentialité dans les 30 jours, comme l'exige la LPRPDE."
+      },
+      dataBreach: {
+        title: "Notification de Violation de Données",
+        text1: "En cas de violation de données qui présente un risque réel de préjudice important pour vos informations personnelles, nous :",
+        step1: "Aviserons le Commissariat à la protection de la vie privée du Canada dès que possible",
+        step2: "Aviserons les personnes concernées dès que possible après avoir pris connaissance de la violation",
+        step3: "Fournirons des informations sur la violation, y compris quelles informations ont été compromises, ce que nous faisons pour y remédier et les mesures que vous pouvez prendre pour vous protéger",
+        text2: "Nous maintenons des mesures de sécurité pour prévenir l'accès non autorisé, mais dans l'éventualité peu probable d'une violation, nous prendrons des mesures immédiates pour contenir la violation et aviser les parties concernées conformément aux exigences de la LPRPDE."
+      },
+      canadianPrivacyLaws: {
+        title: "Lois Canadiennes sur la Confidentialité (Conformité LPRPDE)",
+        text1: "En tant qu'entreprise canadienne opérant en Ontario, nous nous conformons à la Loi sur la protection des renseignements personnels et les documents électroniques (LPRPDE) et à la législation provinciale applicable sur la confidentialité. En vertu de la LPRPDE, vous avez les droits suivants :",
+        right1: "Savoir pourquoi nous collectons, utilisons ou divulguons vos informations personnelles et les fins pour lesquelles elles seront utilisées",
+        right2: "Vous attendre à ce que nous collections, utilisions ou divulguions vos informations personnelles de manière raisonnable et appropriée, et uniquement pour les fins identifiées",
+        right3: "Accéder aux informations personnelles que nous détenons sur vous et recevoir une copie de ces informations",
+        right4: "Contester l'exactitude et l'exhaustivité de vos informations et les faire corriger",
+        right5: "Faire modifier vos informations si elles sont inexactes ou incomplètes",
+        right6: "Déposer une plainte auprès du Commissariat à la protection de la vie privée du Canada si vous croyez que vos droits à la vie privée ont été violés",
+        text2: "Nous nous engageons à respecter ces droits et répondrons à vos demandes conformément aux exigences de la LPRPDE."
+      },
+      privacyOfficer: {
+        title: "Responsable de la Protection de la Vie Privée",
+        text1: "Pure Peel Co. a désigné un Responsable de la Protection de la Vie Privée responsable d'assurer la conformité à la LPRPDE et de traiter les demandes et plaintes liées à la vie privée. Vous pouvez contacter notre Responsable de la Protection de la Vie Privée à :",
+        email: "E-mail :",
+        address: "Adresse Postale :",
+        addressText: "Responsable de la Protection de la Vie Privée, Pure Peel Co., Ontario, Canada",
+        text2: "Notre Responsable de la Protection de la Vie Privée répondra à vos demandes de confidentialité dans les 30 jours, comme l'exige la LPRPDE."
+      },
+      dataBreach: {
+        title: "Notification de Violation de Données",
+        text1: "En cas de violation de données qui présente un risque réel de préjudice important pour vos informations personnelles, nous :",
+        step1: "Aviserons le Commissariat à la protection de la vie privée du Canada dès que possible",
+        step2: "Aviserons les personnes concernées dès que possible après avoir pris connaissance de la violation",
+        step3: "Fournirons des informations sur la violation, y compris quelles informations ont été compromises, ce que nous faisons pour y remédier et les mesures que vous pouvez prendre pour vous protéger",
+        text2: "Nous maintenons des mesures de sécurité pour prévenir l'accès non autorisé, mais dans l'éventualité peu probable d'une violation, nous prendrons des mesures immédiates pour contenir la violation et aviser les parties concernées conformément aux exigences de la LPRPDE."
       },
       marketingCommunications: {
         title: "Communications Marketing",
@@ -744,14 +849,19 @@ export const translations = {
         text: "Nous mettons en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos informations personnelles. Cependant, aucune méthode de transmission sur Internet ou de stockage électronique n'est sécurisée à 100 %. Bien que nous nous efforcions d'utiliser des moyens commercialement acceptables pour protéger vos informations, nous ne pouvons pas garantir une sécurité absolue."
       },
       yourRights: {
-        title: "Vos Droits",
-        text1: "Vous avez le droit de :",
-        right1: "Accéder aux informations personnelles que nous détenons sur vous",
-        right2: "Demander la correction d'informations inexactes ou incomplètes",
-        right3: "Demander la suppression de vos informations personnelles (sous réserve d'obligations légales)",
-        right4: "Vous désinscrire des communications marketing (vous pouvez vous désabonner des e-mails à tout moment)",
-        right5: "Déposer une plainte auprès des autorités de protection des données compétentes",
-        text2: "Pour exercer ces droits, veuillez nous contacter en utilisant les informations fournies ci-dessous."
+        title: "Vos Droits en Vertu de la LPRPDE",
+        text1: "En vertu de la LPRPDE, vous avez les droits suivants :",
+        right1: "Accès : Demander l'accès aux informations personnelles que nous détenons sur vous et recevoir une copie de ces informations",
+        right2: "Correction : Demander la correction d'informations inexactes ou incomplètes",
+        right3: "Suppression : Demander la suppression de vos informations personnelles, sous réserve d'obligations légales (telles que les exigences fiscales et comptables qui nous obligent à conserver certains dossiers)",
+        right4: "Retirer le Consentement : Retirer votre consentement à la collecte, à l'utilisation ou à la divulgation de vos informations personnelles à tout moment",
+        right5: "Se Désinscrire : Se désinscrire des communications marketing (vous pouvez vous désabonner des e-mails à tout moment)",
+        right6: "Porter Plainte : Déposer une plainte auprès du Commissariat à la protection de la vie privée du Canada si vous croyez que vos droits à la vie privée ont été violés",
+        text2: "Pour exercer ces droits, veuillez contacter notre Responsable de la Protection de la Vie Privée en utilisant les informations de contact fournies ci-dessous. Nous répondrons à votre demande dans les 30 jours, comme l'exige la LPRPDE.",
+        text3: "Si vous n'êtes pas satisfait de notre réponse, vous avez le droit de déposer une plainte auprès du Commissariat à la protection de la vie privée du Canada à :",
+        commissionerWebsite: "Site Web :",
+        commissionerPhone: "Téléphone : 1-800-282-1376",
+        commissionerAddress: "Commissariat à la protection de la vie privée du Canada, 30, rue Victoria, Gatineau, QC K1A 1H3"
       },
       changesToPolicy: {
         title: "Modifications de cette Politique de Confidentialité",
@@ -762,12 +872,14 @@ export const translations = {
         text: "Vos informations personnelles sont stockées sur des serveurs sécurisés situés au Canada. Nous prenons des mesures appropriées pour garantir que vos données sont protégées et traitées conformément aux lois canadiennes sur la confidentialité. Certains services tiers que nous utilisons (tels que Stripe et Resend) peuvent traiter des données dans d'autres juridictions, mais ils sont tenus de maintenir des mesures de sécurité appropriées et de se conformer aux lois sur la confidentialité applicables."
       },
       contact: {
-        title: "Nous Contacter",
-        text: "Si vous avez des questions, préoccupations ou demandes concernant cette Politique de Confidentialité ou vos informations personnelles, veuillez nous contacter :",
-        privacyEmail: "E-mail de confidentialité :",
-        generalEmail: "E-mail général :",
-        address: "Adresse :",
-        responseTime: "Temps de réponse : Nous visons à répondre à toutes les demandes liées à la confidentialité dans les 30 jours."
+        title: "Nous Contacter - Demandes de Confidentialité",
+        text: "Si vous avez des questions, préoccupations ou demandes concernant cette Politique de Confidentialité ou vos informations personnelles, veuillez contacter notre Responsable de la Protection de la Vie Privée :",
+        privacyEmail: "E-mail du Responsable de la Protection de la Vie Privée :",
+        generalEmail: "E-mail des Demandes Générales :",
+        address: "Adresse Commerciale :",
+        addressText: "Pure Peel Co., Ontario, Canada",
+        responseTime: "Temps de Réponse : Nous visons à répondre à toutes les demandes liées à la confidentialité dans les 30 jours, comme l'exige la LPRPDE.",
+        text2: "Pour les demandes générales concernant nos produits ou services, veuillez nous contacter à info@purepeelco.com. Pour les préoccupations spécifiques à la confidentialité, veuillez contacter notre Responsable de la Protection de la Vie Privée à privacy@purepeelco.com."
       }
     },
     shipping: {
@@ -968,8 +1080,9 @@ export const translations = {
         limitation: "Notre responsabilité totale envers vous pour toutes les réclamations découlant de ou liées à votre utilisation de notre site Web ou de nos produits ne dépassera pas le montant que vous nous avez payé au cours des 12 mois précédant la réclamation."
       },
       governingLaw: {
-        title: "Loi Applicable",
-        text: "Ces Conditions seront régies et interprétées conformément aux lois du Canada et de la province dans laquelle Pure Peel Co. opère, sans égard à ses dispositions de conflit de lois. Tout litige découlant de ces Conditions ou de votre utilisation de notre site Web sera soumis à la juridiction exclusive des tribunaux du Canada."
+        title: "Loi Applicable et Juridiction",
+        text: "Ces Conditions seront régies et interprétées conformément aux lois de la province de l'Ontario et aux lois fédérales du Canada applicables, sans égard à ses dispositions de conflit de lois. Tout litige découlant de ces Conditions ou de votre utilisation de notre site Web sera soumis à la juridiction exclusive des tribunaux de l'Ontario, Canada.",
+        consumerProtection: "Protection du Consommateur : En tant qu'entreprise opérant en Ontario, nous nous conformons à la Loi sur la protection du consommateur de l'Ontario (LPCO). Si vous êtes un consommateur en Ontario, vous avez certains droits et protections en vertu de la LPCO, notamment le droit de recevoir des informations exactes sur les produits et services, des conditions contractuelles équitables et une protection contre les pratiques commerciales déloyales."
       },
       changes: {
         title: "Modifications des Conditions",
