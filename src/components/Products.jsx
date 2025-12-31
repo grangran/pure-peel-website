@@ -110,7 +110,8 @@ export default function Products() {
       <div className="max-w-7xl mx-auto">
         {/* Citrus Collection Section */}
         <div className="mb-20">
-          <div className="text-center mb-4">
+          {/* Hide collection tag on mobile for cleaner look */}
+          <div className="text-center mb-4 hidden md:block">
             <span className="inline-block px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-amber-700 bg-amber-50 rounded-full mb-4">
               Collection
             </span>
@@ -138,7 +139,8 @@ export default function Products() {
 
         {/* Fruit Collection Section */}
         <div>
-          <div className="text-center mb-4">
+          {/* Hide collection tag on mobile for cleaner look */}
+          <div className="text-center mb-4 hidden md:block">
             <span className="inline-block px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-amber-700 bg-amber-50 rounded-full mb-4">
               Collection
             </span>

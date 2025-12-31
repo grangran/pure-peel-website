@@ -149,20 +149,20 @@ export default function ProductPage({ product }) {
                 </div>
               </div>
 
-              {/* Trust Badges */}
-              <div className="grid grid-cols-3 gap-2 md:gap-2.5 mb-4 md:mb-5">
-                <div className="text-center p-2.5 md:p-3 bg-linear-to-br from-amber-50/80 to-amber-100/40 rounded-lg border border-amber-200/40 shadow-sm hover:shadow transition-all duration-200 hover:scale-[1.02]">
-                  <div className="text-[10px] md:text-[11px] font-semibold text-amber-700/90 uppercase tracking-wide leading-tight">
+              {/* Trust Badges - Simplified for mobile */}
+              <div className="grid grid-cols-3 gap-1.5 md:gap-2.5 mb-4 md:mb-5">
+                <div className="text-center p-2 md:p-2.5 bg-stone-50/60 rounded-lg border border-stone-200/40">
+                  <div className="text-[9px] md:text-[11px] font-medium text-stone-600 uppercase tracking-wide leading-tight">
                     {getTranslation(language, 'productPage.trustBadges.natural')}
                   </div>
                 </div>
-                <div className="text-center p-2.5 md:p-3 bg-linear-to-br from-amber-50/80 to-amber-100/40 rounded-lg border border-amber-200/40 shadow-sm hover:shadow transition-all duration-200 hover:scale-[1.02]">
-                  <div className="text-[10px] md:text-[11px] font-semibold text-amber-700/90 uppercase tracking-wide leading-tight">
+                <div className="text-center p-2 md:p-2.5 bg-stone-50/60 rounded-lg border border-stone-200/40">
+                  <div className="text-[9px] md:text-[11px] font-medium text-stone-600 uppercase tracking-wide leading-tight">
                     {getTranslation(language, 'productPage.trustBadges.noPreservatives')}
                   </div>
                 </div>
-                <div className="text-center p-2.5 md:p-3 bg-linear-to-br from-amber-50/80 to-amber-100/40 rounded-lg border border-amber-200/40 shadow-sm hover:shadow transition-all duration-200 hover:scale-[1.02]">
-                  <div className="text-[10px] md:text-[11px] font-semibold text-amber-700/90 uppercase tracking-wide leading-tight">
+                <div className="text-center p-2 md:p-2.5 bg-stone-50/60 rounded-lg border border-stone-200/40">
+                  <div className="text-[9px] md:text-[11px] font-medium text-stone-600 uppercase tracking-wide leading-tight">
                     {getTranslation(language, 'productPage.trustBadges.madeInCanada')}
                   </div>
                 </div>
@@ -175,21 +175,21 @@ export default function ProductPage({ product }) {
 
           {/* Details Section */}
           <div className="flex flex-col">
-            {/* Brand Name */}
-            <div className="mb-3 md:mb-4">
+            {/* Brand Name - Hidden on mobile for cleaner look */}
+            <div className="mb-3 md:mb-4 hidden md:block">
               <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[10px] md:text-xs font-semibold uppercase tracking-wider text-amber-700/90 bg-linear-to-r from-amber-50/80 to-amber-100/40 rounded-full border border-amber-200/40">
                 Pure Peel Co.
               </span>
             </div>
 
-            {/* Title */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 text-stone-900 tracking-tight leading-[1.1]">
+            {/* Title - Better spacing on mobile */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-5 md:mb-6 text-stone-900 tracking-tight leading-[1.1]">
               {product.id ? getTranslation(language, `products.${product.id}.name`) : product.name}
             </h1>
 
-            {/* Price */}
-            <div className="mb-6 md:mb-8 pb-5 md:pb-6 border-b border-stone-200/50">
-              <div className="flex items-baseline gap-2 mb-2.5">
+            {/* Price - Cleaner on mobile */}
+            <div className="mb-6 md:mb-8 pb-4 md:pb-6 border-b border-stone-200/50">
+              <div className="flex items-baseline gap-2 mb-2">
                 <span className="text-4xl md:text-5xl font-bold text-stone-900">${selectedVariant.price}</span>
                 <span className="text-lg md:text-xl text-stone-500 font-medium">CAD</span>
               </div>
@@ -201,32 +201,25 @@ export default function ProductPage({ product }) {
               </p>
             </div>
 
-            {/* Variants - Horizontal Buttons */}
+            {/* Variants - Cleaner design */}
             <div className="mb-6 md:mb-8">
               <label className="block text-xs md:text-sm font-semibold text-stone-700 mb-3 md:mb-4 uppercase tracking-wider">
                 Select Size
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 md:gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 md:gap-3">
                 {product.variants.map((variant) => (
                   <button
                     key={variant.id}
                     onClick={() => handleVariantChange(variant)}
-                    className={`px-3.5 md:px-4 py-2.5 md:py-3 text-xs md:text-sm font-semibold rounded-lg md:rounded-xl border transition-all duration-200 relative overflow-hidden group min-h-[44px] focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-1 ${
+                    className={`px-3 md:px-4 py-2.5 md:py-3 text-xs md:text-sm font-medium rounded-lg border transition-all duration-200 min-h-[44px] focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-1 ${
                       selectedVariant.id === variant.id
-                        ? "bg-linear-to-br from-amber-500 to-amber-600 border-amber-500 text-stone-900 shadow-md scale-[1.01] ring-1 ring-amber-200/50"
-                        : "bg-white border-stone-200 text-stone-700 hover:border-amber-300 hover:bg-linear-to-br hover:from-amber-50/60 hover:to-amber-100/30 hover:text-stone-900 hover:shadow-sm active:scale-[0.98]"
+                        ? "bg-amber-500 border-amber-500 text-stone-900 shadow-sm"
+                        : "bg-white border-stone-200 text-stone-700 hover:border-amber-300 hover:bg-stone-50 active:scale-[0.98]"
                     }`}
                   >
-                    {selectedVariant.id === variant.id && (
-                      <div className="absolute top-1.5 right-1.5">
-                        <svg className="w-4 h-4 text-stone-900" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                    )}
                     <div className="text-center">
-                      <div className="font-semibold text-xs md:text-sm">{translateVariantLabel(language, variant.label).split("—")[0].trim()}</div>
-                      <div className="text-[10px] md:text-[11px] font-medium text-stone-600/80 mt-0.5">
+                      <div className="font-medium text-xs md:text-sm">{translateVariantLabel(language, variant.label).split("—")[0].trim()}</div>
+                      <div className="text-[10px] md:text-[11px] text-stone-600/70 mt-0.5">
                         {translateVariantLabel(language, variant.label).split("—")[1]?.trim() || ''}
                       </div>
                     </div>

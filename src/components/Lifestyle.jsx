@@ -146,19 +146,20 @@ export default function Lifestyle() {
       className="relative py-16 md:py-24 px-4 sm:px-5 bg-white overflow-hidden"
     >
       <div className="max-w-7xl mx-auto">
-        {/* Section Header */}
-        <div className={`text-center mb-12 md:mb-16 transition-all duration-800 ease-out ${
+        {/* Section Header - Cleaner on mobile */}
+        <div className={`text-center mb-10 md:mb-16 transition-all duration-800 ease-out ${
           isSectionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
-          <div className="text-center mb-6">
-            <span className="inline-block px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-amber-700 bg-amber-50 rounded-full mb-6">
+          {/* Hide tag on mobile for cleaner look */}
+          <div className="text-center mb-4 md:mb-6 hidden md:block">
+            <span className="inline-block px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-amber-700 bg-amber-50 rounded-full">
               Lifestyle
             </span>
           </div>
-          <h2 className="text-[clamp(1.75rem,5vw,3.5rem)] font-bold mb-4 md:mb-6 text-stone-900 tracking-tight">
+          <h2 className="text-[clamp(1.75rem,5vw,3.5rem)] font-bold mb-3 md:mb-6 text-stone-900 tracking-tight">
             {getTranslation(language, 'lifestyle.title')}
           </h2>
-          <p className="text-stone-600 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed px-4">
+          <p className="text-stone-600 text-base md:text-xl max-w-3xl mx-auto leading-relaxed px-4">
             {getTranslation(language, 'lifestyle.subtitle')}
           </p>
         </div>
@@ -222,9 +223,9 @@ export default function Lifestyle() {
               />
             </div>
 
-            {/* Slide Counter */}
-            <div className="absolute top-6 right-6 z-3 bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full">
-              <span className="text-white text-sm font-medium">
+            {/* Slide Counter - More subtle on mobile */}
+            <div className="absolute top-4 right-4 md:top-6 md:right-6 z-3 bg-black/30 md:bg-black/40 backdrop-blur-sm px-2.5 py-1.5 md:px-4 md:py-2 rounded-full">
+              <span className="text-white text-xs md:text-sm font-medium">
                 {currentIndex + 1} / {lifestyleItems.length}
               </span>
             </div>
