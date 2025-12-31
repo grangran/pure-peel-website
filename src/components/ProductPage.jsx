@@ -196,7 +196,7 @@ export default function ProductPage({ product }) {
                   <>
                     <button
                       onClick={handlePrevImage}
-                      className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-9 md:h-9 bg-black/20 hover:bg-black/30 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0"
+                      className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-9 md:h-9 bg-black/30 hover:bg-black/40 rounded-full flex items-center justify-center shadow-sm transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0"
                       aria-label="Previous image"
                     >
                       <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -205,7 +205,7 @@ export default function ProductPage({ product }) {
                     </button>
                     <button
                       onClick={handleNextImage}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-9 md:h-9 bg-black/20 hover:bg-black/30 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 md:w-9 md:h-9 bg-black/30 hover:bg-black/40 rounded-full flex items-center justify-center shadow-sm transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0"
                       aria-label="Next image"
                     >
                       <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -217,7 +217,7 @@ export default function ProductPage({ product }) {
 
                 {/* Image Counter - Only show if more than one image */}
                 {variantImages.length > 1 && (
-                  <div className="absolute bottom-3 right-3 z-20 bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full">
+                  <div className="absolute bottom-3 right-3 z-20 bg-black/50 px-3 py-1.5 rounded-full">
                     <span className="text-white text-xs md:text-sm font-medium">
                       {currentImageIndex + 1} / {variantImages.length}
                     </span>
@@ -244,10 +244,10 @@ export default function ProductPage({ product }) {
               </div>
               
               {/* About This Product - Accordion */}
-              <div className="mb-4 md:mb-5 bg-white/80 backdrop-blur-sm rounded-xl border border-stone-200/50 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
+              <div className="mb-4 md:mb-5 bg-white rounded-xl border border-stone-200/50 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
                 <button
                   onClick={() => setIsAboutExpanded(!isAboutExpanded)}
-                  className="w-full flex items-center justify-between p-4 md:p-5 text-left focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-1 transition-all duration-200 hover:bg-stone-50/60 active:scale-[0.99] group"
+                  className="w-full flex items-center justify-between p-4 md:p-5 text-left focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-1 transition-all duration-200 hover:bg-stone-50 active:scale-[0.99] group"
                   aria-expanded={isAboutExpanded}
                 >
                   <div className="flex items-center gap-3">
@@ -282,17 +282,17 @@ export default function ProductPage({ product }) {
 
               {/* Trust Badges - Simplified for mobile */}
               <div className="grid grid-cols-3 gap-1.5 md:gap-2.5 mb-4 md:mb-5">
-                <div className="text-center p-2 md:p-2.5 bg-stone-50/60 rounded-lg border border-stone-200/40">
+                <div className="text-center p-2 md:p-2.5 bg-stone-50 rounded-lg border border-stone-200/40">
                   <div className="text-[9px] md:text-[11px] font-medium text-stone-600 uppercase tracking-wide leading-tight">
                     {getTranslation(language, 'productPage.trustBadges.natural')}
                   </div>
                 </div>
-                <div className="text-center p-2 md:p-2.5 bg-stone-50/60 rounded-lg border border-stone-200/40">
+                <div className="text-center p-2 md:p-2.5 bg-stone-50 rounded-lg border border-stone-200/40">
                   <div className="text-[9px] md:text-[11px] font-medium text-stone-600 uppercase tracking-wide leading-tight">
                     {getTranslation(language, 'productPage.trustBadges.noPreservatives')}
                   </div>
                 </div>
-                <div className="text-center p-2 md:p-2.5 bg-stone-50/60 rounded-lg border border-stone-200/40">
+                <div className="text-center p-2 md:p-2.5 bg-stone-50 rounded-lg border border-stone-200/40">
                   <div className="text-[9px] md:text-[11px] font-medium text-stone-600 uppercase tracking-wide leading-tight">
                     {getTranslation(language, 'productPage.trustBadges.madeInCanada')}
                   </div>
