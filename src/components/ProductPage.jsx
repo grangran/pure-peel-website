@@ -391,7 +391,7 @@ export default function ProductPage({ product }) {
 
             {/* Quantity & Add to Cart Section */}
             <div className="mb-6 md:mb-8 pb-6 md:pb-8 border-b border-stone-200/50">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-5 md:mb-6">
+              <div className="flex flex-col items-center gap-3 sm:gap-4 mb-5 md:mb-6">
                 <span className="text-xs md:text-sm font-semibold text-stone-700 uppercase tracking-wide">{getTranslation(language, 'productPage.quantity')}</span>
                 <div className="flex items-center border border-stone-200 rounded-xl overflow-hidden bg-white shadow-sm">
                   <button
