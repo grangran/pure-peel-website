@@ -38,6 +38,7 @@ export default function Checkout() {
   const [loadingShipping, setLoadingShipping] = useState(false)
   const [shippingError, setShippingError] = useState(null)
   const [isRedirecting, setIsRedirecting] = useState(false)
+  const [hasEnteredShippingDetails, setHasEnteredShippingDetails] = useState(false)
   
   // Check for Stripe redirect
   useEffect(() => {
@@ -100,6 +101,13 @@ export default function Checkout() {
 
   const [errors, setErrors] = useState({})
 
+  // Clear shipping options on initial load
+  useEffect(() => {
+    setShippingOptions([])
+    setSelectedShipping(null)
+    setHasEnteredShippingDetails(false)
+  }, [])
+
   const [sectionRef, isSectionVisible] = useScrollReveal({ threshold: 0.1 })
 
   // No history management on mount - keep it simple
@@ -142,6 +150,12 @@ export default function Checkout() {
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }))
+    }
+    // Track when user enters shipping details
+    if (name === 'postalCode' || name === 'province' || name === 'city') {
+      if (value && !hasEnteredShippingDetails) {
+        setHasEnteredShippingDetails(true)
+      }
     }
   }
 
@@ -274,14 +288,19 @@ export default function Checkout() {
   }, []) // Only run on mount - let App.jsx handle all navigation
 
   // Fetch shipping rates when postal code, province, and city are filled
+  // Only fetch if user has actively entered shipping details (not on initial load)
   useEffect(() => {
-    if (formData.postalCode && formData.province && formData.city && cartItems.length > 0) {
+    if (hasEnteredShippingDetails && formData.postalCode && formData.province && formData.city && cartItems.length > 0) {
       const timer = setTimeout(() => {
         fetchShippingRates()
       }, 500) // Debounce
       return () => clearTimeout(timer)
+    } else if (!hasEnteredShippingDetails) {
+      // Clear shipping options if user hasn't entered details yet
+      setShippingOptions([])
+      setSelectedShipping(null)
     }
-  }, [formData.postalCode, formData.province, formData.city, cartItems])
+  }, [formData.postalCode, formData.province, formData.city, cartItems, hasEnteredShippingDetails])
 
   const handlePaymentSubmit = async (e) => {
     e.preventDefault()
@@ -442,8 +461,9 @@ export default function Checkout() {
 
   const shippingCost = calculateShipping()
   const subtotal = getCartTotal()
-  const tax = subtotal * 0.13 // 13% HST for Ontario (can be made dynamic)
-  const total = subtotal + shippingCost + tax
+  // Only calculate tax and total if shipping has been selected
+  const tax = hasEnteredShippingDetails && selectedShipping ? subtotal * 0.13 : 0 // 13% HST for Ontario (can be made dynamic)
+  const total = hasEnteredShippingDetails && selectedShipping ? subtotal + shippingCost + tax : subtotal
 
   if (cartItems.length === 0 && currentStep !== 2) {
     return (
@@ -654,8 +674,8 @@ export default function Checkout() {
                     />
                   </div>
 
-                  {/* Shipping Options */}
-                  {formData.postalCode && formData.province && formData.city && (
+                  {/* Shipping Options - Only show after user enters shipping details */}
+                  {hasEnteredShippingDetails && formData.postalCode && formData.province && formData.city && (
                     <div className="mt-5 pt-5 border-t border-gray-200">
                       <label className="block text-sm font-medium text-gray-700 mb-3">
                         {getTranslation(language, 'checkout.shippingMethod')} *
@@ -730,7 +750,7 @@ export default function Checkout() {
 
                     <button
                       type="submit"
-                      disabled={isSubmitting || (!selectedShipping && shippingOptions.length > 0)}
+                      disabled={isSubmitting || !hasEnteredShippingDetails || !selectedShipping}
                       className="w-full py-4 px-6 text-base font-semibold rounded-lg border-0 cursor-pointer transition-all duration-200 bg-amber-500 text-white hover:bg-amber-600 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-h-[52px]"
                     >
                       {isSubmitting ? (
@@ -740,7 +760,10 @@ export default function Checkout() {
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                           </svg>
-                          {getTranslation(language, 'checkout.paySecurely')} ${total.toFixed(2)} {getTranslation(language, 'checkout.paySecurelySuffix')}
+                          {hasEnteredShippingDetails && selectedShipping 
+                            ? `${getTranslation(language, 'checkout.paySecurely')} ${total.toFixed(2)} ${getTranslation(language, 'checkout.paySecurelySuffix')}`
+                            : (language === 'fr' ? 'Entrez les détails d\'expédition' : 'Enter shipping details')
+                          }
                         </>
                       )}
                     </button>
@@ -781,16 +804,26 @@ export default function Checkout() {
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">{getTranslation(language, 'checkout.shipping')}</span>
                     <span className="text-gray-900 font-medium">
-                      {shippingCost === 0 ? getTranslation(language, 'checkout.free') : `$${shippingCost.toFixed(2)}`}
+                      {!hasEnteredShippingDetails || !selectedShipping 
+                        ? (language === 'fr' ? 'À calculer' : 'To be calculated')
+                        : (shippingCost === 0 ? getTranslation(language, 'checkout.free') : `$${shippingCost.toFixed(2)}`)
+                      }
                     </span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">{getTranslation(language, 'checkout.taxHST')}</span>
-                    <span className="text-gray-900 font-medium">${tax.toFixed(2)}</span>
-                  </div>
+                  {hasEnteredShippingDetails && selectedShipping && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">{getTranslation(language, 'checkout.taxHST')}</span>
+                      <span className="text-gray-900 font-medium">${tax.toFixed(2)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray-200">
                     <span className="text-gray-900">{getTranslation(language, 'checkout.total')}</span>
-                    <span className="text-gray-900">${total.toFixed(2)} CAD</span>
+                    <span className="text-gray-900">
+                      {hasEnteredShippingDetails && selectedShipping 
+                        ? `$${total.toFixed(2)} CAD`
+                        : (language === 'fr' ? 'À calculer' : 'To be calculated')
+                      }
+                    </span>
                   </div>
                 </div>
               </div>
