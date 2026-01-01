@@ -61,6 +61,17 @@ export default function TermsOfService() {
             </ul>
           </div>
 
+          {/* Taxes and HST */}
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'terms.taxes.title')}</h2>
+            <p className="text-gray-700 leading-relaxed mb-3">{getTranslation(language, 'terms.taxes.text')}</p>
+            <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
+              <li>{getTranslation(language, 'terms.taxes.zeroRated')}</li>
+              <li>{getTranslation(language, 'terms.taxes.shippingTax')}</li>
+              <li>{getTranslation(language, 'terms.taxes.compliance')}</li>
+            </ul>
+          </div>
+
           {/* Shipping and Delivery */}
           <div>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'terms.shipping.title')}</h2>

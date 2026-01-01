@@ -446,6 +446,13 @@ export const translations = {
         confirmation: "You will receive an order confirmation email once your order is successfully placed",
         cancellation: "We reserve the right to cancel any order for any reason, including but not limited to product unavailability, pricing errors, or suspected fraudulent activity"
       },
+      taxes: {
+        title: "Taxes and HST",
+        text: "Our products are classified as zero-rated goods under Schedule VI Part III of the Excise Tax Act (Canada). Dehydrated citrus products that are unsweetened and contain no preservatives qualify as zero-rated basic groceries under Canadian tax law.",
+        zeroRated: "As such, our products are subject to 0% Harmonized Sales Tax (HST). No HST is charged on product purchases.",
+        shippingTax: "Shipping costs may be subject to applicable taxes based on your location and the shipping method selected.",
+        compliance: "We comply with all applicable Canadian tax laws and regulations, including the Excise Tax Act and provincial tax requirements."
+      },
       shipping: {
         title: "Shipping and Delivery",
         text: "Shipping terms are as follows:",
@@ -1053,6 +1060,13 @@ export const translations = {
         payment: "Le paiement doit être effectué au moment de l'achat en utilisant notre processeur de paiement sécurisé (Stripe)",
         confirmation: "Vous recevrez un courriel de confirmation de commande une fois votre commande passée avec succès",
         cancellation: "Nous nous réservons le droit d'annuler toute commande pour quelque raison que ce soit, y compris, mais sans s'y limiter, l'indisponibilité des produits, les erreurs de prix ou l'activité frauduleuse suspectée"
+      },
+      taxes: {
+        title: "Taxes et TPS",
+        text: "Nos produits sont classés comme des biens à taux zéro en vertu de la Partie III de l'Annexe VI de la Loi sur la taxe d'accise (Canada). Les produits d'agrumes déshydratés qui ne sont pas sucrés et qui ne contiennent pas de conservateurs sont admissibles comme produits d'épicerie de base à taux zéro en vertu de la législation fiscale canadienne.",
+        zeroRated: "En tant que tel, nos produits sont assujettis à 0 % de taxe de vente harmonisée (TVH). Aucune TVH n'est facturée sur les achats de produits.",
+        shippingTax: "Les coûts d'expédition peuvent être assujettis aux taxes applicables selon votre emplacement et la méthode d'expédition sélectionnée.",
+        compliance: "Nous nous conformons à toutes les lois et réglementations fiscales canadiennes applicables, y compris la Loi sur la taxe d'accise et les exigences fiscales provinciales."
       },
       shipping: {
         title: "Expédition et Livraison",
