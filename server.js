@@ -55,7 +55,9 @@ app.post('/api/create-checkout-session', async (req, res) => {
       : (total >= 50 ? 0 : 1000) // Fallback: free over $50, else $10
     
     const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity * 100), 0)
-    const tax = Math.round(subtotal * 0.13) // 13% HST
+    // Zero-rated goods under Schedule VI Part III of the Excise Tax Act
+    // Dehydrated citrus products (unsweetened, no preservatives) qualify as zero-rated basic groceries
+    const tax = 0 // 0% HST/GST - Products are zero-rated as unsweetened dried fruits
     const totalAmount = subtotal + shippingCost + tax
 
     // Create Stripe Checkout Session
