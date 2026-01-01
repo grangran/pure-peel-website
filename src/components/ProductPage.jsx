@@ -138,6 +138,8 @@ export default function ProductPage({ product }) {
     setQuantity(prev => Math.max(1, prev + delta))
   }
 
+  const variants = product?.variants || []
+
   return (
     <section className="py-6 md:py-10 lg:py-12 px-4 sm:px-6 pb-20 md:pb-24 bg-brand-bg min-h-[calc(100vh-72px)]">
       <div className="max-w-7xl mx-auto">
@@ -164,7 +166,7 @@ export default function ProductPage({ product }) {
                       key={`${selectedVariant.id}-${index}`}
                       className={`absolute inset-0 flex items-center justify-center p-4 md:p-5 transition-all duration-500 ${
                         index === currentImageIndex
-                          ? "opacity-100 z-1 scale-100"
+                          ? "opacity-100 z-10 scale-100"
                           : "opacity-0 z-0 scale-95"
                       }`}
                     >
@@ -338,7 +340,7 @@ export default function ProductPage({ product }) {
                 Select Size
               </label>
               <div className="flex flex-col gap-2 md:gap-3">
-                {/* First row: 2 buttons on mobile, 3 on desktop - centered */}
+                {/* First row: 3 buttons centered */}
                 <div className="flex justify-center gap-2 md:gap-3">
                   {product.variants.slice(0, 3).map((variant) => (
                     <button
