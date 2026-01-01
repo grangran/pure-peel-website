@@ -562,6 +562,7 @@ export const translations = {
       orderSummary: "Order Summary",
       qty: "Qty:",
       free: "Free",
+      subtotal: "Subtotal",
       taxHST: "Tax (HST)",
       total: "Total",
       orderConfirmed: "Order Confirmed!",
