@@ -89,7 +89,7 @@ export default function Nav() {
   }
 
   return (
-    <nav className={`sticky top-0 left-0 right-0 z-1000 h-[72px] bg-[#faf8f5] border-b transition-all duration-300 ${
+    <nav className={`sticky top-0 left-0 right-0 z-50 h-[72px] bg-[#faf8f5] border-b transition-all duration-300 ${
       isScrolled 
         ? 'border-gray-200/80 shadow-md backdrop-blur-sm bg-[#faf8f5]/95' 
         : 'border-gray-200/50 shadow-sm'
@@ -150,10 +150,10 @@ export default function Nav() {
             {isLangDropdownOpen && (
               <>
                 <div 
-                  className="fixed inset-0 z-998"
+                  className="fixed inset-0 z-40"
                   onClick={() => setIsLangDropdownOpen(false)}
                 />
-                <div className="absolute right-0 mt-2 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 z-999 backdrop-blur-sm">
+                <div className="absolute right-0 mt-2 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 z-50 backdrop-blur-sm">
                   <button
                     onClick={() => handleLanguageChange('en')}
                     className={`w-full text-left px-4 py-2.5 text-sm transition-all rounded-lg mx-1 active:scale-95 min-h-[44px] ${
@@ -223,12 +223,12 @@ export default function Nav() {
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-998 transition-opacity duration-250"
+          className="fixed inset-0 bg-black/50 z-40 transition-opacity duration-250"
           onClick={closeMenu}
         />
       )}
       <div 
-        className={`fixed top-[72px] left-0 sm:left-5 w-full sm:w-[380px] max-h-[calc(100vh-72px)] sm:max-h-[calc(100vh-72px-24px)] bg-[#faf8f5] sm:rounded-2xl shadow-2xl overflow-y-auto z-999 transition-all duration-300 ease-out backdrop-blur-xl ${
+        className={`fixed top-[72px] left-0 sm:left-5 w-full sm:w-[380px] max-h-[calc(100vh-72px)] sm:max-h-[calc(100vh-72px-24px)] bg-[#faf8f5] sm:rounded-2xl shadow-2xl overflow-y-auto z-50 transition-all duration-300 ease-out backdrop-blur-xl ${
           isMenuOpen 
             ? "opacity-100 pointer-events-auto translate-x-0" 
             : "opacity-0 pointer-events-none -translate-x-full sm:-translate-x-4"
