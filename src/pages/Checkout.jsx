@@ -320,7 +320,9 @@ export default function Checkout() {
     // Track checkout started
     const subtotal = getCartTotal()
     const shipping = calculateShipping()
-    const tax = subtotal * 0.13
+    // Zero-rated goods under Schedule VI Part III of the Excise Tax Act
+    // Dehydrated citrus products (unsweetened, no preservatives) qualify as zero-rated basic groceries
+    const tax = 0 // 0% HST/GST - Products are zero-rated as unsweetened dried fruits
     const total = subtotal + shipping + tax
     trackCheckoutStarted(cartItems, total)
     
@@ -461,8 +463,10 @@ export default function Checkout() {
 
   const shippingCost = calculateShipping()
   const subtotal = getCartTotal()
-  // Only calculate tax and total if shipping has been selected
-  const tax = hasEnteredShippingDetails && selectedShipping ? subtotal * 0.13 : 0 // 13% HST for Ontario (can be made dynamic)
+  // Zero-rated goods under Schedule VI Part III of the Excise Tax Act
+  // Dehydrated citrus products (unsweetened, no preservatives) qualify as zero-rated basic groceries
+  // Tax is 0% - Products are zero-rated as unsweetened dried fruits
+  const tax = 0
   const total = hasEnteredShippingDetails && selectedShipping ? subtotal + shippingCost + tax : subtotal
 
   if (cartItems.length === 0 && currentStep !== 2) {
@@ -810,6 +814,7 @@ export default function Checkout() {
                       }
                     </span>
                   </div>
+                  {/* Tax line - Products are zero-rated under Schedule VI Part III */}
                   {hasEnteredShippingDetails && selectedShipping && (
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">{getTranslation(language, 'checkout.taxHST')}</span>
