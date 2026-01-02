@@ -42,7 +42,7 @@ const appleProduct = {
       label: "Clear Box — 40 pcs",
       option: "Clear Box (40 pcs)",
       price: 20,
-      image: "/images/apple-product.jpg?v=professional"
+      image: "/images/apple-box.jpg"
     }
   ]
 }

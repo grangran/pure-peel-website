@@ -42,7 +42,7 @@ const lemonProduct = {
       label: "Clear Box — 50 pcs",
       option: "Clear Box (50 pcs)",
       price: 20,
-      image: "/images/lemon-product.jpg?v=professional"
+      image: "/images/lemon-box.jpg"
     }
   ]
 }

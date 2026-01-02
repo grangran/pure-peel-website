@@ -12,7 +12,7 @@ const citrusProducts = [
   },
   {
     id: "pink-orange",
-    image: "/images/pink-orange-product-card.jpg?v=trimmed",
+    image: "/images/pink-orange-product-card.jpg",
     link: "/pink-orange"
   },
   {
