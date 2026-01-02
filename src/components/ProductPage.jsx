@@ -182,18 +182,18 @@ export default function ProductPage({ product }) {
             <div className="relative w-full max-w-sm mx-auto lg:max-w-sm">
               {/* Image Carousel */}
               <div 
-                className="relative bg-white rounded-xl md:rounded-2xl overflow-hidden mb-4 md:mb-5 shadow-xl md:shadow-2xl border-2 border-stone-300/60"
+                className="relative mb-4 md:mb-5"
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
               >                                                                                                                                                                              
                 {imageLoading && !isImageFading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-stone-100 z-10">
+                  <div className="absolute inset-0 flex items-center justify-center bg-stone-100 z-10 rounded-xl md:rounded-2xl">
                     <Skeleton type="image" width="100%" height="100%" />
                   </div>
                 )}
                 
                 {/* Main Image Container */}
-                <div className={`aspect-square relative overflow-hidden bg-gradient-to-br ${productColors.gradient} ring-2 ${productColors.accent} rounded-lg`}>
+                <div className={`aspect-square relative overflow-hidden bg-gradient-to-br ${productColors.gradient} ring-2 ${productColors.accent} rounded-xl md:rounded-2xl shadow-xl md:shadow-2xl`}>
                   {variantImages.map((image, index) => {
                     const isBoxImage = selectedVariant.id.includes('clearbox') || selectedVariant.id.includes('box')
                     return (
