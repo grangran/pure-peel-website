@@ -152,7 +152,7 @@ export default function ProductPage({ product }) {
                 className="relative bg-white rounded-xl md:rounded-2xl overflow-hidden mb-4 md:mb-5 shadow-xl md:shadow-2xl border-2 border-stone-300/60"
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
-              >
+              >                                                                                                                                                                              
                 {imageLoading && !isImageFading && (
                   <div className="absolute inset-0 flex items-center justify-center bg-stone-100 z-10">
                     <Skeleton type="image" width="100%" height="100%" />
