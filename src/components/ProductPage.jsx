@@ -160,7 +160,7 @@ export default function ProductPage({ product }) {
                 )}
                 
                 {/* Main Image Container */}
-                <div className="aspect-square relative overflow-hidden bg-white">
+                <div className="aspect-square relative overflow-hidden bg-white border border-gray-200">
                   {variantImages.map((image, index) => {
                     const isBoxImage = selectedVariant.id.includes('clearbox') || selectedVariant.id.includes('box')
                     return (
