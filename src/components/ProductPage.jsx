@@ -161,21 +161,27 @@ export default function ProductPage({ product }) {
                 
                 {/* Main Image Container */}
                 <div className="aspect-square relative overflow-hidden bg-linear-to-br from-stone-50 to-white">
-                  {variantImages.map((image, index) => (
-                    <div
-                      key={`${selectedVariant.id}-${index}`}
-                      className={`absolute inset-0 flex items-center justify-center p-1 md:p-2 transition-all duration-500 ${
-                        index === currentImageIndex
-                          ? "opacity-100 z-10 scale-100"
-                          : "opacity-0 z-0 scale-95"
-                      }`}
-                    >
-                      <img
-                        src={image}
-                        alt={`${product.name} - Image ${index + 1}`}
-                        className={`w-full h-full object-contain drop-shadow-md ${
-                          isImageFading || imageLoading ? "opacity-0" : "opacity-100"
+                  {variantImages.map((image, index) => {
+                    const isBoxImage = selectedVariant.id.includes('clearbox') || selectedVariant.id.includes('box')
+                    return (
+                      <div
+                        key={`${selectedVariant.id}-${index}`}
+                        className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ${
+                          isBoxImage ? 'p-1 md:p-2' : 'p-0.5 md:p-1'
+                        } ${
+                          index === currentImageIndex
+                            ? "opacity-100 z-10 scale-100"
+                            : "opacity-0 z-0 scale-95"
                         }`}
+                      >
+                        <img
+                          src={image}
+                          alt={`${product.name} - Image ${index + 1}`}
+                          className={`w-full h-full ${
+                            isBoxImage ? 'object-contain' : 'object-contain'
+                          } drop-shadow-md ${
+                            isImageFading || imageLoading ? "opacity-0" : "opacity-100"
+                          }`}
                         onLoad={() => {
                           if (index === currentImageIndex) {
                             setImageLoading(false)
@@ -189,8 +195,9 @@ export default function ProductPage({ product }) {
                         }}
                         loading={index === 0 ? "eager" : "lazy"}
                       />
-                    </div>
-                  ))}
+                      </div>
+                    )
+                  })}
                 </div>
 
                 {/* Navigation Arrows - Only show if more than one image */}
