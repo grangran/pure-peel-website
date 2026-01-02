@@ -52,7 +52,7 @@ function ProductCard({ product, index, onProductClick }) {
     <a
       ref={cardRef}
       href={product.link}
-      className={`group bg-white rounded-2xl md:rounded-3xl shadow-sm border border-stone-100 text-center no-underline text-inherit p-0 w-full max-w-[340px] transition-all duration-500 ease-out flex flex-col overflow-hidden hover:-translate-y-2 md:hover:-translate-y-3 hover:shadow-xl md:hover:shadow-2xl hover:border-amber-200/50 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 ${
+      className={`group bg-gradient-to-b from-white to-[#F6F3EE] rounded-2xl md:rounded-3xl shadow-sm border border-stone-100 text-center no-underline text-inherit p-0 w-full max-w-[340px] transition-all duration-500 ease-out flex flex-col overflow-hidden hover:-translate-y-2 md:hover:-translate-y-3 hover:shadow-xl md:hover:shadow-2xl hover:border-amber-200/50 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 ${
         isCardVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
       }`}
       onClick={handleClick}
