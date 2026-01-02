@@ -57,9 +57,13 @@ function ProductCard({ product, index, onProductClick }) {
       }`}
       onClick={handleClick}
     >
-      <div className="w-full h-72 mb-0 rounded-t-3xl overflow-hidden bg-stone-50 relative">
+      <div className={`w-full h-72 mb-0 rounded-t-3xl overflow-hidden relative ${
+        product.id === 'pink-orange' ? 'bg-transparent' : 'bg-stone-50'
+      }`}>
         {imageLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-stone-100">
+          <div className={`absolute inset-0 flex items-center justify-center ${
+            product.id === 'pink-orange' ? 'bg-transparent' : 'bg-stone-100'
+          }`}>
             <Skeleton type="image" width="100%" height="100%" />
           </div>
         )}
