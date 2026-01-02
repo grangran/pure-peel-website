@@ -167,7 +167,7 @@ export default function ProductPage({ product }) {
                       <div
                         key={`${selectedVariant.id}-${index}`}
                         className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ${
-                          isBoxImage ? 'p-1' : 'p-0'
+                          isBoxImage ? 'p-2 md:p-3' : 'p-2 md:p-3'
                         } ${
                           index === currentImageIndex
                             ? "opacity-100 z-10 scale-100"
@@ -177,9 +177,7 @@ export default function ProductPage({ product }) {
                         <img
                           src={image}
                           alt={`${product.name} - Image ${index + 1}`}
-                          className={`w-full h-full ${
-                            isBoxImage ? 'object-contain' : 'object-cover'
-                          } drop-shadow-md ${
+                          className={`w-full h-full object-contain drop-shadow-md ${
                             isImageFading || imageLoading ? "opacity-0" : "opacity-100"
                           }`}
                         onLoad={() => {
