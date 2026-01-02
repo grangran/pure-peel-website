@@ -167,7 +167,7 @@ export default function ProductPage({ product }) {
                       <div
                         key={`${selectedVariant.id}-${index}`}
                         className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ${
-                          isBoxImage ? 'p-2 md:p-3' : 'p-2 md:p-3'
+                          isBoxImage ? 'p-2 md:p-3' : 'p-1 md:p-1.5'
                         } ${
                           index === currentImageIndex
                             ? "opacity-100 z-10 scale-100"
