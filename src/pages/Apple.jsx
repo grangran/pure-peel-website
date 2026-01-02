@@ -14,28 +14,28 @@ const appleProduct = {
       label: "Mini Bag — 10 pcs",
       option: "Mini Bag (10 pcs)",
       price: 6,
-      image: "/images/apple-product.jpg?v=professional"
+      image: "/images/apple-product.jpg"
     },
     {
       id: "apple-small",
       label: "Small Bag — 20 pcs",
       option: "Small Bag (20 pcs)",
       price: 13,
-      image: "/images/apple-product.jpg?v=professional"
+      image: "/images/apple-product.jpg"
     },
     {
       id: "apple-medium",
       label: "Medium Bag — 40 pcs",
       option: "Medium Bag (40 pcs)",
       price: 20,
-      image: "/images/apple-product.jpg?v=professional"
+      image: "/images/apple-product.jpg"
     },
     {
       id: "apple-large",
       label: "Large Bag — 75 pcs",
       option: "Large Bag (75 pcs)",
       price: 30,
-      image: "/images/apple-product.jpg?v=professional"
+      image: "/images/apple-product.jpg"
     },
     {
       id: "apple-clearbox",

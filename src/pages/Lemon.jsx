@@ -14,28 +14,28 @@ const lemonProduct = {
       label: "Mini Bag — 15 pcs",
       option: "Mini Bag (15 pcs)",
       price: 7,
-      image: "/images/lemon-product.jpg?v=professional"
+      image: "/images/lemon-product.jpg"
     },
     {
       id: "lemon-small",
       label: "Small Bag — 35 pcs",
       option: "Small Bag (35 pcs)",
       price: 16,
-      image: "/images/lemon-product.jpg?v=professional"
+      image: "/images/lemon-product.jpg"
     },
     {
       id: "lemon-medium",
       label: "Medium Bag — 50 pcs",
       option: "Medium Bag (50 pcs)",
       price: 20,
-      image: "/images/lemon-product.jpg?v=professional"
+      image: "/images/lemon-product.jpg"
     },
     {
       id: "lemon-large",
       label: "Large Bag — 85 pcs",
       option: "Large Bag (85 pcs)",
       price: 32,
-      image: "/images/lemon-product.jpg?v=professional"
+      image: "/images/lemon-product.jpg"
     },
     {
       id: "lemon-clearbox",

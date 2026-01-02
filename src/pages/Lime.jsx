@@ -17,28 +17,28 @@ const limeProduct = {
       label: "Mini Bag — 20 pcs",
       option: "Mini Bag (20 pcs)",
       price: 6,
-      image: "/images/lime-product.jpg?v=professional"
+      image: "/images/lime-product.jpg"
     },
     {
       id: "lime-small",
       label: "Small Bag — 50 pcs",
       option: "Small Bag (50 pcs)",
       price: 12,
-      image: "/images/lime-product.jpg?v=professional"
+      image: "/images/lime-product.jpg"
     },
     {
       id: "lime-medium",
       label: "Medium Bag — 100 pcs",
       option: "Medium Bag (100 pcs)",
       price: 23,
-      image: "/images/lime-product.jpg?v=professional"
+      image: "/images/lime-product.jpg"
     },
     {
       id: "lime-large",
       label: "Large Bag — 250 pcs",
       option: "Large Bag (250 pcs)",
       price: 58,
-      image: "/images/lime-product.jpg?v=professional"
+      image: "/images/lime-product.jpg"
     },
     {
       id: "lime-clearbox",

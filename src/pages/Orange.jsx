@@ -14,28 +14,28 @@ const orangeProduct = {
       label: "Mini Bag — 10 pcs",
       option: "Mini Bag (10 pcs)",
       price: 5,
-      image: "/images/orange-product.jpg?v=professional"
+      image: "/images/orange-product.jpg"
     },
     {
       id: "orange-small",
       label: "Small Bag — 20 pcs",
       option: "Small Bag (20 pcs)",
       price: 9,
-      image: "/images/orange-product.jpg?v=professional"
+      image: "/images/orange-product.jpg"
     },
     {
       id: "orange-medium",
       label: "Medium Bag — 40 pcs",
       option: "Medium Bag (40 pcs)",
       price: 17,
-      image: "/images/orange-product.jpg?v=professional"
+      image: "/images/orange-product.jpg"
     },
     {
       id: "orange-large",
       label: "Large Bag — 75 pcs",
       option: "Large Bag (75 pcs)",
       price: 32,
-      image: "/images/orange-product.jpg?v=professional"
+      image: "/images/orange-product.jpg"
     },
     {
       id: "orange-clearbox",
