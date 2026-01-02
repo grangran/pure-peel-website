@@ -146,7 +146,7 @@ export default function ProductPage({ product }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-16 items-start">
           {/* Image Section */}
           <div className="flex justify-center items-start lg:sticky lg:top-20">
-            <div className="relative w-full max-w-md mx-auto lg:max-w-md">
+            <div className="relative w-full max-w-sm mx-auto lg:max-w-sm">
               {/* Image Carousel */}
               <div 
                 className="relative bg-white rounded-xl md:rounded-2xl overflow-hidden mb-4 md:mb-5 shadow-xl md:shadow-2xl border-2 border-stone-300/60"
