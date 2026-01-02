@@ -143,7 +143,7 @@ export default function ProductPage({ product }) {
   return (
     <section className="py-6 md:py-10 lg:py-12 px-4 sm:px-6 pb-20 md:pb-24 bg-brand-bg min-h-[calc(100vh-72px)]">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-16 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8 items-start">
           {/* Image Section */}
           <div className="flex justify-center items-start lg:sticky lg:top-20">
             <div className="relative w-full max-w-sm mx-auto lg:max-w-sm">
