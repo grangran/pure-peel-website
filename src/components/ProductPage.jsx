@@ -25,6 +25,39 @@ export default function ProductPage({ product }) {
 
   const variantImages = getVariantImages()
 
+  // Get product-specific gradient and accent colors
+  const getProductColors = () => {
+    const productId = product.id?.toLowerCase() || product.name?.toLowerCase() || ''
+    const colors = {
+      'lemon': {
+        gradient: 'from-yellow-50 via-amber-50 to-yellow-50',
+        accent: 'ring-yellow-200/40'
+      },
+      'apple': {
+        gradient: 'from-red-50 via-rose-50 to-red-50',
+        accent: 'ring-red-200/40'
+      },
+      'orange': {
+        gradient: 'from-orange-50 via-amber-50 to-orange-50',
+        accent: 'ring-orange-200/40'
+      },
+      'pink-orange': {
+        gradient: 'from-pink-50 via-rose-50 to-pink-50',
+        accent: 'ring-pink-200/40'
+      },
+      'lime': {
+        gradient: 'from-lime-50 via-green-50 to-lime-50',
+        accent: 'ring-lime-200/40'
+      }
+    }
+    return colors[productId] || {
+      gradient: 'from-gray-50 via-stone-50 to-gray-50',
+      accent: 'ring-amber-200/40'
+    }
+  }
+
+  const productColors = getProductColors()
+
   useEffect(() => {
     // Reset all state when product changes (e.g., navigating back/forward)
     setSelectedVariant(product.variants[0])
@@ -160,7 +193,7 @@ export default function ProductPage({ product }) {
                 )}
                 
                 {/* Main Image Container */}
-                <div className="aspect-square relative overflow-hidden bg-white border border-gray-200">
+                <div className={`aspect-square relative overflow-hidden bg-gradient-to-br ${productColors.gradient} ring-2 ${productColors.accent} rounded-lg`}>
                   {variantImages.map((image, index) => {
                     const isBoxImage = selectedVariant.id.includes('clearbox') || selectedVariant.id.includes('box')
                     return (
@@ -177,7 +210,7 @@ export default function ProductPage({ product }) {
                         <img
                           src={image}
                           alt={`${product.name} - Image ${index + 1}`}
-                          className={`w-full h-full object-contain drop-shadow-md ${
+                          className={`w-full h-full object-contain drop-shadow-2xl ${
                             isImageFading || imageLoading ? "opacity-0" : "opacity-100"
                           }`}
                         onLoad={() => {
