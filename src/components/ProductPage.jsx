@@ -160,14 +160,14 @@ export default function ProductPage({ product }) {
                 )}
                 
                 {/* Main Image Container */}
-                <div className="aspect-square relative overflow-hidden bg-linear-to-br from-stone-50 to-white">
+                <div className="aspect-square relative overflow-hidden bg-white">
                   {variantImages.map((image, index) => {
                     const isBoxImage = selectedVariant.id.includes('clearbox') || selectedVariant.id.includes('box')
                     return (
                       <div
                         key={`${selectedVariant.id}-${index}`}
                         className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ${
-                          isBoxImage ? 'p-1 md:p-2' : 'p-0.5 md:p-1'
+                          isBoxImage ? 'p-1' : 'p-0'
                         } ${
                           index === currentImageIndex
                             ? "opacity-100 z-10 scale-100"
@@ -178,7 +178,7 @@ export default function ProductPage({ product }) {
                           src={image}
                           alt={`${product.name} - Image ${index + 1}`}
                           className={`w-full h-full ${
-                            isBoxImage ? 'object-contain' : 'object-contain'
+                            isBoxImage ? 'object-contain' : 'object-cover'
                           } drop-shadow-md ${
                             isImageFading || imageLoading ? "opacity-0" : "opacity-100"
                           }`}
