@@ -57,7 +57,7 @@ function ProductCard({ product, index, onProductClick }) {
       }`}
       onClick={handleClick}
     >
-      <div className={`w-full h-72 mb-0 rounded-t-3xl overflow-hidden relative ${
+      <div className={`w-full h-[305px] mb-0 rounded-t-3xl overflow-hidden relative ${
         product.id === 'pink-orange' ? 'bg-transparent' : 'bg-stone-50'
       }`}>
         {imageLoading && (
