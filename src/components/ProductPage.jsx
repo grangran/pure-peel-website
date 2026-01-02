@@ -164,7 +164,7 @@ export default function ProductPage({ product }) {
                   {variantImages.map((image, index) => (
                     <div
                       key={`${selectedVariant.id}-${index}`}
-                      className={`absolute inset-0 flex items-center justify-center p-4 md:p-5 transition-all duration-500 ${
+                      className={`absolute inset-0 flex items-center justify-center p-2 md:p-3 transition-all duration-500 ${
                         index === currentImageIndex
                           ? "opacity-100 z-10 scale-100"
                           : "opacity-0 z-0 scale-95"
