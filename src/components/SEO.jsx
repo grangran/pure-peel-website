@@ -9,9 +9,8 @@ const SEO = ({
   keywords = '',
   noindex = false
 }) => {
-  const baseUrl = typeof window !== 'undefined' 
-    ? window.location.origin 
-    : 'https://purepeelco.com'
+  // Always use the canonical domain (non-www, HTTPS)
+  const baseUrl = 'https://purepeelco.com'
   
   const fullUrl = `${baseUrl}${url}`
   const fullImageUrl = image.startsWith('http') ? image : `${baseUrl}${image}`
