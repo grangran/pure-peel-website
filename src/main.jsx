@@ -6,6 +6,7 @@ import { CartProvider } from './context/CartContext.jsx'
 import { LanguageProvider } from './context/LanguageContext.jsx'
 import { ToastProvider } from './components/ToastContainer.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
+import { Analytics } from '@vercel/analytics/react'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -14,6 +15,7 @@ createRoot(document.getElementById('root')).render(
         <CartProvider>
           <ToastProvider>
             <App />
+            <Analytics />
           </ToastProvider>
         </CartProvider>
       </LanguageProvider>
