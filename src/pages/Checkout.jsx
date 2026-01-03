@@ -183,7 +183,7 @@ export default function Checkout() {
     return Object.keys(newErrors).length === 0
   }
 
-  const fetchShippingRates = async () => {
+  const fetchShippingRates = async (retryCount = 0) => {
     if (!formData.postalCode || !formData.province || !formData.city) {
       return
     }
@@ -193,40 +193,73 @@ export default function Checkout() {
 
     try {
       const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
-      const response = await fetch(`${API_URL}/api/get-shipping-rates`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          destination: {
-            postalCode: formData.postalCode,
-            province: formData.province,
-            city: formData.city
-          },
-          cartItems: cartItems
-        }),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: `Server error: ${response.status}` }))
-        throw new Error(errorData.error || `Failed to get shipping rates (${response.status})`)
-      }
-
-      const data = await response.json()
-
-      if (!data.options || data.options.length === 0) {
-        throw new Error('No shipping options available')
-      }
-
-      setShippingOptions(data.options)
       
-      // Auto-select first option (usually cheapest)
-      if (data.options.length > 0) {
-        setSelectedShipping(data.options[0])
+      // Create an AbortController for timeout
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 15000) // 15 second timeout
+      
+      try {
+        const response = await fetch(`${API_URL}/api/get-shipping-rates`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            destination: {
+              postalCode: formData.postalCode,
+              province: formData.province,
+              city: formData.city
+            },
+            cartItems: cartItems
+          }),
+          signal: controller.signal
+        })
+
+        clearTimeout(timeoutId)
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ error: `Server error: ${response.status}` }))
+          throw new Error(errorData.error || `Failed to get shipping rates (${response.status})`)
+        }
+
+        const data = await response.json()
+
+        if (!data.options || data.options.length === 0) {
+          throw new Error('No shipping options available')
+        }
+
+        setShippingOptions(data.options)
+        
+        // Auto-select first option (usually cheapest)
+        if (data.options.length > 0) {
+          setSelectedShipping(data.options[0])
+        }
+      } catch (fetchError) {
+        clearTimeout(timeoutId)
+        
+        // If it's a timeout and we haven't retried, try once more
+        if (fetchError.name === 'AbortError' && retryCount < 1) {
+          console.log('Shipping rates request timed out, retrying...')
+          return fetchShippingRates(retryCount + 1)
+        }
+        
+        throw fetchError
       }
     } catch (error) {
       console.error('Error fetching shipping rates:', error)
+      
+      // Handle timeout errors
+      if (error.name === 'AbortError' || error.message.includes('timeout')) {
+        setShippingError('Shipping calculation is taking longer than expected. Please try again.')
+        // Retry once automatically after a short delay
+        if (retryCount === 0) {
+          setTimeout(() => {
+            fetchShippingRates(1)
+          }, 2000)
+        }
+        return
+      }
+      
       // Fallback to default shipping options if server is unavailable
       if (error.message.includes('fetch') || error.message.includes('connect') || error.message.includes('Failed to fetch')) {
         // Provide default shipping options
