@@ -34,14 +34,26 @@ After registration, you'll receive:
 
 ### Step 3: Add Credentials to Environment Variables
 
-Add these to your `.env` file:
+Add these to your `.env` file or Render environment variables:
 
+**For Development/Testing:**
 ```env
-CANADA_POST_USERNAME=your_username_here
-CANADA_POST_PASSWORD=your_password_here
-CANADA_POST_CUSTOMER_NUMBER=your_customer_number_here
+CANADA_POST_USERNAME=39fd860bcf7eff08
+CANADA_POST_PASSWORD=6204a45981dc9fd6e826ec
+CANADA_POST_CUSTOMER_NUMBER=0001238590
+CANADA_POST_USE_PRODUCTION=false
+```
 
-# Your shipping origin address
+**For Production:**
+```env
+CANADA_POST_USERNAME=h9e4989e8c7da2594
+CANADA_POST_PASSWORD=9fa07857e4f3b920f75fbd
+CANADA_POST_CUSTOMER_NUMBER=0001238590
+CANADA_POST_USE_PRODUCTION=true
+```
+
+**Your shipping origin address:**
+```env
 SHIPPING_ORIGIN_POSTAL_CODE=M5H 2N2
 SHIPPING_ORIGIN_CITY=Toronto
 SHIPPING_ORIGIN_PROVINCE=ON

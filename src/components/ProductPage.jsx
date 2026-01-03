@@ -149,7 +149,7 @@ export default function ProductPage({ product }) {
             <div className="relative w-full max-w-sm mx-auto lg:max-w-sm">
               {/* Image Carousel */}
               <div 
-                className="relative bg-gradient-to-b from-white to-[#F6F3EE] rounded-xl md:rounded-2xl overflow-hidden mb-4 md:mb-5 shadow-xl md:shadow-2xl border-2 border-stone-300/60"
+                className="relative bg-linear-to-b from-white to-[#F6F3EE] rounded-xl md:rounded-2xl overflow-hidden mb-4 md:mb-5 shadow-xl md:shadow-2xl border-2 border-stone-300/60"
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
               >                                                                                                                                                                              
@@ -160,7 +160,7 @@ export default function ProductPage({ product }) {
                 )}
                 
                 {/* Main Image Container */}
-                <div className="aspect-square relative overflow-hidden bg-gradient-to-b from-white to-[#F6F3EE] border border-gray-200">
+                <div className="aspect-square relative overflow-hidden bg-linear-to-b from-white to-[#F6F3EE] border border-gray-200">
                   {variantImages.map((image, index) => {
                     const isBoxImage = selectedVariant.id.includes('clearbox') || selectedVariant.id.includes('box')
                     return (

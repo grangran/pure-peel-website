@@ -62,7 +62,7 @@ app.post('/api/create-checkout-session', async (req, res) => {
 
     // Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
+      payment_method_types: ['card', 'apple_pay', 'google_pay'],
       line_items: lineItems,
       mode: 'payment',
       success_url: `${req.headers.origin || 'http://localhost:5173'}/checkout?success=true&session_id={CHECKOUT_SESSION_ID}`,
@@ -501,7 +501,13 @@ app.post('/api/get-shipping-rates', async (req, res) => {
       // Fall through to estimated rates if parsing failed
       console.log('Failed to parse Canada Post response, using estimated rates')
     } catch (apiError) {
-      console.error('Canada Post API error:', apiError)
+      console.error('Canada Post API error:', apiError.message || apiError)
+      console.error('Error details:', {
+        username: canadaPostUsername ? 'set' : 'missing',
+        password: canadaPostPassword ? 'set' : 'missing',
+        customerNumber: canadaPostCustomerNumber,
+        useProduction: process.env.CANADA_POST_USE_PRODUCTION
+      })
       // Fall through to estimated rates
     }
 
