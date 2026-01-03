@@ -297,7 +297,7 @@ export const sendOrderConfirmation = async (order) => {
         console.log('   To:', customerEmail)
         
             const { data, error } = await resend.emails.send({
-          from: process.env.RESEND_FROM_EMAIL,
+          from: `Pure Peel Co. <${process.env.RESEND_FROM_EMAIL}>`,
           to: customerEmail,
           replyTo: process.env.ADMIN_EMAIL || process.env.RESEND_FROM_EMAIL,
           subject: subject,
@@ -306,7 +306,6 @@ export const sendOrderConfirmation = async (order) => {
             'X-Entity-Ref-ID': order.id || 'unknown',
             'List-Unsubscribe': `<mailto:${process.env.ADMIN_EMAIL || 'support@purepeelco.com'}?subject=Unsubscribe>`,
             'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-            'Precedence': 'bulk',
             'X-Auto-Response-Suppress': 'All'
           },
           tags: [
@@ -391,7 +390,7 @@ export const sendShippingNotification = async (order, trackingNumber = null) => 
       }
       
       const { data, error } = await resend.emails.send({
-        from: process.env.RESEND_FROM_EMAIL,
+        from: `Pure Peel Co. <${process.env.RESEND_FROM_EMAIL}>`,
         to: customerEmail,
         replyTo: process.env.ADMIN_EMAIL || process.env.RESEND_FROM_EMAIL,
         subject: subject,
@@ -400,7 +399,6 @@ export const sendShippingNotification = async (order, trackingNumber = null) => 
           'X-Entity-Ref-ID': order.id || 'unknown',
           'List-Unsubscribe': `<mailto:${process.env.ADMIN_EMAIL || 'support@purepeelco.com'}?subject=Unsubscribe>`,
           'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-          'Precedence': 'bulk',
           'X-Auto-Response-Suppress': 'All'
         },
         tags: [
