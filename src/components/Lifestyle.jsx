@@ -16,17 +16,12 @@ const lifestyleItems = [
   },
   {
     id: 3,
-    image: "/images/decorated-lime-box.jpg",
-    key: "gift"
-  },
-  {
-    id: 4,
-    image: "/images/drinks.jpg",
+    image: "/images/drinks.png",
     key: "drinks"
   },
   {
-    id: 5,
-    image: "/images/decorated-orange-box.jpg",
+    id: 4,
+    image: "/images/decorated-orange-box.png",
     key: "giftOrange"
   }
 ]
