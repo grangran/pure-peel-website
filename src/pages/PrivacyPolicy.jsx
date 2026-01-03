@@ -3,14 +3,14 @@ import { useLanguage } from "../context/LanguageContext"
 import { getTranslation } from "../utils/translations"
 
 export default function PrivacyPolicy() {
-  const [sectionRef, isSectionVisible] = useScrollReveal({ threshold: 0.1 })
+  const [sectionRef, isSectionVisible] = useScrollReveal({ threshold: 0.05 })
   const { language } = useLanguage()
 
   return (
     <section 
       ref={sectionRef} 
-      className={`py-8 md:py-12 px-4 sm:px-5 bg-gray-50 min-h-screen transition-all duration-800 ${
-        isSectionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+      className={`py-8 md:py-12 px-4 sm:px-5 bg-gray-50 min-h-screen transition-all duration-500 ${
+        isSectionVisible ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0 md:opacity-0 md:translate-y-8'
       }`}
     >
       <div className="max-w-4xl mx-auto">
