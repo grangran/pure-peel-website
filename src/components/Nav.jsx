@@ -71,13 +71,24 @@ export default function Nav() {
   const handleLinkClick = (e, targetId) => {
     e.preventDefault()
     closeMenu()
-    const element = document.getElementById(targetId)
-    if (element) {
-      const offset = navHeight + 20
-      const elementPosition = element.getBoundingClientRect().top
-      const offsetPosition = elementPosition + window.pageYOffset - offset
-      window.scrollTo({ top: offsetPosition, behavior: "smooth" })
+    
+    // Navigate to home page first if not already there
+    const currentPath = window.location.pathname.replace(/\/$/, '')
+    if (currentPath !== '/' && currentPath !== '') {
+      window.history.pushState({ page: '/' }, '', '/')
+      window.dispatchEvent(new Event('hashchange'))
     }
+    
+    // Wait for page to render, then scroll to section
+    setTimeout(() => {
+      const element = document.getElementById(targetId)
+      if (element) {
+        const offset = navHeight + 20
+        const elementPosition = element.getBoundingClientRect().top
+        const offsetPosition = elementPosition + window.pageYOffset - offset
+        window.scrollTo({ top: offsetPosition, behavior: "smooth" })
+      }
+    }, 100)
   }
 
   const handleShopLink = (e, product) => {

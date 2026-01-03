@@ -284,17 +284,17 @@ export const translations = {
           title: "Shipping Methods",
           regular: {
             name: "Regular Parcel",
-            time: "5-7 business days",
+            time: "3 business days",
             description: "Standard delivery within Canada with tracking"
           },
           expedited: {
             name: "Expedited Parcel",
-            time: "3-5 business days",
+            time: "2 business days",
             description: "Faster delivery with tracking and signature confirmation"
           },
           xpresspost: {
             name: "Xpresspost",
-            time: "2-3 business days",
+            time: "1 business day",
             description: "Express delivery with signature confirmation and priority handling"
           }
         }
@@ -312,7 +312,7 @@ export const translations = {
       shippingCosts: {
         title: "Shipping Costs",
         text1: "Shipping costs are calculated based on your location, package weight, and selected shipping method. Rates are displayed at checkout before you complete your purchase.",
-        text2: "All orders require shipping fees. Rates start from approximately $10 CAD for Regular Parcel within Canada."
+        text2: "All orders require shipping fees. Rates start from approximately $12 CAD for Regular Parcel within Canada."
       },
       orderTracking: {
         title: "Order Tracking",
@@ -899,17 +899,17 @@ export const translations = {
           title: "Méthodes d'Expédition",
           regular: {
             name: "Colis Régulier",
-            time: "5-7 jours ouvrables",
+            time: "3 jours ouvrables",
             description: "Livraison standard au Canada avec suivi"
           },
           expedited: {
             name: "Colis Accéléré",
-            time: "3-5 jours ouvrables",
+            time: "2 jours ouvrables",
             description: "Livraison plus rapide avec suivi et confirmation de signature"
           },
           xpresspost: {
             name: "Xpresspost",
-            time: "2-3 jours ouvrables",
+            time: "1 jour ouvrable",
             description: "Livraison express avec confirmation de signature et traitement prioritaire"
           }
         }
@@ -927,7 +927,7 @@ export const translations = {
       shippingCosts: {
         title: "Frais d'Expédition",
         text1: "Les frais d'expédition sont calculés en fonction de votre emplacement, du poids du colis et de la méthode d'expédition sélectionnée. Les tarifs sont affichés à la caisse avant de finaliser votre achat.",
-        text2: "Toutes les commandes nécessitent des frais d'expédition. Les tarifs commencent à environ 10 $ CAD pour le Colis Régulier au Canada."
+        text2: "Toutes les commandes nécessitent des frais d'expédition. Les tarifs commencent à environ 12 $ CAD pour le Colis Régulier au Canada."
       },
       orderTracking: {
         title: "Suivi de Commande",
