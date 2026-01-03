@@ -192,7 +192,7 @@ export default function Checkout() {
     setShippingError(null)
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+      const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
       const response = await fetch(`${API_URL}/api/get-shipping-rates`, {
         method: 'POST',
         headers: {
@@ -331,7 +331,7 @@ export default function Checkout() {
 
     try {
       // Create Stripe Checkout Session
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+      const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
       let response
       try {
         response = await fetch(`${API_URL}/api/create-checkout-session`, {
@@ -398,7 +398,7 @@ export default function Checkout() {
   const handlePaymentSuccess = async (sessionId) => {
     try {
       // Verify the payment with the backend
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+      const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
       const response = await fetch(`${API_URL}/api/checkout-session/${sessionId}`)
       const session = await response.json()
 
