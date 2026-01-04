@@ -850,10 +850,25 @@ function parseCanadaPostResponse(xml, country = 'Canada') {
       
       const price = parseFloat(priceMatch[1])
       
-      // Get description based on country
-      const description = country === 'United States' 
-        ? getServiceDescription(serviceInfo.name, country)
-        : getServiceDescription(serviceInfo.name, country)
+      // Build description based on service name and country
+      let description = 'Standard delivery'
+      if (country === 'United States') {
+        if (serviceInfo.name.includes('Tracked Packet')) {
+          description = 'Standard delivery to US with tracking (5-10 business days)'
+        } else if (serviceInfo.name.includes('Xpresspost')) {
+          description = 'Faster delivery to US with tracking and insurance (2-3 business days)'
+        } else if (serviceInfo.name.includes('Priority Worldwide')) {
+          description = 'Express delivery to US with signature (1-2 business days)'
+        }
+      } else {
+        if (serviceInfo.name.includes('Regular Parcel')) {
+          description = 'Standard delivery within Canada'
+        } else if (serviceInfo.name.includes('Expedited Parcel')) {
+          description = 'Faster delivery with tracking'
+        } else if (serviceInfo.name.includes('Xpresspost')) {
+          description = 'Express delivery with signature'
+        }
+      }
       
       rates.push({
         id: serviceInfo.name.toLowerCase().replace(/\s+/g, '-'),
