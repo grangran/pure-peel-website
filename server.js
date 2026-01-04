@@ -61,8 +61,9 @@ app.post('/api/create-checkout-session', async (req, res) => {
     const totalAmount = subtotal + shippingCost + tax
 
     // Create Stripe Checkout Session
+    // Note: 'card' automatically enables Apple Pay and Google Pay when available
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card', 'apple_pay', 'google_pay'],
+      payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
       success_url: `${req.headers.origin || 'http://localhost:5173'}/checkout?success=true&session_id={CHECKOUT_SESSION_ID}`,
@@ -474,32 +475,48 @@ app.post('/api/get-shipping-rates', async (req, res) => {
   </destination>
 </mailing-scenario>`
 
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${auth}`,
-          'Content-Type': 'application/vnd.cpc.ship.rate-v4+xml',
-          'Accept': 'application/vnd.cpc.ship.rate-v4+xml'
-        },
-        body: xmlBody
-      })
-
-      if (!response.ok) {
-        const errorText = await response.text()
-        console.error('Canada Post API error:', response.status, errorText)
-        throw new Error(`Canada Post API error: ${response.statusText}`)
-      }
-
-      const xmlData = await response.text()
-      const rates = parseCanadaPostResponse(xmlData)
+      // Add timeout to Canada Post API call (20 seconds)
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 20000)
       
-      // If we got rates from API, return them
-      if (rates && rates.length > 0) {
-        return res.json({ options: rates })
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Basic ${auth}`,
+            'Content-Type': 'application/vnd.cpc.ship.rate-v4+xml',
+            'Accept': 'application/vnd.cpc.ship.rate-v4+xml'
+          },
+          body: xmlBody,
+          signal: controller.signal
+        })
+        
+        clearTimeout(timeoutId)
+
+        if (!response.ok) {
+          const errorText = await response.text()
+          console.error('Canada Post API error:', response.status, errorText)
+          throw new Error(`Canada Post API error: ${response.statusText}`)
+        }
+
+        const xmlData = await response.text()
+        const rates = parseCanadaPostResponse(xmlData)
+        
+        // If we got rates from API, return them
+        if (rates && rates.length > 0) {
+          return res.json({ options: rates })
+        }
+        
+        // Fall through to estimated rates if parsing failed
+        console.log('Failed to parse Canada Post response, using estimated rates')
+      } catch (fetchError) {
+        clearTimeout(timeoutId)
+        if (fetchError.name === 'AbortError') {
+          console.error('Canada Post API request timed out after 20 seconds')
+          throw new Error('Canada Post API request timed out')
+        }
+        throw fetchError
       }
-      
-      // Fall through to estimated rates if parsing failed
-      console.log('Failed to parse Canada Post response, using estimated rates')
     } catch (apiError) {
       console.error('Canada Post API error:', apiError.message || apiError)
       console.error('Error details:', {
