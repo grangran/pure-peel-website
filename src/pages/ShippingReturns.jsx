@@ -127,7 +127,7 @@ export default function ShippingReturns() {
               </div>
             </div>
             <p className="text-xs md:text-sm text-gray-600 italic mt-4">
-              {getTranslation(language, 'shipping.usShipping.note')}
+              Prices shown are in {currency}. Delivery times are estimates and may vary based on destination and customs processing. Packages are shipped via Canada Post and delivered by USPS within the United States.
             </p>
           </div>
 
