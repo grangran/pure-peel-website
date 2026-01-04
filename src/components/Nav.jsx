@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { useCart } from "../context/CartContext"
 import { useLanguage } from "../context/LanguageContext"
+import { useCurrency } from "../context/CurrencyContext"
 import { getTranslation } from "../utils/translations"
 
 export default function Nav() {
@@ -9,13 +10,16 @@ export default function Nav() {
   const { cartCount, isCartOpen, setIsCartOpen, getCartTotal } = useCart()
   const [badgeUpdated, setBadgeUpdated] = useState(false)
   const { language, setLanguage } = useLanguage()
+  const { currency, setCurrency } = useCurrency()
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false)
+  const [isCurrencyDropdownOpen, setIsCurrencyDropdownOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
 
   // Reset menu state when component mounts or when route changes
   useEffect(() => {
     setIsMenuOpen(false)
     setIsLangDropdownOpen(false)
+    setIsCurrencyDropdownOpen(false)
   }, []) // Reset on mount - component will remount with key prop from App.jsx
 
   useEffect(() => {
