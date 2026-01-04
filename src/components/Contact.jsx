@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useScrollReveal } from "../hooks/useScrollReveal"
 import { useLanguage } from "../context/LanguageContext"
 import { getTranslation } from "../utils/translations"
@@ -18,6 +18,26 @@ export default function ContactForm() {
   const [titleRef, isTitleVisible] = useScrollReveal({ threshold: 0.2, delay: 100 })
   const [formRef, isFormVisible] = useScrollReveal({ threshold: 0.1, delay: 200 })
   const { language } = useLanguage()
+
+  // Handle URL parameters for pre-filling form (e.g., from bulk inquiry button)
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const subject = urlParams.get('subject')
+    const message = urlParams.get('message')
+    
+    if (message) {
+      setFormData(prev => ({
+        ...prev,
+        message: message
+      }))
+    }
+    
+    // Clean up URL parameters after reading them
+    if (subject || message) {
+      const newUrl = window.location.pathname
+      window.history.replaceState({}, '', newUrl)
+    }
+  }, [])
 
   const handleChange = (e) => {
     const { name, value } = e.target
