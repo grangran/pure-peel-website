@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import { useCart } from "../context/CartContext"
 import { useLanguage } from "../context/LanguageContext"
+import { useCurrency } from "../context/CurrencyContext"
 import { getTranslation, translateVariantLabel } from "../utils/translations"
 import Skeleton from "./Skeleton"
 import LoadingSpinner from "./LoadingSpinner"
@@ -17,6 +18,7 @@ export default function ProductPage({ product }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const { addToCart } = useCart()
   const { language } = useLanguage()
+  const { currency, formatPrice } = useCurrency()
 
   // Get images for the selected variant (only variant image for now)
   const getVariantImages = () => {
@@ -328,8 +330,8 @@ export default function ProductPage({ product }) {
             {/* Price - Cleaner on mobile */}
             <div className="mb-6 md:mb-8 pb-4 md:pb-6 border-b border-stone-200/50">
               <div className="flex items-baseline gap-2 mb-2">
-                <span className="text-4xl md:text-5xl font-bold text-stone-900">${selectedVariant.price.toFixed(2)}</span>
-                <span className="text-lg md:text-xl text-stone-500 font-medium">CAD</span>
+                <span className="text-4xl md:text-5xl font-bold text-stone-900">{formatPrice(selectedVariant.price)}</span>
+                <span className="text-lg md:text-xl text-stone-500 font-medium">{currency}</span>
               </div>
               <p className="text-xs md:text-sm text-stone-500 font-medium flex items-center gap-1.5">
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,12 +1,14 @@
 import { useState } from "react"
 import { useCart } from "../context/CartContext"
 import { useLanguage } from "../context/LanguageContext"
+import { useCurrency } from "../context/CurrencyContext"
 import { getTranslation, translateVariantLabel } from "../utils/translations"
 
 export default function Cart({ isOpen, onClose }) {
   const { cartItems, removeFromCart, updateQuantity, getCartTotal } = useCart()
   const [removingItem, setRemovingItem] = useState(null)
   const { language } = useLanguage()
+  const { currency, formatPrice } = useCurrency()
 
   const handleQuantityChange = (productId, variant, newQuantity) => {
     const quantity = parseInt(newQuantity) || 0
@@ -201,7 +203,7 @@ export default function Cart({ isOpen, onClose }) {
                             </div>
                             <div className="text-right">
                               <p className="text-lg font-bold text-gray-900 m-0">
-                                ${(item.price * item.quantity).toFixed(2)}
+                                {formatPrice(item.price * item.quantity)}
                               </p>
                             </div>
                           </div>
@@ -219,7 +221,7 @@ export default function Cart({ isOpen, onClose }) {
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-base text-gray-600">{getTranslation(language, 'cart.subtotal')}</span>
                     <span className="text-2xl font-bold text-gray-900">
-                      ${getCartTotal().toFixed(2)} CAD
+                      {formatPrice(getCartTotal())} {currency}
                     </span>
                   </div>
                   <p className="text-xs text-gray-500 m-0 text-center mt-2">
