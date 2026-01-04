@@ -8,6 +8,7 @@ const limeProduct = {
   id: "lime",
   name: "Lime",
   description: "Bright, crisp, and refreshing. Essential for margaritas, mojitos, and gin & tonics. Adds a zesty kick to iced tea and cuts through rich flavors on charcuterie boards.",
+  showBulkInquiry: true, // Enable bulk inquiry button for this product
   galleryImages: [
     "/images/freshlimes.jpg"
   ],

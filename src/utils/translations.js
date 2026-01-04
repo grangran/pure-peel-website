@@ -19,6 +19,9 @@ export const translations = {
       quantity: "Quantity:",
       addToCart: "Add to Cart",
       adding: "Adding...",
+      inquireBulk: "Inquire About Larger Quantities",
+      inquireBulkSubject: "Bulk Order Inquiry",
+      inquireBulkMessage: "I'm interested in ordering larger quantities of {product} slices. Please contact me with pricing and availability.",
       trustBadges: {
         natural: "100% Natural",
         noPreservatives: "No Preservatives",
@@ -607,6 +610,9 @@ export const translations = {
       quantity: "Quantité :",
       addToCart: "Ajouter au Panier",
       adding: "Ajout en cours...",
+      inquireBulk: "Demander des quantités plus importantes",
+      inquireBulkSubject: "Demande de commande en gros",
+      inquireBulkMessage: "Je suis intéressé(e) à commander de plus grandes quantités de tranches de {product}. Veuillez me contacter pour les prix et la disponibilité.",
       trustBadges: {
         natural: "100% Naturel",
         noPreservatives: "Sans Conservateurs",

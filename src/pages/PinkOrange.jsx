@@ -8,6 +8,7 @@ const pinkOrangeProduct = {
   id: "pink-orange",
   name: "Pink Orange",
   description: "Floral, vibrant, and uniquely beautiful. Perfect for premium cocktails and spritzes, elevates tea presentations with stunning color, and creates eye-catching gourmet displays on charcuterie boards.",
+  showBulkInquiry: true, // Enable bulk inquiry button for this product
   galleryImages: [
     "/images/pinkorange-fresh.jpg"
   ],

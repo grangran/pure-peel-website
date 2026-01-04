@@ -8,6 +8,7 @@ const lemonProduct = {
   id: "lemon",
   name: "Lemon",
   description: "Tart, zesty, and refreshing. Perfect for lemon drops, whiskey sours, and classic tea pairings. Brightens charcuterie boards and complements creamy cheeses.",
+  showBulkInquiry: true, // Enable bulk inquiry button for this product
   variants: [
     {
       id: "lemon-mini",

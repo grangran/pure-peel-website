@@ -448,17 +448,22 @@ export default function ProductPage({ product }) {
               </button>
 
               {/* Bulk Inquiry Button - Show only if product has showBulkInquiry flag */}
-              {product.showBulkInquiry && (
-                <a
-                  href={`/contact?subject=Bulk Order Inquiry - ${product.name}&message=I'm interested in ordering larger quantities of ${product.name} slices. Please contact me with pricing and availability.`}
-                  className="w-full py-3.5 md:py-4 px-5 text-sm md:text-base font-semibold rounded-xl border-2 border-stone-300 bg-white text-stone-700 hover:bg-stone-50 hover:border-stone-400 transition-all duration-200 flex items-center justify-center gap-2.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] min-h-[48px] md:min-h-[52px] focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                  </svg>
-                  {language === 'fr' ? 'Demander des quantités plus importantes' : 'Inquire About Larger Quantities'}
-                </a>
-              )}
+              {product.showBulkInquiry && (() => {
+                const productName = product.id ? getTranslation(language, `products.${product.id}.name`) : product.name
+                const subject = `${getTranslation(language, 'productPage.inquireBulkSubject')} - ${productName}`
+                const message = getTranslation(language, 'productPage.inquireBulkMessage').replace('{product}', productName)
+                return (
+                  <a
+                    href={`/contact?subject=${encodeURIComponent(subject)}&message=${encodeURIComponent(message)}`}
+                    className="w-full py-3.5 md:py-4 px-5 text-sm md:text-base font-semibold rounded-xl border-2 border-stone-300 bg-white text-stone-700 hover:bg-stone-50 hover:border-stone-400 transition-all duration-200 flex items-center justify-center gap-2.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] min-h-[48px] md:min-h-[52px] focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    {getTranslation(language, 'productPage.inquireBulk')}
+                  </a>
+                )
+              })()}
             </div>
           </div>
         </div>

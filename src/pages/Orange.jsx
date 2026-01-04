@@ -8,6 +8,7 @@ const orangeProduct = {
   id: "orange",
   name: "Orange",
   description: "Sweet, zesty, and aromatic. Ideal for classic cocktails like Old Fashioneds and mimosas, adds natural sweetness to hot or iced tea, and pairs beautifully with cheeses and cured meats on charcuterie boards.",
+  showBulkInquiry: true, // Enable bulk inquiry button for this product
   variants: [
     {
       id: "orange-mini",
