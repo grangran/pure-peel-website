@@ -289,8 +289,8 @@ export default function ProductPage({ product }) {
 
               {/* Trust Badges - Simplified for mobile */}
               <div className="grid grid-cols-3 gap-1.5 md:gap-2.5 mb-4 md:mb-5">
-                <div className="text-center p-2 md:p-2.5 bg-stone-50 rounded-lg border border-stone-200/40">
-                  <div className="text-[9px] md:text-[11px] font-medium text-stone-600 uppercase tracking-wide leading-tight">
+                <div className="flex items-center justify-center p-2 md:p-2.5 bg-stone-50 rounded-lg border border-stone-200/40">
+                  <div className="text-[9px] md:text-[11px] font-medium text-stone-600 uppercase tracking-wide leading-tight text-center">
                     {getTranslation(language, 'productPage.trustBadges.natural')}
                   </div>
                 </div>
