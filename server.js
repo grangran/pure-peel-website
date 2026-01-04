@@ -445,6 +445,7 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
     }
 
     const country = destination.country || 'Canada'
+    console.log('🌍 Shipping rate request - Country:', country, 'Postal Code:', destination.postalCode)
     
     if (!destination.postalCode || !validatePostalCode(destination.postalCode, country)) {
       return res.status(400).json({ 

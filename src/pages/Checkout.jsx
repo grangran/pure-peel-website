@@ -897,7 +897,7 @@ export default function Checkout() {
                         <p className="text-sm font-semibold text-gray-900 truncate mb-1">{item.name}</p>
                         <p className="text-xs text-gray-500 mb-1.5">{item.variant}</p>
                         <p className="text-sm text-gray-700 font-medium">
-                          {getTranslation(language, 'checkout.qty')} {item.quantity} × ${item.price}.00
+                          {getTranslation(language, 'checkout.qty')} {item.quantity} × ${item.price.toFixed(2)}
                         </p>
                       </div>
                     </div>
@@ -928,7 +928,7 @@ export default function Checkout() {
                     <span className="text-gray-900">{getTranslation(language, 'checkout.total')}</span>
                     <span className="text-gray-900">
                       {hasEnteredShippingDetails && selectedShipping 
-                        ? `$${total.toFixed(2)} CAD`
+                        ? `$${total.toFixed(2)} ${formData.country === 'United States' ? 'USD' : 'CAD'}`
                         : (language === 'fr' ? 'À calculer' : 'To be calculated')
                       }
                     </span>
