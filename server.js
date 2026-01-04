@@ -6,6 +6,7 @@ import express from 'express'
 import cors from 'cors'
 import Stripe from 'stripe'
 import dotenv from 'dotenv'
+import rateLimit from 'express-rate-limit'
 import { saveOrder, getAllOrders, getOrderById, updateOrderStatus, getOrderStats, markEmailSent, hasEmailBeenSent } from './utils/orderStorage.js'
 import { sendOrderConfirmation, sendShippingNotification, sendAdminNotification } from './utils/emailService.js'
 
@@ -14,9 +15,74 @@ dotenv.config()
 const app = express()
 const PORT = process.env.PORT || 3001
 
+// CORS configuration - restrict to your domains only
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true)
+    
+    const allowedOrigins = [
+      'https://purepeelco.com',
+      'https://www.purepeelco.com',
+      'http://localhost:5173', // Development only
+      'http://localhost:3000' // Development only
+    ]
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200
+}
+
+// Security headers middleware
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff')
+  res.setHeader('X-Frame-Options', 'DENY')
+  res.setHeader('X-XSS-Protection', '1; mode=block')
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
+  res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()')
+  next()
+})
+
+// Rate limiting
+// General API rate limiter - 100 requests per 15 minutes per IP
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+})
+
+// Stricter rate limiter for checkout - 5 attempts per 15 minutes per IP
+const checkoutLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 checkout attempts per 15 minutes
+  message: 'Too many checkout attempts, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+})
+
+// Stricter rate limiter for shipping rates - 20 requests per 15 minutes per IP
+const shippingLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // Limit each IP to 20 shipping rate requests per 15 minutes
+  message: 'Too many shipping rate requests, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+})
+
 // Middleware
-app.use(cors())
-app.use(express.json())
+app.use(cors(corsOptions))
+app.use(express.json({ limit: '10mb' })) // Limit request body size
+
+// Apply rate limiting to API routes
+app.use('/api/', apiLimiter)
 
 // Initialize Stripe with your secret key
 // Get this from https://dashboard.stripe.com/apikeys
@@ -24,8 +90,17 @@ const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY)
   : null
 
+// Input validation helper
+const validateEmail = (email) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+}
+
+const validatePostalCode = (postalCode) => {
+  return /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/.test(postalCode)
+}
+
 // Create Checkout Session
-app.post('/api/create-checkout-session', async (req, res) => {
+app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
   try {
     if (!stripe) {
       return res.status(500).json({ 
@@ -34,6 +109,40 @@ app.post('/api/create-checkout-session', async (req, res) => {
     }
 
     const { items, shippingInfo, total } = req.body
+
+    // Input validation
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: 'Items are required and must be a non-empty array' })
+    }
+
+    if (!shippingInfo) {
+      return res.status(400).json({ error: 'Shipping information is required' })
+    }
+
+    if (!shippingInfo.email || !validateEmail(shippingInfo.email)) {
+      return res.status(400).json({ error: 'Valid email address is required' })
+    }
+
+    if (!shippingInfo.firstName || !shippingInfo.firstName.trim()) {
+      return res.status(400).json({ error: 'First name is required' })
+    }
+
+    if (!shippingInfo.lastName || !shippingInfo.lastName.trim()) {
+      return res.status(400).json({ error: 'Last name is required' })
+    }
+
+    // Validate items
+    for (const item of items) {
+      if (!item.name || !item.variant || !item.price || !item.quantity) {
+        return res.status(400).json({ error: 'Each item must have name, variant, price, and quantity' })
+      }
+      if (typeof item.price !== 'number' || item.price <= 0) {
+        return res.status(400).json({ error: 'Item price must be a positive number' })
+      }
+      if (typeof item.quantity !== 'number' || item.quantity <= 0 || item.quantity > 100) {
+        return res.status(400).json({ error: 'Item quantity must be between 1 and 100' })
+      }
+    }
 
     // Create line items for Stripe
     const lineItems = items.map(item => ({
@@ -320,9 +429,30 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
 })
 
 // Get Canada Post Shipping Rates
-app.post('/api/get-shipping-rates', async (req, res) => {
+app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
   try {
     const { destination, cartItems } = req.body
+
+    // Input validation
+    if (!destination) {
+      return res.status(400).json({ error: 'Destination information is required' })
+    }
+
+    if (!destination.postalCode || !validatePostalCode(destination.postalCode)) {
+      return res.status(400).json({ error: 'Valid Canadian postal code is required' })
+    }
+
+    if (!destination.province || !destination.province.trim()) {
+      return res.status(400).json({ error: 'Province is required' })
+    }
+
+    if (!destination.city || !destination.city.trim()) {
+      return res.status(400).json({ error: 'City is required' })
+    }
+
+    if (!cartItems || !Array.isArray(cartItems)) {
+      return res.status(400).json({ error: 'Cart items must be an array' })
+    }
 
     // Validate input
     if (!destination || !destination.postalCode || !cartItems || cartItems.length === 0) {
