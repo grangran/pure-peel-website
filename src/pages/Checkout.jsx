@@ -409,11 +409,12 @@ export default function Checkout() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
+            body: JSON.stringify({
             items: cartItems,
             shippingInfo: {
               ...formData,
-              selectedShipping: selectedShipping
+              selectedShipping: selectedShipping,
+              language: language // Include language preference for email translations
             },
             total: getCartTotal(),
           }),
