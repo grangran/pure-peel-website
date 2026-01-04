@@ -24,34 +24,106 @@ export default function ShippingReturns() {
         <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 md:p-8 mb-6 md:mb-8">
           <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">{getTranslation(language, 'shipping.shippingInfo.title')}</h2>
           
-          {/* Shipping Methods */}
-          <div className="mb-5 md:mb-6">
-            <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'shipping.shippingInfo.methods.title')}</h3>
+          {/* Shipping to Canada */}
+          <div className="mb-6 md:mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-2xl">🇨🇦</span>
+              <h3 className="text-lg md:text-xl font-semibold text-gray-900">Shipping Within Canada</h3>
+            </div>
             <div className="space-y-3 md:space-y-4">
-              <div className="border border-gray-200 rounded-lg p-3 md:p-4">
+              <div className="border-2 border-gray-200 rounded-xl p-4 md:p-5 hover:border-amber-300 transition-colors">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2 gap-2">
-                  <h4 className="font-semibold text-sm md:text-base text-gray-900">{getTranslation(language, 'shipping.shippingInfo.methods.regular.name')}</h4>
-                  <span className="text-xs md:text-sm font-medium text-gray-600 shrink-0">{getTranslation(language, 'shipping.shippingInfo.methods.regular.time')}</span>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-base md:text-lg text-gray-900 mb-1">{getTranslation(language, 'shipping.shippingInfo.methods.regular.name')}</h4>
+                    <p className="text-xs md:text-sm text-gray-600 mb-2">{getTranslation(language, 'shipping.shippingInfo.methods.regular.description')}</p>
+                  </div>
+                  <div className="text-right sm:text-left sm:ml-4">
+                    <span className="text-sm md:text-base font-semibold text-gray-900 block">{getTranslation(language, 'shipping.shippingInfo.methods.regular.time')}</span>
+                    <span className="text-xs text-gray-500">Starting at $12 CAD</span>
+                  </div>
                 </div>
-                <p className="text-xs md:text-sm text-gray-700">{getTranslation(language, 'shipping.shippingInfo.methods.regular.description')}</p>
               </div>
               
-              <div className="border border-gray-200 rounded-lg p-3 md:p-4">
+              <div className="border-2 border-gray-200 rounded-xl p-4 md:p-5 hover:border-amber-300 transition-colors">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2 gap-2">
-                  <h4 className="font-semibold text-sm md:text-base text-gray-900">{getTranslation(language, 'shipping.shippingInfo.methods.expedited.name')}</h4>
-                  <span className="text-xs md:text-sm font-medium text-gray-600 shrink-0">{getTranslation(language, 'shipping.shippingInfo.methods.expedited.time')}</span>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-base md:text-lg text-gray-900 mb-1">{getTranslation(language, 'shipping.shippingInfo.methods.expedited.name')}</h4>
+                    <p className="text-xs md:text-sm text-gray-600 mb-2">{getTranslation(language, 'shipping.shippingInfo.methods.expedited.description')}</p>
+                  </div>
+                  <div className="text-right sm:text-left sm:ml-4">
+                    <span className="text-sm md:text-base font-semibold text-gray-900 block">{getTranslation(language, 'shipping.shippingInfo.methods.expedited.time')}</span>
+                    <span className="text-xs text-gray-500">Starting at $18 CAD</span>
+                  </div>
                 </div>
-                <p className="text-xs md:text-sm text-gray-700">{getTranslation(language, 'shipping.shippingInfo.methods.expedited.description')}</p>
               </div>
               
-              <div className="border border-gray-200 rounded-lg p-3 md:p-4">
+              <div className="border-2 border-amber-200 bg-amber-50/30 rounded-xl p-4 md:p-5 hover:border-amber-300 transition-colors">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2 gap-2">
-                  <h4 className="font-semibold text-sm md:text-base text-gray-900">{getTranslation(language, 'shipping.shippingInfo.methods.xpresspost.name')}</h4>
-                  <span className="text-xs md:text-sm font-medium text-gray-600 shrink-0">{getTranslation(language, 'shipping.shippingInfo.methods.xpresspost.time')}</span>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-base md:text-lg text-gray-900 mb-1">{getTranslation(language, 'shipping.shippingInfo.methods.xpresspost.name')}</h4>
+                    <p className="text-xs md:text-sm text-gray-600 mb-2">{getTranslation(language, 'shipping.shippingInfo.methods.xpresspost.description')}</p>
+                  </div>
+                  <div className="text-right sm:text-left sm:ml-4">
+                    <span className="text-sm md:text-base font-semibold text-gray-900 block">{getTranslation(language, 'shipping.shippingInfo.methods.xpresspost.time')}</span>
+                    <span className="text-xs text-gray-500">Starting at $22 CAD</span>
+                  </div>
                 </div>
-                <p className="text-xs md:text-sm text-gray-700">{getTranslation(language, 'shipping.shippingInfo.methods.xpresspost.description')}</p>
               </div>
             </div>
+          </div>
+
+          {/* Shipping to United States */}
+          <div className="mb-5 md:mb-6 pt-6 border-t-2 border-gray-200">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-2xl">🇺🇸</span>
+              <h3 className="text-lg md:text-xl font-semibold text-gray-900">{getTranslation(language, 'shipping.usShipping.title')}</h3>
+            </div>
+            <p className="text-sm md:text-base text-gray-700 mb-4">
+              {getTranslation(language, 'shipping.usShipping.text1')}
+            </p>
+            <div className="space-y-3 md:space-y-4">
+              <div className="border-2 border-gray-200 rounded-xl p-4 md:p-5 hover:border-amber-300 transition-colors">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2 gap-2">
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-base md:text-lg text-gray-900 mb-1">Tracked Packet - USA</h4>
+                    <p className="text-xs md:text-sm text-gray-600 mb-2">Standard delivery to US with tracking (5-10 business days)</p>
+                  </div>
+                  <div className="text-right sm:text-left sm:ml-4">
+                    <span className="text-sm md:text-base font-semibold text-gray-900 block">5-10 business days</span>
+                    <span className="text-xs text-gray-500">Starting at $18 CAD</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="border-2 border-gray-200 rounded-xl p-4 md:p-5 hover:border-amber-300 transition-colors">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2 gap-2">
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-base md:text-lg text-gray-900 mb-1">Xpresspost - USA</h4>
+                    <p className="text-xs md:text-sm text-gray-600 mb-2">Faster delivery to US with tracking and insurance (2-3 business days)</p>
+                  </div>
+                  <div className="text-right sm:text-left sm:ml-4">
+                    <span className="text-sm md:text-base font-semibold text-gray-900 block">2-3 business days</span>
+                    <span className="text-xs text-gray-500">Starting at $28 CAD</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="border-2 border-amber-200 bg-amber-50/30 rounded-xl p-4 md:p-5 hover:border-amber-300 transition-colors">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2 gap-2">
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-base md:text-lg text-gray-900 mb-1">Priority Worldwide - USA</h4>
+                    <p className="text-xs md:text-sm text-gray-600 mb-2">Express delivery to US with signature (1-2 business days)</p>
+                  </div>
+                  <div className="text-right sm:text-left sm:ml-4">
+                    <span className="text-sm md:text-base font-semibold text-gray-900 block">1-2 business days</span>
+                    <span className="text-xs text-gray-500">Starting at $45 CAD</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p className="text-xs md:text-sm text-gray-600 italic mt-4">
+              {getTranslation(language, 'shipping.usShipping.note')}
+            </p>
           </div>
 
           {/* Shipping Times */}
@@ -77,13 +149,20 @@ export default function ShippingReturns() {
           </div>
 
           {/* Shipping Costs */}
-          <div className="mb-5 md:mb-6">
+          <div className="mb-5 md:mb-6 pt-6 border-t-2 border-gray-200">
             <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'shipping.shippingCosts.title')}</h3>
-            <p className="text-sm md:text-base text-gray-700 mb-3">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 md:p-5 mb-3">
+              <p className="text-sm md:text-base text-gray-900 font-semibold mb-2">How Shipping Costs Work:</p>
+              <ul className="list-disc list-inside space-y-1.5 text-xs md:text-sm text-gray-700 ml-2">
+                <li>Shipping costs are calculated automatically at checkout based on your destination</li>
+                <li>Rates vary by location, package weight, and selected shipping method</li>
+                <li>Canada: Starting at $12 CAD for Regular Parcel</li>
+                <li>United States: Starting at $18 CAD for Tracked Packet</li>
+                <li>All prices shown are in Canadian dollars (CAD) - use the currency selector to view in USD</li>
+              </ul>
+            </div>
+            <p className="text-sm md:text-base text-gray-700">
               {getTranslation(language, 'shipping.shippingCosts.text1')}
-            </p>
-            <p className="text-xs md:text-sm text-gray-700">
-              {getTranslation(language, 'shipping.shippingCosts.text2')}
             </p>
           </div>
 
@@ -119,24 +198,6 @@ export default function ShippingReturns() {
             </p>
           </div>
 
-          {/* US Shipping */}
-          <div className="mb-5 md:mb-6">
-            <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'shipping.usShipping.title')}</h3>
-            <p className="text-sm md:text-base text-gray-700 mb-3">
-              {getTranslation(language, 'shipping.usShipping.text1')}
-            </p>
-            <p className="text-sm md:text-base text-gray-700 mb-2">
-              {getTranslation(language, 'shipping.usShipping.text2')}
-            </p>
-            <ul className="list-disc list-inside space-y-2 text-xs md:text-sm text-gray-700 ml-2 md:ml-4 mb-3">
-              <li>{getTranslation(language, 'shipping.usShipping.item1')}</li>
-              <li>{getTranslation(language, 'shipping.usShipping.item2')}</li>
-              <li>{getTranslation(language, 'shipping.usShipping.item3')}</li>
-            </ul>
-            <p className="text-xs md:text-sm text-gray-600 italic">
-              {getTranslation(language, 'shipping.usShipping.note')}
-            </p>
-          </div>
 
           {/* International Shipping */}
           <div>
