@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { useCart } from "../context/CartContext"
 import { useScrollReveal } from "../hooks/useScrollReveal"
 import { useLanguage } from "../context/LanguageContext"
+import { useCurrency } from "../context/CurrencyContext"
 import { getTranslation } from "../utils/translations"
 import { trackCheckoutStarted, trackPurchase } from "../utils/analytics"
 import LoadingSpinner from "../components/LoadingSpinner"
@@ -31,6 +32,7 @@ const usStates = [
 export default function Checkout() {
   const { cartItems, getCartTotal, clearCart, setIsCartOpen } = useCart()
   const { language } = useLanguage()
+  const { currency, convertPrice, formatPrice } = useCurrency()
   const [currentStep, setCurrentStep] = useState(1) // 1: Checkout (combined), 2: Confirmation
   
   // Track step changes (only for confirmation)
@@ -822,7 +824,7 @@ export default function Checkout() {
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between">
                                   <span className="font-medium text-sm text-gray-900">{option.name}</span>
-                                  <span className="font-semibold text-sm text-gray-900">${option.price.toFixed(2)}</span>
+                                  <span className="font-semibold text-sm text-gray-900">{formatPrice(option.price)}</span>
                                 </div>
                                 <p className="text-xs text-gray-500 mt-0.5">
                                   {option.estimatedDays} {getTranslation(language, 'checkout.businessDays')}
@@ -897,7 +899,7 @@ export default function Checkout() {
                         <p className="text-sm font-semibold text-gray-900 truncate mb-1">{item.name}</p>
                         <p className="text-xs text-gray-500 mb-1.5">{item.variant}</p>
                         <p className="text-sm text-gray-700 font-medium">
-                          {getTranslation(language, 'checkout.qty')} {item.quantity} × ${item.price.toFixed(2)}
+                          {getTranslation(language, 'checkout.qty')} {item.quantity} × {formatPrice(item.price)}
                         </p>
                       </div>
                     </div>
@@ -906,14 +908,14 @@ export default function Checkout() {
                 <div className="space-y-3 pt-5 border-t-2 border-gray-100">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.subtotal')}</span>
-                    <span className="text-gray-900 font-semibold">${subtotal.toFixed(2)}</span>
+                    <span className="text-gray-900 font-semibold">{formatPrice(subtotal)}</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.shipping')}</span>
                     <span className="text-gray-900 font-semibold">
                       {!hasEnteredShippingDetails || !selectedShipping 
                         ? (language === 'fr' ? 'À calculer' : 'To be calculated')
-                        : (shippingCost === 0 ? getTranslation(language, 'checkout.free') : `$${shippingCost.toFixed(2)}`)
+                        : (shippingCost === 0 ? getTranslation(language, 'checkout.free') : formatPrice(shippingCost))
                       }
                     </span>
                   </div>
@@ -921,14 +923,14 @@ export default function Checkout() {
                   {hasEnteredShippingDetails && selectedShipping && (
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.taxHST')}</span>
-                      <span className="text-gray-900 font-semibold">${tax.toFixed(2)}</span>
+                      <span className="text-gray-900 font-semibold">{formatPrice(tax)}</span>
                     </div>
                   )}
                   <div className="flex justify-between items-center text-xl font-bold pt-4 border-t-2 border-gray-200 mt-4">
                     <span className="text-gray-900">{getTranslation(language, 'checkout.total')}</span>
                     <span className="text-gray-900">
                       {hasEnteredShippingDetails && selectedShipping 
-                        ? `$${total.toFixed(2)} ${formData.country === 'United States' ? 'USD' : 'CAD'}`
+                        ? `${formatPrice(total)} ${currency}`
                         : (language === 'fr' ? 'À calculer' : 'To be calculated')
                       }
                     </span>
