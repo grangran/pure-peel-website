@@ -191,6 +191,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
         customer_name: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
         customer_phone: shippingInfo.phone,
         order_notes: shippingInfo.notes || '',
+        language: shippingInfo.language || 'en', // Store language preference
       },
       // Add shipping cost
       shipping_options: shippingCost > 0 ? [{
@@ -350,6 +351,8 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
         const orderData = {
           stripeSessionId: session.id,
           stripePaymentIntentId: session.payment_intent,
+          language: session.metadata?.language || 'en', // Store language from metadata
+          metadata: { language: session.metadata?.language || 'en' }, // Also store in metadata for email service
           customer: {
             name: session.metadata?.customer_name || session.customer_details?.name || 'N/A',
             email: session.customer_email || session.customer_details?.email || 'N/A',

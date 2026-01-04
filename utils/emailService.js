@@ -53,8 +53,8 @@ const getTransporter = () => {
   return createTransporter()
 }
 
-// Email templates
-const orderConfirmationTemplate = (order, trackingUrl) => {
+// Email templates - English
+const orderConfirmationTemplateEN = (order, trackingUrl) => {
   const itemsList = (order.items || []).map(item => 
     `  • ${item.name || 'Item'} (${item.variant || 'N/A'}) - Qty: ${item.quantity || 1} - $${(item.total || 0).toFixed(2)}`
   ).join('\n')
@@ -151,6 +151,113 @@ const orderConfirmationTemplate = (order, trackingUrl) => {
 </body>
 </html>
   `
+}
+
+// Email templates - French
+const orderConfirmationTemplateFR = (order, trackingUrl) => {
+  const itemsList = (order.items || []).map(item => 
+    `  • ${item.name || 'Article'} (${item.variant || 'N/A'}) - Qté : ${item.quantity || 1} - ${(item.total || 0).toFixed(2)} $`
+  ).join('\n')
+  
+  const customerName = order.customer?.name || 'Client'
+  const customerEmail = order.customer?.email || ''
+  const shippingName = order.shipping?.name || customerName
+  const shippingAddress = order.shipping?.address || {}
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+    .content { background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; }
+    .order-info { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #f59e0b; }
+    .items { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; }
+    .total { background: #fef3c7; padding: 20px; margin: 20px 0; border-radius: 8px; text-align: right; }
+    .button { display: inline-block; padding: 12px 24px; background: #f59e0b; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; }
+    .footer { text-align: center; padding: 20px; color: #6b7280; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🍁 Commande Confirmée !</h1>
+      <p>Merci pour votre commande chez Pure Peel Co.</p>
+    </div>
+    
+    <div class="content">
+      <p>Bonjour ${customerName},</p>
+      
+      <p>Nous sommes ravis de vous informer que nous avons reçu votre commande et que le paiement a été confirmé !</p>
+      
+      <div class="order-info">
+        <h2 style="margin-top: 0;">Détails de la Commande</h2>
+        <p><strong>Numéro de Commande :</strong> ${order.id || 'N/A'}</p>
+        <p><strong>Date de Commande :</strong> ${order.createdAt ? new Date(order.createdAt).toLocaleDateString('fr-CA', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }) : new Date().toLocaleDateString('fr-CA')}</p>
+        <p><strong>Statut :</strong> <span style="color: #f59e0b; font-weight: bold;">${(order.status || 'en attente').charAt(0).toUpperCase() + (order.status || 'en attente').slice(1)}</span></p>
+      </div>
+
+      <div class="items">
+        <h3 style="margin-top: 0;">Articles Commandés :</h3>
+        <pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${itemsList}</pre>
+      </div>
+
+      <div class="total">
+        <p style="margin: 5px 0;"><strong>Sous-total :</strong> ${(order.subtotal || 0).toFixed(2)} $ ${order.currency || 'CAD'}</p>
+        <p style="margin: 5px 0;"><strong>Expédition :</strong> ${(order.shippingCost || 0).toFixed(2)} $ ${order.currency || 'CAD'}</p>
+        <p style="margin: 5px 0;"><strong>Taxe :</strong> ${(order.tax || 0).toFixed(2)} $ ${order.currency || 'CAD'}</p>
+        <p style="margin: 10px 0 0 0; font-size: 18px; font-weight: bold;">Total : ${(order.total || 0).toFixed(2)} $ ${order.currency || 'CAD'}</p>
+      </div>
+
+      <div style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px;">
+        <h3 style="margin-top: 0;">Adresse de Livraison :</h3>
+        <p>
+          ${shippingName}<br>
+          ${shippingAddress.line1 || ''}<br>
+          ${shippingAddress.line2 ? shippingAddress.line2 + '<br>' : ''}
+          ${shippingAddress.city || ''}${shippingAddress.city && shippingAddress.state ? ',' : ''} ${shippingAddress.state || ''} ${shippingAddress.postal_code || ''}<br>
+          ${shippingAddress.country || ''}
+        </p>
+        <p><strong>Méthode d'Expédition :</strong> ${order.shipping?.method || 'Expédition Standard'}</p>
+      </div>
+
+      ${trackingUrl ? `
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${trackingUrl}" class="button">Suivre Votre Commande</a>
+      </div>
+      ` : ''}
+
+      <p>Nous vous enverrons un autre e-mail lorsque votre commande sera expédiée avec les informations de suivi.</p>
+      
+      <p>Si vous avez des questions, n'hésitez pas à nous contacter.</p>
+      
+      <p>Merci d'avoir choisi Pure Peel Co. 🍁</p>
+    </div>
+
+    <div class="footer">
+      <p>Pure Peel Co. | Fabriqué au Canada</p>
+      <p>Ceci est un e-mail automatisé. Veuillez ne pas répondre directement à ce message.</p>
+    </div>
+  </div>
+</body>
+</html>
+  `
+}
+
+// Language-aware template selector
+const orderConfirmationTemplate = (order, trackingUrl, language = 'en') => {
+  return language === 'fr' 
+    ? orderConfirmationTemplateFR(order, trackingUrl)
+    : orderConfirmationTemplateEN(order, trackingUrl)
 }
 
 const shippingNotificationTemplate = (order, trackingNumber) => {
@@ -285,8 +392,13 @@ export const sendOrderConfirmation = async (order) => {
   try {
     const customerEmail = order.customer?.email || ''
     const trackingUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/order-tracking?orderId=${order.id || ''}&email=${encodeURIComponent(customerEmail)}`
-    const htmlContent = orderConfirmationTemplate(order, trackingUrl)
-    const subject = `Order Confirmation - ${order.id} | Pure Peel Co.`
+    
+    // Detect language from order metadata or default to 'en'
+    const language = order.metadata?.language || order.language || 'en'
+    const htmlContent = orderConfirmationTemplate(order, trackingUrl, language)
+    const subject = language === 'fr' 
+      ? `Confirmation de Commande - ${order.id} | Pure Peel Co.`
+      : `Order Confirmation - ${order.id} | Pure Peel Co.`
     
     // Use Resend if configured
     if (resend && process.env.RESEND_FROM_EMAIL) {
