@@ -748,11 +748,12 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
         
         // If we got rates from API, return them
         if (rates && rates.length > 0) {
+          console.log(`✅ Canada Post API returned ${rates.length} rates for ${country}`)
           return res.json({ options: rates })
         }
         
         // Fall through to estimated rates if parsing failed
-        console.log('Failed to parse Canada Post response, using estimated rates')
+        console.log(`⚠️ Failed to parse Canada Post response for ${country}, using estimated rates`)
       } catch (fetchError) {
         clearTimeout(timeoutId)
         if (fetchError.name === 'AbortError') {
