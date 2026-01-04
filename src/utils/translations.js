@@ -343,10 +343,10 @@ export const translations = {
         title: "Shipping to the United States",
         text1: "We now ship to the United States! Select 'United States' as your country during checkout to see available shipping options.",
         text2: "US shipping options include:",
-        item1: "First-Class Package: Standard delivery (5-7 business days) - Starting at $18 CAD",
-        item2: "Priority Mail: Faster delivery (2-3 business days) - Starting at $25 CAD",
-        item3: "Priority Mail Express: Express delivery (1-2 business days) - Starting at $45 CAD",
-        note: "All prices are in Canadian dollars (CAD). Delivery times are estimates and may vary based on destination and customs processing."
+        item1: "Tracked Packet - USA: Standard delivery (5-10 business days) - Starting at $18 CAD",
+        item2: "Xpresspost - USA: Faster delivery (2-3 business days) - Starting at $28 CAD",
+        item3: "Priority Worldwide - USA: Express delivery (1-2 business days) - Starting at $45 CAD",
+        note: "All prices are in Canadian dollars (CAD). Delivery times are estimates and may vary based on destination and customs processing. Packages are shipped via Canada Post and delivered by USPS within the United States."
       },
       returns: {
         title: "Issue Resolution & Product Replacement",
@@ -975,10 +975,10 @@ export const translations = {
         title: "Expédition aux États-Unis",
         text1: "Nous expédions maintenant aux États-Unis ! Sélectionnez 'États-Unis' comme pays lors de la caisse pour voir les options d'expédition disponibles.",
         text2: "Les options d'expédition vers les États-Unis incluent :",
-        item1: "Colis First-Class : Livraison standard (5-7 jours ouvrables) - À partir de 18 $ CAD",
-        item2: "Priority Mail : Livraison plus rapide (2-3 jours ouvrables) - À partir de 25 $ CAD",
-        item3: "Priority Mail Express : Livraison express (1-2 jours ouvrables) - À partir de 45 $ CAD",
-        note: "Tous les prix sont en dollars canadiens (CAD). Les délais de livraison sont des estimations et peuvent varier selon la destination et le traitement des douanes."
+        item1: "Colis Suivi - É.-U. : Livraison standard (5-10 jours ouvrables) - À partir de 18 $ CAD",
+        item2: "Xpresspost - É.-U. : Livraison plus rapide (2-3 jours ouvrables) - À partir de 28 $ CAD",
+        item3: "Priority Worldwide - É.-U. : Livraison express (1-2 jours ouvrables) - À partir de 45 $ CAD",
+        note: "Tous les prix sont en dollars canadiens (CAD). Les délais de livraison sont des estimations et peuvent varier selon la destination et le traitement des douanes. Les colis sont expédiés via Postes Canada et livrés par USPS aux États-Unis."
       },
       returns: {
         title: "Résolution des Problèmes et Remplacement de Produit",

@@ -572,12 +572,13 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
 
     const getEstimatedDays = (serviceName, country = 'Canada') => {
       if (country === 'United States') {
+        // Canada Post US services
         const days = {
-          'First-Class Package': 6,      // 5-7 business days
-          'Priority Mail': 3,            // 2-3 business days
-          'Priority Mail Express': 2     // 1-2 business days
+          'Tracked Packet - USA': 7,           // 5-10 business days
+          'Xpresspost - USA': 3,              // 2-3 business days
+          'Priority Worldwide - USA': 2       // 1-2 business days
         }
-        return days[serviceName] || 6
+        return days[serviceName] || 7
       } else {
         const days = { 
           'Regular Parcel': 3,      // Updated from 5 - Ontario is typically 2-5 days
@@ -590,10 +591,11 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
 
     const getServiceDescription = (serviceName, country = 'Canada') => {
       if (country === 'United States') {
+        // Canada Post US services
         const descriptions = {
-          'First-Class Package': 'Standard delivery to US (5-7 business days)',
-          'Priority Mail': 'Faster delivery with tracking (2-3 business days)',
-          'Priority Mail Express': 'Express delivery with signature (1-2 business days)'
+          'Tracked Packet - USA': 'Standard delivery to US with tracking (5-10 business days)',
+          'Xpresspost - USA': 'Faster delivery to US with tracking and insurance (2-3 business days)',
+          'Priority Worldwide - USA': 'Express delivery to US with signature (1-2 business days)'
         }
         return descriptions[serviceName] || 'Standard delivery to US'
       } else {
@@ -606,28 +608,31 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
       }
     }
 
-    // Handle US shipping separately (always use estimated rates for now)
-    if (country === 'United States') {
-      console.log('US shipping requested, using estimated USPS rates')
-      
+    // Helper function for estimated US rates (Canada Post services)
+    const calculateEstimatedUSRate = (postalCode, weight, serviceType) => {
+      // Base rates for Canada Post US services (in CAD)
       const baseRates = {
-        'First-Class Package': calculateEstimatedRate(destination.postalCode, weight, 'first-class', country),
-        'Priority Mail': calculateEstimatedRate(destination.postalCode, weight, 'priority', country),
-        'Priority Mail Express': calculateEstimatedRate(destination.postalCode, weight, 'priority-express', country)
+        'tracked-packet': 18.00,      // Tracked Packet - USA
+        'xpresspost-usa': 28.00,      // Xpresspost - USA
+        'priority-worldwide': 45.00  // Priority Worldwide - USA
       }
-
-      const shippingOptions = Object.entries(baseRates).map(([name, price]) => ({
-        id: name.toLowerCase().replace(/\s+/g, '-'),
-        name: name,
-        price: price,
-        estimatedDays: getEstimatedDays(name, country),
-        description: getServiceDescription(name, country)
-      }))
-
-      return res.json({ options: shippingOptions })
+      
+      let rate = baseRates[serviceType] || 18.00
+      
+      // Weight-based pricing (convert kg to lbs: 1kg = 2.2lbs)
+      const weightLbs = weight * 2.2
+      if (weightLbs > 1 && weightLbs <= 2) {
+        rate += 3.00
+      } else if (weightLbs > 2 && weightLbs <= 4) {
+        rate += 6.00
+      } else if (weightLbs > 4) {
+        rate += 6.00 + ((weightLbs - 4) / 1) * 2.00
+      }
+      
+      return Math.round(rate * 100) / 100
     }
 
-    // Check if Canada Post credentials are configured (for Canada only)
+    // Check if Canada Post credentials are configured
     const canadaPostUsername = process.env.CANADA_POST_USERNAME
     const canadaPostPassword = process.env.CANADA_POST_PASSWORD
     const canadaPostCustomerNumber = process.env.CANADA_POST_CUSTOMER_NUMBER || '0001238590' // Your customer number from the portal
@@ -636,24 +641,44 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
     if (!canadaPostUsername || !canadaPostPassword) {
       console.log('Canada Post credentials not configured, using estimated rates')
       
-      const baseRates = {
-        'Regular Parcel': calculateEstimatedRate(destination.postalCode, weight, 'regular', country),
-        'Expedited Parcel': calculateEstimatedRate(destination.postalCode, weight, 'expedited', country),
-        'Xpresspost': calculateEstimatedRate(destination.postalCode, weight, 'xpresspost', country)
+      if (country === 'United States') {
+        // Estimated rates for US (Canada Post services)
+        const baseRates = {
+          'Tracked Packet - USA': calculateEstimatedUSRate(destination.postalCode, weight, 'tracked-packet'),
+          'Xpresspost - USA': calculateEstimatedUSRate(destination.postalCode, weight, 'xpresspost-usa'),
+          'Priority Worldwide - USA': calculateEstimatedUSRate(destination.postalCode, weight, 'priority-worldwide')
+        }
+
+        const shippingOptions = Object.entries(baseRates).map(([name, price]) => ({
+          id: name.toLowerCase().replace(/\s+/g, '-'),
+          name: name,
+          price: price,
+          estimatedDays: getEstimatedDays(name, country),
+          description: getServiceDescription(name, country)
+        }))
+
+        return res.json({ options: shippingOptions })
+      } else {
+        // Estimated rates for Canada
+        const baseRates = {
+          'Regular Parcel': calculateEstimatedRate(destination.postalCode, weight, 'regular', country),
+          'Expedited Parcel': calculateEstimatedRate(destination.postalCode, weight, 'expedited', country),
+          'Xpresspost': calculateEstimatedRate(destination.postalCode, weight, 'xpresspost', country)
+        }
+
+        const shippingOptions = Object.entries(baseRates).map(([name, price]) => ({
+          id: name.toLowerCase().replace(/\s+/g, '-'),
+          name: name,
+          price: price,
+          estimatedDays: getEstimatedDays(name, country),
+          description: getServiceDescription(name, country)
+        }))
+
+        return res.json({ options: shippingOptions })
       }
-
-      const shippingOptions = Object.entries(baseRates).map(([name, price]) => ({
-        id: name.toLowerCase().replace(/\s+/g, '-'),
-        name: name,
-        price: price,
-        estimatedDays: getEstimatedDays(name, country),
-        description: getServiceDescription(name, country)
-      }))
-
-      return res.json({ options: shippingOptions })
     }
 
-    // Real Canada Post API integration (Canada only)
+    // Real Canada Post API integration (supports both Canada and US)
     try {
       const auth = Buffer.from(`${canadaPostUsername}:${canadaPostPassword}`).toString('base64')
       
@@ -661,6 +686,20 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
       const apiUrl = process.env.CANADA_POST_USE_PRODUCTION === 'true'
         ? 'https://soa-gw.canadapost.ca/rs/ship/price'
         : 'https://ct.soa-gw.canadapost.ca/rs/ship/price'
+
+      // Build XML based on destination country
+      let destinationXml
+      if (country === 'United States') {
+        // US destination - use united-states element
+        destinationXml = `<united-states>
+      <postal-code>${destination.postalCode.replace(/\s+/g, '').replace(/-/g, '').substring(0, 5)}</postal-code>
+    </united-states>`
+      } else {
+        // Canadian destination - use domestic element
+        destinationXml = `<domestic>
+      <postal-code>${destination.postalCode.replace(/\s+/g, '')}</postal-code>
+    </domestic>`
+      }
 
       const xmlBody = `<?xml version="1.0" encoding="UTF-8"?>
 <mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v4">
@@ -675,9 +714,7 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
   </parcel-characteristics>
   <origin-postal-code>${origin.postalCode.replace(/\s+/g, '')}</origin-postal-code>
   <destination>
-    <domestic>
-      <postal-code>${destination.postalCode.replace(/\s+/g, '')}</postal-code>
-    </domestic>
+    ${destinationXml}
   </destination>
 </mailing-scenario>`
 
@@ -706,7 +743,7 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
         }
 
         const xmlData = await response.text()
-        const rates = parseCanadaPostResponse(xmlData)
+        const rates = parseCanadaPostResponse(xmlData, country)
         
         // If we got rates from API, return them
         if (rates && rates.length > 0) {
@@ -735,10 +772,19 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
     }
 
     // Fallback to estimated rates if API call fails
-    const baseRates = {
-      'Regular Parcel': calculateEstimatedRate(destination.postalCode, weight, 'regular', country),
-      'Expedited Parcel': calculateEstimatedRate(destination.postalCode, weight, 'expedited', country),
-      'Xpresspost': calculateEstimatedRate(destination.postalCode, weight, 'xpresspost', country)
+    let baseRates
+    if (country === 'United States') {
+      baseRates = {
+        'Tracked Packet - USA': calculateEstimatedUSRate(destination.postalCode, weight, 'tracked-packet'),
+        'Xpresspost - USA': calculateEstimatedUSRate(destination.postalCode, weight, 'xpresspost-usa'),
+        'Priority Worldwide - USA': calculateEstimatedUSRate(destination.postalCode, weight, 'priority-worldwide')
+      }
+    } else {
+      baseRates = {
+        'Regular Parcel': calculateEstimatedRate(destination.postalCode, weight, 'regular', country),
+        'Expedited Parcel': calculateEstimatedRate(destination.postalCode, weight, 'expedited', country),
+        'Xpresspost': calculateEstimatedRate(destination.postalCode, weight, 'xpresspost', country)
+      }
     }
 
     const shippingOptions = Object.entries(baseRates).map(([name, price]) => ({
@@ -757,17 +803,27 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
 })
 
 // Parse Canada Post XML response
-function parseCanadaPostResponse(xml) {
+function parseCanadaPostResponse(xml, country = 'Canada') {
   const rates = []
   
   try {
-    // Service code mappings
-    const serviceMap = {
-      'DOM.RP': { name: 'Regular Parcel', days: 5 },
-      'DOM.EP': { name: 'Expedited Parcel', days: 3 },
-      'DOM.XP': { name: 'Xpresspost', days: 2 },
+    // Service code mappings for Canada
+    const canadaServiceMap = {
+      'DOM.RP': { name: 'Regular Parcel', days: 3 },
+      'DOM.EP': { name: 'Expedited Parcel', days: 2 },
+      'DOM.XP': { name: 'Xpresspost', days: 1 },
       'DOM.PC': { name: 'Priority', days: 1 }
     }
+    
+    // Service code mappings for US
+    const usServiceMap = {
+      'USA.TP': { name: 'Tracked Packet - USA', days: 7 },
+      'USA.EP': { name: 'Xpresspost - USA', days: 3 },
+      'USA.PW': { name: 'Priority Worldwide - USA', days: 2 },
+      'USA.PW.ENV': { name: 'Priority Worldwide - USA', days: 2 }
+    }
+    
+    const serviceMap = country === 'United States' ? usServiceMap : canadaServiceMap
     
     // Extract price quotes from XML
     const priceQuoteRegex = /<price-quote>([\s\S]*?)<\/price-quote>/g
@@ -782,7 +838,11 @@ function parseCanadaPostResponse(xml) {
       
       const serviceCode = serviceCodeMatch[1]
       const serviceInfo = serviceMap[serviceCode]
-      if (!serviceInfo) continue
+      if (!serviceInfo) {
+        // Log unmapped service codes for debugging
+        console.log(`Unmapped service code: ${serviceCode} for country: ${country}`)
+        continue
+      }
       
       // Extract price
       const priceMatch = quoteXml.match(/<base>([^<]+)<\/base>/)
@@ -790,12 +850,17 @@ function parseCanadaPostResponse(xml) {
       
       const price = parseFloat(priceMatch[1])
       
+      // Get description based on country
+      const description = country === 'United States' 
+        ? getServiceDescription(serviceInfo.name, country)
+        : getServiceDescription(serviceInfo.name, country)
+      
       rates.push({
         id: serviceInfo.name.toLowerCase().replace(/\s+/g, '-'),
         name: serviceInfo.name,
         price: price,
         estimatedDays: serviceInfo.days,
-        description: getServiceDescription(serviceInfo.name),
+        description: description,
         serviceCode: serviceCode
       })
     }
@@ -808,16 +873,6 @@ function parseCanadaPostResponse(xml) {
   }
   
   return rates
-}
-
-function getServiceDescription(serviceName) {
-  const descriptions = {
-    'Regular Parcel': 'Standard delivery within Canada',
-    'Expedited Parcel': 'Faster delivery with tracking',
-    'Xpresspost': 'Express delivery with signature',
-    'Priority': 'Priority express delivery'
-  }
-  return descriptions[serviceName] || 'Standard delivery'
 }
 
 // Health check endpoint
