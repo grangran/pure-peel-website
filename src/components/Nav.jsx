@@ -142,12 +142,74 @@ export default function Nav() {
           <img src="/logo.png" alt="Pure Peel Co." className="h-[36px] md:h-[42px] w-auto max-w-[160px] md:max-w-[200px] block object-contain" />
         </a>
 
-        {/* Right: Language & Cart */}
+        {/* Right: Currency, Language & Cart */}
         <div className="flex items-center gap-3">
+          {/* Currency Selector */}
+          <div className="relative">
+            <button
+              onClick={() => {
+                setIsCurrencyDropdownOpen(!isCurrencyDropdownOpen)
+                setIsLangDropdownOpen(false) // Close language dropdown if open
+              }}
+              className="flex items-center gap-1 px-2.5 md:px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 rounded-lg hover:bg-white/50 transition-all duration-200 active:scale-95 min-w-[44px] min-h-[44px]"
+              aria-label="Select currency"
+            >
+              <span className="text-xs uppercase">{currency}</span>
+              <svg 
+                className={`w-3.5 h-3.5 md:w-4 md:h-4 transition-transform hidden md:block ${isCurrencyDropdownOpen ? 'rotate-180' : ''}`}
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            
+            {isCurrencyDropdownOpen && (
+              <>
+                <div 
+                  className="fixed inset-0 z-40"
+                  onClick={() => setIsCurrencyDropdownOpen(false)}
+                />
+                <div className="absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 z-50 backdrop-blur-sm">
+                  <button
+                    onClick={() => {
+                      setCurrency('CAD')
+                      setIsCurrencyDropdownOpen(false)
+                    }}
+                    className={`w-full text-left px-4 py-2.5 text-sm transition-all rounded-lg mx-1 active:scale-95 min-h-[44px] ${
+                      currency === 'CAD' 
+                        ? 'bg-amber-50 text-amber-600 font-semibold' 
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    CAD - Canadian Dollar
+                  </button>
+                  <button
+                    onClick={() => {
+                      setCurrency('USD')
+                      setIsCurrencyDropdownOpen(false)
+                    }}
+                    className={`w-full text-left px-4 py-2.5 text-sm transition-all rounded-lg mx-1 active:scale-95 min-h-[44px] ${
+                      currency === 'USD' 
+                        ? 'bg-amber-50 text-amber-600 font-semibold' 
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    USD - US Dollar
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+
           {/* Language Selector - Simplified on mobile */}
           <div className="relative">
             <button
-              onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
+              onClick={() => {
+                setIsLangDropdownOpen(!isLangDropdownOpen)
+                setIsCurrencyDropdownOpen(false) // Close currency dropdown if open
+              }}
               className="flex items-center gap-1 px-2.5 md:px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 rounded-lg hover:bg-white/50 transition-all duration-200 active:scale-95 min-w-[44px] min-h-[44px]"
               aria-label="Select language"
             >
