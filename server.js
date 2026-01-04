@@ -95,8 +95,14 @@ const validateEmail = (email) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
 
-const validatePostalCode = (postalCode) => {
-  return /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/.test(postalCode)
+const validatePostalCode = (postalCode, country = 'Canada') => {
+  if (country === 'United States') {
+    // US ZIP code: 5 digits or 5+4 format
+    return /^\d{5}(-\d{4})?$/.test(postalCode)
+  } else {
+    // Canadian postal code
+    return /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/.test(postalCode)
+  }
 }
 
 // Create Checkout Session
@@ -438,12 +444,22 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
       return res.status(400).json({ error: 'Destination information is required' })
     }
 
-    if (!destination.postalCode || !validatePostalCode(destination.postalCode)) {
-      return res.status(400).json({ error: 'Valid Canadian postal code is required' })
+    const country = destination.country || 'Canada'
+    
+    if (!destination.postalCode || !validatePostalCode(destination.postalCode, country)) {
+      return res.status(400).json({ 
+        error: country === 'United States' 
+          ? 'Valid US ZIP code is required' 
+          : 'Valid Canadian postal code is required' 
+      })
     }
 
     if (!destination.province || !destination.province.trim()) {
-      return res.status(400).json({ error: 'Province is required' })
+      return res.status(400).json({ 
+        error: country === 'United States' 
+          ? 'State is required' 
+          : 'Province is required' 
+      })
     }
 
     if (!destination.city || !destination.city.trim()) {
@@ -498,60 +514,120 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
       : { length: 30, width: 25, height: 10 }
 
     // Helper functions for estimated rates - Updated for 2024 Canada Post rates
-    const calculateEstimatedRate = (postalCode, weight, serviceType) => {
-      // Base rates for packages under 1kg (most common for small orders)
-      // These reflect actual Canada Post retail rates for Ontario/domestic shipping
+    const calculateEstimatedRate = (postalCode, weight, serviceType, country = 'Canada') => {
+      if (country === 'United States') {
+        // USPS rates (converted to CAD, approximate)
+        // Base rates for packages under 1lb (0.45kg)
+        const baseRates = {
+          'first-class': 18.00,      // First-Class Package - 5-7 business days
+          'priority': 25.00,          // Priority Mail - 2-3 business days
+          'priority-express': 45.00  // Priority Mail Express - 1-2 business days
+        }
+        
+        let rate = baseRates[serviceType] || 18.00
+        
+        // Weight-based pricing (convert kg to lbs: 1kg = 2.2lbs)
+        const weightLbs = weight * 2.2
+        if (weightLbs > 1 && weightLbs <= 2) {
+          rate += 3.00
+        } else if (weightLbs > 2 && weightLbs <= 4) {
+          rate += 6.00
+        } else if (weightLbs > 4) {
+          rate += 6.00 + ((weightLbs - 4) / 1) * 2.00
+        }
+        
+        return Math.round(rate * 100) / 100
+      } else {
+        // Canada Post rates
+        const baseRates = {
+          'regular': 12.00,      // Regular Parcel - standard delivery
+          'expedited': 18.00,    // Expedited Parcel - faster delivery (50% more than regular)
+          'xpresspost': 22.00    // Xpresspost - express delivery (83% more than regular)
+        }
+        
+        let rate = baseRates[serviceType] || 10.00
+        
+        // Weight-based pricing (more accurate tier system)
+        // Under 0.5kg: base rate
+        // 0.5kg - 1kg: +$1.50
+        // 1kg - 2kg: +$3.00
+        // 2kg+: +$2 per additional 0.5kg
+        if (weight > 0.5 && weight <= 1.0) {
+          rate += 1.50
+        } else if (weight > 1.0 && weight <= 2.0) {
+          rate += 3.00
+        } else if (weight > 2.0) {
+          rate += 3.00 + ((weight - 2.0) / 0.5) * 2.00
+        }
+        
+        // Remote area surcharge (Yukon, Northwest Territories, Nunavut)
+        const firstChar = postalCode.charAt(0).toUpperCase()
+        if (['Y', 'X'].includes(firstChar)) {
+          rate *= 1.25  // 25% surcharge for remote areas
+        }
+        
+        return Math.round(rate * 100) / 100
+      }
+    }
+
+    const getEstimatedDays = (serviceName, country = 'Canada') => {
+      if (country === 'United States') {
+        const days = {
+          'First-Class Package': 6,      // 5-7 business days
+          'Priority Mail': 3,            // 2-3 business days
+          'Priority Mail Express': 2     // 1-2 business days
+        }
+        return days[serviceName] || 6
+      } else {
+        const days = { 
+          'Regular Parcel': 3,      // Updated from 5 - Ontario is typically 2-5 days
+          'Expedited Parcel': 2,    // Updated from 3
+          'Xpresspost': 1           // Updated from 2
+        }
+        return days[serviceName] || 3
+      }
+    }
+
+    const getServiceDescription = (serviceName, country = 'Canada') => {
+      if (country === 'United States') {
+        const descriptions = {
+          'First-Class Package': 'Standard delivery to US (5-7 business days)',
+          'Priority Mail': 'Faster delivery with tracking (2-3 business days)',
+          'Priority Mail Express': 'Express delivery with signature (1-2 business days)'
+        }
+        return descriptions[serviceName] || 'Standard delivery to US'
+      } else {
+        const descriptions = {
+          'Regular Parcel': 'Standard delivery within Canada',
+          'Expedited Parcel': 'Faster delivery with tracking',
+          'Xpresspost': 'Express delivery with signature'
+        }
+        return descriptions[serviceName] || 'Standard delivery'
+      }
+    }
+
+    // Handle US shipping separately (always use estimated rates for now)
+    if (country === 'United States') {
+      console.log('US shipping requested, using estimated USPS rates')
+      
       const baseRates = {
-        'regular': 12.00,      // Regular Parcel - standard delivery
-        'expedited': 18.00,    // Expedited Parcel - faster delivery (50% more than regular)
-        'xpresspost': 22.00    // Xpresspost - express delivery (83% more than regular)
+        'First-Class Package': calculateEstimatedRate(destination.postalCode, weight, 'first-class', country),
+        'Priority Mail': calculateEstimatedRate(destination.postalCode, weight, 'priority', country),
+        'Priority Mail Express': calculateEstimatedRate(destination.postalCode, weight, 'priority-express', country)
       }
-      
-      let rate = baseRates[serviceType] || 10.00
-      
-      // Weight-based pricing (more accurate tier system)
-      // Under 0.5kg: base rate
-      // 0.5kg - 1kg: +$1.50
-      // 1kg - 2kg: +$3.00
-      // 2kg+: +$2 per additional 0.5kg
-      if (weight > 0.5 && weight <= 1.0) {
-        rate += 1.50
-      } else if (weight > 1.0 && weight <= 2.0) {
-        rate += 3.00
-      } else if (weight > 2.0) {
-        rate += 3.00 + ((weight - 2.0) / 0.5) * 2.00
-      }
-      
-      // Remote area surcharge (Yukon, Northwest Territories, Nunavut)
-      const firstChar = postalCode.charAt(0).toUpperCase()
-      if (['Y', 'X'].includes(firstChar)) {
-        rate *= 1.25  // 25% surcharge for remote areas
-      }
-      // Note: 'K' (Ontario) removed from remote areas - it's not remote
-      
-      return Math.round(rate * 100) / 100
+
+      const shippingOptions = Object.entries(baseRates).map(([name, price]) => ({
+        id: name.toLowerCase().replace(/\s+/g, '-'),
+        name: name,
+        price: price,
+        estimatedDays: getEstimatedDays(name, country),
+        description: getServiceDescription(name, country)
+      }))
+
+      return res.json({ options: shippingOptions })
     }
 
-    const getEstimatedDays = (serviceName) => {
-      // Updated delivery times based on actual Canada Post service standards
-      const days = { 
-        'Regular Parcel': 3,      // Updated from 5 - Ontario is typically 2-5 days
-        'Expedited Parcel': 2,    // Updated from 3
-        'Xpresspost': 1           // Updated from 2
-      }
-      return days[serviceName] || 3
-    }
-
-    const getServiceDescription = (serviceName) => {
-      const descriptions = {
-        'Regular Parcel': 'Standard delivery within Canada',
-        'Expedited Parcel': 'Faster delivery with tracking',
-        'Xpresspost': 'Express delivery with signature'
-      }
-      return descriptions[serviceName] || 'Standard delivery'
-    }
-
-    // Check if Canada Post credentials are configured
+    // Check if Canada Post credentials are configured (for Canada only)
     const canadaPostUsername = process.env.CANADA_POST_USERNAME
     const canadaPostPassword = process.env.CANADA_POST_PASSWORD
     const canadaPostCustomerNumber = process.env.CANADA_POST_CUSTOMER_NUMBER || '0001238590' // Your customer number from the portal
@@ -561,23 +637,23 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
       console.log('Canada Post credentials not configured, using estimated rates')
       
       const baseRates = {
-        'Regular Parcel': calculateEstimatedRate(destination.postalCode, weight, 'regular'),
-        'Expedited Parcel': calculateEstimatedRate(destination.postalCode, weight, 'expedited'),
-        'Xpresspost': calculateEstimatedRate(destination.postalCode, weight, 'xpresspost')
+        'Regular Parcel': calculateEstimatedRate(destination.postalCode, weight, 'regular', country),
+        'Expedited Parcel': calculateEstimatedRate(destination.postalCode, weight, 'expedited', country),
+        'Xpresspost': calculateEstimatedRate(destination.postalCode, weight, 'xpresspost', country)
       }
 
       const shippingOptions = Object.entries(baseRates).map(([name, price]) => ({
         id: name.toLowerCase().replace(/\s+/g, '-'),
         name: name,
         price: price,
-        estimatedDays: getEstimatedDays(name),
-        description: getServiceDescription(name)
+        estimatedDays: getEstimatedDays(name, country),
+        description: getServiceDescription(name, country)
       }))
 
       return res.json({ options: shippingOptions })
     }
 
-    // Real Canada Post API integration
+    // Real Canada Post API integration (Canada only)
     try {
       const auth = Buffer.from(`${canadaPostUsername}:${canadaPostPassword}`).toString('base64')
       
@@ -660,17 +736,17 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
 
     // Fallback to estimated rates if API call fails
     const baseRates = {
-      'Regular Parcel': calculateEstimatedRate(destination.postalCode, weight, 'regular'),
-      'Expedited Parcel': calculateEstimatedRate(destination.postalCode, weight, 'expedited'),
-      'Xpresspost': calculateEstimatedRate(destination.postalCode, weight, 'xpresspost')
+      'Regular Parcel': calculateEstimatedRate(destination.postalCode, weight, 'regular', country),
+      'Expedited Parcel': calculateEstimatedRate(destination.postalCode, weight, 'expedited', country),
+      'Xpresspost': calculateEstimatedRate(destination.postalCode, weight, 'xpresspost', country)
     }
 
     const shippingOptions = Object.entries(baseRates).map(([name, price]) => ({
       id: name.toLowerCase().replace(/\s+/g, '-'),
       name: name,
       price: price,
-      estimatedDays: getEstimatedDays(name),
-      description: getServiceDescription(name)
+      estimatedDays: getEstimatedDays(name, country),
+      description: getServiceDescription(name, country)
     }))
 
     res.json({ options: shippingOptions })

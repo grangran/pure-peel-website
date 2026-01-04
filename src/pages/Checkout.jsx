@@ -15,6 +15,19 @@ const canadianProvinces = [
   "Saskatchewan", "Yukon"
 ]
 
+const usStates = [
+  "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
+  "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho",
+  "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana",
+  "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota",
+  "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
+  "New Hampshire", "New Jersey", "New Mexico", "New York",
+  "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon",
+  "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
+  "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington",
+  "West Virginia", "Wisconsin", "Wyoming"
+]
+
 export default function Checkout() {
   const { cartItems, getCartTotal, clearCart, setIsCartOpen } = useCart()
   const { language } = useLanguage()
@@ -91,6 +104,7 @@ export default function Checkout() {
       phone: "",
       address: "",
       city: "",
+      country: "Canada",
       province: "",
       postalCode: "",
       notes: ""
@@ -152,9 +166,15 @@ export default function Checkout() {
       setErrors(prev => ({ ...prev, [name]: "" }))
     }
     // Track when user enters shipping details
-    if (name === 'postalCode' || name === 'province' || name === 'city') {
+    if (name === 'postalCode' || name === 'province' || name === 'city' || name === 'country') {
       if (value && !hasEnteredShippingDetails) {
         setHasEnteredShippingDetails(true)
+      }
+      // Clear province/state and postal code when country changes
+      if (name === 'country') {
+        setFormData(prev => ({ ...prev, province: '', postalCode: '' }))
+        setShippingOptions([])
+        setSelectedShipping(null)
       }
     }
   }
@@ -172,11 +192,25 @@ export default function Checkout() {
     if (!formData.phone.trim()) newErrors.phone = "Phone number is required"
     if (!formData.address.trim()) newErrors.address = "Address is required"
     if (!formData.city.trim()) newErrors.city = "City is required"
-    if (!formData.province) newErrors.province = "Province is required"
+    if (!formData.country) newErrors.country = "Country is required"
+    if (!formData.province) {
+      newErrors.province = formData.country === "United States" ? "State is required" : "Province is required"
+    }
     if (!formData.postalCode.trim()) {
-      newErrors.postalCode = "Postal code is required"
-    } else if (!/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/.test(formData.postalCode)) {
-      newErrors.postalCode = "Please enter a valid Canadian postal code"
+      newErrors.postalCode = formData.country === "United States" ? "ZIP code is required" : "Postal code is required"
+    } else {
+      // Validate based on country
+      if (formData.country === "United States") {
+        // US ZIP code: 5 digits or 5+4 format
+        if (!/^\d{5}(-\d{4})?$/.test(formData.postalCode)) {
+          newErrors.postalCode = "Please enter a valid US ZIP code (e.g., 12345 or 12345-6789)"
+        }
+      } else {
+        // Canadian postal code
+        if (!/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/.test(formData.postalCode)) {
+          newErrors.postalCode = "Please enter a valid Canadian postal code"
+        }
+      }
     }
 
     setErrors(newErrors)
@@ -184,7 +218,7 @@ export default function Checkout() {
   }
 
   const fetchShippingRates = async (retryCount = 0) => {
-    if (!formData.postalCode || !formData.province || !formData.city) {
+    if (!formData.postalCode || !formData.province || !formData.city || !formData.country) {
       return
     }
 
@@ -196,7 +230,7 @@ export default function Checkout() {
       
       // Create an AbortController for timeout
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 15000) // 15 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout (increased for Canada Post API)
       
       try {
         const response = await fetch(`${API_URL}/api/get-shipping-rates`, {
@@ -208,7 +242,8 @@ export default function Checkout() {
             destination: {
               postalCode: formData.postalCode,
               province: formData.province,
-              city: formData.city
+              city: formData.city,
+              country: formData.country
             },
             cartItems: cartItems
           }),
@@ -320,10 +355,10 @@ export default function Checkout() {
     }
   }, []) // Only run on mount - let App.jsx handle all navigation
 
-  // Fetch shipping rates when postal code, province, and city are filled
+  // Fetch shipping rates when postal code, province/state, city, and country are filled
   // Only fetch if user has actively entered shipping details (not on initial load)
   useEffect(() => {
-    if (hasEnteredShippingDetails && formData.postalCode && formData.province && formData.city && cartItems.length > 0) {
+    if (hasEnteredShippingDetails && formData.postalCode && formData.province && formData.city && formData.country && cartItems.length > 0) {
       const timer = setTimeout(() => {
         fetchShippingRates()
       }, 500) // Debounce
@@ -333,7 +368,7 @@ export default function Checkout() {
       setShippingOptions([])
       setSelectedShipping(null)
     }
-  }, [formData.postalCode, formData.province, formData.city, cartItems, hasEnteredShippingDetails])
+  }, [formData.postalCode, formData.province, formData.city, formData.country, cartItems, hasEnteredShippingDetails])
 
   const handlePaymentSubmit = async (e) => {
     e.preventDefault()
@@ -635,6 +670,27 @@ export default function Checkout() {
                     )}
                   </div>
 
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      {getTranslation(language, 'checkout.country')} *
+                    </label>
+                    <select
+                      name="country"
+                      value={formData.country}
+                      onChange={handleInputChange}
+                      className={`w-full px-4 py-3 text-sm rounded-lg border transition-colors ${
+                        errors.country ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
+                      } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500`}
+                      required
+                    >
+                      <option value="Canada">Canada</option>
+                      <option value="United States">United States</option>
+                    </select>
+                    {errors.country && (
+                      <p className="text-red-500 text-xs mt-1">{errors.country}</p>
+                    )}
+                  </div>
+
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="sm:col-span-1">
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -656,7 +712,10 @@ export default function Checkout() {
                     </div>
                     <div className="sm:col-span-1">
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        {getTranslation(language, 'checkout.province')} *
+                        {formData.country === "United States" 
+                          ? getTranslation(language, 'checkout.state') 
+                          : getTranslation(language, 'checkout.province')
+                        } *
                       </label>
                       <select
                         name="province"
@@ -667,9 +726,14 @@ export default function Checkout() {
                         } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500`}
                         required
                       >
-                        <option value="">{getTranslation(language, 'checkout.selectProvince')}</option>
-                        {canadianProvinces.map(province => (
-                          <option key={province} value={province}>{province}</option>
+                        <option value="">
+                          {formData.country === "United States" 
+                            ? getTranslation(language, 'checkout.selectState')
+                            : getTranslation(language, 'checkout.selectProvince')
+                          }
+                        </option>
+                        {(formData.country === "United States" ? usStates : canadianProvinces).map(region => (
+                          <option key={region} value={region}>{region}</option>
                         ))}
                       </select>
                       {errors.province && (
@@ -678,17 +742,23 @@ export default function Checkout() {
                     </div>
                     <div className="sm:col-span-1">
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        {getTranslation(language, 'checkout.postalCode')} *
+                        {formData.country === "United States" 
+                          ? getTranslation(language, 'checkout.zipCode')
+                          : getTranslation(language, 'checkout.postalCode')
+                        } *
                       </label>
                       <input
                         type="text"
                         name="postalCode"
                         value={formData.postalCode}
                         onChange={handleInputChange}
-                        placeholder={getTranslation(language, 'checkout.postalCodePlaceholder')}
+                        placeholder={formData.country === "United States" 
+                          ? getTranslation(language, 'checkout.zipCodePlaceholder')
+                          : getTranslation(language, 'checkout.postalCodePlaceholder')
+                        }
                         className={`w-full px-4 py-3 text-sm rounded-lg border transition-colors ${
                           errors.postalCode ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
-                        } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 uppercase`}
+                        } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 ${formData.country === "Canada" ? 'uppercase' : ''}`}
                         required
                       />
                       {errors.postalCode && (
@@ -712,7 +782,7 @@ export default function Checkout() {
                   </div>
 
                   {/* Shipping Options - Only show after user enters shipping details */}
-                  {hasEnteredShippingDetails && formData.postalCode && formData.province && formData.city && (
+                  {hasEnteredShippingDetails && formData.postalCode && formData.province && formData.city && formData.country && (
                     <div className="mt-6 pt-6 border-t-2 border-gray-100">
                       <label className="block text-base font-semibold text-gray-900 mb-4">
                         {getTranslation(language, 'checkout.shippingMethod')} *

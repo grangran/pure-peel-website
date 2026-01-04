@@ -119,6 +119,25 @@ export default function ShippingReturns() {
             </p>
           </div>
 
+          {/* US Shipping */}
+          <div className="mb-5 md:mb-6">
+            <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'shipping.usShipping.title')}</h3>
+            <p className="text-sm md:text-base text-gray-700 mb-3">
+              {getTranslation(language, 'shipping.usShipping.text1')}
+            </p>
+            <p className="text-sm md:text-base text-gray-700 mb-2">
+              {getTranslation(language, 'shipping.usShipping.text2')}
+            </p>
+            <ul className="list-disc list-inside space-y-2 text-xs md:text-sm text-gray-700 ml-2 md:ml-4 mb-3">
+              <li>{getTranslation(language, 'shipping.usShipping.item1')}</li>
+              <li>{getTranslation(language, 'shipping.usShipping.item2')}</li>
+              <li>{getTranslation(language, 'shipping.usShipping.item3')}</li>
+            </ul>
+            <p className="text-xs md:text-sm text-gray-600 italic">
+              {getTranslation(language, 'shipping.usShipping.note')}
+            </p>
+          </div>
+
           {/* International Shipping */}
           <div>
             <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'shipping.internationalShipping.title')}</h3>

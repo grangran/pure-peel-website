@@ -336,8 +336,17 @@ export const translations = {
       },
       internationalShipping: {
         title: "International Shipping",
-        text1: "Currently, we only ship within Canada. If you're interested in international shipping, please contact us at",
-        text2: "We're working on expanding our shipping options. Sign up for our newsletter to be notified when international shipping becomes available."
+        text1: "We currently ship to Canada and the United States. For shipping to other countries, please contact us at",
+        text2: "International shipping rates and delivery times vary by destination. We will provide a shipping quote upon request."
+      },
+      usShipping: {
+        title: "Shipping to the United States",
+        text1: "We now ship to the United States! Select 'United States' as your country during checkout to see available shipping options.",
+        text2: "US shipping options include:",
+        item1: "First-Class Package: Standard delivery (5-7 business days) - Starting at $18 CAD",
+        item2: "Priority Mail: Faster delivery (2-3 business days) - Starting at $25 CAD",
+        item3: "Priority Mail Express: Express delivery (1-2 business days) - Starting at $45 CAD",
+        note: "All prices are in Canadian dollars (CAD). Delivery times are estimates and may vary based on destination and customs processing."
       },
       returns: {
         title: "Issue Resolution & Product Replacement",
@@ -547,10 +556,15 @@ export const translations = {
       phonePlaceholder: "(555) 123-4567",
       streetAddress: "Street Address",
       city: "City",
+      country: "Country",
       province: "Province",
       selectProvince: "Select Province",
+      state: "State",
+      selectState: "Select State",
       postalCode: "Postal Code",
       postalCodePlaceholder: "A1A 1A1",
+      zipCode: "ZIP Code",
+      zipCodePlaceholder: "12345",
       orderNotes: "Order Notes (Optional)",
       orderNotesPlaceholder: "Special delivery instructions or notes...",
       shippingMethod: "Shipping Method",
@@ -954,8 +968,17 @@ export const translations = {
       },
       internationalShipping: {
         title: "Expédition Internationale",
-        text1: "Actuellement, nous expédions uniquement au Canada. Si vous êtes intéressé par l'expédition internationale, veuillez nous contacter à",
-        text2: "Nous travaillons à l'expansion de nos options d'expédition. Inscrivez-vous à notre newsletter pour être informé lorsque l'expédition internationale devient disponible."
+        text1: "Nous expédions actuellement au Canada et aux États-Unis. Pour l'expédition vers d'autres pays, veuillez nous contacter à",
+        text2: "Les tarifs et délais d'expédition internationale varient selon la destination. Nous fournirons un devis d'expédition sur demande."
+      },
+      usShipping: {
+        title: "Expédition aux États-Unis",
+        text1: "Nous expédions maintenant aux États-Unis ! Sélectionnez 'États-Unis' comme pays lors de la caisse pour voir les options d'expédition disponibles.",
+        text2: "Les options d'expédition vers les États-Unis incluent :",
+        item1: "Colis First-Class : Livraison standard (5-7 jours ouvrables) - À partir de 18 $ CAD",
+        item2: "Priority Mail : Livraison plus rapide (2-3 jours ouvrables) - À partir de 25 $ CAD",
+        item3: "Priority Mail Express : Livraison express (1-2 jours ouvrables) - À partir de 45 $ CAD",
+        note: "Tous les prix sont en dollars canadiens (CAD). Les délais de livraison sont des estimations et peuvent varier selon la destination et le traitement des douanes."
       },
       returns: {
         title: "Résolution des Problèmes et Remplacement de Produit",
@@ -1165,10 +1188,15 @@ export const translations = {
       phonePlaceholder: "(555) 123-4567",
       streetAddress: "Adresse",
       city: "Ville",
+      country: "Pays",
       province: "Province",
       selectProvince: "Sélectionner une Province",
+      state: "État",
+      selectState: "Sélectionner un État",
       postalCode: "Code Postal",
       postalCodePlaceholder: "A1A 1A1",
+      zipCode: "Code Postal (É.-U.)",
+      zipCodePlaceholder: "12345",
       orderNotes: "Notes de Commande (Optionnel)",
       orderNotesPlaceholder: "Instructions de livraison spéciales ou notes...",
       shippingMethod: "Méthode d'Expédition",
