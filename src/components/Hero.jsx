@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react"
 import { useLanguage } from "../context/LanguageContext"
+import { useCurrency } from "../context/CurrencyContext"
 import { getTranslation } from "../utils/translations"
 
 export default function Hero() {
   const [isVisible, setIsVisible] = useState(false)
   const [ripples, setRipples] = useState({})
   const { language } = useLanguage()
+  const { currency, setCurrency } = useCurrency()
+  const [isCurrencyDropdownOpen, setIsCurrencyDropdownOpen] = useState(false)
 
   useEffect(() => {
     setIsVisible(true)
@@ -90,42 +93,106 @@ export default function Hero() {
             {getTranslation(language, 'hero.features')}
           </p>
   
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 w-full max-w-lg mx-auto px-4">
-            <button 
-              className="relative w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 text-sm sm:text-base font-semibold rounded-full border-0 cursor-pointer transition-all duration-300 overflow-hidden bg-amber-500 text-stone-900 shadow-[0_8px_24px_rgba(245,158,11,0.4)] hover:bg-amber-400 hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(245,158,11,0.5)] active:translate-y-0 active:scale-[0.98] min-h-[52px] tracking-wide"
-              onClick={handleShopNow}
-            >
-              {getTranslation(language, 'hero.shopNow')}
-              {ripples.shop && (
-                <span
-                  className="absolute rounded-full bg-white/30 pointer-events-none animate-ripple"
-                  style={{
-                    left: `${ripples.shop.x}px`,
-                    top: `${ripples.shop.y}px`,
-                    width: `${ripples.shop.size}px`,
-                    height: `${ripples.shop.size}px`
-                  }}
-                />
+          <div className="flex flex-col items-center gap-4 w-full max-w-lg mx-auto px-4">
+            {/* Currency Selector */}
+            <div className="relative">
+              <button
+                onClick={() => setIsCurrencyDropdownOpen(!isCurrencyDropdownOpen)}
+                className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-white/10 backdrop-blur-md rounded-full border border-white/30 hover:bg-white/20 hover:border-white/50 transition-all duration-200 active:scale-95 min-h-[44px]"
+                aria-label="Select currency"
+              >
+                <span className="text-sm">{currency === 'CAD' ? 'CAD' : 'USD'}</span>
+                <svg 
+                  className={`w-4 h-4 transition-transform ${isCurrencyDropdownOpen ? 'rotate-180' : ''}`}
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {isCurrencyDropdownOpen && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-40"
+                    onClick={() => setIsCurrencyDropdownOpen(false)}
+                  />
+                  <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-40 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 z-50 backdrop-blur-sm">
+                    <button
+                      onClick={() => {
+                        setCurrency('CAD')
+                        setIsCurrencyDropdownOpen(false)
+                      }}
+                      className={`w-full text-left px-4 py-2.5 text-sm transition-all rounded-lg mx-1 active:scale-95 min-h-[44px] ${
+                        currency === 'CAD' 
+                          ? 'bg-amber-50 text-amber-600 font-semibold' 
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <span className="text-xs">🇨🇦</span>
+                        CAD - Canadian Dollar
+                      </span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setCurrency('USD')
+                        setIsCurrencyDropdownOpen(false)
+                      }}
+                      className={`w-full text-left px-4 py-2.5 text-sm transition-all rounded-lg mx-1 active:scale-95 min-h-[44px] ${
+                        currency === 'USD' 
+                          ? 'bg-amber-50 text-amber-600 font-semibold' 
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <span className="text-xs">🇺🇸</span>
+                        USD - US Dollar
+                      </span>
+                    </button>
+                  </div>
+                </>
               )}
-            </button>
-  
-            <button 
-              className="relative w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 text-sm sm:text-base font-semibold rounded-full border-2 border-white/80 cursor-pointer transition-all duration-300 overflow-hidden bg-white/10 backdrop-blur-md text-white hover:bg-white/20 hover:border-white hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(255,255,255,0.2)] active:translate-y-0 active:scale-[0.98] min-h-[52px] tracking-wide"
-              onClick={handleLearnMore}
-            >
-              {getTranslation(language, 'hero.learnMore')}
-              {ripples.learn && (
-                <span
-                  className="absolute rounded-full bg-white/40 pointer-events-none animate-ripple"
-                  style={{
-                    left: `${ripples.learn.x}px`,
-                    top: `${ripples.learn.y}px`,
-                    width: `${ripples.learn.size}px`,
-                    height: `${ripples.learn.size}px`
-                  }}
-                />
-              )}
-            </button>
+            </div>
+
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4 w-full">
+              <button 
+                className="relative w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 text-sm sm:text-base font-semibold rounded-full border-0 cursor-pointer transition-all duration-300 overflow-hidden bg-amber-500 text-stone-900 shadow-[0_8px_24px_rgba(245,158,11,0.4)] hover:bg-amber-400 hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(245,158,11,0.5)] active:translate-y-0 active:scale-[0.98] min-h-[52px] tracking-wide"
+                onClick={handleShopNow}
+              >
+                {getTranslation(language, 'hero.shopNow')}
+                {ripples.shop && (
+                  <span
+                    className="absolute rounded-full bg-white/30 pointer-events-none animate-ripple"
+                    style={{
+                      left: `${ripples.shop.x}px`,
+                      top: `${ripples.shop.y}px`,
+                      width: `${ripples.shop.size}px`,
+                      height: `${ripples.shop.size}px`
+                    }}
+                  />
+                )}
+              </button>
+    
+              <button 
+                className="relative w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 text-sm sm:text-base font-semibold rounded-full border-2 border-white/80 cursor-pointer transition-all duration-300 overflow-hidden bg-white/10 backdrop-blur-md text-white hover:bg-white/20 hover:border-white hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(255,255,255,0.2)] active:translate-y-0 active:scale-[0.98] min-h-[52px] tracking-wide"
+                onClick={handleLearnMore}
+              >
+                {getTranslation(language, 'hero.learnMore')}
+                {ripples.learn && (
+                  <span
+                    className="absolute rounded-full bg-white/40 pointer-events-none animate-ripple"
+                    style={{
+                      left: `${ripples.learn.x}px`,
+                      top: `${ripples.learn.y}px`,
+                      width: `${ripples.learn.size}px`,
+                      height: `${ripples.learn.size}px`
+                    }}
+                  />
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
