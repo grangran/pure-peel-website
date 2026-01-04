@@ -129,7 +129,6 @@ export default function Hero() {
             </div>
           </div>
         </div>
-      </div>
 
       {/* Refined scroll indicator - Hidden on mobile */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-2 opacity-70 animate-fadeInUp hidden md:flex flex-col items-center gap-2">
