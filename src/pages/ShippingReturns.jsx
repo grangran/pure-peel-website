@@ -10,7 +10,7 @@ export default function ShippingReturns() {
     <section 
       ref={sectionRef} 
       className={`py-8 md:py-12 px-4 sm:px-5 bg-gray-50 min-h-screen transition-all duration-800 ${
-        isSectionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+        isSectionVisible ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0 md:opacity-0 md:translate-y-8'
       }`}
     >
       <div className="max-w-4xl mx-auto">
@@ -28,8 +28,11 @@ export default function ShippingReturns() {
           <div className="mb-6 md:mb-8">
             <div className="flex items-center gap-2 mb-4">
               <span className="text-2xl">🇨🇦</span>
-              <h3 className="text-lg md:text-xl font-semibold text-gray-900">Shipping Within Canada</h3>
+              <h3 className="text-lg md:text-xl font-semibold text-gray-900">Canada-Wide Shipping</h3>
             </div>
+            <p className="text-sm md:text-base text-gray-700 mb-4">
+              We ship to all provinces and territories across Canada.
+            </p>
             <div className="space-y-3 md:space-y-4">
               <div className="border-2 border-gray-200 rounded-xl p-4 md:p-5 hover:border-amber-300 transition-colors">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2 gap-2">
@@ -76,10 +79,10 @@ export default function ShippingReturns() {
           <div className="mb-5 md:mb-6 pt-6 border-t-2 border-gray-200">
             <div className="flex items-center gap-2 mb-4">
               <span className="text-2xl">🇺🇸</span>
-              <h3 className="text-lg md:text-xl font-semibold text-gray-900">{getTranslation(language, 'shipping.usShipping.title')}</h3>
+              <h3 className="text-lg md:text-xl font-semibold text-gray-900">United States-Wide Shipping</h3>
             </div>
             <p className="text-sm md:text-base text-gray-700 mb-4">
-              {getTranslation(language, 'shipping.usShipping.text1')}
+              We ship to all 50 states across America. Select 'United States' as your country during checkout to see available shipping options.
             </p>
             <div className="space-y-3 md:space-y-4">
               <div className="border-2 border-gray-200 rounded-xl p-4 md:p-5 hover:border-amber-300 transition-colors">
