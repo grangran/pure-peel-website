@@ -1,10 +1,12 @@
 import { useScrollReveal } from "../hooks/useScrollReveal"
 import { useLanguage } from "../context/LanguageContext"
+import { useCurrency } from "../context/CurrencyContext"
 import { getTranslation } from "../utils/translations"
 
 export default function ShippingReturns() {
   const [sectionRef, isSectionVisible] = useScrollReveal({ threshold: 0.1 })
   const { language } = useLanguage()
+  const { formatPrice, currency } = useCurrency()
 
   return (
     <section 
@@ -93,7 +95,7 @@ export default function ShippingReturns() {
                   </div>
                   <div className="text-right sm:text-left sm:ml-4">
                     <span className="text-sm md:text-base font-semibold text-gray-900 block">5-10 business days</span>
-                    <span className="text-xs text-gray-500">Starting at $18 CAD</span>
+                    <span className="text-xs text-gray-500">Starting at {formatPrice(18)} {currency}</span>
                   </div>
                 </div>
               </div>
@@ -106,7 +108,7 @@ export default function ShippingReturns() {
                   </div>
                   <div className="text-right sm:text-left sm:ml-4">
                     <span className="text-sm md:text-base font-semibold text-gray-900 block">2-3 business days</span>
-                    <span className="text-xs text-gray-500">Starting at $28 CAD</span>
+                    <span className="text-xs text-gray-500">Starting at {formatPrice(28)} {currency}</span>
                   </div>
                 </div>
               </div>
@@ -119,7 +121,7 @@ export default function ShippingReturns() {
                   </div>
                   <div className="text-right sm:text-left sm:ml-4">
                     <span className="text-sm md:text-base font-semibold text-gray-900 block">1-2 business days</span>
-                    <span className="text-xs text-gray-500">Starting at $45 CAD</span>
+                    <span className="text-xs text-gray-500">Starting at {formatPrice(45)} {currency}</span>
                   </div>
                 </div>
               </div>
@@ -159,9 +161,9 @@ export default function ShippingReturns() {
               <ul className="list-disc list-inside space-y-1.5 text-xs md:text-sm text-gray-700 ml-2">
                 <li>Shipping costs are calculated automatically at checkout based on your destination</li>
                 <li>Rates vary by location, package weight, and selected shipping method</li>
-                <li>Canada: Starting at $12 CAD for Regular Parcel</li>
-                <li>United States: Starting at $18 CAD for Tracked Packet</li>
-                <li>All prices shown are in Canadian dollars (CAD) - use the currency selector to view in USD</li>
+                <li>Canada: Starting at {formatPrice(12)} {currency} for Regular Parcel</li>
+                <li>United States: Starting at {formatPrice(18)} {currency} for Tracked Packet</li>
+                <li>All prices shown are in {currency} - use the currency selector in the navigation to switch between CAD and USD</li>
               </ul>
             </div>
             <p className="text-sm md:text-base text-gray-700">
