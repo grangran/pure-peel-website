@@ -121,15 +121,20 @@ export default function Checkout() {
 
   const [errors, setErrors] = useState({})
 
+  // Track saved address to match with shipping options
+  const [savedAddressKey, setSavedAddressKey] = useState(null)
+  
   // Restore shipping options and selected shipping from localStorage on mount
   useEffect(() => {
     try {
       const savedOptions = localStorage.getItem('checkoutShippingOptions')
       const savedSelected = localStorage.getItem('checkoutShippingOption')
+      const savedAddress = localStorage.getItem('checkoutAddressKey')
       
-      if (savedOptions) {
+      if (savedOptions && savedAddress) {
         const parsedOptions = JSON.parse(savedOptions)
         setShippingOptions(parsedOptions)
+        setSavedAddressKey(savedAddress)
       }
       
       if (savedSelected) {
@@ -278,9 +283,14 @@ export default function Checkout() {
 
         setShippingOptions(data.options)
         
-        // Save shipping options to localStorage
+        // Create address key for matching
+        const addressKey = `${formData.postalCode}-${formData.province}-${formData.city}-${formData.country}`
+        
+        // Save shipping options and address key to localStorage
         try {
           localStorage.setItem('checkoutShippingOptions', JSON.stringify(data.options))
+          localStorage.setItem('checkoutAddressKey', addressKey)
+          setSavedAddressKey(addressKey)
         } catch (error) {
           console.error('Error saving shipping options:', error)
         }
