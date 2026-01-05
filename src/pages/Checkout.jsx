@@ -1083,7 +1083,7 @@ export default function Checkout() {
                     <span className="text-gray-900">{getTranslation(language, 'checkout.total')}</span>
                     <span className="text-gray-900">
                       {hasEnteredShippingDetails && selectedShipping 
-                        ? `${formatPrice(total)} ${currency}`
+                        ? formatPrice(total)
                         : (language === 'fr' ? 'À calculer' : 'To be calculated')
                       }
                     </span>
