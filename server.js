@@ -61,7 +61,7 @@ const apiLimiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
-  trustProxy: true, // Trust proxy headers (Render, Vercel, etc.)
+  // Note: trustProxy is handled by Express's app.set('trust proxy', 1) above
 })
 
 // Stricter rate limiter for checkout - 5 attempts per 15 minutes per IP
@@ -71,7 +71,7 @@ const checkoutLimiter = rateLimit({
   message: 'Too many checkout attempts, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
-  trustProxy: true, // Trust proxy headers (Render, Vercel, etc.)
+  // Note: trustProxy is handled by Express's app.set('trust proxy', 1) above
 })
 
 // Stricter rate limiter for shipping rates - 20 requests per 15 minutes per IP
@@ -81,7 +81,7 @@ const shippingLimiter = rateLimit({
   message: 'Too many shipping rate requests, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
-  trustProxy: true, // Trust proxy headers (Render, Vercel, etc.)
+  // Note: trustProxy is handled by Express's app.set('trust proxy', 1) above
 })
 
 // Middleware
