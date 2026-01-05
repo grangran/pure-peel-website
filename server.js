@@ -124,9 +124,10 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
       console.log('   Customer email:', session.customer_email)
       
       try {
-        // Retrieve full session details to get line items and shipping details
+        // Retrieve full session details to get line items
+        // Note: shipping_details is included by default when shipping_address_collection is enabled, no need to expand
         const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
-          expand: ['line_items', 'shipping_details']
+          expand: ['line_items']
         })
 
         // Debug logging for shipping address (webhook handler)
@@ -579,8 +580,9 @@ app.get('/api/checkout-session/:sessionId', async (req, res) => {
       })
     }
 
+    // Note: shipping_details is included by default when shipping_address_collection is enabled, no need to expand
     const session = await stripe.checkout.sessions.retrieve(req.params.sessionId, {
-      expand: ['line_items', 'shipping_details']
+      expand: ['line_items']
     })
     
     // Check if order already exists
