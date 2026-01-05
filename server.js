@@ -173,11 +173,15 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     // Zero-rated goods under Schedule VI Part III of the Excise Tax Act
     // Dehydrated citrus products (unsweetened, no preservatives) qualify as zero-rated basic groceries
     const tax = 0 // 0% HST/GST - Products are zero-rated as unsweetened dried fruits
-    const totalAmount = subtotal + shippingCost + tax
+    
+    // Apply promo code discount if provided
+    const promoCode = req.body.promoCode || null
+    const discountAmount = req.body.discount || 0
+    const totalAmount = Math.max(0, subtotal + shippingCost + tax - discountAmount)
 
     // Create Stripe Checkout Session
     // Note: 'card' automatically enables Apple Pay and Google Pay when available
-    const session = await stripe.checkout.sessions.create({
+    const sessionConfig = {
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
@@ -185,26 +189,71 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       cancel_url: `${req.headers.origin || 'http://localhost:5173'}/checkout?canceled=true`,
       customer_email: shippingInfo.email,
       shipping_address_collection: {
-        allowed_countries: ['CA'],
+        allowed_countries: ['CA', 'US'],
       },
       metadata: {
         customer_name: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
         customer_phone: shippingInfo.phone,
         order_notes: shippingInfo.notes || '',
         language: shippingInfo.language || 'en', // Store language preference
+        promo_code: promoCode || '',
       },
       // Add shipping cost
       shipping_options: shippingCost > 0 ? [{
         shipping_rate_data: {
           type: 'fixed_amount',
           fixed_amount: {
-            amount: shippingCost,
+            amount: Math.round(shippingCost * 100), // Convert to cents
             currency: 'cad',
           },
           display_name: shippingInfo.selectedShipping?.name || 'Standard Shipping',
         },
       }] : [],
-    })
+    }
+
+    // Apply discount if promo code is used
+    if (promoCode && discountAmount > 0) {
+      try {
+        // Calculate discount percentage based on order total
+        const orderTotal = subtotal + shippingCost + tax
+        const discountPercent = Math.round((discountAmount / orderTotal) * 100)
+        
+        // Get or create discount coupon
+        const couponId = await getOrCreateDiscountCoupon(promoCode, discountPercent)
+        if (couponId) {
+          sessionConfig.discounts = [{ coupon: couponId }]
+        } else {
+          // Fallback: Add discount as a negative line item if coupon creation fails
+          lineItems.push({
+            price_data: {
+              currency: 'cad',
+              product_data: {
+                name: `Discount: ${promoCode}`,
+                description: 'Promo code discount',
+              },
+              unit_amount: -discountAmount, // Negative amount for discount
+            },
+            quantity: 1,
+          })
+        }
+      } catch (error) {
+        console.error('Error applying discount:', error)
+        // If discount fails, add as negative line item
+        lineItems.push({
+          price_data: {
+            currency: 'cad',
+            product_data: {
+              name: `Discount: ${promoCode}`,
+              description: 'Promo code discount',
+            },
+            unit_amount: -discountAmount,
+          },
+          quantity: 1,
+        })
+      }
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionConfig)
 
     res.json({ sessionId: session.id, url: session.url })
   } catch (error) {

@@ -54,6 +54,10 @@ export default function Checkout() {
   const [shippingError, setShippingError] = useState(null)
   const [isRedirecting, setIsRedirecting] = useState(false)
   const [hasEnteredShippingDetails, setHasEnteredShippingDetails] = useState(false)
+  const [promoCode, setPromoCode] = useState('')
+  const [appliedPromoCode, setAppliedPromoCode] = useState(null)
+  const [promoCodeError, setPromoCodeError] = useState('')
+  const [promoCodeDiscount, setPromoCodeDiscount] = useState(0) // Discount amount in CAD
   
   // Check for Stripe redirect
   useEffect(() => {
@@ -334,6 +338,63 @@ export default function Checkout() {
     }
   }
 
+  // Promo code validation
+  const validatePromoCode = (code) => {
+    const codeUpper = code.toUpperCase().trim()
+    
+    // Define valid promo codes
+    const validCodes = {
+      'FREETEST': { discount: 100, type: 'percent' }, // 100% off for testing
+      'TEST100': { discount: 100, type: 'percent' }, // Alternative test code
+      'WELCOME10': { discount: 10, type: 'percent' }, // Example: 10% off
+      'SAVE20': { discount: 20, type: 'percent' }, // Example: 20% off
+    }
+    
+    if (validCodes[codeUpper]) {
+      const promo = validCodes[codeUpper]
+      const subtotal = getCartTotal()
+      const shipping = calculateShipping()
+      const tax = 0
+      const orderTotal = subtotal + shipping + tax
+      
+      if (promo.type === 'percent') {
+        const discountAmount = (orderTotal * promo.discount) / 100
+        return { valid: true, discount: discountAmount, code: codeUpper }
+      }
+    }
+    
+    return { valid: false, discount: 0, code: null }
+  }
+
+  const handleApplyPromoCode = () => {
+    setPromoCodeError('')
+    
+    if (!promoCode.trim()) {
+      setPromoCodeError(getTranslation(language, 'checkout.promoCode.enterCode'))
+      return
+    }
+    
+    const result = validatePromoCode(promoCode)
+    
+    if (result.valid) {
+      setAppliedPromoCode(result.code)
+      setPromoCodeDiscount(result.discount)
+      setPromoCodeError('')
+      // Clear the input but keep the applied code visible
+    } else {
+      setPromoCodeError(getTranslation(language, 'checkout.promoCode.invalid'))
+      setAppliedPromoCode(null)
+      setPromoCodeDiscount(0)
+    }
+  }
+
+  const handleRemovePromoCode = () => {
+    setAppliedPromoCode(null)
+    setPromoCodeDiscount(0)
+    setPromoCode('')
+    setPromoCodeError('')
+  }
+
   const calculateShipping = () => {
     // Use selected shipping option price, or default to estimated rate
     if (selectedShipping) {
@@ -417,6 +478,8 @@ export default function Checkout() {
               language: language // Include language preference for email translations
             },
             total: getCartTotal(),
+            promoCode: appliedPromoCode || null,
+            discount: appliedPromoCode ? discount : 0,
           }),
         })
       } catch (fetchError) {
@@ -538,7 +601,11 @@ export default function Checkout() {
   // Dehydrated citrus products (unsweetened, no preservatives) qualify as zero-rated basic groceries
   // Tax is 0% - Products are zero-rated as unsweetened dried fruits
   const tax = 0
-  const total = hasEnteredShippingDetails && selectedShipping ? subtotal + shippingCost + tax : subtotal
+  // Apply promo code discount (convert to current currency if needed)
+  const discount = appliedPromoCode ? (currency === 'USD' ? convertPrice(promoCodeDiscount) : promoCodeDiscount) : 0
+  const total = hasEnteredShippingDetails && selectedShipping 
+    ? Math.max(0, subtotal + shippingCost + tax - discount) 
+    : subtotal
 
   if (cartItems.length === 0 && currentStep !== 2) {
     return (
@@ -925,6 +992,13 @@ export default function Checkout() {
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.taxHST')}</span>
                       <span className="text-gray-900 font-semibold">{formatPrice(tax)}</span>
+                    </div>
+                  )}
+                  {/* Discount line */}
+                  {appliedPromoCode && hasEnteredShippingDetails && selectedShipping && (
+                    <div className="flex justify-between items-center text-sm text-green-600">
+                      <span className="font-medium">{getTranslation(language, 'checkout.promoCode.discount')}</span>
+                      <span className="font-semibold">-{formatPrice(discount)}</span>
                     </div>
                   )}
                   <div className="flex justify-between items-center text-xl font-bold pt-4 border-t-2 border-gray-200 mt-4">

@@ -589,6 +589,16 @@ export const translations = {
       subtotal: "Subtotal",
       taxHST: "Tax (HST)",
       total: "Total",
+      promoCode: {
+        label: "Promo Code",
+        placeholder: "Enter code",
+        apply: "Apply",
+        applied: "Promo code applied",
+        discount: "Discount",
+        remove: "Remove",
+        enterCode: "Please enter a promo code",
+        invalid: "Invalid promo code"
+      },
       orderConfirmed: "Order Confirmed!",
       thankYou: "Thank you for your order",
       orderNumber: "Order Number",
@@ -1220,6 +1230,16 @@ export const translations = {
       free: "Gratuit",
       taxHST: "Taxe (TPS)",
       total: "Total",
+      promoCode: {
+        label: "Code Promo",
+        placeholder: "Entrez le code",
+        apply: "Appliquer",
+        applied: "Code promo appliqué",
+        discount: "Rabais",
+        remove: "Retirer",
+        enterCode: "Veuillez entrer un code promo",
+        invalid: "Code promo invalide"
+      },
       orderConfirmed: "Commande Confirmée !",
       thankYou: "Merci pour votre commande",
       orderNumber: "Numéro de Commande",
