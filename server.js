@@ -1400,6 +1400,8 @@ app.post('/api/order-lookup', async (req, res) => {
   try {
     const { orderId, email } = req.body
 
+    console.log('🔍 Order lookup request:', { orderId, email: email ? email.substring(0, 3) + '***' : 'missing' })
+
     if (!orderId || !email) {
       return res.status(400).json({ error: 'Order ID and email are required' })
     }
@@ -1407,18 +1409,26 @@ app.post('/api/order-lookup', async (req, res) => {
     const order = getOrderById(orderId)
 
     if (!order) {
+      console.log('❌ Order not found:', orderId)
       return res.status(404).json({ error: 'Order not found' })
     }
 
     // Verify email matches order email (case-insensitive)
     if (order.customer?.email?.toLowerCase() !== email.toLowerCase()) {
+      console.log('❌ Email mismatch:', {
+        provided: email.substring(0, 3) + '***',
+        expected: order.customer?.email ? order.customer.email.substring(0, 3) + '***' : 'missing'
+      })
       return res.status(403).json({ error: 'Email does not match this order' })
     }
+
+    console.log('✅ Order lookup successful:', orderId)
+    console.log('   Shipping address available:', !!(order.shipping?.address && (order.shipping.address.line1 || order.shipping.address.city)))
 
     // Return order details (without sensitive info)
     res.json({ order })
   } catch (error) {
-    console.error('Error looking up order:', error)
+    console.error('❌ Error looking up order:', error)
     res.status(500).json({ error: error.message })
   }
 })
