@@ -283,7 +283,8 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     // Check if this is a 100% discount code (common test codes)
     const promoCodeUpper = promoCode ? promoCode.toUpperCase().trim() : ''
     const isKnown100PercentCode = promoCodeUpper === 'FREETEST' || promoCodeUpper === 'TEST100'
-    const discountCoversTotal = discountAmountCents >= orderTotalCents && orderTotalCents > 0
+    // Allow small rounding tolerance (within 1 cent) for discount covering total
+    const discountCoversTotal = orderTotalCents > 0 && discountAmountCents >= (orderTotalCents - 1)
     const is100PercentDiscount = promoCodeUpper && (isKnown100PercentCode || discountCoversTotal)
     
     console.log('🎟️ Promo code check:', {
