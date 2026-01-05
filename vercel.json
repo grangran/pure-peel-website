@@ -46,18 +46,19 @@
   ],
   "redirects": [
     {
-      "source": "/:path*",
+      "source": "/(.*)",
       "has": [
         {
           "type": "host",
           "value": "www.purepeelco.com"
         }
       ],
-      "destination": "https://purepeelco.com/:path*",
-      "permanent": true
+      "destination": "https://purepeelco.com/$1",
+      "permanent": true,
+      "statusCode": 301
     },
     {
-      "source": "/:path*",
+      "source": "/(.*)",
       "has": [
         {
           "type": "header",
@@ -65,8 +66,9 @@
           "value": "http"
         }
       ],
-      "destination": "https://purepeelco.com/:path*",
-      "permanent": true
+      "destination": "https://purepeelco.com/$1",
+      "permanent": true,
+      "statusCode": 301
     }
   ]
 }
