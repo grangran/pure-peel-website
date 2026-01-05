@@ -91,10 +91,10 @@ export default function ShippingReturns() {
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2 gap-2">
                   <div className="flex-1">
                     <h4 className="font-semibold text-base md:text-lg text-gray-900 mb-1">Tracked Packet - USA</h4>
-                    <p className="text-xs md:text-sm text-gray-600 mb-2">Standard delivery to US with tracking (5-10 business days)</p>
+                    <p className="text-xs md:text-sm text-gray-600 mb-2">Standard delivery to US with tracking (4-7 business days)</p>
                   </div>
                   <div className="text-right sm:text-left sm:ml-4">
-                    <span className="text-sm md:text-base font-semibold text-gray-900 block">5-10 business days</span>
+                    <span className="text-sm md:text-base font-semibold text-gray-900 block">4-7 business days</span>
                     <span className="text-xs text-gray-500">Starting at {formatPrice(18)} {currency}</span>
                   </div>
                 </div>

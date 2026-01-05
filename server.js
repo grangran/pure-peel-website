@@ -834,7 +834,7 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
       if (country === 'United States') {
         // Canada Post US services
         const days = {
-          'Tracked Packet - USA': 7,           // 5-10 business days
+          'Tracked Packet - USA': 5.5,         // 4-7 business days
           'Xpresspost - USA': 3,              // 2-3 business days
           'Priority Worldwide - USA': 2       // 1-2 business days
         }
@@ -853,7 +853,7 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
       if (country === 'United States') {
         // Canada Post US services
         const descriptions = {
-          'Tracked Packet - USA': 'Standard delivery to US with tracking (5-10 business days)',
+          'Tracked Packet - USA': 'Standard delivery to US with tracking (4-7 business days)',
           'Xpresspost - USA': 'Faster delivery to US with tracking and insurance (2-3 business days)',
           'Priority Worldwide - USA': 'Express delivery to US with signature (1-2 business days)'
         }
@@ -1115,7 +1115,7 @@ function parseCanadaPostResponse(xml, country = 'Canada') {
       let description = 'Standard delivery'
       if (country === 'United States') {
         if (serviceInfo.name.includes('Tracked Packet')) {
-          description = 'Standard delivery to US with tracking (5-10 business days)'
+          description = 'Standard delivery to US with tracking (4-7 business days)'
         } else if (serviceInfo.name.includes('Xpresspost')) {
           description = 'Faster delivery to US with tracking and insurance (2-3 business days)'
         } else if (serviceInfo.name.includes('Priority Worldwide')) {
