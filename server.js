@@ -580,7 +580,7 @@ app.get('/api/checkout-session/:sessionId', async (req, res) => {
     }
 
     const session = await stripe.checkout.sessions.retrieve(req.params.sessionId, {
-      expand: ['line_items']
+      expand: ['line_items', 'shipping_details']
     })
     
     // Check if order already exists
