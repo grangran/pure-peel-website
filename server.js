@@ -1256,24 +1256,29 @@ if (process.env.ADMIN_PASSWORD) {
 }
 
 const authenticateAdmin = (req, res, next) => {
-  const providedPassword = req.headers['x-admin-password'] || req.query.password
+  // Get password from query param (URL decoded) or header
+  const providedPassword = req.query.password 
+    ? decodeURIComponent(req.query.password) 
+    : req.headers['x-admin-password']
   
   // Trim whitespace from provided password
   const trimmedProvided = providedPassword ? providedPassword.trim() : ''
-  const trimmedAdmin = ADMIN_PASSWORD.trim()
+  const trimmedAdmin = ADMIN_PASSWORD ? ADMIN_PASSWORD.trim() : ''
   
   // Debug logging (only log on failure to avoid exposing password)
   if (trimmedProvided !== trimmedAdmin) {
     console.log('🔒 Admin authentication failed:', {
       providedLength: trimmedProvided.length,
       expectedLength: trimmedAdmin.length,
-      match: trimmedProvided === trimmedAdmin,
+      providedFirstChar: trimmedProvided.charAt(0),
+      expectedFirstChar: trimmedAdmin.charAt(0),
       hasQueryParam: !!req.query.password,
-      hasHeader: !!req.headers['x-admin-password']
+      hasHeader: !!req.headers['x-admin-password'],
+      envVarSet: !!process.env.ADMIN_PASSWORD
     })
   }
   
-  if (trimmedProvided === trimmedAdmin) {
+  if (trimmedProvided === trimmedAdmin && trimmedAdmin.length > 0) {
     console.log('✅ Admin authentication successful')
     next()
   } else {

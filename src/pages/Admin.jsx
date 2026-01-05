@@ -26,16 +26,20 @@ export default function Admin() {
     setError(null)
 
     try {
-      const response = await fetch(`${API_URL}/api/admin/orders?password=${password}`)
+      // URL encode the password to handle special characters
+      const encodedPassword = encodeURIComponent(password)
+      const response = await fetch(`${API_URL}/api/admin/orders?password=${encodedPassword}`)
       if (response.ok) {
         const data = await response.json()
         setIsAuthenticated(true)
         setOrders(data.orders)
         fetchStats()
       } else {
-        setError('Invalid password. Please try again.')
+        const errorData = await response.json().catch(() => ({ error: 'Invalid password' }))
+        setError(errorData.error || 'Invalid password. Please try again.')
       }
     } catch (error) {
+      console.error('Login error:', error)
       setError('Failed to connect to server. Make sure the backend is running.')
     } finally {
       setLoading(false)
