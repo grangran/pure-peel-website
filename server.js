@@ -380,12 +380,17 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       
       const unitAmount = Math.max(1, Math.round(itemPrice * 100)) // Convert to cents, ensure at least 1 cent
       
+      // Create a short description for Stripe checkout (max 50 characters)
+      const shortDescription = item.description 
+        ? item.description.split('.')[0].substring(0, 50) + (item.description.split('.')[0].length > 50 ? '...' : '')
+        : ''
+      
       return {
         price_data: {
           currency: 'cad',
           product_data: {
             name: `${item.name} - ${item.variant}`,
-            // Remove description to keep Stripe checkout clean and concise
+            description: shortDescription, // Short, concise description for Stripe checkout
             images: item.image ? [new URL(item.image, req.headers.origin || 'http://localhost:5173').href] : [],
           },
           unit_amount: unitAmount,
