@@ -450,7 +450,8 @@ export default function Checkout() {
     
     // Track checkout started
     const subtotal = getCartTotal()
-    const shipping = calculateShipping()
+    const shippingCAD = calculateShipping() // Shipping is in CAD
+    const shipping = currency === 'USD' ? convertPrice(shippingCAD) : shippingCAD
     // Zero-rated goods under Schedule VI Part III of the Excise Tax Act
     // Dehydrated citrus products (unsweetened, no preservatives) qualify as zero-rated basic groceries
     const tax = 0 // 0% HST/GST - Products are zero-rated as unsweetened dried fruits
@@ -595,7 +596,8 @@ export default function Checkout() {
     }
   }
 
-  const shippingCost = calculateShipping()
+  const shippingCostCAD = calculateShipping() // Shipping is always in CAD from backend
+  const shippingCost = currency === 'USD' ? convertPrice(shippingCostCAD) : shippingCostCAD
   const subtotal = getCartTotal()
   // Zero-rated goods under Schedule VI Part III of the Excise Tax Act
   // Dehydrated citrus products (unsweetened, no preservatives) qualify as zero-rated basic groceries

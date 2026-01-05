@@ -61,7 +61,20 @@ export function CurrencyProvider({ children }) {
         }
         
         const data = await response.json()
-        const rate = data.rates?.USD || FALLBACK_RATE
+        let rate = data.rates?.USD || FALLBACK_RATE
+        
+        // Ensure rate is a decimal (0.0-1.0 range), not a percentage
+        // Some APIs might return rates as percentages (e.g., 75.47 instead of 0.7547)
+        if (rate > 1) {
+          console.warn('Exchange rate appears to be a percentage, converting to decimal:', rate)
+          rate = rate / 100
+        }
+        
+        // Validate rate is reasonable (between 0.5 and 1.5 for CAD to USD)
+        if (rate < 0.5 || rate > 1.5) {
+          console.warn('Exchange rate seems incorrect, using fallback:', rate)
+          rate = FALLBACK_RATE
+        }
         
         // Cache the rate
         if (typeof window !== 'undefined') {
