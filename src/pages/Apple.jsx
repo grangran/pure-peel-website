@@ -14,14 +14,14 @@ const appleProduct = {
       label: "Small Bag — 18 slices",
       option: "Small Bag (18 slices)",
       price: 7.20,
-      image: "/images/apple-product.jpg"
+      image: "/images/apple-product.png"
     },
     {
       id: "apple-medium",
       label: "Medium Bag — 30 slices",
       option: "Medium Bag (30 slices)",
       price: 12.00,
-      image: "/images/apple-product.jpg"
+      image: "/images/apple-product.png"
     }
   ],
   showBulkInquiry: true // Enable bulk inquiry button for this product
