@@ -165,21 +165,33 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     }))
 
     // Get shipping cost from request (selected shipping option)
-    // Note: selectedShipping.price is in CAD dollars (e.g., 12.00), we need to convert to cents
-    console.log('📦 Shipping info received:', {
+    // Note: selectedShipping.price should be in CAD dollars (e.g., 12.00), we need to convert to cents
+    console.log('📦 Shipping info received:', JSON.stringify({
       hasSelectedShipping: !!shippingInfo.selectedShipping,
       shippingPrice: shippingInfo.selectedShipping?.price,
-      shippingName: shippingInfo.selectedShipping?.name
-    })
+      shippingPriceType: typeof shippingInfo.selectedShipping?.price,
+      shippingName: shippingInfo.selectedShipping?.name,
+      fullSelectedShipping: shippingInfo.selectedShipping
+    }, null, 2))
     
-    const shippingCostCents = shippingInfo.selectedShipping 
-      ? Math.round(shippingInfo.selectedShipping.price * 100) // Convert dollars to cents
-      : (total >= 50 ? 0 : 1000) // Fallback: free over $50, else $10 (in cents)
+    // Ensure we have a valid shipping price
+    let shippingPrice = 12.00 // Default fallback
+    if (shippingInfo.selectedShipping?.price) {
+      shippingPrice = parseFloat(shippingInfo.selectedShipping.price)
+      // Safety check: if price seems too high (likely already in cents or wrong currency), divide by 100
+      if (shippingPrice > 1000) {
+        console.warn('⚠️ Shipping price seems too high, dividing by 100:', shippingPrice)
+        shippingPrice = shippingPrice / 100
+      }
+    }
+    
+    const shippingCostCents = Math.round(shippingPrice * 100) // Convert dollars to cents
     
     console.log('💰 Shipping cost calculated:', {
-      priceInDollars: shippingInfo.selectedShipping?.price,
+      originalPrice: shippingInfo.selectedShipping?.price,
+      normalizedPrice: shippingPrice,
       priceInCents: shippingCostCents,
-      priceInDollarsAgain: shippingCostCents / 100
+      priceInDollars: shippingCostCents / 100
     })
     
     const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity * 100), 0)
