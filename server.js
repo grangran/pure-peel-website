@@ -321,18 +321,54 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
         customer_phone: shippingInfo.phone,
         order_notes: shippingInfo.notes || '',
         language: shippingInfo.language || 'en', // Store language preference
+        promo_code: promoCode || '',
       },
-      // Add shipping cost (shippingCostCents is already in cents, no need to multiply again)
-      shipping_options: shippingCostCents > 0 ? [{
+      // Add shipping cost (finalShippingCostCents is already in cents, no need to multiply again)
+      // Always provide a shipping option (even if $0) when shipping_address_collection is enabled
+      shipping_options: [{
         shipping_rate_data: {
           type: 'fixed_amount',
           fixed_amount: {
-            amount: shippingCostCents, // Already in cents, don't multiply by 100 again!
+            amount: finalShippingCostCents, // Already in cents, don't multiply by 100 again! Can be 0 for free shipping
             currency: 'cad',
           },
-          display_name: shippingInfo.selectedShipping?.name || 'Standard Shipping',
+          display_name: finalShippingCostCents > 0 
+            ? (shippingInfo.selectedShipping?.name || 'Standard Shipping')
+            : 'Free Shipping',
         },
-      }] : [],
+      }],
+    }
+
+    // Apply discount if promo code is used
+    if (promoCode && discountAmountCents > 0) {
+      try {
+        // Calculate discount percentage based on order total
+        const orderTotalForDiscount = subtotal + finalShippingCostCents + tax
+        const discountPercent = orderTotalForDiscount > 0 
+          ? Math.max(1, Math.min(100, Math.round((discountAmountCents / orderTotalForDiscount) * 100)))
+          : 100 // If total is $0, discount is 100%
+        
+        console.log('🎟️ Applying promo code:', {
+          promoCode,
+          discountAmountCents,
+          originalOrderTotal: subtotal + shippingCostCents + tax,
+          finalOrderTotal: orderTotalForDiscount,
+          finalShipping: finalShippingCostCents,
+          discountPercent: `${discountPercent}%`
+        })
+        
+        // Get or create discount coupon
+        const couponId = await getOrCreateDiscountCoupon(promoCode, discountPercent)
+        if (couponId) {
+          sessionConfig.discounts = [{ coupon: couponId }]
+          console.log('✅ Discount coupon applied to checkout session:', couponId)
+        } else {
+          console.error('❌ Failed to create discount coupon, discount will not be applied in Stripe')
+        }
+      } catch (error) {
+        console.error('❌ Error applying discount:', error.message || error)
+        console.error('Failed to apply discount, continuing without discount')
+      }
     }
 
     const session = await stripe.checkout.sessions.create(sessionConfig)
