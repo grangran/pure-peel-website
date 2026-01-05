@@ -55,10 +55,6 @@ const getTransporter = () => {
 
 // Email templates - English
 const orderConfirmationTemplateEN = (order, trackingUrl) => {
-  const itemsList = (order.items || []).map(item => 
-    `  • ${item.name || 'Item'} (${item.variant || 'N/A'}) - Qty: ${item.quantity || 1} - $${(item.total || 0).toFixed(2)}`
-  ).join('\n')
-  
   const customerName = order.customer?.name || 'Customer'
   const customerEmail = order.customer?.email || ''
   const shippingName = order.shipping?.name || customerName
@@ -108,7 +104,13 @@ const orderConfirmationTemplateEN = (order, trackingUrl) => {
 
       <div class="items">
         <h3 style="margin-top: 0;">Items Ordered:</h3>
-        <pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${itemsList}</pre>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          ${(order.items || []).map(item => 
+            `<li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+              <strong>${item.name || 'Item'}</strong> ${item.variant ? `(${item.variant})` : ''} - Qty: ${item.quantity || 1} - $${(item.total || item.price * (item.quantity || 1) || 0).toFixed(2)}
+            </li>`
+          ).join('')}
+        </ul>
       </div>
 
       <div class="total">
@@ -120,14 +122,14 @@ const orderConfirmationTemplateEN = (order, trackingUrl) => {
 
       <div style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px;">
         <h3 style="margin-top: 0;">Shipping Address:</h3>
-        <p>
-          ${shippingName}<br>
+        <p style="margin: 8px 0;">
+          <strong>${shippingName}</strong><br>
           ${shippingAddress.line1 || ''}<br>
           ${shippingAddress.line2 ? shippingAddress.line2 + '<br>' : ''}
-          ${shippingAddress.city || ''}${shippingAddress.city && shippingAddress.state ? ',' : ''} ${shippingAddress.state || ''} ${shippingAddress.postal_code || ''}<br>
+          ${shippingAddress.city || ''}${shippingAddress.city && (shippingAddress.state || shippingAddress.province) ? ', ' : ''} ${shippingAddress.state || shippingAddress.province || ''} ${shippingAddress.postal_code || shippingAddress.postalCode || ''}<br>
           ${shippingAddress.country || ''}
         </p>
-        <p><strong>Shipping Method:</strong> ${order.shipping?.method || 'Standard Shipping'}</p>
+        <p style="margin: 8px 0;"><strong>Shipping Method:</strong> ${order.shipping?.method || 'Standard Shipping'}</p>
       </div>
 
       ${trackingUrl ? `
@@ -155,10 +157,6 @@ const orderConfirmationTemplateEN = (order, trackingUrl) => {
 
 // Email templates - French
 const orderConfirmationTemplateFR = (order, trackingUrl) => {
-  const itemsList = (order.items || []).map(item => 
-    `  • ${item.name || 'Article'} (${item.variant || 'N/A'}) - Qté : ${item.quantity || 1} - ${(item.total || 0).toFixed(2)} $`
-  ).join('\n')
-  
   const customerName = order.customer?.name || 'Client'
   const customerEmail = order.customer?.email || ''
   const shippingName = order.shipping?.name || customerName
@@ -208,7 +206,13 @@ const orderConfirmationTemplateFR = (order, trackingUrl) => {
 
       <div class="items">
         <h3 style="margin-top: 0;">Articles Commandés :</h3>
-        <pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${itemsList}</pre>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          ${(order.items || []).map(item => 
+            `<li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+              <strong>${item.name || 'Article'}</strong> ${item.variant ? `(${item.variant})` : ''} - Qté : ${item.quantity || 1} - ${(item.total || item.price * (item.quantity || 1) || 0).toFixed(2)} $
+            </li>`
+          ).join('')}
+        </ul>
       </div>
 
       <div class="total">
@@ -220,14 +224,14 @@ const orderConfirmationTemplateFR = (order, trackingUrl) => {
 
       <div style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px;">
         <h3 style="margin-top: 0;">Adresse de Livraison :</h3>
-        <p>
-          ${shippingName}<br>
+        <p style="margin: 8px 0;">
+          <strong>${shippingName}</strong><br>
           ${shippingAddress.line1 || ''}<br>
           ${shippingAddress.line2 ? shippingAddress.line2 + '<br>' : ''}
-          ${shippingAddress.city || ''}${shippingAddress.city && shippingAddress.state ? ',' : ''} ${shippingAddress.state || ''} ${shippingAddress.postal_code || ''}<br>
+          ${shippingAddress.city || ''}${shippingAddress.city && (shippingAddress.state || shippingAddress.province) ? ', ' : ''} ${shippingAddress.state || shippingAddress.province || ''} ${shippingAddress.postal_code || shippingAddress.postalCode || ''}<br>
           ${shippingAddress.country || ''}
         </p>
-        <p><strong>Méthode d'Expédition :</strong> ${order.shipping?.method || 'Expédition Standard'}</p>
+        <p style="margin: 8px 0;"><strong>Méthode d'Expédition :</strong> ${order.shipping?.method || 'Expédition Standard'}</p>
       </div>
 
       ${trackingUrl ? `
@@ -376,7 +380,7 @@ const adminNotificationTemplate = (order) => {
       </div>
 
       <p style="text-align: center; margin-top: 30px;">
-        <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/admin" style="display: inline-block; padding: 12px 24px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px;">
+        <a href="${process.env.FRONTEND_URL || 'https://purepeelco.com'}/admin" style="display: inline-block; padding: 12px 24px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px;">
           View Order in Admin Dashboard
         </a>
       </p>
