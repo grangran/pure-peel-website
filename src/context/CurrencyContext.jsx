@@ -115,8 +115,10 @@ export function CurrencyProvider({ children }) {
 
   const formatPrice = (price) => {
     const convertedPrice = convertPrice(price)
-    // Use Canadian English (en-CA) for formatting
-    return new Intl.NumberFormat('en-CA', {
+    // Use appropriate locale based on currency
+    // en-US for USD, en-CA for CAD
+    const locale = currency === 'USD' ? 'en-US' : 'en-CA'
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: currency,
       minimumFractionDigits: 2,
