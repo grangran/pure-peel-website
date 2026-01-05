@@ -57,7 +57,7 @@ export default function ProductInfoLabel({ productName }) {
           </div>
 
           {/* No preservatives */}
-          <div>
+          <div translate="no">
             <p className="text-gray-700">
               <span className="font-semibold text-gray-900">No preservatives. No added sugars.</span>
               <br />
