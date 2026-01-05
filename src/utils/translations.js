@@ -287,18 +287,18 @@ export const translations = {
           title: "Shipping Methods",
           regular: {
             name: "Regular Parcel",
-            time: "3 business days",
+            time: "2-5 business days",
             description: "Standard delivery within Canada with tracking"
           },
           expedited: {
             name: "Expedited Parcel",
-            time: "2 business days",
-            description: "Faster delivery with tracking and signature confirmation"
+            time: "1-3 business days",
+            description: "Faster delivery with tracking and signature confirmation (guaranteed delivery)"
           },
           xpresspost: {
             name: "Xpresspost",
-            time: "1 business day",
-            description: "Express delivery with signature confirmation and priority handling"
+            time: "Next business day",
+            description: "Express delivery with signature confirmation and priority handling (guaranteed, major centers)"
           }
         }
       },
@@ -309,13 +309,13 @@ export const translations = {
         schedule1: "Orders placed Monday-Thursday before 2:00 PM EST: Processed within 24 hours",
         schedule2: "Orders placed Friday-Sunday: Processed the following Monday",
         schedule3: "Holiday orders: May experience additional processing delays",
-        text2: "Shipping times are calculated from the date your order ships, not from the date you place your order. You will receive a shipping confirmation email with a tracking number once your order has been shipped.",
-        note: "Note: Shipping times may be longer during peak seasons (holidays, special promotions) or due to weather conditions, postal service delays, or remote locations. We will notify you via email if there are any significant delays."
+        text2: "Shipping times are calculated from the date your order ships, not from the date you place your order. You will receive a shipping confirmation email with a tracking number once your order has been shipped. Delivery times vary by distance and destination - local deliveries are typically faster, while cross-country shipments may take longer.",
+        note: "Note: Shipping times may be longer during peak seasons (holidays, special promotions) or due to weather conditions, postal service delays, or remote locations. Regular Parcel delivery times (2-5 business days) vary by distance. Expedited Parcel (1-3 business days) and Xpresspost (next business day) offer guaranteed delivery. We will notify you via email if there are any significant delays."
       },
       shippingCosts: {
         title: "Shipping Costs",
         text1: "Shipping costs are calculated based on your location, package weight, and selected shipping method. Rates are displayed at checkout before you complete your purchase.",
-        text2: "All orders require shipping fees. Rates start from approximately $12 CAD for Regular Parcel within Canada."
+        text2: "All orders require shipping fees. Rates start from approximately $12 CAD for Regular Parcel within Canada. Remote locations (Yukon, Northwest Territories, Nunavut) may have additional surcharges applied at checkout."
       },
       orderTracking: {
         title: "Order Tracking",
@@ -330,7 +330,7 @@ export const translations = {
         title: "Damaged or Lost Packages",
         text1: "If your package arrives damaged or is lost in transit, please contact us immediately:",
         damagedItems: "Damaged Items: Take photos of the damaged package and items, then contact us within 48 hours of delivery",
-        lostPackages: "Lost Packages: Contact us if your package hasn't arrived within 10 business days of the expected delivery date",
+        lostPackages: "Lost Packages: Contact us if your package hasn't arrived within 7-12 business days of the expected delivery date (depending on shipping method)",
         incorrectItems: "Incorrect Items: Contact us immediately if you received the wrong items",
         text2: "We will work with Canada Post to resolve the issue and will replace or refund your order as appropriate. We may require photos or additional information to process your claim."
       },
@@ -932,18 +932,18 @@ export const translations = {
           title: "Méthodes d'Expédition",
           regular: {
             name: "Colis Régulier",
-            time: "3 jours ouvrables",
+            time: "2-5 jours ouvrables",
             description: "Livraison standard au Canada avec suivi"
           },
           expedited: {
             name: "Colis Accéléré",
-            time: "2 jours ouvrables",
-            description: "Livraison plus rapide avec suivi et confirmation de signature"
+            time: "1-3 jours ouvrables",
+            description: "Livraison plus rapide avec suivi et confirmation de signature (livraison garantie)"
           },
           xpresspost: {
             name: "Xpresspost",
-            time: "1 jour ouvrable",
-            description: "Livraison express avec confirmation de signature et traitement prioritaire"
+            time: "Prochain jour ouvrable",
+            description: "Livraison express avec confirmation de signature et traitement prioritaire (garantie, centres majeurs)"
           }
         }
       },
@@ -954,13 +954,13 @@ export const translations = {
         schedule1: "Commandes passées lundi-jeudi avant 14 h 00 HNE : Traitées dans les 24 heures",
         schedule2: "Commandes passées vendredi-dimanche : Traitées le lundi suivant",
         schedule3: "Commandes de jours fériés : Peuvent subir des retards de traitement supplémentaires",
-        text2: "Les délais d'expédition sont calculés à partir de la date d'expédition de votre commande, et non de la date à laquelle vous passez votre commande. Vous recevrez un e-mail de confirmation d'expédition avec un numéro de suivi une fois votre commande expédiée.",
-        note: "Note : Les délais d'expédition peuvent être plus longs pendant les périodes de pointe (jours fériés, promotions spéciales) ou en raison des conditions météorologiques, des retards du service postal ou des emplacements éloignés. Nous vous informerons par e-mail en cas de retards importants."
+        text2: "Les délais d'expédition sont calculés à partir de la date d'expédition de votre commande, et non de la date à laquelle vous passez votre commande. Vous recevrez un e-mail de confirmation d'expédition avec un numéro de suivi une fois votre commande expédiée. Les délais de livraison varient selon la distance et la destination - les livraisons locales sont généralement plus rapides, tandis que les expéditions transcontinentales peuvent prendre plus de temps.",
+        note: "Note : Les délais d'expédition peuvent être plus longs pendant les périodes de pointe (jours fériés, promotions spéciales) ou en raison des conditions météorologiques, des retards du service postal ou des emplacements éloignés. Les délais de livraison du Colis Régulier (2-5 jours ouvrables) varient selon la distance. Le Colis Accéléré (1-3 jours ouvrables) et Xpresspost (prochain jour ouvrable) offrent une livraison garantie. Nous vous informerons par e-mail en cas de retards importants."
       },
       shippingCosts: {
         title: "Frais d'Expédition",
         text1: "Les frais d'expédition sont calculés en fonction de votre emplacement, du poids du colis et de la méthode d'expédition sélectionnée. Les tarifs sont affichés à la caisse avant de finaliser votre achat.",
-        text2: "Toutes les commandes nécessitent des frais d'expédition. Les tarifs commencent à environ 12 $ CAD pour le Colis Régulier au Canada."
+        text2: "Toutes les commandes nécessitent des frais d'expédition. Les tarifs commencent à environ 12 $ CAD pour le Colis Régulier au Canada. Les emplacements éloignés (Yukon, Territoires du Nord-Ouest, Nunavut) peuvent avoir des frais supplémentaires appliqués à la caisse."
       },
       orderTracking: {
         title: "Suivi de Commande",
@@ -975,7 +975,7 @@ export const translations = {
         title: "Colis Endommagés ou Perdus",
         text1: "Si votre colis arrive endommagé ou est perdu en transit, veuillez nous contacter immédiatement :",
         damagedItems: "Articles Endommagés : Prenez des photos du colis et des articles endommagés, puis contactez-nous dans les 48 heures suivant la livraison",
-        lostPackages: "Colis Perdus : Contactez-nous si votre colis n'est pas arrivé dans les 10 jours ouvrables suivant la date de livraison prévue",
+        lostPackages: "Colis Perdus : Contactez-nous si votre colis n'est pas arrivé dans les 7-12 jours ouvrables suivant la date de livraison prévue (selon la méthode d'expédition)",
         incorrectItems: "Articles Incorrects : Contactez-nous immédiatement si vous avez reçu les mauvais articles",
         text2: "Nous travaillerons avec Postes Canada pour résoudre le problème et remplacer ou rembourser votre commande selon le cas. Nous pouvons demander des photos ou des informations supplémentaires pour traiter votre réclamation."
       },
