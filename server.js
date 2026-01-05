@@ -16,7 +16,8 @@ const app = express()
 const PORT = process.env.PORT || 3001
 
 // Trust proxy - required for rate limiting behind reverse proxies (Render, Vercel, etc.)
-app.set('trust proxy', true)
+// Set to 1 to trust the first proxy (Render)
+app.set('trust proxy', 1)
 
 // CORS configuration - restrict to your domains only
 const corsOptions = {
@@ -60,6 +61,7 @@ const apiLimiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  trustProxy: true, // Trust proxy headers (Render, Vercel, etc.)
 })
 
 // Stricter rate limiter for checkout - 5 attempts per 15 minutes per IP
@@ -69,6 +71,7 @@ const checkoutLimiter = rateLimit({
   message: 'Too many checkout attempts, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
+  trustProxy: true, // Trust proxy headers (Render, Vercel, etc.)
 })
 
 // Stricter rate limiter for shipping rates - 20 requests per 15 minutes per IP
@@ -78,6 +81,7 @@ const shippingLimiter = rateLimit({
   message: 'Too many shipping rate requests, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
+  trustProxy: true, // Trust proxy headers (Render, Vercel, etc.)
 })
 
 // Middleware
