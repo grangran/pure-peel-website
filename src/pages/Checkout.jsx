@@ -483,7 +483,7 @@ export default function Checkout() {
             },
             total: getCartTotal(),
             promoCode: appliedPromoCode || null,
-            discount: appliedPromoCode ? discount : 0,
+            discount: appliedPromoCode ? promoCodeDiscount : 0, // Always send CAD discount amount
           }),
         })
       } catch (fetchError) {
