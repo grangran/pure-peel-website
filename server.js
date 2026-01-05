@@ -543,7 +543,11 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
           stripeSessionId: session.id,
           stripePaymentIntentId: session.payment_intent,
           language: session.metadata?.language || 'en', // Store language from metadata
-          metadata: { language: session.metadata?.language || 'en' }, // Also store in metadata for email service
+          timezone: session.metadata?.timezone || 'America/Toronto', // Store customer timezone
+          metadata: { 
+            language: session.metadata?.language || 'en', // Also store in metadata for email service
+            timezone: session.metadata?.timezone || 'America/Toronto' // Store timezone for email service
+          },
           customer: {
             name: session.metadata?.customer_name || session.customer_details?.name || 'N/A',
             email: session.customer_email || session.customer_details?.email || 'N/A',
