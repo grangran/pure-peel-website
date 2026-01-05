@@ -277,18 +277,10 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
         if (couponId) {
           sessionConfig.discounts = [{ coupon: couponId }]
         } else {
-          // Fallback: Add discount as a negative line item if coupon creation fails
-          lineItems.push({
-            price_data: {
-              currency: 'cad',
-              product_data: {
-                name: `Discount: ${promoCode}`,
-                description: 'Promo code discount',
-              },
-              unit_amount: -discountAmountCents, // Negative amount for discount (already in cents)
-            },
-            quantity: 1,
-          })
+          // Fallback: If coupon creation fails, log error but continue
+          // Note: Stripe Checkout Sessions don't support negative line items
+          // The discount will need to be applied via coupon or not at all
+          console.error('Failed to create discount coupon, discount will not be applied in Stripe')
         }
       } catch (error) {
         console.error('Error applying discount:', error)
