@@ -86,6 +86,167 @@ const shippingLimiter = rateLimit({
 
 // Middleware
 app.use(cors(corsOptions))
+
+// IMPORTANT: Webhook endpoint must be BEFORE express.json() middleware
+// Stripe webhooks require the raw body for signature verification
+app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  if (!stripe) {
+    return res.status(500).json({ 
+      error: 'Stripe is not configured. Please set STRIPE_SECRET_KEY in your .env file' 
+    })
+  }
+
+  const sig = req.headers['stripe-signature']
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+
+  if (!webhookSecret) {
+    console.error('⚠️  STRIPE_WEBHOOK_SECRET not set - webhook signature verification disabled')
+    return res.status(400).send('Webhook secret not configured')
+  }
+
+  let event
+
+  try {
+    // Verify webhook signature using raw body
+    event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret)
+    console.log('✅ Webhook signature verified:', event.type)
+  } catch (err) {
+    console.error('❌ Webhook signature verification failed:', err.message)
+    return res.status(400).send(`Webhook Error: ${err.message}`)
+  }
+
+  // Handle the event
+  switch (event.type) {
+    case 'checkout.session.completed':
+      const session = event.data.object
+      console.log('📦 Checkout session completed:', session.id)
+      console.log('   Payment status:', session.payment_status)
+      console.log('   Customer email:', session.customer_email)
+      
+      try {
+        // Retrieve full session details to get line items and shipping details
+        const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
+          expand: ['line_items']
+        })
+
+        // Debug logging for shipping address (webhook handler)
+        console.log('📦 Shipping address debug (webhook):', {
+          hasShippingDetails: !!fullSession.shipping_details,
+          shippingDetailsName: fullSession.shipping_details?.name,
+          shippingDetailsAddress: fullSession.shipping_details?.address,
+          addressLine1: fullSession.shipping_details?.address?.line1,
+          addressCity: fullSession.shipping_details?.address?.city,
+          addressState: fullSession.shipping_details?.address?.state,
+          addressPostalCode: fullSession.shipping_details?.address?.postal_code,
+          addressCountry: fullSession.shipping_details?.address?.country,
+          fullShippingDetails: JSON.stringify(fullSession.shipping_details, null, 2)
+        })
+
+        // Check if order already exists
+        const existingOrder = getOrderById(fullSession.id.replace('cs_', 'PP-'))
+
+        if (!existingOrder && fullSession.payment_status === 'paid') {
+          // Extract order information
+          const orderData = {
+            stripeSessionId: fullSession.id,
+            stripePaymentIntentId: fullSession.payment_intent,
+            language: fullSession.metadata?.language || 'en',
+            timezone: fullSession.metadata?.timezone || 'America/Toronto',
+            metadata: { 
+              language: fullSession.metadata?.language || 'en',
+              timezone: fullSession.metadata?.timezone || 'America/Toronto'
+            },
+            customer: {
+              name: fullSession.metadata?.customer_name || fullSession.customer_details?.name || 'N/A',
+              email: fullSession.customer_email || fullSession.customer_details?.email || 'N/A',
+              phone: fullSession.metadata?.customer_phone || fullSession.customer_details?.phone || 'N/A',
+            },
+            shipping: {
+              name: fullSession.shipping_details?.name || fullSession.metadata?.customer_name || 'N/A',
+              address: fullSession.shipping_details?.address || {},
+              method: fullSession.shipping_cost?.display_name || 'Standard Shipping'
+            },
+            items: fullSession.line_items?.data?.map(item => ({
+              name: item.description || item.price_data?.product_data?.name || 'Unknown',
+              variant: item.description?.split(' - ')[1] || 'N/A',
+              quantity: item.quantity,
+              price: item.price.unit_amount / 100,
+              total: (item.price.unit_amount * item.quantity) / 100
+            })) || [],
+            subtotal: (fullSession.amount_subtotal || 0) / 100,
+            shippingCost: (fullSession.shipping_cost?.amount_total || 0) / 100,
+            tax: (fullSession.total_details?.amount_tax || 0) / 100,
+            total: (fullSession.amount_total || 0) / 100,
+            currency: fullSession.currency?.toUpperCase() || 'CAD',
+            notes: fullSession.metadata?.order_notes || '',
+            paymentStatus: fullSession.payment_status,
+            paymentMethod: fullSession.payment_method_types?.[0] || 'card'
+          }
+          const savedOrder = saveOrder(orderData)
+          console.log('Order saved:', savedOrder.id)
+          
+          // Send email notifications (only if not already sent)
+          console.log('📧 Attempting to send email notifications for order:', savedOrder.id)
+          console.log('   Customer email:', savedOrder.customer?.email)
+          
+          const confirmationSent = hasEmailBeenSent(savedOrder.id, 'confirmation')
+          const adminSent = hasEmailBeenSent(savedOrder.id, 'admin')
+          
+          if (!confirmationSent) {
+            try {
+              const emailResult = await sendOrderConfirmation(savedOrder)
+              if (emailResult.success) {
+                markEmailSent(savedOrder.id, 'confirmation')
+                console.log('✅ Customer email sent successfully')
+              } else {
+                console.log('⚠️  Customer email not sent:', emailResult.reason || emailResult.error)
+              }
+            } catch (emailError) {
+              console.error('❌ Error sending customer email:', emailError.message)
+            }
+          } else {
+            console.log('ℹ️  Customer confirmation email already sent, skipping')
+          }
+          
+          if (!adminSent) {
+            try {
+              const adminResult = await sendAdminNotification(savedOrder)
+              if (adminResult.success) {
+                markEmailSent(savedOrder.id, 'admin')
+                console.log('✅ Admin email sent successfully')
+              } else {
+                console.log('⚠️  Admin email not sent:', adminResult.reason || adminResult.error)
+              }
+            } catch (emailError) {
+              console.error('❌ Error sending admin email:', emailError.message)
+            }
+          } else {
+            console.log('ℹ️  Admin notification email already sent, skipping')
+          }
+        } else {
+          console.log('Order already exists:', fullSession.id.replace('cs_', 'PP-'))
+        }
+      } catch (error) {
+        console.error('Error saving order from webhook:', error)
+      }
+      break
+    case 'payment_intent.succeeded':
+      console.log('✅ PaymentIntent succeeded')
+      break
+    case 'payment_intent.payment_failed':
+      console.log('❌ PaymentIntent failed')
+      break
+    case 'charge.refunded':
+      console.log('💰 Charge refunded')
+      break
+    default:
+      console.log(`Unhandled event type ${event.type}`)
+  }
+
+  res.json({ received: true })
+})
+
+// Now apply JSON parsing for all other routes
 app.use(express.json({ limit: '10mb' })) // Limit request body size
 
 // Apply rate limiting to API routes
@@ -519,147 +680,7 @@ app.get('/api/checkout-session/:sessionId', async (req, res) => {
   }
 })
 
-// Webhook endpoint for Stripe events
-app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
-  if (!stripe) {
-    return res.status(500).json({ 
-      error: 'Stripe is not configured. Please set STRIPE_SECRET_KEY in your .env file' 
-    })
-  }
-
-  const sig = req.headers['stripe-signature']
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
-
-  let event
-
-  try {
-    event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret)
-  } catch (err) {
-    console.error('Webhook signature verification failed:', err.message)
-    return res.status(400).send(`Webhook Error: ${err.message}`)
-  }
-
-  // Handle the event
-  switch (event.type) {
-    case 'checkout.session.completed':
-      const session = event.data.object
-      console.log('Payment successful for session:', session.id)
-      
-      try {
-        // Retrieve full session details to get line items
-        const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
-          expand: ['line_items']
-        })
-
-        // Debug logging for shipping address (webhook handler)
-        console.log('📦 Shipping address debug (webhook):', {
-          hasShippingDetails: !!session.shipping_details,
-          shippingDetailsName: session.shipping_details?.name,
-          shippingDetailsAddress: session.shipping_details?.address,
-          addressLine1: session.shipping_details?.address?.line1,
-          addressCity: session.shipping_details?.address?.city,
-          addressState: session.shipping_details?.address?.state,
-          addressPostalCode: session.shipping_details?.address?.postal_code,
-          addressCountry: session.shipping_details?.address?.country,
-          fullShippingDetails: JSON.stringify(session.shipping_details, null, 2)
-        })
-
-        // Extract order information
-        const orderData = {
-          stripeSessionId: session.id,
-          stripePaymentIntentId: session.payment_intent,
-          language: session.metadata?.language || 'en', // Store language from metadata
-          timezone: session.metadata?.timezone || 'America/Toronto', // Store customer timezone
-          metadata: { 
-            language: session.metadata?.language || 'en', // Also store in metadata for email service
-            timezone: session.metadata?.timezone || 'America/Toronto' // Store timezone for email service
-          },
-          customer: {
-            name: session.metadata?.customer_name || session.customer_details?.name || 'N/A',
-            email: session.customer_email || session.customer_details?.email || 'N/A',
-            phone: session.metadata?.customer_phone || session.customer_details?.phone || 'N/A',
-          },
-          shipping: {
-            name: session.shipping_details?.name || session.metadata?.customer_name || 'N/A',
-            address: session.shipping_details?.address || {},
-            method: session.shipping_cost?.display_name || 'Standard Shipping'
-          },
-          items: fullSession.line_items?.data?.map(item => ({
-            name: item.description || item.price_data?.product_data?.name || 'Unknown',
-            variant: item.description?.split(' - ')[1] || 'N/A',
-            quantity: item.quantity,
-            price: item.price.unit_amount / 100, // Convert from cents
-            total: (item.price.unit_amount * item.quantity) / 100
-          })) || [],
-          subtotal: (session.amount_subtotal || 0) / 100,
-          shippingCost: (session.shipping_cost?.amount_total || 0) / 100,
-          tax: (session.total_details?.amount_tax || 0) / 100,
-          total: (session.amount_total || 0) / 100,
-          currency: session.currency?.toUpperCase() || 'CAD',
-          notes: session.metadata?.order_notes || '',
-          paymentStatus: session.payment_status,
-          paymentMethod: session.payment_method_types?.[0] || 'card'
-        }
-
-        // Save order
-        const savedOrder = saveOrder(orderData)
-        console.log('Order saved successfully:', savedOrder.id)
-        console.log('📦 Order shipping address:', JSON.stringify(savedOrder.shipping?.address, null, 2))
-        console.log('📦 Order items count:', savedOrder.items?.length || 0)
-        console.log('📦 Order items:', JSON.stringify(savedOrder.items, null, 2))
-
-        // Send email notifications (only if not already sent)
-        console.log('📧 Attempting to send email notifications for order:', savedOrder.id)
-        console.log('   Customer email:', savedOrder.customer?.email)
-        
-        // Check if emails were already sent (prevent duplicates)
-        const confirmationSent = hasEmailBeenSent(savedOrder.id, 'confirmation')
-        const adminSent = hasEmailBeenSent(savedOrder.id, 'admin')
-        
-        if (!confirmationSent) {
-          try {
-            const emailResult = await sendOrderConfirmation(savedOrder)
-            if (emailResult.success) {
-              markEmailSent(savedOrder.id, 'confirmation')
-              console.log('✅ Customer email sent successfully')
-            } else {
-              console.log('⚠️  Customer email not sent:', emailResult.reason || emailResult.error)
-            }
-          } catch (emailError) {
-            console.error('❌ Error sending customer email:', emailError.message)
-          }
-        } else {
-          console.log('ℹ️  Customer confirmation email already sent, skipping')
-        }
-        
-        if (!adminSent) {
-          try {
-            const adminResult = await sendAdminNotification(savedOrder)
-            if (adminResult.success) {
-              markEmailSent(savedOrder.id, 'admin')
-              console.log('✅ Admin email sent successfully')
-            } else {
-              console.log('⚠️  Admin email not sent:', adminResult.reason || adminResult.error)
-            }
-          } catch (emailError) {
-            console.error('❌ Error sending admin email:', emailError.message)
-          }
-        } else {
-          console.log('ℹ️  Admin notification email already sent, skipping')
-        }
-      } catch (error) {
-        console.error('Error saving order from webhook:', error)
-      }
-      break
-    case 'payment_intent.succeeded':
-      console.log('PaymentIntent succeeded')
-      break
-    default:
-      console.log(`Unhandled event type ${event.type}`)
-  }
-
-  res.json({ received: true })
-})
+// Old webhook endpoint removed - now handled above before express.json()
 
 // Get Canada Post Shipping Rates
 app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
