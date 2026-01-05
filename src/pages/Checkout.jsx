@@ -396,12 +396,13 @@ export default function Checkout() {
   }
 
   const calculateShipping = () => {
-    // Use selected shipping option price, or default to estimated rate
+    // Use selected shipping option price (always in CAD from backend)
+    // Note: selectedShipping.price is always in CAD, we'll convert it when displaying
     if (selectedShipping) {
-      return selectedShipping.price
+      return selectedShipping.price // This is in CAD
     }
     // Fallback: default estimated shipping (no free shipping)
-    return 12.00 // Default estimated shipping
+    return 12.00 // Default estimated shipping in CAD
   }
 
   // Reset to checkout form if user navigates back from confirmation
@@ -894,7 +895,9 @@ export default function Checkout() {
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between">
                                   <span className="font-medium text-sm text-gray-900">{option.name}</span>
-                                  <span className="font-semibold text-sm text-gray-900">{formatPrice(option.price)}</span>
+                                  <span className="font-semibold text-sm text-gray-900">
+                                    {formatPrice(option.price)}
+                                  </span>
                                 </div>
                                 <p className="text-xs text-gray-500 mt-0.5">
                                   {option.estimatedDays} {getTranslation(language, 'checkout.businessDays')}
