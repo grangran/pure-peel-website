@@ -43,19 +43,6 @@
       "source": "/(.*)",
       "destination": "/index.html"
     }
-  ],
-  "redirects": [
-    {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.purepeelco.com"
-        }
-      ],
-      "destination": "https://purepeelco.com/:path*",
-      "permanent": true
-    }
   ]
 }
 
