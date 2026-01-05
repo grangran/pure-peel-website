@@ -417,6 +417,19 @@ app.get('/api/checkout-session/:sessionId', async (req, res) => {
     // If order doesn't exist and payment is successful, save it (fallback if webhook didn't fire)
     if (!existingOrder && session.payment_status === 'paid') {
       try {
+        // Debug logging for shipping address (checkout session handler)
+        console.log('📦 Shipping address debug (checkout session):', {
+          hasShippingDetails: !!session.shipping_details,
+          shippingDetailsName: session.shipping_details?.name,
+          shippingDetailsAddress: session.shipping_details?.address,
+          addressLine1: session.shipping_details?.address?.line1,
+          addressCity: session.shipping_details?.address?.city,
+          addressState: session.shipping_details?.address?.state,
+          addressPostalCode: session.shipping_details?.address?.postal_code,
+          addressCountry: session.shipping_details?.address?.country,
+          fullShippingDetails: JSON.stringify(session.shipping_details, null, 2)
+        })
+
         const orderData = {
           stripeSessionId: session.id,
           stripePaymentIntentId: session.payment_intent,
