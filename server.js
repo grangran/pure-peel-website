@@ -271,7 +271,19 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     const promoCode = req.body.promoCode || null
     const discountAmount = parseFloat(req.body.discount) || 0
     const discountAmountCents = Math.max(0, Math.round(discountAmount * 100)) // Ensure non-negative integer
-    const totalAmount = Math.max(0, subtotal + shippingCostCents + tax - discountAmountCents)
+    
+    // Calculate order total to check if discount covers everything (including shipping)
+    const orderTotalCents = subtotal + shippingCostCents + tax
+    const totalAmount = Math.max(0, orderTotalCents - discountAmountCents)
+    
+    // If discount is 100% or covers the entire order (including shipping), make shipping free
+    // This ensures that 100% discount codes make shipping free
+    let finalShippingCostCents = shippingCostCents
+    if (discountAmountCents >= orderTotalCents && orderTotalCents > 0) {
+      // Discount covers entire order, set shipping to $0
+      finalShippingCostCents = 0
+      console.log('🎁 100% discount applied - shipping set to $0')
+    }
     
     // Validate all amounts are valid integers
     if (isNaN(shippingCostCents) || isNaN(subtotal) || isNaN(discountAmountCents)) {
@@ -298,12 +310,13 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
         language: shippingInfo.language || 'en', // Store language preference
         promo_code: promoCode || '',
       },
-      // Add shipping cost (shippingCostCents is already in cents, no need to multiply again)
-      shipping_options: shippingCostCents > 0 ? [{
+      // Add shipping cost (finalShippingCostCents is already in cents, no need to multiply again)
+      // If shipping is $0, don't add shipping option (Stripe will show free shipping)
+      shipping_options: finalShippingCostCents > 0 ? [{
         shipping_rate_data: {
           type: 'fixed_amount',
           fixed_amount: {
-            amount: shippingCostCents, // Already in cents, don't multiply by 100 again!
+            amount: finalShippingCostCents, // Already in cents, don't multiply by 100 again!
             currency: 'cad',
           },
           display_name: shippingInfo.selectedShipping?.name || 'Standard Shipping',
@@ -314,7 +327,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     // Apply discount if promo code is used
     if (promoCode && discountAmountCents > 0) {
       try {
-        // Calculate discount percentage based on order total
+        // Calculate discount percentage based on order total (use original shipping cost for calculation)
         const orderTotal = subtotal + shippingCostCents + tax
         const discountPercent = Math.max(1, Math.min(100, Math.round((discountAmountCents / orderTotal) * 100)))
         
