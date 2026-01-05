@@ -92,13 +92,15 @@ const orderConfirmationTemplateEN = (order, trackingUrl) => {
       <div class="order-info">
         <h2 style="margin-top: 0;">Order Details</h2>
         <p><strong>Order Number:</strong> ${order.id || 'N/A'}</p>
-        <p><strong>Order Date:</strong> ${order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-CA', { 
+        <p><strong>Order Date:</strong> ${order.createdAt ? new Date(order.createdAt).toLocaleString('en-CA', { 
+          timeZone: 'America/Toronto',
           year: 'numeric', 
           month: 'long', 
           day: 'numeric',
           hour: '2-digit',
-          minute: '2-digit'
-        }) : new Date().toLocaleDateString()}</p>
+          minute: '2-digit',
+          hour12: true
+        }) : new Date().toLocaleString('en-CA', { timeZone: 'America/Toronto' })}</p>
         <p><strong>Status:</strong> <span style="color: #f59e0b; font-weight: bold;">${(order.status || 'pending').charAt(0).toUpperCase() + (order.status || 'pending').slice(1)}</span></p>
       </div>
 
@@ -194,13 +196,15 @@ const orderConfirmationTemplateFR = (order, trackingUrl) => {
       <div class="order-info">
         <h2 style="margin-top: 0;">Détails de la Commande</h2>
         <p><strong>Numéro de Commande :</strong> ${order.id || 'N/A'}</p>
-        <p><strong>Date de Commande :</strong> ${order.createdAt ? new Date(order.createdAt).toLocaleDateString('fr-CA', { 
+        <p><strong>Date de Commande :</strong> ${order.createdAt ? new Date(order.createdAt).toLocaleString('fr-CA', { 
+          timeZone: 'America/Toronto',
           year: 'numeric', 
           month: 'long', 
           day: 'numeric',
           hour: '2-digit',
-          minute: '2-digit'
-        }) : new Date().toLocaleDateString('fr-CA')}</p>
+          minute: '2-digit',
+          hour12: true
+        }) : new Date().toLocaleString('fr-CA', { timeZone: 'America/Toronto' })}</p>
         <p><strong>Statut :</strong> <span style="color: #f59e0b; font-weight: bold;">${(order.status || 'en attente').charAt(0).toUpperCase() + (order.status || 'en attente').slice(1)}</span></p>
       </div>
 
@@ -209,7 +213,7 @@ const orderConfirmationTemplateFR = (order, trackingUrl) => {
         <ul style="list-style: none; padding: 0; margin: 0;">
           ${(order.items || []).map(item => 
             `<li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
-              <strong>${item.name || 'Article'}</strong> ${item.variant ? `(${item.variant})` : ''} - Qté : ${item.quantity || 1} - ${(item.total || item.price * (item.quantity || 1) || 0).toFixed(2)} $
+              ${item.name || 'Article'}${item.variant ? ` - ${item.variant}` : ''} - Qté : ${item.quantity || 1} - ${(item.total || item.price * (item.quantity || 1) || 0).toFixed(2)} $
             </li>`
           ).join('')}
         </ul>
