@@ -13,7 +13,8 @@ export function LanguageProvider({ children }) {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('language', language)
-      document.documentElement.lang = language
+      // Set to Canadian English (en-CA) or French Canadian (fr-CA)
+      document.documentElement.lang = language === 'fr' ? 'fr-CA' : 'en-CA'
     }
   }, [language])
 

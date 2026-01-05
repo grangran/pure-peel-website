@@ -96,7 +96,7 @@ const orderConfirmationTemplateEN = (order, trackingUrl) => {
       <div class="order-info">
         <h2 style="margin-top: 0;">Order Details</h2>
         <p><strong>Order Number:</strong> ${order.id || 'N/A'}</p>
-        <p><strong>Order Date:</strong> ${order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-US', { 
+        <p><strong>Order Date:</strong> ${order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-CA', { 
           year: 'numeric', 
           month: 'long', 
           day: 'numeric',

@@ -102,7 +102,8 @@ export function CurrencyProvider({ children }) {
 
   const formatPrice = (price) => {
     const convertedPrice = convertPrice(price)
-    return new Intl.NumberFormat('en-US', {
+    // Use Canadian English (en-CA) for formatting
+    return new Intl.NumberFormat('en-CA', {
       style: 'currency',
       currency: currency,
       minimumFractionDigits: 2,
