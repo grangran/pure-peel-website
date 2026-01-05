@@ -378,6 +378,16 @@ export default function Checkout() {
     }
   }, [formData.postalCode, formData.province, formData.city, formData.country, cartItems, hasEnteredShippingDetails])
 
+  // Recalculate promo code discount when shipping changes
+  useEffect(() => {
+    if (appliedPromoCode) {
+      const result = validatePromoCode(appliedPromoCode)
+      if (result.valid) {
+        setPromoCodeDiscount(result.discount)
+      }
+    }
+  }, [selectedShipping, cartItems, appliedPromoCode])
+
   // Promo code validation
   const validatePromoCode = (code) => {
     const codeUpper = code.toUpperCase().trim()
