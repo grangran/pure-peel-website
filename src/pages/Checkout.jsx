@@ -605,8 +605,7 @@ export default function Checkout() {
   // Dehydrated citrus products (unsweetened, no preservatives) qualify as zero-rated basic groceries
   // Tax is 0% - Products are zero-rated as unsweetened dried fruits
   const tax = 0
-  // Apply promo code discount (convert to current currency if needed)
-  const discount = appliedPromoCode ? (currency === 'USD' ? convertPrice(promoCodeDiscount) : promoCodeDiscount) : 0
+  // Promo code discount is always stored in CAD - formatPrice will handle conversion
   // Calculate total - formatPrice will handle currency conversion, so use CAD prices for calculation
   const totalCAD = hasEnteredShippingDetails && selectedShipping 
     ? Math.max(0, subtotal + shippingCostCAD + tax - promoCodeDiscount) 
