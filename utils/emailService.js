@@ -392,12 +392,6 @@ const adminNotificationTemplate = (order) => {
         </p>
         <p style="margin: 8px 0;"><strong>Shipping Method:</strong> ${order.shipping?.method || 'Standard Shipping'}</p>
       </div>
-
-      <p style="text-align: center; margin-top: 30px;">
-        <a href="${process.env.FRONTEND_URL || 'https://purepeelco.com'}/admin" style="display: inline-block; padding: 12px 24px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px;">
-          View Order in Admin Dashboard
-        </a>
-      </p>
     </div>
   </div>
 </body>
