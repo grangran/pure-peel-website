@@ -598,7 +598,6 @@ export default function Checkout() {
   }
 
   const shippingCostCAD = calculateShipping() // Shipping is always in CAD from backend
-  const shippingCost = currency === 'USD' ? convertPrice(shippingCostCAD) : shippingCostCAD
   const subtotal = getCartTotal()
   // Zero-rated goods under Schedule VI Part III of the Excise Tax Act
   // Dehydrated citrus products (unsweetened, no preservatives) qualify as zero-rated basic groceries
@@ -606,9 +605,11 @@ export default function Checkout() {
   const tax = 0
   // Apply promo code discount (convert to current currency if needed)
   const discount = appliedPromoCode ? (currency === 'USD' ? convertPrice(promoCodeDiscount) : promoCodeDiscount) : 0
-  const total = hasEnteredShippingDetails && selectedShipping 
-    ? Math.max(0, subtotal + shippingCost + tax - discount) 
+  // Calculate total - formatPrice will handle currency conversion, so use CAD prices for calculation
+  const totalCAD = hasEnteredShippingDetails && selectedShipping 
+    ? Math.max(0, subtotal + shippingCostCAD + tax - promoCodeDiscount) 
     : subtotal
+  const total = currency === 'USD' ? convertPrice(totalCAD) : totalCAD
 
   if (cartItems.length === 0 && currentStep !== 2) {
     return (
@@ -988,7 +989,7 @@ export default function Checkout() {
                     <span className="text-gray-900 font-semibold">
                       {!hasEnteredShippingDetails || !selectedShipping 
                         ? (language === 'fr' ? 'À calculer' : 'To be calculated')
-                        : (shippingCost === 0 ? getTranslation(language, 'checkout.free') : formatPrice(shippingCost))
+                        : (shippingCostCAD === 0 ? getTranslation(language, 'checkout.free') : formatPrice(shippingCostCAD))
                       }
                     </span>
                   </div>
