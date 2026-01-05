@@ -980,6 +980,69 @@ export default function Checkout() {
                     </div>
                   ))}
                 </div>
+                
+                {/* Promo Code Section */}
+                <div className="pt-5 border-t-2 border-gray-100 mb-5">
+                  {!appliedPromoCode ? (
+                    <div className="space-y-2">
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        {getTranslation(language, 'checkout.promoCode.label')}
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={promoCode}
+                          onChange={(e) => {
+                            setPromoCode(e.target.value.toUpperCase())
+                            setPromoCodeError('')
+                          }}
+                          onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault()
+                              handleApplyPromoCode()
+                            }
+                          }}
+                          placeholder={getTranslation(language, 'checkout.promoCode.placeholder')}
+                          className="flex-1 px-4 py-2.5 text-sm rounded-lg border border-gray-300 bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleApplyPromoCode}
+                          className="px-5 py-2.5 text-sm font-semibold rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors whitespace-nowrap"
+                        >
+                          {getTranslation(language, 'checkout.promoCode.apply')}
+                        </button>
+                      </div>
+                      {promoCodeError && (
+                        <p className="text-red-500 text-xs mt-1">{promoCodeError}</p>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <div>
+                          <p className="text-sm font-semibold text-green-800">
+                            {getTranslation(language, 'checkout.promoCode.applied')}: {appliedPromoCode}
+                          </p>
+                          <p className="text-xs text-green-600">
+                            {getTranslation(language, 'checkout.promoCode.discount')}: {formatPrice(promoCodeDiscount)}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleRemovePromoCode}
+                        className="text-green-600 hover:text-green-800 text-sm font-medium"
+                      >
+                        {getTranslation(language, 'checkout.promoCode.remove')}
+                      </button>
+                    </div>
+                  )}
+                </div>
+                
                 <div className="space-y-3 pt-5 border-t-2 border-gray-100">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.subtotal')}</span>
