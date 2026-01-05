@@ -19,7 +19,7 @@ createRoot(document.getElementById('root')).render(
             <ToastProvider>
               <App />
               <Analytics />
-              <SpeedInsights />
+              <SpeedInsights sampleRate={1} />
             </ToastProvider>
           </CartProvider>
         </CurrencyProvider>
