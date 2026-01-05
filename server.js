@@ -166,9 +166,21 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
 
     // Get shipping cost from request (selected shipping option)
     // Note: selectedShipping.price is in CAD dollars (e.g., 12.00), we need to convert to cents
+    console.log('📦 Shipping info received:', {
+      hasSelectedShipping: !!shippingInfo.selectedShipping,
+      shippingPrice: shippingInfo.selectedShipping?.price,
+      shippingName: shippingInfo.selectedShipping?.name
+    })
+    
     const shippingCostCents = shippingInfo.selectedShipping 
       ? Math.round(shippingInfo.selectedShipping.price * 100) // Convert dollars to cents
       : (total >= 50 ? 0 : 1000) // Fallback: free over $50, else $10 (in cents)
+    
+    console.log('💰 Shipping cost calculated:', {
+      priceInDollars: shippingInfo.selectedShipping?.price,
+      priceInCents: shippingCostCents,
+      priceInDollarsAgain: shippingCostCents / 100
+    })
     
     const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity * 100), 0)
     // Zero-rated goods under Schedule VI Part III of the Excise Tax Act
@@ -213,11 +225,11 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     }
 
     // Apply discount if promo code is used
-    if (promoCode && discountAmount > 0) {
+    if (promoCode && discountAmountCents > 0) {
       try {
         // Calculate discount percentage based on order total
-        const orderTotal = subtotal + shippingCost + tax
-        const discountPercent = Math.round((discountAmount / orderTotal) * 100)
+        const orderTotal = subtotal + shippingCostCents + tax
+        const discountPercent = Math.round((discountAmountCents / orderTotal) * 100)
         
         // Get or create discount coupon
         const couponId = await getOrCreateDiscountCoupon(promoCode, discountPercent)
@@ -247,7 +259,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
               name: `Discount: ${promoCode}`,
               description: 'Promo code discount',
             },
-            unit_amount: -discountAmount,
+            unit_amount: -discountAmountCents, // Already in cents
           },
           quantity: 1,
         })
