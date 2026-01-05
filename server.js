@@ -105,6 +105,52 @@ const validatePostalCode = (postalCode, country = 'Canada') => {
   }
 }
 
+// Helper function to get or create a discount coupon for promo codes
+async function getOrCreateDiscountCoupon(promoCode, discountPercent) {
+  if (!stripe) {
+    console.error('Stripe not configured, cannot create coupon')
+    return null
+  }
+  
+  try {
+    const couponId = promoCode.toUpperCase()
+    
+    // Try to retrieve existing coupon
+    try {
+      const existingCoupon = await stripe.coupons.retrieve(couponId)
+      if (existingCoupon && !existingCoupon.deleted) {
+        console.log(`✅ Using existing coupon: ${couponId}`)
+        return existingCoupon.id
+      }
+    } catch (retrieveError) {
+      // Coupon doesn't exist, we'll create it
+      if (retrieveError.code !== 'resource_missing') {
+        console.error('Error retrieving coupon:', retrieveError)
+      }
+    }
+    
+    // Create a new coupon
+    // Ensure discount percent is between 1-100
+    const validPercent = Math.max(1, Math.min(100, Math.round(discountPercent)))
+    
+    console.log(`Creating new coupon: ${couponId} with ${validPercent}% discount`)
+    
+    const coupon = await stripe.coupons.create({
+      id: couponId,
+      percent_off: validPercent,
+      duration: 'once', // One-time use
+      name: `Promo Code: ${promoCode}`,
+    })
+    
+    console.log(`✅ Created coupon: ${coupon.id}`)
+    return coupon.id
+  } catch (error) {
+    console.error('Error creating discount coupon:', error.message)
+    // If coupon creation fails, return null
+    return null
+  }
+}
+
 // Create Checkout Session
 app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
   try {
