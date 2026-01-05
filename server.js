@@ -569,6 +569,9 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
         // Save order
         const savedOrder = saveOrder(orderData)
         console.log('Order saved successfully:', savedOrder.id)
+        console.log('📦 Order shipping address:', JSON.stringify(savedOrder.shipping?.address, null, 2))
+        console.log('📦 Order items count:', savedOrder.items?.length || 0)
+        console.log('📦 Order items:', JSON.stringify(savedOrder.items, null, 2))
 
         // Send email notifications (only if not already sent)
         console.log('📧 Attempting to send email notifications for order:', savedOrder.id)
