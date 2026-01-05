@@ -271,8 +271,34 @@ export default function Checkout() {
 
         setShippingOptions(data.options)
         
-        // Auto-select first option (usually cheapest)
+        // Save shipping options to localStorage
+        try {
+          localStorage.setItem('checkoutShippingOptions', JSON.stringify(data.options))
+        } catch (error) {
+          console.error('Error saving shipping options:', error)
+        }
+        
+        // Auto-select first option (usually cheapest) or restore previously selected
         if (data.options.length > 0) {
+          // Try to restore previously selected shipping option
+          try {
+            const savedSelected = localStorage.getItem('checkoutShippingOption')
+            if (savedSelected) {
+              const parsedSelected = JSON.parse(savedSelected)
+              // Check if the saved option still exists in the new options
+              const matchingOption = data.options.find(opt => 
+                opt.id === parsedSelected.id || 
+                (opt.name === parsedSelected.name && opt.price === parsedSelected.price)
+              )
+              if (matchingOption) {
+                setSelectedShipping(matchingOption)
+                return // Don't auto-select first option if we restored a match
+              }
+            }
+          } catch (error) {
+            console.error('Error restoring selected shipping:', error)
+          }
+          // If no match found, select first option
           setSelectedShipping(data.options[0])
         }
       } catch (fetchError) {
