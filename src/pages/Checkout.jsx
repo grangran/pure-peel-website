@@ -352,14 +352,16 @@ export default function Checkout() {
     
     if (validCodes[codeUpper]) {
       const promo = validCodes[codeUpper]
-      const subtotal = getCartTotal()
-      const shipping = calculateShipping()
+      // Always calculate discount in CAD (all prices are stored in CAD)
+      const subtotalCAD = getCartTotal() // Already in CAD
+      const shippingCAD = calculateShipping() // Already in CAD
       const tax = 0
-      const orderTotal = subtotal + shipping + tax
+      const orderTotalCAD = subtotalCAD + shippingCAD + tax
       
       if (promo.type === 'percent') {
-        const discountAmount = (orderTotal * promo.discount) / 100
-        return { valid: true, discount: discountAmount, code: codeUpper }
+        // Calculate discount in CAD
+        const discountAmountCAD = (orderTotalCAD * promo.discount) / 100
+        return { valid: true, discount: discountAmountCAD, code: codeUpper }
       }
     }
     
@@ -1004,7 +1006,7 @@ export default function Checkout() {
                   {appliedPromoCode && hasEnteredShippingDetails && selectedShipping && (
                     <div className="flex justify-between items-center text-sm text-green-600">
                       <span className="font-medium">{getTranslation(language, 'checkout.promoCode.discount')}</span>
-                      <span className="font-semibold">-{formatPrice(discount)}</span>
+                      <span className="font-semibold">-{formatPrice(promoCodeDiscount)}</span>
                     </div>
                   )}
                   <div className="flex justify-between items-center text-xl font-bold pt-4 border-t-2 border-gray-200 mt-4">
