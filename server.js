@@ -126,20 +126,26 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
       try {
         // Retrieve full session details to get line items and shipping details
         const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
-          expand: ['line_items']
+          expand: ['line_items', 'shipping_details']
         })
 
         // Debug logging for shipping address (webhook handler)
         console.log('📦 Shipping address debug (webhook):', {
+          sessionId: fullSession.id,
           hasShippingDetails: !!fullSession.shipping_details,
           shippingDetailsName: fullSession.shipping_details?.name,
           shippingDetailsAddress: fullSession.shipping_details?.address,
           addressLine1: fullSession.shipping_details?.address?.line1,
           addressCity: fullSession.shipping_details?.address?.city,
           addressState: fullSession.shipping_details?.address?.state,
+          addressProvince: fullSession.shipping_details?.address?.province,
           addressPostalCode: fullSession.shipping_details?.address?.postal_code,
           addressCountry: fullSession.shipping_details?.address?.country,
-          fullShippingDetails: JSON.stringify(fullSession.shipping_details, null, 2)
+          fullShippingDetails: JSON.stringify(fullSession.shipping_details, null, 2),
+          // Also check the original session object from the event
+          eventSessionHasShipping: !!session.shipping_details,
+          eventSessionShipping: session.shipping_details ? JSON.stringify(session.shipping_details, null, 2) : 'null',
+          shippingAddressCollection: fullSession.shipping_address_collection
         })
 
         // Check if order already exists
