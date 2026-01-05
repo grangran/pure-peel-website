@@ -316,20 +316,28 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       try {
         // Calculate discount percentage based on order total
         const orderTotal = subtotal + shippingCostCents + tax
-        const discountPercent = Math.round((discountAmountCents / orderTotal) * 100)
+        const discountPercent = Math.max(1, Math.min(100, Math.round((discountAmountCents / orderTotal) * 100)))
+        
+        console.log('🎟️ Applying promo code:', {
+          promoCode,
+          discountAmountCents,
+          orderTotal,
+          discountPercent: `${discountPercent}%`
+        })
         
         // Get or create discount coupon
         const couponId = await getOrCreateDiscountCoupon(promoCode, discountPercent)
         if (couponId) {
           sessionConfig.discounts = [{ coupon: couponId }]
+          console.log('✅ Discount coupon applied to checkout session:', couponId)
         } else {
           // Fallback: If coupon creation fails, log error but continue
           // Note: Stripe Checkout Sessions don't support negative line items
           // The discount will need to be applied via coupon or not at all
-          console.error('Failed to create discount coupon, discount will not be applied in Stripe')
+          console.error('❌ Failed to create discount coupon, discount will not be applied in Stripe')
         }
       } catch (error) {
-        console.error('Error applying discount:', error)
+        console.error('❌ Error applying discount:', error.message || error)
         // If discount fails completely, log error but continue without discount
         console.error('Failed to apply discount, continuing without discount')
       }
