@@ -333,17 +333,19 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
         promo_code: promoCode || '',
       },
       // Add shipping cost (finalShippingCostCents is already in cents, no need to multiply again)
-      // If shipping is $0, don't add shipping option (Stripe will show free shipping)
-      shipping_options: finalShippingCostCents > 0 ? [{
+      // Always provide a shipping option (even if $0) when shipping_address_collection is enabled
+      shipping_options: [{
         shipping_rate_data: {
           type: 'fixed_amount',
           fixed_amount: {
-            amount: finalShippingCostCents, // Already in cents, don't multiply by 100 again!
+            amount: finalShippingCostCents, // Already in cents, don't multiply by 100 again! Can be 0 for free shipping
             currency: 'cad',
           },
-          display_name: shippingInfo.selectedShipping?.name || 'Standard Shipping',
+          display_name: finalShippingCostCents > 0 
+            ? (shippingInfo.selectedShipping?.name || 'Standard Shipping')
+            : 'Free Shipping',
         },
-      }] : [],
+      }],
     }
 
     // Apply discount if promo code is used
