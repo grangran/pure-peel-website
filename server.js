@@ -151,18 +151,30 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     }
 
     // Create line items for Stripe
-    const lineItems = items.map(item => ({
-      price_data: {
-        currency: 'cad',
-        product_data: {
-          name: `${item.name} - ${item.variant}`,
-          description: item.description || '',
-          images: item.image ? [new URL(item.image, req.headers.origin || 'http://localhost:5173').href] : [],
+    const lineItems = items.map(item => {
+      const itemPrice = parseFloat(item.price) || 0
+      const itemQuantity = parseInt(item.quantity) || 0
+      
+      // Validate item data
+      if (itemPrice <= 0 || itemQuantity <= 0 || isNaN(itemPrice) || isNaN(itemQuantity)) {
+        throw new Error(`Invalid item data: price=${item.price}, quantity=${item.quantity}`)
+      }
+      
+      const unitAmount = Math.max(1, Math.round(itemPrice * 100)) // Convert to cents, ensure at least 1 cent
+      
+      return {
+        price_data: {
+          currency: 'cad',
+          product_data: {
+            name: `${item.name} - ${item.variant}`,
+            description: item.description || '',
+            images: item.image ? [new URL(item.image, req.headers.origin || 'http://localhost:5173').href] : [],
+          },
+          unit_amount: unitAmount,
         },
-        unit_amount: Math.round(item.price * 100), // Convert to cents
-      },
-      quantity: item.quantity,
-    }))
+        quantity: itemQuantity,
+      }
+    })
 
     // Get shipping cost from request (selected shipping option)
     // Note: selectedShipping.price should be in CAD dollars (e.g., 12.00), we need to convert to cents
@@ -185,7 +197,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       }
     }
     
-    const shippingCostCents = Math.round(shippingPrice * 100) // Convert dollars to cents
+    const shippingCostCents = Math.max(0, Math.round(shippingPrice * 100)) // Convert dollars to cents, ensure non-negative
     
     console.log('💰 Shipping cost calculated:', {
       originalPrice: shippingInfo.selectedShipping?.price,
@@ -194,15 +206,32 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       priceInDollars: shippingCostCents / 100
     })
     
-    const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity * 100), 0)
+    // Validate and calculate subtotal
+    const subtotal = items.reduce((sum, item) => {
+      const itemPrice = parseFloat(item.price) || 0
+      const itemQuantity = parseInt(item.quantity) || 0
+      if (itemPrice < 0 || itemQuantity < 0 || isNaN(itemPrice) || isNaN(itemQuantity)) {
+        console.error('Invalid item price or quantity:', { price: item.price, quantity: item.quantity })
+        return sum
+      }
+      return sum + Math.round(itemPrice * itemQuantity * 100)
+    }, 0)
+    
     // Zero-rated goods under Schedule VI Part III of the Excise Tax Act
     // Dehydrated citrus products (unsweetened, no preservatives) qualify as zero-rated basic groceries
     const tax = 0 // 0% HST/GST - Products are zero-rated as unsweetened dried fruits
     
     // Apply promo code discount if provided (discountAmount is in dollars, convert to cents)
     const promoCode = req.body.promoCode || null
-    const discountAmountCents = req.body.discount ? Math.round(req.body.discount * 100) : 0
+    const discountAmount = parseFloat(req.body.discount) || 0
+    const discountAmountCents = Math.max(0, Math.round(discountAmount * 100)) // Ensure non-negative integer
     const totalAmount = Math.max(0, subtotal + shippingCostCents + tax - discountAmountCents)
+    
+    // Validate all amounts are valid integers
+    if (isNaN(shippingCostCents) || isNaN(subtotal) || isNaN(discountAmountCents)) {
+      console.error('Invalid amount detected:', { shippingCostCents, subtotal, discountAmountCents })
+      return res.status(400).json({ error: 'Invalid amount calculation. Please check your cart items and shipping.' })
+    }
 
     // Create Stripe Checkout Session
     // Note: 'card' automatically enables Apple Pay and Google Pay when available
@@ -263,18 +292,8 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
         }
       } catch (error) {
         console.error('Error applying discount:', error)
-        // If discount fails, add as negative line item
-        lineItems.push({
-          price_data: {
-            currency: 'cad',
-            product_data: {
-              name: `Discount: ${promoCode}`,
-              description: 'Promo code discount',
-            },
-            unit_amount: -discountAmountCents, // Already in cents
-          },
-          quantity: 1,
-        })
+        // If discount fails completely, log error but continue without discount
+        console.error('Failed to apply discount, continuing without discount')
       }
     }
 
