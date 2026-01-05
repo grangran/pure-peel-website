@@ -54,10 +54,6 @@ export default function Checkout() {
   const [shippingError, setShippingError] = useState(null)
   const [isRedirecting, setIsRedirecting] = useState(false)
   const [hasEnteredShippingDetails, setHasEnteredShippingDetails] = useState(false)
-  const [promoCode, setPromoCode] = useState('')
-  const [appliedPromoCode, setAppliedPromoCode] = useState(null)
-  const [promoCodeError, setPromoCodeError] = useState('')
-  const [promoCodeDiscount, setPromoCodeDiscount] = useState(0) // Discount amount in CAD
   
   // Check for Stripe redirect
   useEffect(() => {
@@ -338,64 +334,6 @@ export default function Checkout() {
     }
   }
 
-  // Promo code validation
-  const validatePromoCode = (code) => {
-    const codeUpper = code.toUpperCase().trim()
-    
-    // Define valid promo codes
-    const validCodes = {
-      'FREETEST': { discount: 100, type: 'percent' }, // 100% off for testing
-      'TEST100': { discount: 100, type: 'percent' }, // Alternative test code
-      'WELCOME10': { discount: 10, type: 'percent' }, // Example: 10% off
-      'SAVE20': { discount: 20, type: 'percent' }, // Example: 20% off
-    }
-    
-    if (validCodes[codeUpper]) {
-      const promo = validCodes[codeUpper]
-      // Always calculate discount in CAD (all prices are stored in CAD)
-      const subtotalCAD = getCartTotal() // Already in CAD
-      const shippingCAD = calculateShipping() // Already in CAD
-      const tax = 0
-      const orderTotalCAD = subtotalCAD + shippingCAD + tax
-      
-      if (promo.type === 'percent') {
-        // Calculate discount in CAD
-        const discountAmountCAD = (orderTotalCAD * promo.discount) / 100
-        return { valid: true, discount: discountAmountCAD, code: codeUpper }
-      }
-    }
-    
-    return { valid: false, discount: 0, code: null }
-  }
-
-  const handleApplyPromoCode = () => {
-    setPromoCodeError('')
-    
-    if (!promoCode.trim()) {
-      setPromoCodeError(getTranslation(language, 'checkout.promoCode.enterCode'))
-      return
-    }
-    
-    const result = validatePromoCode(promoCode)
-    
-    if (result.valid) {
-      setAppliedPromoCode(result.code)
-      setPromoCodeDiscount(result.discount)
-      setPromoCodeError('')
-      // Clear the input but keep the applied code visible
-    } else {
-      setPromoCodeError(getTranslation(language, 'checkout.promoCode.invalid'))
-      setAppliedPromoCode(null)
-      setPromoCodeDiscount(0)
-    }
-  }
-
-  const handleRemovePromoCode = () => {
-    setAppliedPromoCode(null)
-    setPromoCodeDiscount(0)
-    setPromoCode('')
-    setPromoCodeError('')
-  }
 
   const calculateShipping = () => {
     // Use selected shipping option price (always in CAD from backend)
@@ -482,8 +420,6 @@ export default function Checkout() {
               language: language // Include language preference for email translations
             },
             total: getCartTotal(),
-            promoCode: appliedPromoCode || null,
-            discount: appliedPromoCode ? promoCodeDiscount : 0, // Always send CAD discount amount
           }),
         })
       } catch (fetchError) {
@@ -605,10 +541,9 @@ export default function Checkout() {
   // Dehydrated citrus products (unsweetened, no preservatives) qualify as zero-rated basic groceries
   // Tax is 0% - Products are zero-rated as unsweetened dried fruits
   const tax = 0
-  // Promo code discount is always stored in CAD - formatPrice will handle conversion
   // Calculate total - formatPrice will handle currency conversion, so use CAD prices for calculation
   const totalCAD = hasEnteredShippingDetails && selectedShipping 
-    ? Math.max(0, subtotal + shippingCostCAD + tax - promoCodeDiscount) 
+    ? subtotal + shippingCostCAD + tax
     : subtotal
   const total = currency === 'USD' ? convertPrice(totalCAD) : totalCAD
 
@@ -638,7 +573,7 @@ export default function Checkout() {
   }
 
   return (
-    <section ref={sectionRef} className="py-12 px-5 bg-gradient-to-b from-gray-50 to-gray-100 min-h-[calc(100vh-72px)]">
+    <section ref={sectionRef} className="py-12 px-5 bg-linear-to-b from-gray-50 to-gray-100 min-h-[calc(100vh-72px)]">
       <div className="max-w-6xl mx-auto">
         {/* Combined Checkout: Shipping + Payment */}
         {currentStep === 1 && (
@@ -981,68 +916,6 @@ export default function Checkout() {
                   ))}
                 </div>
                 
-                {/* Promo Code Section */}
-                <div className="pt-5 border-t-2 border-gray-100 mb-5">
-                  {!appliedPromoCode ? (
-                    <div className="space-y-2">
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        {getTranslation(language, 'checkout.promoCode.label')}
-                      </label>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          value={promoCode}
-                          onChange={(e) => {
-                            setPromoCode(e.target.value.toUpperCase())
-                            setPromoCodeError('')
-                          }}
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                              e.preventDefault()
-                              handleApplyPromoCode()
-                            }
-                          }}
-                          placeholder={getTranslation(language, 'checkout.promoCode.placeholder')}
-                          className="flex-1 px-4 py-2.5 text-sm rounded-lg border border-gray-300 bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
-                        />
-                        <button
-                          type="button"
-                          onClick={handleApplyPromoCode}
-                          className="px-5 py-2.5 text-sm font-semibold rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors whitespace-nowrap"
-                        >
-                          {getTranslation(language, 'checkout.promoCode.apply')}
-                        </button>
-                      </div>
-                      {promoCodeError && (
-                        <p className="text-red-500 text-xs mt-1">{promoCodeError}</p>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                        <div>
-                          <p className="text-sm font-semibold text-green-800">
-                            {getTranslation(language, 'checkout.promoCode.applied')}: {appliedPromoCode}
-                          </p>
-                          <p className="text-xs text-green-600">
-                            {getTranslation(language, 'checkout.promoCode.discount')}: {formatPrice(promoCodeDiscount)}
-                          </p>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleRemovePromoCode}
-                        className="text-green-600 hover:text-green-800 text-sm font-medium"
-                      >
-                        {getTranslation(language, 'checkout.promoCode.remove')}
-                      </button>
-                    </div>
-                  )}
-                </div>
-                
                 <div className="space-y-3 pt-5 border-t-2 border-gray-100">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.subtotal')}</span>
@@ -1062,13 +935,6 @@ export default function Checkout() {
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.taxHST')}</span>
                       <span className="text-gray-900 font-semibold">{formatPrice(tax)}</span>
-                    </div>
-                  )}
-                  {/* Discount line */}
-                  {appliedPromoCode && hasEnteredShippingDetails && selectedShipping && (
-                    <div className="flex justify-between items-center text-sm text-green-600">
-                      <span className="font-medium">{getTranslation(language, 'checkout.promoCode.discount')}</span>
-                      <span className="font-semibold">-{formatPrice(promoCodeDiscount)}</span>
                     </div>
                   )}
                   <div className="flex justify-between items-center text-xl font-bold pt-4 border-t-2 border-gray-200 mt-4">

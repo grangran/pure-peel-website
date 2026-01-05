@@ -105,52 +105,6 @@ const validatePostalCode = (postalCode, country = 'Canada') => {
   }
 }
 
-// Helper function to get or create a discount coupon for promo codes
-async function getOrCreateDiscountCoupon(promoCode, discountPercent) {
-  if (!stripe) {
-    console.error('Stripe not configured, cannot create coupon')
-    return null
-  }
-  
-  try {
-    const couponId = promoCode.toUpperCase()
-    
-    // Try to retrieve existing coupon
-    try {
-      const existingCoupon = await stripe.coupons.retrieve(couponId)
-      if (existingCoupon && !existingCoupon.deleted) {
-        console.log(`✅ Using existing coupon: ${couponId}`)
-        return existingCoupon.id
-      }
-    } catch (retrieveError) {
-      // Coupon doesn't exist, we'll create it
-      if (retrieveError.code !== 'resource_missing') {
-        console.error('Error retrieving coupon:', retrieveError)
-      }
-    }
-    
-    // Create a new coupon
-    // Ensure discount percent is between 1-100
-    const validPercent = Math.max(1, Math.min(100, Math.round(discountPercent)))
-    
-    console.log(`Creating new coupon: ${couponId} with ${validPercent}% discount`)
-    
-    const coupon = await stripe.coupons.create({
-      id: couponId,
-      percent_off: validPercent,
-      duration: 'once', // One-time use
-      name: `Promo Code: ${promoCode}`,
-    })
-    
-    console.log(`✅ Created coupon: ${coupon.id}`)
-    return coupon.id
-  } catch (error) {
-    console.error('Error creating discount coupon:', error.message)
-    // If coupon creation fails, return null
-    return null
-  }
-}
-
 // Create Checkout Session
 app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
   try {
@@ -267,49 +221,11 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     // Dehydrated citrus products (unsweetened, no preservatives) qualify as zero-rated basic groceries
     const tax = 0 // 0% HST/GST - Products are zero-rated as unsweetened dried fruits
     
-    // Apply promo code discount if provided (discountAmount is in dollars, convert to cents)
-    const promoCode = req.body.promoCode || null
-    const discountAmount = parseFloat(req.body.discount) || 0
-    const discountAmountCents = Math.max(0, Math.round(discountAmount * 100)) // Ensure non-negative integer
-    
-    // Calculate order total to check if discount covers everything (including shipping)
-    const orderTotalCents = subtotal + shippingCostCents + tax
-    
-    // Check if this is a 100% discount code (common test codes)
-    const promoCodeUpper = promoCode ? promoCode.toUpperCase().trim() : ''
-    const is100PercentDiscount = promoCodeUpper && (
-      promoCodeUpper === 'FREETEST' || 
-      promoCodeUpper === 'TEST100' ||
-      (discountAmountCents >= orderTotalCents && orderTotalCents > 0)
-    )
-    
-    // If discount is 100% or covers the entire order (including shipping), make shipping free
-    // This ensures that 100% discount codes make shipping free
-    let finalShippingCostCents = shippingCostCents
-    if (is100PercentDiscount) {
-      // Discount covers entire order, set shipping to $0
-      finalShippingCostCents = 0
-      console.log('🎁 100% discount detected - shipping set to $0', {
-        promoCode: promoCodeUpper,
-        originalShipping: shippingCostCents,
-        orderTotal: orderTotalCents,
-        discountAmount: discountAmountCents,
-        is100Percent: true
-      })
-    } else {
-      console.log('💰 Regular discount or no discount:', {
-        promoCode: promoCodeUpper || 'none',
-        shippingCost: shippingCostCents,
-        orderTotal: orderTotalCents,
-        discountAmount: discountAmountCents
-      })
-    }
-    
-    const totalAmount = Math.max(0, subtotal + finalShippingCostCents + tax - discountAmountCents)
+    const totalAmount = subtotal + shippingCostCents + tax
     
     // Validate all amounts are valid integers
-    if (isNaN(shippingCostCents) || isNaN(subtotal) || isNaN(discountAmountCents)) {
-      console.error('Invalid amount detected:', { shippingCostCents, subtotal, discountAmountCents })
+    if (isNaN(shippingCostCents) || isNaN(subtotal)) {
+      console.error('Invalid amount detected:', { shippingCostCents, subtotal })
       return res.status(400).json({ error: 'Invalid amount calculation. Please check your cart items and shipping.' })
     }
 
@@ -330,59 +246,18 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
         customer_phone: shippingInfo.phone,
         order_notes: shippingInfo.notes || '',
         language: shippingInfo.language || 'en', // Store language preference
-        promo_code: promoCode || '',
       },
-      // Add shipping cost (finalShippingCostCents is already in cents, no need to multiply again)
-      // Always provide a shipping option (even if $0) when shipping_address_collection is enabled
-      shipping_options: [{
+      // Add shipping cost (shippingCostCents is already in cents, no need to multiply again)
+      shipping_options: shippingCostCents > 0 ? [{
         shipping_rate_data: {
           type: 'fixed_amount',
           fixed_amount: {
-            amount: finalShippingCostCents, // Already in cents, don't multiply by 100 again! Can be 0 for free shipping
+            amount: shippingCostCents, // Already in cents, don't multiply by 100 again!
             currency: 'cad',
           },
-          display_name: finalShippingCostCents > 0 
-            ? (shippingInfo.selectedShipping?.name || 'Standard Shipping')
-            : 'Free Shipping',
+          display_name: shippingInfo.selectedShipping?.name || 'Standard Shipping',
         },
-      }],
-    }
-
-    // Apply discount if promo code is used
-    if (promoCode && discountAmountCents > 0) {
-      try {
-        // Calculate discount percentage based on order total
-        // Use final shipping cost (which may be $0 for 100% discounts) for accurate calculation
-        const orderTotalForDiscount = subtotal + finalShippingCostCents + tax
-        const discountPercent = orderTotalForDiscount > 0 
-          ? Math.max(1, Math.min(100, Math.round((discountAmountCents / orderTotalForDiscount) * 100)))
-          : 100 // If total is $0, discount is 100%
-        
-        console.log('🎟️ Applying promo code:', {
-          promoCode,
-          discountAmountCents,
-          originalOrderTotal: subtotal + shippingCostCents + tax,
-          finalOrderTotal: orderTotalForDiscount,
-          finalShipping: finalShippingCostCents,
-          discountPercent: `${discountPercent}%`
-        })
-        
-        // Get or create discount coupon
-        const couponId = await getOrCreateDiscountCoupon(promoCode, discountPercent)
-        if (couponId) {
-          sessionConfig.discounts = [{ coupon: couponId }]
-          console.log('✅ Discount coupon applied to checkout session:', couponId)
-        } else {
-          // Fallback: If coupon creation fails, log error but continue
-          // Note: Stripe Checkout Sessions don't support negative line items
-          // The discount will need to be applied via coupon or not at all
-          console.error('❌ Failed to create discount coupon, discount will not be applied in Stripe')
-        }
-      } catch (error) {
-        console.error('❌ Error applying discount:', error.message || error)
-        // If discount fails completely, log error but continue without discount
-        console.error('Failed to apply discount, continuing without discount')
-      }
+      }] : [],
     }
 
     const session = await stripe.checkout.sessions.create(sessionConfig)
