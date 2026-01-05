@@ -121,11 +121,25 @@ export default function Checkout() {
 
   const [errors, setErrors] = useState({})
 
-  // Clear shipping options on initial load
+  // Restore shipping options and selected shipping from localStorage on mount
   useEffect(() => {
-    setShippingOptions([])
-    setSelectedShipping(null)
-    setHasEnteredShippingDetails(false)
+    try {
+      const savedOptions = localStorage.getItem('checkoutShippingOptions')
+      const savedSelected = localStorage.getItem('checkoutShippingOption')
+      
+      if (savedOptions) {
+        const parsedOptions = JSON.parse(savedOptions)
+        setShippingOptions(parsedOptions)
+      }
+      
+      if (savedSelected) {
+        const parsedSelected = JSON.parse(savedSelected)
+        setSelectedShipping(parsedSelected)
+        setHasEnteredShippingDetails(true)
+      }
+    } catch (error) {
+      console.error('Error loading saved shipping data:', error)
+    }
   }, [])
 
   const [sectionRef, isSectionVisible] = useScrollReveal({ threshold: 0.1 })
