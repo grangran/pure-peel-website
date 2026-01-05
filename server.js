@@ -162,9 +162,9 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
               phone: fullSession.metadata?.customer_phone || fullSession.customer_details?.phone || 'N/A',
             },
             shipping: {
-              name: fullSession.shipping_details?.name || fullSession.metadata?.customer_name || 'N/A',
-              address: fullSession.shipping_details?.address || {},
-              method: fullSession.shipping_cost?.display_name || 'Standard Shipping'
+              name: fullSession.shipping_details?.name || fullSession.customer_details?.name || fullSession.metadata?.customer_name || 'N/A',
+              address: fullSession.shipping_details?.address || fullSession.shipping?.address || {},
+              method: fullSession.shipping_cost?.display_name || fullSession.shipping_options?.[0]?.shipping_rate?.display_name || 'Standard Shipping'
             },
             items: fullSession.line_items?.data?.map(item => ({
               name: item.description || item.price_data?.product_data?.name || 'Unknown',
