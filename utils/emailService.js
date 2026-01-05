@@ -109,7 +109,7 @@ const orderConfirmationTemplateEN = (order, trackingUrl) => {
         <ul style="list-style: none; padding: 0; margin: 0;">
           ${(order.items || []).map(item => 
             `<li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
-              <strong>${item.name || 'Item'}</strong> ${item.variant ? `(${item.variant})` : ''} - Qty: ${item.quantity || 1} - $${(item.total || item.price * (item.quantity || 1) || 0).toFixed(2)}
+              ${item.name || 'Item'}${item.variant ? ` - ${item.variant}` : ''} - Qty: ${item.quantity || 1} - $${(item.total || item.price * (item.quantity || 1) || 0).toFixed(2)}
             </li>`
           ).join('')}
         </ul>
