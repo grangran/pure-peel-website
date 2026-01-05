@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useCart } from "../context/CartContext"
 import { useScrollReveal } from "../hooks/useScrollReveal"
 import { useLanguage } from "../context/LanguageContext"
@@ -155,17 +155,7 @@ export default function Checkout() {
     }
   }, [formData])
 
-  // Load saved shipping option from localStorage
-  useEffect(() => {
-    try {
-      const savedShipping = localStorage.getItem('checkoutShippingOption')
-      if (savedShipping) {
-        setSelectedShipping(JSON.parse(savedShipping))
-      }
-    } catch (error) {
-      console.error('Error loading saved shipping option:', error)
-    }
-  }, [])
+  // Duplicate removed - shipping options and selected shipping are now loaded in the useEffect above
 
   // Save shipping option to localStorage
   useEffect(() => {
@@ -195,6 +185,9 @@ export default function Checkout() {
         setFormData(prev => ({ ...prev, province: '', postalCode: '' }))
         setShippingOptions([])
         setSelectedShipping(null)
+        // Clear saved shipping data when address changes
+        localStorage.removeItem('checkoutShippingOptions')
+        localStorage.removeItem('checkoutShippingOption')
       }
     }
   }
