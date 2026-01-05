@@ -1248,9 +1248,33 @@ app.get('/api/test-email', async (req, res) => {
 // Simple password protection - in production, use proper authentication
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123' // Change this!
 
+// Log admin password status on server start (without revealing the actual password)
+if (process.env.ADMIN_PASSWORD) {
+  console.log('✅ Admin password loaded from environment variable (length:', process.env.ADMIN_PASSWORD.length, 'chars)')
+} else {
+  console.log('⚠️  Using default admin password. Set ADMIN_PASSWORD in environment variables for production.')
+}
+
 const authenticateAdmin = (req, res, next) => {
   const providedPassword = req.headers['x-admin-password'] || req.query.password
-  if (providedPassword === ADMIN_PASSWORD) {
+  
+  // Trim whitespace from provided password
+  const trimmedProvided = providedPassword ? providedPassword.trim() : ''
+  const trimmedAdmin = ADMIN_PASSWORD.trim()
+  
+  // Debug logging (only log on failure to avoid exposing password)
+  if (trimmedProvided !== trimmedAdmin) {
+    console.log('🔒 Admin authentication failed:', {
+      providedLength: trimmedProvided.length,
+      expectedLength: trimmedAdmin.length,
+      match: trimmedProvided === trimmedAdmin,
+      hasQueryParam: !!req.query.password,
+      hasHeader: !!req.headers['x-admin-password']
+    })
+  }
+  
+  if (trimmedProvided === trimmedAdmin) {
+    console.log('✅ Admin authentication successful')
     next()
   } else {
     res.status(401).json({ error: 'Unauthorized. Invalid admin password.' })
