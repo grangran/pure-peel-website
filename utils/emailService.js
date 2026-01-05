@@ -319,10 +319,6 @@ const shippingNotificationTemplate = (order, trackingNumber) => {
 }
 
 const adminNotificationTemplate = (order) => {
-  const itemsList = (order.items || []).map(item => 
-    `  • ${item.name || 'Item'} (${item.variant || 'N/A'}) - Qty: ${item.quantity || 1} - $${(item.total || 0).toFixed(2)}`
-  ).join('\n')
-  
   const customerName = order.customer?.name || 'N/A'
   const customerEmail = order.customer?.email || 'N/A'
   const customerPhone = order.customer?.phone || 'N/A'
@@ -365,18 +361,25 @@ const adminNotificationTemplate = (order) => {
 
       <div class="info-box">
         <h3 style="margin-top: 0;">Items:</h3>
-        <pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${itemsList}</pre>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          ${(order.items || []).map(item => 
+            `<li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+              <strong>${item.name || 'Item'}</strong> ${item.variant ? `(${item.variant})` : ''} - Qty: ${item.quantity || 1} - $${(item.total || item.price * (item.quantity || 1) || 0).toFixed(2)}
+            </li>`
+          ).join('')}
+        </ul>
       </div>
 
       <div class="info-box">
         <h3 style="margin-top: 0;">Shipping Address:</h3>
-        <p>
-          ${shippingName}<br>
+        <p style="margin: 8px 0;">
+          <strong>${shippingName}</strong><br>
           ${shippingAddress.line1 || ''}<br>
           ${shippingAddress.line2 ? shippingAddress.line2 + '<br>' : ''}
-          ${shippingAddress.city || ''}${shippingAddress.city && shippingAddress.state ? ',' : ''} ${shippingAddress.state || ''} ${shippingAddress.postal_code || ''}<br>
+          ${shippingAddress.city || ''}${shippingAddress.city && (shippingAddress.state || shippingAddress.province) ? ', ' : ''} ${shippingAddress.state || shippingAddress.province || ''} ${shippingAddress.postal_code || shippingAddress.postalCode || ''}<br>
           ${shippingAddress.country || ''}
         </p>
+        <p style="margin: 8px 0;"><strong>Shipping Method:</strong> ${order.shipping?.method || 'Standard Shipping'}</p>
       </div>
 
       <p style="text-align: center; margin-top: 30px;">
