@@ -316,19 +316,37 @@ export default function OrderTracking() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">{getTranslation(language, 'orderTracking.shippingInfo')}</h3>
                 <div className="bg-gray-50 rounded-lg p-4">
                   <p className="font-medium text-gray-900 mb-2">{order.shipping.name}</p>
-                  {order.shipping.address && (
+                  {order.shipping.address && (order.shipping.address.line1 || order.shipping.address.city) ? (
                     <div className="text-sm text-gray-600">
-                      <p>{order.shipping.address.line1}</p>
+                      {order.shipping.address.line1 && <p>{order.shipping.address.line1}</p>}
                       {order.shipping.address.line2 && <p>{order.shipping.address.line2}</p>}
                       <p>
-                        {order.shipping.address.city}, {order.shipping.address.state} {order.shipping.address.postal_code}
+                        {order.shipping.address.city || ''}{order.shipping.address.city && (order.shipping.address.state || order.shipping.address.province || order.shipping.address.postal_code || order.shipping.address.postalCode) ? ', ' : ''}{order.shipping.address.state || order.shipping.address.province || ''} {order.shipping.address.postal_code || order.shipping.address.postalCode || ''}
                       </p>
-                      <p>{order.shipping.address.country}</p>
+                      {order.shipping.address.country && <p>{order.shipping.address.country}</p>}
                     </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 italic">{getTranslation(language, 'orderTracking.shippingAddressNotAvailable') || 'Shipping address not available'}</p>
                   )}
                   <p className="text-sm text-gray-600 mt-2">
-                    <strong>{getTranslation(language, 'orderTracking.shippingMethod')}</strong> {order.shipping.method}
+                    <strong>{getTranslation(language, 'orderTracking.shippingMethod')}</strong> {order.shipping.method || 'Standard Shipping'}
                   </p>
+                  {order.trackingNumber && (
+                    <div className="mt-3 pt-3 border-t border-gray-200">
+                      <p className="text-sm font-semibold text-gray-900 mb-1">{getTranslation(language, 'orderTracking.trackingNumber') || 'Tracking Number'}:</p>
+                      <p className="text-sm text-gray-700 font-mono">{order.trackingNumber}</p>
+                      {order.shipping.address?.country === 'CA' && (
+                        <a 
+                          href={`https://www.canadapost.ca/trackweb/en#/search?searchFor=${order.trackingNumber}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-amber-600 hover:text-amber-700 underline mt-2 inline-block"
+                        >
+                          {getTranslation(language, 'orderTracking.trackOnCanadaPost') || 'Track on Canada Post'}
+                        </a>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             )}

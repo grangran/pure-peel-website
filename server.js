@@ -538,6 +538,19 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
           expand: ['line_items']
         })
 
+        // Debug logging for shipping address (webhook handler)
+        console.log('📦 Shipping address debug (webhook):', {
+          hasShippingDetails: !!session.shipping_details,
+          shippingDetailsName: session.shipping_details?.name,
+          shippingDetailsAddress: session.shipping_details?.address,
+          addressLine1: session.shipping_details?.address?.line1,
+          addressCity: session.shipping_details?.address?.city,
+          addressState: session.shipping_details?.address?.state,
+          addressPostalCode: session.shipping_details?.address?.postal_code,
+          addressCountry: session.shipping_details?.address?.country,
+          fullShippingDetails: JSON.stringify(session.shipping_details, null, 2)
+        })
+
         // Extract order information
         const orderData = {
           stripeSessionId: session.id,
