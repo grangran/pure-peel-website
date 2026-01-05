@@ -59,6 +59,8 @@ const orderConfirmationTemplateEN = (order, trackingUrl) => {
   const customerEmail = order.customer?.email || ''
   const shippingName = order.shipping?.name || customerName
   const shippingAddress = order.shipping?.address || {}
+  // Use customer's timezone if available, otherwise default to America/Toronto
+  const customerTimezone = order.timezone || order.metadata?.timezone || 'America/Toronto'
 
   return `
 <!DOCTYPE html>
@@ -93,14 +95,14 @@ const orderConfirmationTemplateEN = (order, trackingUrl) => {
         <h2 style="margin-top: 0;">Order Details</h2>
         <p><strong>Order Number:</strong> ${order.id || 'N/A'}</p>
         <p><strong>Order Date:</strong> ${order.createdAt ? new Date(order.createdAt).toLocaleString('en-CA', { 
-          timeZone: 'America/Toronto',
+          timeZone: customerTimezone,
           year: 'numeric', 
           month: 'long', 
           day: 'numeric',
           hour: '2-digit',
           minute: '2-digit',
           hour12: true
-        }) : new Date().toLocaleString('en-CA', { timeZone: 'America/Toronto' })}</p>
+        }) : new Date().toLocaleString('en-CA', { timeZone: customerTimezone })}</p>
         <p><strong>Status:</strong> <span style="color: #f59e0b; font-weight: bold;">${(order.status || 'pending').charAt(0).toUpperCase() + (order.status || 'pending').slice(1)}</span></p>
       </div>
 
@@ -197,14 +199,14 @@ const orderConfirmationTemplateFR = (order, trackingUrl) => {
         <h2 style="margin-top: 0;">Détails de la Commande</h2>
         <p><strong>Numéro de Commande :</strong> ${order.id || 'N/A'}</p>
         <p><strong>Date de Commande :</strong> ${order.createdAt ? new Date(order.createdAt).toLocaleString('fr-CA', { 
-          timeZone: 'America/Toronto',
+          timeZone: customerTimezone,
           year: 'numeric', 
           month: 'long', 
           day: 'numeric',
           hour: '2-digit',
           minute: '2-digit',
           hour12: true
-        }) : new Date().toLocaleString('fr-CA', { timeZone: 'America/Toronto' })}</p>
+        }) : new Date().toLocaleString('fr-CA', { timeZone: customerTimezone })}</p>
         <p><strong>Statut :</strong> <span style="color: #f59e0b; font-weight: bold;">${(order.status || 'en attente').charAt(0).toUpperCase() + (order.status || 'en attente').slice(1)}</span></p>
       </div>
 

@@ -338,6 +338,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
         customer_phone: shippingInfo.phone,
         order_notes: shippingInfo.notes || '',
         language: shippingInfo.language || 'en', // Store language preference
+        timezone: shippingInfo.timezone || 'America/Toronto', // Store customer timezone
         promo_code: promoCode || '',
       },
       // Add shipping cost (finalShippingCostCents is already in cents, no need to multiply again)

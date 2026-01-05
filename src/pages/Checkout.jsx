@@ -487,7 +487,8 @@ export default function Checkout() {
             shippingInfo: {
               ...formData,
               selectedShipping: selectedShipping,
-              language: language // Include language preference for email translations
+              language: language, // Include language preference for email translations
+              timezone: Intl.DateTimeFormat().resolvedOptions().timeZone // Capture customer's timezone
             },
             total: getCartTotal(),
             promoCode: appliedPromoCode || null,
