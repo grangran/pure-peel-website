@@ -165,19 +165,20 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     }))
 
     // Get shipping cost from request (selected shipping option)
-    const shippingCost = shippingInfo.selectedShipping 
-      ? Math.round(shippingInfo.selectedShipping.price * 100) // Convert to cents
-      : (total >= 50 ? 0 : 1000) // Fallback: free over $50, else $10
+    // Note: selectedShipping.price is in CAD dollars (e.g., 12.00), we need to convert to cents
+    const shippingCostCents = shippingInfo.selectedShipping 
+      ? Math.round(shippingInfo.selectedShipping.price * 100) // Convert dollars to cents
+      : (total >= 50 ? 0 : 1000) // Fallback: free over $50, else $10 (in cents)
     
     const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity * 100), 0)
     // Zero-rated goods under Schedule VI Part III of the Excise Tax Act
     // Dehydrated citrus products (unsweetened, no preservatives) qualify as zero-rated basic groceries
     const tax = 0 // 0% HST/GST - Products are zero-rated as unsweetened dried fruits
     
-    // Apply promo code discount if provided
+    // Apply promo code discount if provided (discountAmount is in dollars, convert to cents)
     const promoCode = req.body.promoCode || null
-    const discountAmount = req.body.discount || 0
-    const totalAmount = Math.max(0, subtotal + shippingCost + tax - discountAmount)
+    const discountAmountCents = req.body.discount ? Math.round(req.body.discount * 100) : 0
+    const totalAmount = Math.max(0, subtotal + shippingCostCents + tax - discountAmountCents)
 
     // Create Stripe Checkout Session
     // Note: 'card' automatically enables Apple Pay and Google Pay when available
@@ -198,12 +199,12 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
         language: shippingInfo.language || 'en', // Store language preference
         promo_code: promoCode || '',
       },
-      // Add shipping cost
-      shipping_options: shippingCost > 0 ? [{
+      // Add shipping cost (shippingCostCents is already in cents, no need to multiply again)
+      shipping_options: shippingCostCents > 0 ? [{
         shipping_rate_data: {
           type: 'fixed_amount',
           fixed_amount: {
-            amount: Math.round(shippingCost * 100), // Convert to cents
+            amount: shippingCostCents, // Already in cents, don't multiply by 100 again!
             currency: 'cad',
           },
           display_name: shippingInfo.selectedShipping?.name || 'Standard Shipping',
@@ -231,7 +232,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
                 name: `Discount: ${promoCode}`,
                 description: 'Promo code discount',
               },
-              unit_amount: -discountAmount, // Negative amount for discount
+              unit_amount: -discountAmountCents, // Negative amount for discount (already in cents)
             },
             quantity: 1,
           })
