@@ -362,17 +362,22 @@ const adminNotificationTemplate = (order) => {
         <p><strong>Customer:</strong> ${customerName}</p>
         <p><strong>Email:</strong> ${customerEmail}</p>
         <p><strong>Phone:</strong> ${customerPhone}</p>
-        <p><strong>Total:</strong> $${(order.total || 0).toFixed(2)} ${order.currency || 'CAD'}</p>
+        <p><strong>Total:</strong> $${(order.total || (order.subtotal || 0) + (order.shippingCost || 0) + (order.tax || 0)).toFixed(2)} ${order.currency || 'CAD'}</p>
       </div>
 
       <div class="info-box">
         <h3 style="margin-top: 0;">Items:</h3>
         <ul style="list-style: none; padding: 0; margin: 0;">
-          ${(order.items || []).map(item => 
-            `<li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
-              <strong>${item.name || 'Item'}</strong> ${item.variant ? `(${item.variant})` : ''} - Qty: ${item.quantity || 1} - $${(item.total || item.price * (item.quantity || 1) || 0).toFixed(2)}
+          ${(order.items || []).map(item => {
+            // Format item name - if variant is already in name, don't duplicate it
+            let itemDisplay = item.name || 'Item'
+            if (item.variant && !itemDisplay.includes(item.variant)) {
+              itemDisplay += ` - ${item.variant}`
+            }
+            return `<li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+              ${itemDisplay} - Qty: ${item.quantity || 1} - $${(item.total || item.price * (item.quantity || 1) || 0).toFixed(2)}
             </li>`
-          ).join('')}
+          }).join('')}
         </ul>
       </div>
 
@@ -380,9 +385,9 @@ const adminNotificationTemplate = (order) => {
         <h3 style="margin-top: 0;">Shipping Address:</h3>
         <p style="margin: 8px 0;">
           <strong>${shippingName}</strong><br>
-          ${shippingAddress.line1 || ''}<br>
+          ${shippingAddress.line1 ? shippingAddress.line1 + '<br>' : ''}
           ${shippingAddress.line2 ? shippingAddress.line2 + '<br>' : ''}
-          ${shippingAddress.city || ''}${shippingAddress.city && (shippingAddress.state || shippingAddress.province) ? ', ' : ''} ${shippingAddress.state || shippingAddress.province || ''} ${shippingAddress.postal_code || shippingAddress.postalCode || ''}<br>
+          ${shippingAddress.city || ''}${shippingAddress.city && (shippingAddress.state || shippingAddress.province || shippingAddress.postal_code || shippingAddress.postalCode) ? ', ' : ''}${shippingAddress.state || shippingAddress.province || ''} ${shippingAddress.postal_code || shippingAddress.postalCode || ''}<br>
           ${shippingAddress.country || ''}
         </p>
         <p style="margin: 8px 0;"><strong>Shipping Method:</strong> ${order.shipping?.method || 'Standard Shipping'}</p>
