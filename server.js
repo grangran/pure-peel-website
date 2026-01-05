@@ -385,7 +385,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
           currency: 'cad',
           product_data: {
             name: `${item.name} - ${item.variant}`,
-            description: item.description || '',
+            // Remove description to keep Stripe checkout clean and concise
             images: item.image ? [new URL(item.image, req.headers.origin || 'http://localhost:5173').href] : [],
           },
           unit_amount: unitAmount,
