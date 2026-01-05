@@ -407,19 +407,35 @@ export default function Checkout() {
   }, []) // Only run on mount - let App.jsx handle all navigation
 
   // Fetch shipping rates when postal code, province/state, city, and country are filled
-  // Only fetch if user has actively entered shipping details (not on initial load)
+  // Only fetch if address changed (don't refetch if we already have rates for this address)
   useEffect(() => {
     if (hasEnteredShippingDetails && formData.postalCode && formData.province && formData.city && formData.country && cartItems.length > 0) {
-      const timer = setTimeout(() => {
-        fetchShippingRates()
-      }, 500) // Debounce
-      return () => clearTimeout(timer)
+      const currentAddressKey = `${formData.postalCode}-${formData.province}-${formData.city}-${formData.country}`
+      
+      // Only fetch if address changed (don't refetch if we already have rates for this address)
+      if (savedAddressKey !== currentAddressKey) {
+        // Address changed, clear old options and fetch new ones
+        if (savedAddressKey) {
+          setShippingOptions([])
+          setSelectedShipping(null)
+          localStorage.removeItem('checkoutShippingOptions')
+          localStorage.removeItem('checkoutShippingOption')
+          localStorage.removeItem('checkoutAddressKey')
+        }
+        
+        // Debounce to avoid too many API calls
+        const timer = setTimeout(() => {
+          fetchShippingRates()
+        }, 500) // Debounce
+        return () => clearTimeout(timer)
+      }
+      // If address hasn't changed, keep using saved options (already restored on mount)
     } else if (!hasEnteredShippingDetails) {
       // Clear shipping options if user hasn't entered details yet
       setShippingOptions([])
       setSelectedShipping(null)
     }
-  }, [formData.postalCode, formData.province, formData.city, formData.country, cartItems, hasEnteredShippingDetails])
+  }, [formData.postalCode, formData.province, formData.city, formData.country, cartItems, hasEnteredShippingDetails, savedAddressKey])
 
   // Recalculate promo code discount when shipping changes
   useEffect(() => {
