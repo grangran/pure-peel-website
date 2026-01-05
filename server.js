@@ -274,16 +274,38 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     
     // Calculate order total to check if discount covers everything (including shipping)
     const orderTotalCents = subtotal + shippingCostCents + tax
-    const totalAmount = Math.max(0, orderTotalCents - discountAmountCents)
+    
+    // Check if this is a 100% discount code (common test codes)
+    const promoCodeUpper = promoCode ? promoCode.toUpperCase().trim() : ''
+    const is100PercentDiscount = promoCodeUpper && (
+      promoCodeUpper === 'FREETEST' || 
+      promoCodeUpper === 'TEST100' ||
+      (discountAmountCents >= orderTotalCents && orderTotalCents > 0)
+    )
     
     // If discount is 100% or covers the entire order (including shipping), make shipping free
     // This ensures that 100% discount codes make shipping free
     let finalShippingCostCents = shippingCostCents
-    if (discountAmountCents >= orderTotalCents && orderTotalCents > 0) {
+    if (is100PercentDiscount) {
       // Discount covers entire order, set shipping to $0
       finalShippingCostCents = 0
-      console.log('🎁 100% discount applied - shipping set to $0')
+      console.log('🎁 100% discount detected - shipping set to $0', {
+        promoCode: promoCodeUpper,
+        originalShipping: shippingCostCents,
+        orderTotal: orderTotalCents,
+        discountAmount: discountAmountCents,
+        is100Percent: true
+      })
+    } else {
+      console.log('💰 Regular discount or no discount:', {
+        promoCode: promoCodeUpper || 'none',
+        shippingCost: shippingCostCents,
+        orderTotal: orderTotalCents,
+        discountAmount: discountAmountCents
+      })
     }
+    
+    const totalAmount = Math.max(0, subtotal + finalShippingCostCents + tax - discountAmountCents)
     
     // Validate all amounts are valid integers
     if (isNaN(shippingCostCents) || isNaN(subtotal) || isNaN(discountAmountCents)) {
@@ -327,14 +349,19 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     // Apply discount if promo code is used
     if (promoCode && discountAmountCents > 0) {
       try {
-        // Calculate discount percentage based on order total (use original shipping cost for calculation)
-        const orderTotal = subtotal + shippingCostCents + tax
-        const discountPercent = Math.max(1, Math.min(100, Math.round((discountAmountCents / orderTotal) * 100)))
+        // Calculate discount percentage based on order total
+        // Use final shipping cost (which may be $0 for 100% discounts) for accurate calculation
+        const orderTotalForDiscount = subtotal + finalShippingCostCents + tax
+        const discountPercent = orderTotalForDiscount > 0 
+          ? Math.max(1, Math.min(100, Math.round((discountAmountCents / orderTotalForDiscount) * 100)))
+          : 100 // If total is $0, discount is 100%
         
         console.log('🎟️ Applying promo code:', {
           promoCode,
           discountAmountCents,
-          orderTotal,
+          originalOrderTotal: subtotal + shippingCostCents + tax,
+          finalOrderTotal: orderTotalForDiscount,
+          finalShipping: finalShippingCostCents,
           discountPercent: `${discountPercent}%`
         })
         
