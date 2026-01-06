@@ -8,8 +8,6 @@ import { trackCheckoutStarted, trackPurchase } from "../utils/analytics"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Skeleton from "../components/Skeleton"
 import PageLoader from "../components/PageLoader"
-import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js"
-import stripePromise from "../config/stripe"
 
 const canadianProvinces = [
   "Alberta", "British Columbia", "Manitoba", "New Brunswick", 
@@ -60,8 +58,6 @@ export default function Checkout() {
   const [appliedPromoCode, setAppliedPromoCode] = useState(null)
   const [promoCodeError, setPromoCodeError] = useState('')
   const [promoCodeDiscount, setPromoCodeDiscount] = useState(0) // Discount amount in CAD
-  const [clientSecret, setClientSecret] = useState(null)
-  const [paymentIntentId, setPaymentIntentId] = useState(null)
   
   // Check for Stripe redirect
   useEffect(() => {
@@ -536,11 +532,11 @@ export default function Checkout() {
     setStripeError(null)
 
     try {
-      // Create Payment Intent for embedded Stripe Elements
+      // Create Stripe Checkout Session (classic Stripe Checkout format)
       const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
       let response
       try {
-        response = await fetch(`${API_URL}/api/create-payment-intent`, {
+        response = await fetch(`${API_URL}/api/create-checkout-session`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -564,25 +560,20 @@ export default function Checkout() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: `Server error: ${response.status}` }))
-        throw new Error(errorData.error || `Failed to create payment intent (${response.status})`)
+        throw new Error(errorData.error || `Failed to create checkout session (${response.status})`)
       }
 
       const data = await response.json()
-      
-      // Set client secret for Stripe Elements
-      if (data.clientSecret) {
-        setClientSecret(data.clientSecret)
-        setPaymentIntentId(data.paymentIntentId)
-        setIsSubmitting(false)
-        // Scroll to payment section
+
+      // Redirect to Stripe Checkout using the session URL (classic format)
+      if (data.url) {
+        setIsRedirecting(true)
+        // Small delay to show loading state
         setTimeout(() => {
-          const paymentSection = document.getElementById('payment-section')
-          if (paymentSection) {
-            window.scrollTo({ top: paymentSection.offsetTop - 100, behavior: "smooth" })
-          }
-        }, 100)
+          window.location.href = data.url
+        }, 300)
       } else {
-        throw new Error('Payment intent client secret not provided by server')
+        throw new Error('Checkout session URL not provided by server')
       }
     } catch (error) {
       console.error('Payment error:', error)
@@ -609,34 +600,45 @@ export default function Checkout() {
     }
   }
 
-  const handlePaymentSuccess = async (paymentIntentId) => {
+  const handlePaymentSuccess = async (sessionId) => {
     try {
       // Verify the payment with the backend
       const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
-      const response = await fetch(`${API_URL}/api/payment-intent/${paymentIntentId}`)
-      const paymentIntent = await response.json()
+      const response = await fetch(`${API_URL}/api/checkout-session/${sessionId}`)
+      const session = await response.json()
 
-      if (paymentIntent.status === 'succeeded') {
-        // Get order number from metadata or generate one
-        const newOrderNumber = paymentIntent.metadata?.order_id || `PP-${Date.now().toString().slice(-8)}`
+      if (session.payment_status === 'paid') {
+        // Get order number from saved order or generate one
+        const newOrderNumber = session.metadata?.order_id || `PP-${Date.now().toString().slice(-8)}`
         setOrderNumber(newOrderNumber)
         
-        // Get customer info from payment intent metadata
-        const customerName = paymentIntent.metadata?.customer_name || formData.firstName + ' ' + formData.lastName || 'Customer'
-        const customerEmail = paymentIntent.metadata?.customer_email || formData.email || ''
+        // Get customer info from session
+        const customerName = session.metadata?.customer_name || session.customer_details?.name || formData.firstName || 'Customer'
+        const customerEmail = session.customer_email || session.customer_details?.email || formData.email || ''
         setCustomerInfo({ name: customerName, email: customerEmail })
         
         // Build order object for tracking
-        const items = JSON.parse(paymentIntent.metadata?.items || JSON.stringify(cartItems))
         const orderData = {
           id: newOrderNumber,
-          stripePaymentIntentId: paymentIntentId,
-          items: items,
-          subtotal: (paymentIntent.amount - (parseFloat(paymentIntent.metadata?.shipping_cost || 0) * 100)) / 100,
-          shippingCost: parseFloat(paymentIntent.metadata?.shipping_cost || 0),
-          tax: 0,
-          total: paymentIntent.amount / 100,
-          currency: paymentIntent.currency?.toUpperCase() || 'CAD'
+          stripeSessionId: sessionId,
+          items: session.line_items?.data?.map(item => ({
+            id: item.price_data?.product_data?.name || 'unknown',
+            name: item.description || item.price_data?.product_data?.name || 'Unknown',
+            variant: item.description?.split(' - ')[1] || 'N/A',
+            quantity: item.quantity || 1,
+            price: (item.price?.unit_amount || 0) / 100
+          })) || cartItems.map(item => ({
+            id: item.id,
+            name: item.name,
+            variant: item.variant,
+            quantity: item.quantity,
+            price: item.price
+          })),
+          subtotal: (session.amount_subtotal || 0) / 100,
+          shippingCost: (session.shipping_cost?.amount_total || 0) / 100,
+          tax: (session.total_details?.amount_tax || 0) / 100,
+          total: (session.amount_total || 0) / 100,
+          currency: session.currency?.toUpperCase() || 'CAD'
         }
         
         // Track purchase event
@@ -645,7 +647,6 @@ export default function Checkout() {
         setCurrentStep(2) // Confirmation step
         clearCart()
         setIsCartOpen(false)
-        setClientSecret(null) // Clear payment intent
         
         // Clear saved form data after successful payment
         localStorage.removeItem('checkoutFormData')
@@ -991,75 +992,26 @@ export default function Checkout() {
                       </div>
                     )}
 
-                    {/* Stripe Payment Element - Embedded UI */}
-                    {clientSecret && (
-                      <div id="payment-section" className="mb-6 pt-6 border-t border-gray-200">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">{getTranslation(language, 'checkout.paymentInformation') || 'Payment Information'}</h3>
-                        <Elements 
-                          stripe={stripePromise} 
-                          options={{ 
-                            clientSecret,
-                            appearance: {
-                              theme: 'stripe',
-                              variables: {
-                                colorPrimary: '#f59e0b',
-                                colorBackground: '#ffffff',
-                                colorText: '#1f2937',
-                                colorDanger: '#ef4444',
-                                fontFamily: 'system-ui, sans-serif',
-                                spacingUnit: '4px',
-                                borderRadius: '8px',
-                              },
-                              rules: {
-                                '.Input': {
-                                  border: '1px solid #d1d5db',
-                                  boxShadow: 'none',
-                                },
-                                '.Input:focus': {
-                                  border: '1px solid #f59e0b',
-                                  boxShadow: '0 0 0 3px rgba(245, 158, 11, 0.1)',
-                                },
-                              },
-                            },
-                            locale: language === 'fr' ? 'fr' : 'en',
-                          }}
-                        >
-                          <PaymentForm 
-                            paymentIntentId={paymentIntentId}
-                            onSuccess={handlePaymentSuccess}
-                            onError={(error) => setStripeError(error)}
-                            language={language}
-                            total={total}
-                            formatPrice={formatPrice}
-                          />
-                        </Elements>
-                      </div>
-                    )}
-
-                    {!clientSecret && (
-                      <div className="mb-6">
-                        <p className="text-sm text-gray-600 leading-relaxed">
-                          {getTranslation(language, 'checkout.securePaymentText')}
-                        </p>
-                      </div>
-                    )}
+                    <div className="mb-6">
+                      <p className="text-sm text-gray-600 leading-relaxed">
+                        {getTranslation(language, 'checkout.securePaymentText')}
+                      </p>
+                    </div>
 
                     <button
                       type="submit"
-                      disabled={isSubmitting || !hasEnteredShippingDetails || !selectedShipping || !!clientSecret}
+                      disabled={isSubmitting || !hasEnteredShippingDetails || !selectedShipping}
                       className="w-full py-4 px-6 text-base font-semibold rounded-xl border-0 cursor-pointer transition-all duration-200 bg-amber-500 text-white hover:bg-amber-600 hover:shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none flex items-center justify-center gap-2 min-h-[56px] shadow-md"
                     >
                       {isSubmitting ? (
                         <LoadingSpinner size="sm" color="white" text={getTranslation(language, 'checkout.processing')} />
-                      ) : clientSecret ? (
-                        <>{language === 'fr' ? 'Remplissez les informations de paiement ci-dessus' : 'Complete payment information above'}</>
                       ) : (
                         <>
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                           </svg>
                           {hasEnteredShippingDetails && selectedShipping 
-                            ? (language === 'fr' ? 'Continuer vers le paiement' : 'Continue to Payment')
+                            ? `${getTranslation(language, 'checkout.paySecurely')} ${formatPrice(total)}`
                             : (language === 'fr' ? 'Entrez les détails d\'expédition' : 'Enter shipping details')
                           }
                         </>
@@ -1157,7 +1109,7 @@ export default function Checkout() {
                   )}
                 </div>
                 
-                <div className="space-y-3 pt-5 border-t-2 border-gray-100">
+              <div className="space-y-3 pt-5 border-t-2 border-gray-100">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.subtotal')}</span>
                     <span className="text-gray-900 font-semibold">{formatPrice(subtotal)}</span>
@@ -1238,143 +1190,6 @@ export default function Checkout() {
         )}
       </div>
     </section>
-  )
-}
-
-// Payment Form Component using Stripe Elements
-function PaymentForm({ paymentIntentId, onSuccess, onError, language, total, formatPrice }) {
-  const stripe = useStripe()
-  const elements = useElements()
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [error, setError] = useState(null)
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-
-    if (!stripe || !elements) {
-      return
-    }
-
-    setIsProcessing(true)
-    setError(null)
-
-    try {
-      const { error: submitError } = await elements.submit()
-      if (submitError) {
-        setError(submitError.message)
-        onError(submitError.message)
-        setIsProcessing(false)
-        return
-      }
-
-      const { error: confirmError, paymentIntent } = await stripe.confirmPayment({
-        elements,
-        confirmParams: {
-          return_url: `${window.location.origin}/checkout?success=true&payment_intent=${paymentIntentId}`,
-        },
-        redirect: 'if_required',
-      })
-
-      if (confirmError) {
-        setError(confirmError.message)
-        onError(confirmError.message)
-        setIsProcessing(false)
-      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-        // Payment succeeded - handle success
-        onSuccess(paymentIntentId)
-      }
-    } catch (err) {
-      const errorMessage = err.message || 'An error occurred during payment'
-      setError(errorMessage)
-      onError(errorMessage)
-      setIsProcessing(false)
-    }
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
-        <PaymentElement 
-          options={{
-            layout: {
-              type: 'tabs',
-              defaultCollapsed: false,
-            },
-            business: {
-              name: 'Pure Peel Co.',
-            },
-            fields: {
-              billingDetails: {
-                name: 'auto',
-                email: 'auto',
-                phone: 'auto',
-                address: {
-                  country: 'auto',
-                  line1: 'auto',
-                  line2: 'auto',
-                  city: 'auto',
-                  state: 'auto',
-                  postalCode: 'auto',
-                },
-              },
-            },
-            wallets: {
-              applePay: 'auto',
-              googlePay: 'auto',
-            },
-          }}
-        />
-      </div>
-      
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex items-start gap-2">
-            <svg className="w-5 h-5 text-red-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <div>
-              <p className="text-sm font-semibold text-red-800">{language === 'fr' ? 'Erreur de paiement' : 'Payment Error'}</p>
-              <p className="text-sm text-red-700 mt-1">{error}</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <button
-        type="submit"
-        disabled={!stripe || !elements || isProcessing}
-        className="w-full py-4 px-6 text-base font-semibold rounded-xl border-0 cursor-pointer transition-all duration-200 bg-amber-500 text-white hover:bg-amber-600 hover:shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none flex items-center justify-center gap-2 min-h-[56px] shadow-md"
-      >
-        {isProcessing ? (
-          <>
-            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <span>{language === 'fr' ? 'Traitement...' : 'Processing...'}</span>
-          </>
-        ) : (
-          <>
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
-            <span>
-              {language === 'fr' 
-                ? `Payer ${formatPrice(total)}`
-                : `Pay ${formatPrice(total)}`
-              }
-            </span>
-          </>
-        )}
-      </button>
-      
-      <p className="text-xs text-gray-500 text-center">
-        {language === 'fr' 
-          ? 'Paiement sécurisé par Stripe'
-          : 'Secured by Stripe'
-        }
-      </p>
-    </form>
   )
 }
 
