@@ -321,33 +321,93 @@ export default function Checkout() {
       }
       
       try {
-        // Build fetch options with signal only if AbortController is supported
-        const fetchOptions = {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+        // Check if fetch is supported, otherwise use XMLHttpRequest fallback for older iOS
+        let response
+        const requestData = {
+          destination: {
+            postalCode: formData.postalCode,
+            province: formData.province,
+            city: formData.city,
+            country: formData.country
           },
-          body: JSON.stringify({
-            destination: {
-              postalCode: formData.postalCode,
-              province: formData.province,
-              city: formData.city,
-              country: formData.country
+          cartItems: cartItems
+        }
+        
+        if (typeof fetch !== 'undefined') {
+          // Modern browsers: use fetch API
+          const fetchOptions = {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
             },
-            cartItems: cartItems
+            body: JSON.stringify(requestData)
+          }
+          
+          // Only add signal if AbortController is supported
+          if (controller && controller.signal) {
+            fetchOptions.signal = controller.signal
+          }
+          
+          response = await fetch(`${API_URL}/api/get-shipping-rates`, fetchOptions)
+          
+          // Check if request was aborted (for older browsers)
+          if (isAborted) {
+            throw new Error('Request timeout')
+          }
+        } else {
+          // Fallback for very old browsers (iOS < 10.3): use XMLHttpRequest
+          response = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest()
+            xhr.open('POST', `${API_URL}/api/get-shipping-rates`, true)
+            xhr.setRequestHeader('Content-Type', 'application/json')
+            
+            xhr.onload = () => {
+              if (isAborted) {
+                reject(new Error('Request timeout'))
+                return
+              }
+              
+              if (xhr.status >= 200 && xhr.status < 300) {
+                try {
+                  const parsedData = JSON.parse(xhr.responseText)
+                  resolve({
+                    ok: true,
+                    status: xhr.status,
+                    json: async () => parsedData
+                  })
+                } catch (parseError) {
+                  reject(new Error('Failed to parse response'))
+                }
+              } else {
+                let errorMessage = `Failed to get shipping rates (${xhr.status})`
+                try {
+                  const errorData = JSON.parse(xhr.responseText)
+                  if (errorData.error) {
+                    errorMessage = errorData.error
+                  }
+                } catch (e) {
+                  // Use default error message
+                }
+                reject(new Error(errorMessage))
+              }
+            }
+            
+            xhr.onerror = () => {
+              reject(new Error('Network error'))
+            }
+            
+            xhr.ontimeout = () => {
+              reject(new Error('Request timeout'))
+            }
+            
+            xhr.timeout = 30000 // 30 second timeout
+            
+            try {
+              xhr.send(JSON.stringify(requestData))
+            } catch (error) {
+              reject(error)
+            }
           })
-        }
-        
-        // Only add signal if AbortController is supported
-        if (controller && controller.signal) {
-          fetchOptions.signal = controller.signal
-        }
-        
-        const response = await fetch(`${API_URL}/api/get-shipping-rates`, fetchOptions)
-
-        // Check if request was aborted (for older browsers)
-        if (isAborted) {
-          throw new Error('Request timeout')
         }
         
         if (timeoutId) {
