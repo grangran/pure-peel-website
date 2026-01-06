@@ -88,6 +88,25 @@ export default function Checkout() {
       if (window.location.search) {
         window.history.replaceState({}, '', '/checkout')
       }
+      
+      // Validate saved postal code matches current form data
+      // If address fields changed, clear postal code and shipping options
+      const savedFormData = loadSavedFormData()
+      const currentAddressKey = `${savedFormData.postalCode}-${savedFormData.province}-${savedFormData.city}-${savedFormData.country}`.toLowerCase()
+      const savedAddressKey = localStorage.getItem('checkoutAddressKey')
+      
+      if (savedAddressKey && savedAddressKey.toLowerCase() !== currentAddressKey) {
+        // Address changed - clear postal code and shipping options
+        console.log('Address mismatch detected, clearing postal code and shipping options')
+        setFormData(prev => ({ ...prev, postalCode: '' }))
+        setShippingOptions([])
+        setSelectedShipping(null)
+        setHasEnteredShippingDetails(false)
+        localStorage.removeItem('checkoutShippingOptions')
+        localStorage.removeItem('checkoutShippingOption')
+        localStorage.removeItem('checkoutAddressKey')
+      }
+      
       // Form data is already loaded from localStorage in loadSavedFormData()
       // Shipping rates will be automatically refetched by the useEffect that watches formData
     }
@@ -704,252 +723,264 @@ export default function Checkout() {
   }
 
   return (
-    <section ref={sectionRef} className="py-12 px-5 bg-linear-to-b from-gray-50 to-gray-100 min-h-[calc(100vh-72px)]">
-      <div className="max-w-6xl mx-auto">
-        {/* Combined Checkout: Shipping + Payment */}
+    <section ref={sectionRef} className="py-8 md:py-12 px-4 md:px-6 bg-white min-h-[calc(100vh-72px)]">
+      <div className="max-w-7xl mx-auto">
+        {/* Stripe-style Checkout Layout */}
         {currentStep === 1 && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Checkout Form (Shipping + Payment) */}
-            <div className="lg:col-span-2">
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">{getTranslation(language, 'checkout.shippingInformation')}</h2>
-                <form onSubmit={handlePaymentSubmit} className="space-y-5">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        {getTranslation(language, 'checkout.firstName')} *
-                      </label>
-                      <input
-                        type="text"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                        className={`w-full px-4 py-3 text-sm rounded-lg border transition-colors ${
-                          errors.firstName ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
-                        } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500`}
-                        required
-                      />
-                      {errors.firstName && (
-                        <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
-                      )}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        {getTranslation(language, 'checkout.lastName')} *
-                      </label>
-                      <input
-                        type="text"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                        className={`w-full px-4 py-3 text-sm rounded-lg border transition-colors ${
-                          errors.lastName ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
-                        } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500`}
-                        required
-                      />
-                      {errors.lastName && (
-                        <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
-                      )}
-                    </div>
-                  </div>
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-0 lg:gap-12">
+            {/* Checkout Form (Shipping + Payment) - Right Side */}
+            <div className="order-2 lg:order-1">
+              <div className="max-w-2xl mx-auto lg:mx-0">
+                {/* Back button */}
+                <button
+                  onClick={() => {
+                    window.history.pushState({ page: "/" }, "", "/")
+                    window.dispatchEvent(new Event("hashchange"))
+                  }}
+                  className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                  </svg>
+                  {getTranslation(language, 'checkout.continueShopping')}
+                </button>
 
+                <div className="mb-8">
+                  <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2">
+                    {getTranslation(language, 'checkout.shippingInformation')}
+                  </h1>
+                  <p className="text-sm text-gray-600">
+                    {getTranslation(language, 'checkout.completeOrder')}
+                  </p>
+                </div>
+                <form onSubmit={handlePaymentSubmit} className="space-y-6">
+                  {/* Contact Information */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      {getTranslation(language, 'checkout.email')} *
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className={`w-full px-4 py-3 text-sm rounded-lg border transition-colors ${
-                        errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
-                      } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500`}
-                      required
-                    />
-                    {errors.email && (
-                      <p className="text-red-500 text-xs mt-1">{errors.email}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      {getTranslation(language, 'checkout.phoneNumber')} *
-                    </label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      placeholder={getTranslation(language, 'checkout.phonePlaceholder')}
-                      className={`w-full px-4 py-3 text-sm rounded-lg border transition-colors ${
-                        errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
-                      } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500`}
-                      required
-                    />
-                    {errors.phone && (
-                      <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      {getTranslation(language, 'checkout.streetAddress')} *
-                    </label>
-                    <input
-                      type="text"
-                      name="address"
-                      value={formData.address}
-                      onChange={handleInputChange}
-                        className={`w-full px-4 py-3 text-sm rounded-lg border transition-colors ${
-                          errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
-                        } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500`}
-                      required
-                    />
-                    {errors.address && (
-                      <p className="text-red-500 text-xs mt-1">{errors.address}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      {getTranslation(language, 'checkout.country')} *
-                    </label>
-                    <select
-                      name="country"
-                      value={formData.country}
-                      onChange={handleInputChange}
-                      className={`w-full px-4 py-3 text-sm rounded-lg border transition-colors ${
-                        errors.country ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
-                      } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500`}
-                      required
-                    >
-                      <option value="Canada">Canada</option>
-                      <option value="United States">United States</option>
-                    </select>
-                    {errors.country && (
-                      <p className="text-red-500 text-xs mt-1">{errors.country}</p>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="sm:col-span-1">
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        {getTranslation(language, 'checkout.city')} *
-                      </label>
-                      <input
-                        type="text"
-                        name="city"
-                        value={formData.city}
-                        onChange={handleInputChange}
-                        className={`w-full px-4 py-3 text-sm rounded-lg border transition-colors ${
-                          errors.city ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
-                        } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500`}
-                        required
-                      />
-                      {errors.city && (
-                        <p className="text-red-500 text-xs mt-1">{errors.city}</p>
-                      )}
-                    </div>
-                    <div className="sm:col-span-1">
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        {formData.country === "United States" 
-                          ? getTranslation(language, 'checkout.state') 
-                          : getTranslation(language, 'checkout.province')
-                        } *
-                      </label>
-                      <select
-                        name="province"
-                        value={formData.province}
-                        onChange={handleInputChange}
-                        className={`w-full px-4 py-3 text-sm rounded-lg border transition-colors ${
-                          errors.province ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
-                        } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500`}
-                        required
-                      >
-                        <option value="">
-                          {formData.country === "United States" 
-                            ? getTranslation(language, 'checkout.selectState')
-                            : getTranslation(language, 'checkout.selectProvince')
-                          }
-                        </option>
-                        {(formData.country === "United States" ? usStates : canadianProvinces).map(region => (
-                          <option key={region} value={region}>{region}</option>
-                        ))}
-                      </select>
-                      {errors.province && (
-                        <p className="text-red-500 text-xs mt-1">{errors.province}</p>
-                      )}
-                    </div>
-                    <div className="sm:col-span-1">
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        {formData.country === "United States" 
-                          ? getTranslation(language, 'checkout.zipCode')
-                          : getTranslation(language, 'checkout.postalCode')
-                        } *
-                      </label>
-                      <input
-                        type="text"
-                        name="postalCode"
-                        value={formData.postalCode}
-                        onChange={handleInputChange}
-                        placeholder={formData.country === "United States" 
-                          ? getTranslation(language, 'checkout.zipCodePlaceholder')
-                          : getTranslation(language, 'checkout.postalCodePlaceholder')
-                        }
-                        className={`w-full px-4 py-3 text-sm rounded-lg border transition-colors ${
-                          errors.postalCode ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
-                        } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 ${formData.country === "Canada" ? 'uppercase' : ''}`}
-                        required
-                      />
-                      {errors.postalCode && (
-                        <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>
-                      )}
+                    <h2 className="text-base font-semibold text-gray-900 mb-4">Contact</h2>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                          {getTranslation(language, 'checkout.email')}
+                        </label>
+                        <input
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
+                            errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
+                          } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
+                          required
+                        />
+                        {errors.email && (
+                          <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                        )}
+                      </div>
                     </div>
                   </div>
 
+                  {/* Name */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      {getTranslation(language, 'checkout.orderNotes')}
+                    <h2 className="text-base font-semibold text-gray-900 mb-4">Name</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <input
+                          type="text"
+                          name="firstName"
+                          value={formData.firstName}
+                          onChange={handleInputChange}
+                          placeholder={getTranslation(language, 'checkout.firstName')}
+                          className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
+                            errors.firstName ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
+                          } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
+                          required
+                        />
+                        {errors.firstName && (
+                          <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
+                        )}
+                      </div>
+                      <div>
+                        <input
+                          type="text"
+                          name="lastName"
+                          value={formData.lastName}
+                          onChange={handleInputChange}
+                          placeholder={getTranslation(language, 'checkout.lastName')}
+                          className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
+                            errors.lastName ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
+                          } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
+                          required
+                        />
+                        {errors.lastName && (
+                          <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Shipping Address */}
+                  <div>
+                    <h2 className="text-base font-semibold text-gray-900 mb-4">Ship to</h2>
+                    <div className="space-y-4">
+                      <div>
+                        <input
+                          type="text"
+                          name="address"
+                          value={formData.address}
+                          onChange={handleInputChange}
+                          placeholder={getTranslation(language, 'checkout.streetAddress')}
+                          className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
+                            errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
+                          } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
+                          required
+                        />
+                        {errors.address && (
+                          <p className="text-red-500 text-xs mt-1">{errors.address}</p>
+                        )}
+                      </div>
+                      
+                      <div>
+                        <select
+                          name="country"
+                          value={formData.country}
+                          onChange={handleInputChange}
+                          className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
+                            errors.country ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
+                          } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
+                          required
+                        >
+                          <option value="Canada">Canada</option>
+                          <option value="United States">United States</option>
+                        </select>
+                        {errors.country && (
+                          <p className="text-red-500 text-xs mt-1">{errors.country}</p>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="col-span-1">
+                          <input
+                            type="text"
+                            name="city"
+                            value={formData.city}
+                            onChange={handleInputChange}
+                            placeholder={getTranslation(language, 'checkout.city')}
+                            className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
+                              errors.city ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
+                            } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
+                            required
+                          />
+                          {errors.city && (
+                            <p className="text-red-500 text-xs mt-1">{errors.city}</p>
+                          )}
+                        </div>
+                        <div className="col-span-1">
+                          <select
+                            name="province"
+                            value={formData.province}
+                            onChange={handleInputChange}
+                            className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
+                              errors.province ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
+                            } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
+                            required
+                          >
+                            <option value="">
+                              {formData.country === "United States" 
+                                ? getTranslation(language, 'checkout.selectState')
+                                : getTranslation(language, 'checkout.selectProvince')
+                              }
+                            </option>
+                            {(formData.country === "United States" ? usStates : canadianProvinces).map(region => (
+                              <option key={region} value={region}>{region}</option>
+                            ))}
+                          </select>
+                          {errors.province && (
+                            <p className="text-red-500 text-xs mt-1">{errors.province}</p>
+                          )}
+                        </div>
+                        <div className="col-span-1">
+                          <input
+                            type="text"
+                            name="postalCode"
+                            value={formData.postalCode}
+                            onChange={handleInputChange}
+                            placeholder={formData.country === "United States" 
+                              ? getTranslation(language, 'checkout.zipCode')
+                              : getTranslation(language, 'checkout.postalCode')
+                            }
+                            className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
+                              errors.postalCode ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
+                            } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 ${formData.country === "Canada" ? 'uppercase' : ''}`}
+                            required
+                          />
+                          {errors.postalCode && (
+                            <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          placeholder={getTranslation(language, 'checkout.phonePlaceholder')}
+                          className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
+                            errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
+                          } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
+                          required
+                        />
+                        {errors.phone && (
+                          <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Order Notes */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                      {getTranslation(language, 'checkout.orderNotes')} ({getTranslation(language, 'checkout.optional')})
                     </label>
                     <textarea
                       name="notes"
                       value={formData.notes}
                       onChange={handleInputChange}
                       rows="3"
-                      className="w-full px-4 py-3 text-sm rounded-lg border border-gray-300 bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors resize-none"
+                      className="w-full px-3.5 py-2.5 text-sm rounded-md border border-gray-300 bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all resize-none"
                       placeholder={getTranslation(language, 'checkout.orderNotesPlaceholder')}
                     />
                   </div>
 
                   {/* Shipping Options - Only show after user enters shipping details */}
                   {hasEnteredShippingDetails && formData.postalCode && formData.province && formData.city && formData.country && (
-                    <div className="mt-6 pt-6 border-t-2 border-gray-100">
-                      <label className="block text-base font-semibold text-gray-900 mb-4">
-                        {getTranslation(language, 'checkout.shippingMethod')} *
-                      </label>
+                    <div className="mt-8 pt-8 border-t border-gray-200">
+                      <h2 className="text-base font-semibold text-gray-900 mb-4">
+                        {getTranslation(language, 'checkout.shippingMethod')}
+                      </h2>
                       
                       {loadingShipping && (
-                        <div className="mb-3">
+                        <div className="mb-4">
                           <LoadingSpinner size="sm" color="amber" text={getTranslation(language, 'checkout.calculatingShipping')} />
                         </div>
                       )}
 
                       {shippingError && (
-                        <div className="bg-red-50 border border-red-200 rounded-lg p-2.5 mb-3">
-                          <p className="text-xs text-red-800">{shippingError}</p>
+                        <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-4">
+                          <p className="text-sm text-red-800">{shippingError}</p>
                         </div>
                       )}
 
                       {!loadingShipping && shippingOptions.length > 0 && (
-                        <div className="space-y-3">
+                        <div className="space-y-2.5">
                           {shippingOptions.map((option) => (
                             <label
                               key={option.id}
-                              className={`flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all ${
+                              className={`flex items-center gap-3 p-3.5 border rounded-md cursor-pointer transition-all ${
                                 selectedShipping?.id === option.id
-                                  ? 'border-amber-500 bg-amber-50 shadow-sm'
-                                  : 'border-gray-200 bg-white hover:border-amber-300 hover:bg-amber-50/30'
+                                  ? 'border-amber-500 bg-amber-50/50'
+                                  : 'border-gray-200 bg-white hover:border-gray-300'
                               }`}
                             >
                               <input
@@ -977,41 +1008,30 @@ export default function Checkout() {
                       )}
 
                       {!loadingShipping && shippingOptions.length === 0 && !shippingError && (
-                        <p className="text-xs text-gray-500">{getTranslation(language, 'checkout.enterAddress')}</p>
+                        <p className="text-sm text-gray-500">{getTranslation(language, 'checkout.enterAddress')}</p>
                       )}
                     </div>
                   )}
 
-                  {/* Payment Section */}
-                  <div className="mt-8 pt-8 border-t-2 border-gray-200">
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">{getTranslation(language, 'checkout.paymentInformation')}</h3>
-                    
+                  {/* Payment Button */}
+                  <div className="mt-8 pt-8 border-t border-gray-200">
                     {stripeError && (
-                      <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4 mb-5">
-                        <p className="text-sm text-red-800 font-medium">{stripeError}</p>
+                      <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-4">
+                        <p className="text-sm text-red-800">{stripeError}</p>
                       </div>
                     )}
-
-                    <div className="mb-6">
-                      <p className="text-sm text-gray-600 leading-relaxed">
-                        {getTranslation(language, 'checkout.securePaymentText')}
-                      </p>
-                    </div>
 
                     <button
                       type="submit"
                       disabled={isSubmitting || !hasEnteredShippingDetails || !selectedShipping}
-                      className="w-full py-4 px-6 text-base font-semibold rounded-xl border-0 cursor-pointer transition-all duration-200 bg-amber-500 text-white hover:bg-amber-600 hover:shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none flex items-center justify-center gap-2 min-h-[56px] shadow-md"
+                      className="w-full py-3.5 px-6 text-base font-semibold rounded-md border-0 cursor-pointer transition-all duration-200 bg-amber-500 text-white hover:bg-amber-600 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-h-[48px]"
                     >
                       {isSubmitting ? (
                         <LoadingSpinner size="sm" color="white" text={getTranslation(language, 'checkout.processing')} />
                       ) : (
                         <>
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                          </svg>
                           {hasEnteredShippingDetails && selectedShipping 
-                            ? `${getTranslation(language, 'checkout.paySecurely')} ${formatPrice(total)}`
+                            ? `Pay ${formatPrice(total)}`
                             : (language === 'fr' ? 'Entrez les détails d\'expédition' : 'Enter shipping details')
                           }
                         </>
@@ -1026,20 +1046,23 @@ export default function Checkout() {
               </div>
             </div>
 
-            {/* Order Summary */}
-            <div className="lg:col-span-1 order-first lg:order-last">
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 lg:sticky lg:top-24">
-                <h3 className="text-xl font-bold text-gray-900 mb-6">{getTranslation(language, 'checkout.orderSummary')}</h3>
+            {/* Order Summary - Left Side (Stripe-style) */}
+            <div className="order-1 lg:order-2">
+              <div className="bg-gray-50 rounded-lg p-6 lg:sticky lg:top-8">
+                <div className="mb-6">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-1">Pure Peel Co.</h2>
+                  <p className="text-2xl font-semibold text-gray-900">Pay {formatPrice(total)}</p>
+                </div>
                 <div className="space-y-4 mb-6">
                   {cartItems.map((item) => (
-                    <div key={`${item.id}-${item.variant}`} className="flex gap-4 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
-                      <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-50 shrink-0 shadow-sm border border-gray-100">
+                    <div key={`${item.id}-${item.variant}`} className="flex gap-3 pb-4 border-b border-gray-200 last:border-0 last:pb-0">
+                      <div className="w-16 h-16 rounded overflow-hidden bg-white shrink-0">
                         <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                       </div>
                       <div className="flex-1 min-w-0 flex flex-col justify-center">
-                        <p className="text-sm font-semibold text-gray-900 truncate mb-1">{item.name}</p>
-                        <p className="text-xs text-gray-500 mb-1.5">{item.variant}</p>
-                        <p className="text-sm text-gray-700 font-medium">
+                        <p className="text-sm font-medium text-gray-900 truncate">{item.name}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">{item.variant}</p>
+                        <p className="text-xs text-gray-500 mt-1">
                           {getTranslation(language, 'checkout.qty')} {item.quantity} × {formatPrice(item.price)}
                         </p>
                       </div>
@@ -1048,7 +1071,7 @@ export default function Checkout() {
                 </div>
                 
                 {/* Promo Code Section */}
-                <div className="pt-5 border-t-2 border-gray-100 mb-5">
+                <div className="pt-5 border-t border-gray-200 mb-5">
                   {!appliedPromoCode ? (
                     <div className="space-y-2">
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -1109,7 +1132,7 @@ export default function Checkout() {
                   )}
                 </div>
                 
-i              <div className="space-y-3 pt-5 border-t-2 border-gray-100">
+                <div className="space-y-3 pt-5 border-t border-gray-200">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.subtotal')}</span>
                     <span className="text-gray-900 font-semibold">{formatPrice(subtotal)}</span>
@@ -1137,8 +1160,8 @@ i              <div className="space-y-3 pt-5 border-t-2 border-gray-100">
                       <span className="font-semibold">-{formatPrice(promoCodeDiscount)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between items-center text-xl font-bold pt-4 border-t-2 border-gray-200 mt-4">
-                    <span className="text-gray-900">{getTranslation(language, 'checkout.total')}</span>
+                  <div className="flex justify-between items-center text-lg font-semibold pt-4 border-t border-gray-200 mt-4">
+                    <span className="text-gray-900">Total due</span>
                     <span className="text-gray-900">
                       {hasEnteredShippingDetails && selectedShipping 
                         ? formatPrice(total)
