@@ -299,29 +299,60 @@ export default function Checkout() {
     try {
       const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
       
-      // Create an AbortController for timeout
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout (increased for Canada Post API)
+      // Create an AbortController for timeout (with fallback for older browsers)
+      let controller = null
+      let timeoutId = null
+      let isAborted = false
+      
+      // Check if AbortController is supported
+      if (typeof AbortController !== 'undefined') {
+        controller = new AbortController()
+        timeoutId = setTimeout(() => {
+          if (controller) {
+            controller.abort()
+          }
+          isAborted = true
+        }, 30000) // 30 second timeout
+      } else {
+        // Fallback for older browsers: use timeout flag instead
+        timeoutId = setTimeout(() => {
+          isAborted = true
+        }, 30000)
+      }
       
       try {
-      const response = await fetch(`${API_URL}/api/get-shipping-rates`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          destination: {
-            postalCode: formData.postalCode,
-            province: formData.province,
+        // Build fetch options with signal only if AbortController is supported
+        const fetchOptions = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            destination: {
+              postalCode: formData.postalCode,
+              province: formData.province,
               city: formData.city,
               country: formData.country
-          },
-          cartItems: cartItems
-        }),
-          signal: controller.signal
-      })
+            },
+            cartItems: cartItems
+          })
+        }
+        
+        // Only add signal if AbortController is supported
+        if (controller && controller.signal) {
+          fetchOptions.signal = controller.signal
+        }
+        
+        const response = await fetch(`${API_URL}/api/get-shipping-rates`, fetchOptions)
 
-        clearTimeout(timeoutId)
+        // Check if request was aborted (for older browsers)
+        if (isAborted) {
+          throw new Error('Request timeout')
+        }
+        
+        if (timeoutId) {
+          clearTimeout(timeoutId)
+        }
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: `Server error: ${response.status}` }))
@@ -385,8 +416,8 @@ export default function Checkout() {
     } catch (error) {
       console.error('Error fetching shipping rates:', error)
       
-      // Handle timeout errors
-      if (error.name === 'AbortError' || error.message.includes('timeout')) {
+      // Handle timeout errors (support both AbortError and timeout messages for older browsers)
+      if (error.name === 'AbortError' || error.message.includes('timeout') || error.message === 'Request timeout') {
         setShippingError('Shipping calculation is taking longer than expected. Please try again.')
         // Retry once automatically after a short delay
         if (retryCount === 0) {
