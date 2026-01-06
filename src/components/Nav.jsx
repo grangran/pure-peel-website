@@ -112,7 +112,7 @@ export default function Nav() {
       <div className="h-full max-w-7xl mx-auto px-2 sm:px-3 md:px-5 flex items-center justify-between relative">
         {/* Left: Hamburger Menu */}
         <button 
-          className={`w-11 h-11 p-2 flex flex-col justify-center gap-1.5 bg-transparent border-0 cursor-pointer rounded-lg transition-all duration-150 hover:bg-black/5 active:scale-95 touch-manipulation min-w-[44px] min-h-[44px] ${
+          className={`w-10 h-10 sm:w-11 sm:h-11 p-1.5 sm:p-2 flex flex-col justify-center gap-1 sm:gap-1.5 bg-transparent border-0 cursor-pointer rounded-lg transition-all duration-150 hover:bg-black/5 active:scale-95 touch-manipulation min-w-[40px] sm:min-w-[44px] min-h-[40px] sm:min-h-[44px] ${
             isMenuOpen ? "is-open" : ""
           }`}
           onClick={toggleMenu}
@@ -162,7 +162,7 @@ export default function Nav() {
                 setIsCurrencyDropdownOpen(!isCurrencyDropdownOpen)
                 setIsLangDropdownOpen(false) // Close language dropdown if open
               }}
-              className="flex items-center gap-1 px-2.5 md:px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 rounded-lg hover:bg-white/50 transition-all duration-200 active:scale-95 min-w-[44px] min-h-[44px]"
+              className="flex items-center gap-1 px-2 md:px-3 py-1.5 md:py-2 text-xs sm:text-sm font-medium text-gray-700 hover:text-gray-900 rounded-lg hover:bg-white/50 transition-all duration-200 active:scale-95 min-w-[36px] sm:min-w-[44px] min-h-[36px] sm:min-h-[44px]"
               aria-label="Select currency"
             >
               <span className="text-xs uppercase">{currency}</span>
@@ -221,7 +221,7 @@ export default function Nav() {
                 setIsLangDropdownOpen(!isLangDropdownOpen)
                 setIsCurrencyDropdownOpen(false) // Close currency dropdown if open
               }}
-              className="flex items-center gap-1 px-2.5 md:px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 rounded-lg hover:bg-white/50 transition-all duration-200 active:scale-95 min-w-[44px] min-h-[44px]"
+              className="flex items-center gap-1 px-2 md:px-3 py-1.5 md:py-2 text-xs sm:text-sm font-medium text-gray-700 hover:text-gray-900 rounded-lg hover:bg-white/50 transition-all duration-200 active:scale-95 min-w-[36px] sm:min-w-[44px] min-h-[36px] sm:min-h-[44px]"
               aria-label="Select language"
             >
               <span className="text-xs uppercase">{language === 'en' ? 'EN' : 'FR'}</span>
@@ -275,7 +275,7 @@ export default function Nav() {
 
           {/* Cart Button */}
           <button 
-            className="relative w-11 h-11 sm:w-14 sm:h-14 flex items-center justify-center bg-transparent border-0 cursor-pointer rounded-lg transition-all duration-200 hover:bg-white/50 active:scale-95 touch-manipulation group" 
+            className="relative w-10 h-10 sm:w-11 sm:h-11 md:w-14 md:h-14 flex items-center justify-center bg-transparent border-0 cursor-pointer rounded-lg transition-all duration-200 hover:bg-white/50 active:scale-95 touch-manipulation group" 
             aria-label={`Open cart${cartCount > 0 ? ` (${cartCount} items)` : ""}`}
             onClick={() => {
               setIsCartOpen(true)
@@ -283,7 +283,7 @@ export default function Nav() {
             }}
           >
             <svg
-              className="w-7 h-7 sm:w-8 sm:h-8 text-gray-800 transition-all duration-300 group-hover:text-amber-600 group-hover:scale-110"
+              className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-gray-800 transition-all duration-300 group-hover:text-amber-600 group-hover:scale-110"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="none"
