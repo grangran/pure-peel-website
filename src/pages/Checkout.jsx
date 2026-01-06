@@ -8,6 +8,8 @@ import { trackCheckoutStarted, trackPurchase } from "../utils/analytics"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Skeleton from "../components/Skeleton"
 import PageLoader from "../components/PageLoader"
+import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js"
+import stripePromise from "../config/stripe"
 
 const canadianProvinces = [
   "Alberta", "British Columbia", "Manitoba", "New Brunswick", 
@@ -58,6 +60,8 @@ export default function Checkout() {
   const [appliedPromoCode, setAppliedPromoCode] = useState(null)
   const [promoCodeError, setPromoCodeError] = useState('')
   const [promoCodeDiscount, setPromoCodeDiscount] = useState(0) // Discount amount in CAD
+  const [clientSecret, setClientSecret] = useState(null)
+  const [paymentIntentId, setPaymentIntentId] = useState(null)
   
   // Check for Stripe redirect
   useEffect(() => {
@@ -532,49 +536,53 @@ export default function Checkout() {
     setStripeError(null)
 
     try {
-      // Create Stripe Checkout Session
+      // Create Payment Intent for embedded Stripe Elements
       const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
       let response
       try {
-        response = await fetch(`${API_URL}/api/create-checkout-session`, {
+        response = await fetch(`${API_URL}/api/create-payment-intent`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-            body: JSON.stringify({
+          body: JSON.stringify({
             items: cartItems,
             shippingInfo: {
               ...formData,
               selectedShipping: selectedShipping,
-              language: language, // Include language preference for email translations
-              timezone: Intl.DateTimeFormat().resolvedOptions().timeZone // Capture customer's timezone
+              language: language,
+              timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
             },
             total: getCartTotal(),
             promoCode: appliedPromoCode || null,
-            discount: appliedPromoCode ? promoCodeDiscount : 0, // Always send CAD discount amount
+            discount: appliedPromoCode ? promoCodeDiscount : 0,
           }),
         })
       } catch (fetchError) {
-        // Catch network errors (server not running, CORS, etc.)
         throw new Error('NETWORK_ERROR')
       }
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: `Server error: ${response.status}` }))
-        throw new Error(errorData.error || `Failed to create checkout session (${response.status})`)
+        throw new Error(errorData.error || `Failed to create payment intent (${response.status})`)
       }
 
       const data = await response.json()
-
-      // Redirect to Stripe Checkout using the session URL
-      if (data.url) {
-        setIsRedirecting(true)
-        // Small delay to show loading state
+      
+      // Set client secret for Stripe Elements
+      if (data.clientSecret) {
+        setClientSecret(data.clientSecret)
+        setPaymentIntentId(data.paymentIntentId)
+        setIsSubmitting(false)
+        // Scroll to payment section
         setTimeout(() => {
-          window.location.href = data.url
-        }, 300)
+          const paymentSection = document.getElementById('payment-section')
+          if (paymentSection) {
+            window.scrollTo({ top: paymentSection.offsetTop - 100, behavior: "smooth" })
+          }
+        }, 100)
       } else {
-        throw new Error('Checkout session URL not provided by server')
+        throw new Error('Payment intent client secret not provided by server')
       }
     } catch (error) {
       console.error('Payment error:', error)
@@ -601,45 +609,34 @@ export default function Checkout() {
     }
   }
 
-  const handlePaymentSuccess = async (sessionId) => {
+  const handlePaymentSuccess = async (paymentIntentId) => {
     try {
       // Verify the payment with the backend
       const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
-      const response = await fetch(`${API_URL}/api/checkout-session/${sessionId}`)
-      const session = await response.json()
+      const response = await fetch(`${API_URL}/api/payment-intent/${paymentIntentId}`)
+      const paymentIntent = await response.json()
 
-      if (session.payment_status === 'paid') {
-        // Get order number from saved order or generate one
-        const newOrderNumber = session.metadata?.order_id || `PP-${Date.now().toString().slice(-8)}`
+      if (paymentIntent.status === 'succeeded') {
+        // Get order number from metadata or generate one
+        const newOrderNumber = paymentIntent.metadata?.order_id || `PP-${Date.now().toString().slice(-8)}`
         setOrderNumber(newOrderNumber)
         
-        // Get customer info from session
-        const customerName = session.metadata?.customer_name || session.customer_details?.name || formData.firstName || 'Customer'
-        const customerEmail = session.customer_email || session.customer_details?.email || formData.email || ''
+        // Get customer info from payment intent metadata
+        const customerName = paymentIntent.metadata?.customer_name || formData.firstName + ' ' + formData.lastName || 'Customer'
+        const customerEmail = paymentIntent.metadata?.customer_email || formData.email || ''
         setCustomerInfo({ name: customerName, email: customerEmail })
         
         // Build order object for tracking
+        const items = JSON.parse(paymentIntent.metadata?.items || JSON.stringify(cartItems))
         const orderData = {
           id: newOrderNumber,
-          stripeSessionId: sessionId,
-          items: session.line_items?.data?.map(item => ({
-            id: item.price_data?.product_data?.name || 'unknown',
-            name: item.description || item.price_data?.product_data?.name || 'Unknown',
-            variant: item.description?.split(' - ')[1] || 'N/A',
-            quantity: item.quantity || 1,
-            price: (item.price?.unit_amount || 0) / 100
-          })) || cartItems.map(item => ({
-            id: item.id,
-            name: item.name,
-            variant: item.variant,
-            quantity: item.quantity,
-            price: item.price
-          })),
-          subtotal: (session.amount_subtotal || 0) / 100,
-          shippingCost: (session.shipping_cost?.amount_total || 0) / 100,
-          tax: (session.total_details?.amount_tax || 0) / 100,
-          total: (session.amount_total || 0) / 100,
-          currency: session.currency?.toUpperCase() || 'CAD'
+          stripePaymentIntentId: paymentIntentId,
+          items: items,
+          subtotal: (paymentIntent.amount - (parseFloat(paymentIntent.metadata?.shipping_cost || 0) * 100)) / 100,
+          shippingCost: parseFloat(paymentIntent.metadata?.shipping_cost || 0),
+          tax: 0,
+          total: paymentIntent.amount / 100,
+          currency: paymentIntent.currency?.toUpperCase() || 'CAD'
         }
         
         // Track purchase event
@@ -648,6 +645,7 @@ export default function Checkout() {
         setCurrentStep(2) // Confirmation step
         clearCart()
         setIsCartOpen(false)
+        setClientSecret(null) // Clear payment intent
         
         // Clear saved form data after successful payment
         localStorage.removeItem('checkoutFormData')
@@ -993,26 +991,47 @@ export default function Checkout() {
                       </div>
                     )}
 
-                    <div className="mb-6">
-                      <p className="text-sm text-gray-600 leading-relaxed">
-                        {getTranslation(language, 'checkout.securePaymentText')}
-                      </p>
-                    </div>
+                    {/* Stripe Payment Element - Embedded UI */}
+                    {clientSecret && (
+                      <div id="payment-section" className="mb-6 pt-6 border-t border-gray-200">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">{getTranslation(language, 'checkout.paymentInformation') || 'Payment Information'}</h3>
+                        <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'stripe' } }}>
+                          <PaymentForm 
+                            paymentIntentId={paymentIntentId}
+                            onSuccess={handlePaymentSuccess}
+                            onError={(error) => setStripeError(error)}
+                            language={language}
+                            total={total}
+                            formatPrice={formatPrice}
+                          />
+                        </Elements>
+                      </div>
+                    )}
+
+                    {!clientSecret && (
+                      <div className="mb-6">
+                        <p className="text-sm text-gray-600 leading-relaxed">
+                          {getTranslation(language, 'checkout.securePaymentText')}
+                        </p>
+                      </div>
+                    )}
 
                     <button
                       type="submit"
-                      disabled={isSubmitting || !hasEnteredShippingDetails || !selectedShipping}
+                      disabled={isSubmitting || !hasEnteredShippingDetails || !selectedShipping || !!clientSecret}
                       className="w-full py-4 px-6 text-base font-semibold rounded-xl border-0 cursor-pointer transition-all duration-200 bg-amber-500 text-white hover:bg-amber-600 hover:shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none flex items-center justify-center gap-2 min-h-[56px] shadow-md"
                     >
                       {isSubmitting ? (
                         <LoadingSpinner size="sm" color="white" text={getTranslation(language, 'checkout.processing')} />
+                      ) : clientSecret ? (
+                        <>{language === 'fr' ? 'Remplissez les informations de paiement ci-dessus' : 'Complete payment information above'}</>
                       ) : (
                         <>
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                           </svg>
                           {hasEnteredShippingDetails && selectedShipping 
-                            ? `${getTranslation(language, 'checkout.paySecurely')} ${formatPrice(total)}`
+                            ? (language === 'fr' ? 'Continuer vers le paiement' : 'Continue to Payment')
                             : (language === 'fr' ? 'Entrez les détails d\'expédition' : 'Enter shipping details')
                           }
                         </>
@@ -1191,6 +1210,98 @@ export default function Checkout() {
         )}
       </div>
     </section>
+  )
+}
+
+// Payment Form Component using Stripe Elements
+function PaymentForm({ paymentIntentId, onSuccess, onError, language, total, formatPrice }) {
+  const stripe = useStripe()
+  const elements = useElements()
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [error, setError] = useState(null)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    if (!stripe || !elements) {
+      return
+    }
+
+    setIsProcessing(true)
+    setError(null)
+
+    try {
+      const { error: submitError } = await elements.submit()
+      if (submitError) {
+        setError(submitError.message)
+        onError(submitError.message)
+        setIsProcessing(false)
+        return
+      }
+
+      const { error: confirmError, paymentIntent } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${window.location.origin}/checkout?success=true&payment_intent=${paymentIntentId}`,
+        },
+        redirect: 'if_required',
+      })
+
+      if (confirmError) {
+        setError(confirmError.message)
+        onError(confirmError.message)
+        setIsProcessing(false)
+      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+        // Payment succeeded - handle success
+        onSuccess(paymentIntentId)
+      }
+    } catch (err) {
+      const errorMessage = err.message || 'An error occurred during payment'
+      setError(errorMessage)
+      onError(errorMessage)
+      setIsProcessing(false)
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+        <PaymentElement 
+          options={{
+            layout: 'tabs',
+            business: {
+              name: 'Pure Peel Co.',
+            },
+          }}
+        />
+      </div>
+      
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+          <p className="text-sm text-red-800">{error}</p>
+        </div>
+      )}
+
+      <button
+        type="submit"
+        disabled={!stripe || isProcessing}
+        className="w-full py-4 px-6 text-base font-semibold rounded-xl border-0 cursor-pointer transition-all duration-200 bg-amber-500 text-white hover:bg-amber-600 hover:shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none flex items-center justify-center gap-2 min-h-[56px] shadow-md"
+      >
+        {isProcessing ? (
+          <LoadingSpinner size="sm" color="white" text={language === 'fr' ? 'Traitement...' : 'Processing...'} />
+        ) : (
+          <>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            {language === 'fr' 
+              ? `Payer ${formatPrice(total)}`
+              : `Pay ${formatPrice(total)}`
+            }
+          </>
+        )}
+      </button>
+    </form>
   )
 }
 

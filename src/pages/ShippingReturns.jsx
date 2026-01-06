@@ -33,7 +33,7 @@ export default function ShippingReturns() {
               <h3 className="text-lg md:text-xl font-semibold text-gray-900">Canada-Wide Shipping</h3>
             </div>
             <p className="text-sm md:text-base text-gray-700 mb-4">
-              We ship to all provinces and territories across Canada.
+              We ship from Canada to all provinces and territories across the country.
             </p>
             <div className="space-y-3 md:space-y-4">
               <div className="border-2 border-gray-200 rounded-xl p-4 md:p-5 hover:border-amber-300 transition-colors">
@@ -84,7 +84,7 @@ export default function ShippingReturns() {
               <h3 className="text-lg md:text-xl font-semibold text-gray-900">United States-Wide Shipping</h3>
             </div>
             <p className="text-sm md:text-base text-gray-700 mb-4">
-              We ship to all 50 states across America. Select 'United States' as your country during checkout to see available shipping options.
+              We ship from Canada to all 50 states across America. Select 'United States' as your country during checkout to see available shipping options.
             </p>
             <div className="space-y-3 md:space-y-4">
               <div className="border-2 border-gray-200 rounded-xl p-4 md:p-5 hover:border-amber-300 transition-colors">

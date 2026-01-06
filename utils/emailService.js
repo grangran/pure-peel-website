@@ -136,6 +136,13 @@ const orderConfirmationTemplateEN = (order, trackingUrl) => {
         <p style="margin: 8px 0;"><strong>Shipping Method:</strong> ${order.shipping?.method || 'Standard Shipping'}</p>
       </div>
 
+      ${order.trackingNumber ? `
+      <div style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #10b981;">
+        <h3 style="margin-top: 0;">Tracking Information</h3>
+        <p><strong>Tracking Number:</strong> ${order.trackingNumber}</p>
+        <p style="margin-top: 10px;"><a href="https://www.canadapost.ca/trackweb/en#/search?searchFor=${order.trackingNumber}" target="_blank" style="color: #10b981; text-decoration: none;">Track with Canada Post →</a></p>
+      </div>
+      ` : ''}
       ${trackingUrl ? `
       <div style="text-align: center; margin: 30px 0;">
         <a href="${trackingUrl}" class="button">Track Your Order</a>
@@ -240,6 +247,13 @@ const orderConfirmationTemplateFR = (order, trackingUrl) => {
         <p style="margin: 8px 0;"><strong>Méthode d'Expédition :</strong> ${order.shipping?.method || 'Expédition Standard'}</p>
       </div>
 
+      ${order.trackingNumber ? `
+      <div style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #10b981;">
+        <h3 style="margin-top: 0;">Informations de Suivi</h3>
+        <p><strong>Numéro de Suivi :</strong> ${order.trackingNumber}</p>
+        <p style="margin-top: 10px;"><a href="https://www.canadapost.ca/trackweb/fr#/search?searchFor=${order.trackingNumber}" target="_blank" style="color: #10b981; text-decoration: none;">Suivre avec Postes Canada →</a></p>
+      </div>
+      ` : ''}
       ${trackingUrl ? `
       <div style="text-align: center; margin: 30px 0;">
         <a href="${trackingUrl}" class="button">Suivre Votre Commande</a>
@@ -403,7 +417,11 @@ const adminNotificationTemplate = (order) => {
 export const sendOrderConfirmation = async (order) => {
   try {
     const customerEmail = order.customer?.email || ''
-    const trackingUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/order-tracking?orderId=${order.id || ''}&email=${encodeURIComponent(customerEmail)}`
+    // Build tracking URL - include tracking number if available
+    let trackingUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/order-tracking?orderId=${order.id || ''}&email=${encodeURIComponent(customerEmail)}`
+    if (order.trackingNumber) {
+      trackingUrl += `&tracking=${encodeURIComponent(order.trackingNumber)}`
+    }
     
     // Detect language from order metadata or default to 'en'
     const language = order.metadata?.language || order.language || 'en'

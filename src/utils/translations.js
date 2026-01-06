@@ -341,7 +341,7 @@ export const translations = {
       },
       usShipping: {
         title: "Shipping to the United States",
-        text1: "We now ship to the United States! Select 'United States' as your country during checkout to see available shipping options.",
+        text1: "We now ship from Canada to the United States! Select 'United States' as your country during checkout to see available shipping options.",
         text2: "US shipping options include:",
         item1: "Tracked Packet - USA: Standard delivery (4-7 business days) - Starting at $18 CAD",
         item2: "Xpresspost - USA: Faster delivery (2-3 business days) - Starting at $28 CAD",
@@ -986,7 +986,7 @@ export const translations = {
       },
       usShipping: {
         title: "Expédition aux États-Unis",
-        text1: "Nous expédions maintenant aux États-Unis ! Sélectionnez 'États-Unis' comme pays lors de la caisse pour voir les options d'expédition disponibles.",
+        text1: "Nous expédions maintenant du Canada vers les États-Unis ! Sélectionnez 'États-Unis' comme pays lors de la caisse pour voir les options d'expédition disponibles.",
         text2: "Les options d'expédition vers les États-Unis incluent :",
         item1: "Colis Suivi - É.-U. : Livraison standard (4-7 jours ouvrables) - À partir de 18 $ CAD",
         item2: "Xpresspost - É.-U. : Livraison plus rapide (2-3 jours ouvrables) - À partir de 28 $ CAD",

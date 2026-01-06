@@ -7,8 +7,9 @@ import cors from 'cors'
 import Stripe from 'stripe'
 import dotenv from 'dotenv'
 import rateLimit from 'express-rate-limit'
-import { saveOrder, getAllOrders, getOrderById, updateOrderStatus, getOrderStats, markEmailSent, hasEmailBeenSent } from './utils/orderStorage.js'
+import { saveOrder, getAllOrders, getOrderById, updateOrderStatus, getOrderStats, markEmailSent, hasEmailBeenSent, updateOrderTracking } from './utils/orderStorage.js'
 import { sendOrderConfirmation, sendShippingNotification, sendAdminNotification } from './utils/emailService.js'
+import { createCanadaPostLabel } from './utils/canadaPostShipping.js'
 
 dotenv.config()
 
@@ -192,6 +193,54 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
           const savedOrder = saveOrder(orderData)
           console.log('Order saved:', savedOrder.id)
           
+          // Automatically create Canada Post shipping label (if enabled)
+          const autoCreateLabels = process.env.AUTO_CREATE_SHIPPING_LABELS !== 'false' // Default to true
+          if (autoCreateLabels) {
+            console.log('📦 Attempting to create Canada Post shipping label for order:', savedOrder.id)
+            try {
+              const labelResult = await createCanadaPostLabel(savedOrder)
+              if (labelResult.success && labelResult.trackingNumber) {
+                // Update order with tracking information
+                updateOrderTracking(savedOrder.id, {
+                  trackingNumber: labelResult.trackingNumber,
+                  labelUrl: labelResult.labelUrl,
+                  shipmentId: labelResult.shipmentId,
+                  pin: labelResult.pin
+                })
+                console.log('✅ Canada Post label created successfully:', labelResult.trackingNumber)
+                
+                // Reload order to get updated tracking info
+                const updatedOrder = getOrderById(savedOrder.id)
+                
+                // Send shipping notification email with tracking number
+                const shippingSent = hasEmailBeenSent(savedOrder.id, 'shipping')
+                if (!shippingSent) {
+                  try {
+                    const shippingEmailResult = await sendShippingNotification(updatedOrder, labelResult.trackingNumber)
+                    if (shippingEmailResult.success) {
+                      markEmailSent(savedOrder.id, 'shipping')
+                      console.log('✅ Shipping notification email sent successfully')
+                    } else {
+                      console.log('⚠️  Shipping notification email not sent:', shippingEmailResult.reason || shippingEmailResult.error)
+                    }
+                  } catch (shippingEmailError) {
+                    console.error('❌ Error sending shipping notification email:', shippingEmailError.message)
+                  }
+                }
+              } else {
+                console.log('⚠️  Canada Post label creation failed:', labelResult.error || 'Unknown error')
+                console.log('   Order will be saved without tracking number. Label can be created manually later.')
+                console.log('   To disable automatic label creation, set AUTO_CREATE_SHIPPING_LABELS=false')
+              }
+            } catch (labelError) {
+              console.error('❌ Error creating Canada Post label:', labelError.message)
+              console.log('   Order will be saved without tracking number. Label can be created manually later.')
+              console.log('   To disable automatic label creation, set AUTO_CREATE_SHIPPING_LABELS=false')
+            }
+          } else {
+            console.log('ℹ️  Automatic label creation is disabled (AUTO_CREATE_SHIPPING_LABELS=false)')
+          }
+          
           // Send email notifications (only if not already sent)
           console.log('📧 Attempting to send email notifications for order:', savedOrder.id)
           console.log('   Customer email:', savedOrder.customer?.email)
@@ -238,7 +287,117 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
       }
       break
     case 'payment_intent.succeeded':
-      console.log('✅ PaymentIntent succeeded')
+      const paymentIntent = event.data.object
+      console.log('✅ PaymentIntent succeeded:', paymentIntent.id)
+      console.log('   Customer email:', paymentIntent.metadata?.customer_email)
+      
+      try {
+        // Check if order already exists
+        const existingOrder = getOrderById(paymentIntent.id.replace('pi_', 'PP-'))
+        
+        if (!existingOrder && paymentIntent.status === 'succeeded') {
+          // Extract order information from Payment Intent
+          const items = JSON.parse(paymentIntent.metadata?.items || '[]')
+          const orderData = {
+            stripePaymentIntentId: paymentIntent.id,
+            language: paymentIntent.metadata?.language || 'en',
+            timezone: paymentIntent.metadata?.timezone || 'America/Toronto',
+            metadata: { 
+              language: paymentIntent.metadata?.language || 'en',
+              timezone: paymentIntent.metadata?.timezone || 'America/Toronto'
+            },
+            customer: {
+              name: paymentIntent.metadata?.customer_name || paymentIntent.shipping?.name || 'N/A',
+              email: paymentIntent.metadata?.customer_email || 'N/A',
+              phone: paymentIntent.metadata?.customer_phone || 'N/A',
+            },
+            shipping: {
+              name: paymentIntent.shipping?.name || paymentIntent.metadata?.customer_name || 'N/A',
+              address: paymentIntent.shipping?.address || {},
+              method: paymentIntent.metadata?.shipping_method || 'Standard Shipping'
+            },
+            items: items,
+            subtotal: (paymentIntent.amount - (parseFloat(paymentIntent.metadata?.shipping_cost || 0) * 100)) / 100,
+            shippingCost: parseFloat(paymentIntent.metadata?.shipping_cost || 0),
+            tax: 0,
+            total: paymentIntent.amount / 100,
+            currency: paymentIntent.currency?.toUpperCase() || 'CAD',
+            notes: paymentIntent.metadata?.order_notes || '',
+            paymentStatus: paymentIntent.status,
+            paymentMethod: paymentIntent.payment_method_types?.[0] || 'card'
+          }
+          const savedOrder = saveOrder(orderData)
+          console.log('Order saved from Payment Intent:', savedOrder.id)
+          
+          // Automatically create Canada Post shipping label (if enabled)
+          const autoCreateLabels = process.env.AUTO_CREATE_SHIPPING_LABELS !== 'false'
+          if (autoCreateLabels) {
+            console.log('📦 Attempting to create Canada Post shipping label for order:', savedOrder.id)
+            try {
+              const labelResult = await createCanadaPostLabel(savedOrder)
+              if (labelResult.success && labelResult.trackingNumber) {
+                updateOrderTracking(savedOrder.id, {
+                  trackingNumber: labelResult.trackingNumber,
+                  labelUrl: labelResult.labelUrl,
+                  shipmentId: labelResult.shipmentId,
+                  pin: labelResult.pin
+                })
+                console.log('✅ Canada Post label created successfully:', labelResult.trackingNumber)
+                
+                const updatedOrder = getOrderById(savedOrder.id)
+                const shippingSent = hasEmailBeenSent(savedOrder.id, 'shipping')
+                if (!shippingSent) {
+                  try {
+                    const shippingEmailResult = await sendShippingNotification(updatedOrder, labelResult.trackingNumber)
+                    if (shippingEmailResult.success) {
+                      markEmailSent(savedOrder.id, 'shipping')
+                      console.log('✅ Shipping notification email sent successfully')
+                    }
+                  } catch (shippingEmailError) {
+                    console.error('❌ Error sending shipping notification email:', shippingEmailError.message)
+                  }
+                }
+              } else {
+                console.log('⚠️  Canada Post label creation failed:', labelResult.error || 'Unknown error')
+              }
+            } catch (labelError) {
+              console.error('❌ Error creating Canada Post label:', labelError.message)
+            }
+          }
+          
+          // Send email notifications (only if not already sent)
+          const confirmationSent = hasEmailBeenSent(savedOrder.id, 'confirmation')
+          const adminSent = hasEmailBeenSent(savedOrder.id, 'admin')
+          
+          if (!confirmationSent) {
+            try {
+              const emailResult = await sendOrderConfirmation(savedOrder)
+              if (emailResult.success) {
+                markEmailSent(savedOrder.id, 'confirmation')
+                console.log('✅ Customer email sent successfully')
+              }
+            } catch (emailError) {
+              console.error('❌ Error sending customer email:', emailError.message)
+            }
+          }
+          
+          if (!adminSent) {
+            try {
+              const adminResult = await sendAdminNotification(savedOrder)
+              if (adminResult.success) {
+                markEmailSent(savedOrder.id, 'admin')
+                console.log('✅ Admin email sent successfully')
+              }
+            } catch (emailError) {
+              console.error('❌ Error sending admin email:', emailError.message)
+            }
+          }
+        } else {
+          console.log('Order already exists:', paymentIntent.id.replace('pi_', 'PP-'))
+        }
+      } catch (error) {
+        console.error('Error saving order from Payment Intent:', error)
+      }
       break
     case 'payment_intent.payment_failed':
       console.log('❌ PaymentIntent failed')
@@ -571,7 +730,123 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
   }
 })
 
-// Verify payment and get session details
+// Create Payment Intent for embedded Stripe Elements
+app.post('/api/create-payment-intent', checkoutLimiter, async (req, res) => {
+  try {
+    if (!stripe) {
+      return res.status(500).json({ 
+        error: 'Stripe is not configured. Please set STRIPE_SECRET_KEY in your .env file' 
+      })
+    }
+
+    const { items, shippingInfo, total } = req.body
+
+    // Input validation
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: 'Items are required and must be a non-empty array' })
+    }
+
+    if (!shippingInfo) {
+      return res.status(400).json({ error: 'Shipping information is required' })
+    }
+
+    if (!shippingInfo.email || !validateEmail(shippingInfo.email)) {
+      return res.status(400).json({ error: 'Valid email address is required' })
+    }
+
+    // Calculate amounts (same logic as checkout session)
+    const subtotal = items.reduce((sum, item) => {
+      const itemPrice = parseFloat(item.price) || 0
+      const itemQuantity = parseInt(item.quantity) || 0
+      if (itemPrice < 0 || itemQuantity < 0 || isNaN(itemPrice) || isNaN(itemQuantity)) {
+        return sum
+      }
+      return sum + Math.round(itemPrice * itemQuantity * 100)
+    }, 0)
+
+    const tax = 0 // Zero-rated
+    let shippingPrice = 12.00
+    if (shippingInfo.selectedShipping?.price) {
+      shippingPrice = parseFloat(shippingInfo.selectedShipping.price)
+      if (shippingPrice > 1000) {
+        shippingPrice = shippingPrice / 100
+      }
+    }
+    const shippingCostCents = Math.max(0, Math.round(shippingPrice * 100))
+
+    // Handle promo codes
+    const promoCode = req.body.promoCode || null
+    const discountAmount = parseFloat(req.body.discount) || 0
+    const discountAmountCents = Math.max(0, Math.round(discountAmount * 100))
+    const promoCodeUpper = promoCode ? promoCode.toUpperCase().trim() : ''
+    const isKnown100PercentCode = promoCodeUpper === 'FREETEST' || promoCodeUpper === 'TEST100'
+    const orderTotalCents = subtotal + shippingCostCents + tax
+    const discountCoversTotal = orderTotalCents > 0 && discountAmountCents >= (orderTotalCents - 1)
+    const is100PercentDiscount = promoCodeUpper && (isKnown100PercentCode || discountCoversTotal)
+    const finalShippingCostCents = is100PercentDiscount ? 0 : shippingCostCents
+    const totalAmount = Math.max(0, subtotal + finalShippingCostCents + tax - discountAmountCents)
+
+    // Create Payment Intent
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: totalAmount,
+      currency: 'cad',
+      automatic_payment_methods: {
+        enabled: true,
+      },
+      metadata: {
+        customer_name: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
+        customer_email: shippingInfo.email,
+        customer_phone: shippingInfo.phone,
+        order_notes: shippingInfo.notes || '',
+        language: shippingInfo.language || 'en',
+        timezone: shippingInfo.timezone || 'America/Toronto',
+        promo_code: promoCode || '',
+        shipping_method: shippingInfo.selectedShipping?.name || 'Standard Shipping',
+        shipping_cost: (finalShippingCostCents / 100).toFixed(2),
+        items: JSON.stringify(items),
+      },
+      shipping: {
+        name: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
+        address: {
+          line1: shippingInfo.address || '',
+          line2: shippingInfo.address2 || '',
+          city: shippingInfo.city || '',
+          state: shippingInfo.province || shippingInfo.state || '',
+          postal_code: shippingInfo.postalCode || '',
+          country: shippingInfo.country === 'United States' ? 'US' : 'CA',
+        },
+      },
+    })
+
+    res.json({ 
+      clientSecret: paymentIntent.client_secret,
+      paymentIntentId: paymentIntent.id 
+    })
+  } catch (error) {
+    console.error('Error creating payment intent:', error)
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// Verify payment and get Payment Intent details
+app.get('/api/payment-intent/:paymentIntentId', async (req, res) => {
+  try {
+    if (!stripe) {
+      return res.status(500).json({ 
+        error: 'Stripe is not configured. Please set STRIPE_SECRET_KEY in your .env file' 
+      })
+    }
+
+    const paymentIntent = await stripe.paymentIntents.retrieve(req.params.paymentIntentId)
+    
+    res.json(paymentIntent)
+  } catch (error) {
+    console.error('Error retrieving payment intent:', error)
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// Verify payment and get session details (legacy - for Checkout Sessions)
 app.get('/api/checkout-session/:sessionId', async (req, res) => {
   try {
     if (!stripe) {

@@ -99,6 +99,29 @@ export const updateOrderStatus = (orderId, status) => {
   }
 }
 
+// Update order with tracking information
+export const updateOrderTracking = (orderId, trackingData) => {
+  try {
+    const orders = getAllOrders()
+    const orderIndex = orders.findIndex(order => order.id === orderId)
+    if (orderIndex === -1) {
+      throw new Error('Order not found')
+    }
+    orders[orderIndex].trackingNumber = trackingData.trackingNumber
+    orders[orderIndex].labelUrl = trackingData.labelUrl
+    orders[orderIndex].shipmentId = trackingData.shipmentId
+    orders[orderIndex].pin = trackingData.pin
+    orders[orderIndex].status = 'processing' // Update status to processing when label is created
+    orders[orderIndex].updatedAt = new Date().toISOString()
+    fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2))
+    console.log('✅ Order tracking updated:', orderId, trackingData.trackingNumber)
+    return orders[orderIndex]
+  } catch (error) {
+    console.error('Error updating order tracking:', error)
+    throw error
+  }
+}
+
 // Mark email as sent for an order
 export const markEmailSent = (orderId, emailType) => {
   try {
