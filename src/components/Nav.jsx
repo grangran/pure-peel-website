@@ -109,7 +109,7 @@ export default function Nav() {
         ? 'border-gray-200/80 shadow-md backdrop-blur-sm bg-[#faf8f5]/95' 
         : 'border-gray-200/50 shadow-sm'
     }`}>
-      <div className="h-full max-w-7xl mx-auto px-3 sm:px-4 md:px-5 flex items-center justify-between relative">
+      <div className="h-full max-w-7xl mx-auto px-2 sm:px-3 md:px-5 flex items-center justify-between relative">
         {/* Left: Hamburger Menu */}
         <button 
           className={`w-11 h-11 p-2 flex flex-col justify-center gap-1.5 bg-transparent border-0 cursor-pointer rounded-lg transition-all duration-150 hover:bg-black/5 active:scale-95 touch-manipulation min-w-[44px] min-h-[44px] ${
@@ -154,9 +154,9 @@ export default function Nav() {
         </a>
 
         {/* Right: Currency, Language & Cart */}
-        <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4 ml-auto">
+        <div className="flex items-center gap-1 sm:gap-1.5 md:gap-4 ml-auto">
           {/* Currency Selector */}
-          <div className="relative ml-2 md:ml-0">
+          <div className="relative ml-1 md:ml-0">
             <button
               onClick={() => {
                 setIsCurrencyDropdownOpen(!isCurrencyDropdownOpen)
