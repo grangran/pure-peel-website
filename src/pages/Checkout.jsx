@@ -167,6 +167,24 @@ export default function Checkout() {
       console.error('Error loading saved data:', error)
     }
   }, [])
+  
+  // Auto-fetch shipping rates when form data is preloaded and address is complete
+  useEffect(() => {
+    // Wait a bit for formData state to be set from localStorage
+    const timer = setTimeout(() => {
+      if (hasEnteredShippingDetails && formData.postalCode && formData.province && formData.city && formData.country && cartItems.length > 0) {
+        const currentAddressKey = `${formData.postalCode}-${formData.province}-${formData.city}-${formData.country}`.toLowerCase()
+        
+        // If we don't have shipping options loaded, or the address key doesn't match, fetch rates
+        if (shippingOptions.length === 0 || !savedAddressKey || savedAddressKey.toLowerCase() !== currentAddressKey) {
+          console.log('Auto-fetching shipping rates for preloaded address')
+          fetchShippingRates()
+        }
+      }
+    }, 100) // Small delay to ensure state is updated
+    
+    return () => clearTimeout(timer)
+  }, [hasEnteredShippingDetails, formData.postalCode, formData.province, formData.city, formData.country, cartItems.length, shippingOptions.length, savedAddressKey]) // Run when these change
 
   const [sectionRef, isSectionVisible] = useScrollReveal({ threshold: 0.1 })
 
@@ -431,12 +449,12 @@ export default function Checkout() {
   // Only fetch if address changed (don't refetch if we already have rates for this address)
   useEffect(() => {
     if (hasEnteredShippingDetails && formData.postalCode && formData.province && formData.city && formData.country && cartItems.length > 0) {
-      const currentAddressKey = `${formData.postalCode}-${formData.province}-${formData.city}-${formData.country}`
+      const currentAddressKey = `${formData.postalCode}-${formData.province}-${formData.city}-${formData.country}`.toLowerCase()
       
       // Only fetch if address changed (don't refetch if we already have rates for this address)
-      if (savedAddressKey !== currentAddressKey) {
-        // Address changed, clear old options and fetch new ones
-        if (savedAddressKey) {
+      if (!savedAddressKey || savedAddressKey.toLowerCase() !== currentAddressKey) {
+        // Address changed or no saved address, clear old options and fetch new ones
+        if (savedAddressKey && savedAddressKey.toLowerCase() !== currentAddressKey) {
           setShippingOptions([])
           setSelectedShipping(null)
           localStorage.removeItem('checkoutShippingOptions')
