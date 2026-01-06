@@ -135,7 +135,8 @@ export default function Nav() {
           href="/" 
           className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center no-underline transition-all duration-200 hover:opacity-85 hover:scale-105 z-10 pointer-events-auto touch-manipulation"
           style={{ 
-            minWidth: '100px' // Minimum width to prevent too small on very small screens
+            minWidth: '100px', // Minimum width to prevent too small on very small screens
+            maxWidth: window.innerWidth < 768 ? 'calc(50% - 80px)' : 'none' // Limit logo width on mobile to leave space for right buttons
           }}
           onClick={(e) => {
             // Let App.jsx handle navigation via its click interceptor
@@ -145,7 +146,7 @@ export default function Nav() {
           <img 
             src="/logo.png" 
             alt="Pure Peel Co." 
-            className="h-[48px] sm:h-[56px] md:h-[72px] w-auto max-w-[120px] sm:max-w-[180px] md:max-w-[360px] block object-contain pointer-events-none"
+            className="h-[48px] sm:h-[56px] md:h-[72px] w-auto max-w-[100px] sm:max-w-[150px] md:max-w-[360px] block object-contain pointer-events-none"
             loading="eager"
             onError={(e) => {
               console.error('Logo failed to load:', e.target.src)
