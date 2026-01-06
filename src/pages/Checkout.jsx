@@ -144,6 +144,7 @@ export default function Checkout() {
         // If all address fields are filled, mark as entered
         if (parsed.postalCode && parsed.province && parsed.city && parsed.country) {
           setHasEnteredShippingDetails(true)
+          console.log('Address fields detected, setting hasEnteredShippingDetails to true')
         }
       }
       
@@ -156,12 +157,14 @@ export default function Checkout() {
         const parsedOptions = JSON.parse(savedOptions)
         setShippingOptions(parsedOptions)
         setSavedAddressKey(savedAddress)
+        console.log('Restored shipping options from localStorage:', parsedOptions.length, 'options')
       }
       
       if (savedSelected) {
         const parsedSelected = JSON.parse(savedSelected)
         setSelectedShipping(parsedSelected)
         setHasEnteredShippingDetails(true)
+        console.log('Restored selected shipping option:', parsedSelected.name)
       }
     } catch (error) {
       console.error('Error loading saved data:', error)
@@ -177,11 +180,22 @@ export default function Checkout() {
         
         // If we don't have shipping options loaded, or the address key doesn't match, fetch rates
         if (shippingOptions.length === 0 || !savedAddressKey || savedAddressKey.toLowerCase() !== currentAddressKey) {
-          console.log('Auto-fetching shipping rates for preloaded address')
+          console.log('Auto-fetching shipping rates for preloaded address:', currentAddressKey)
           fetchShippingRates()
+        } else {
+          console.log('Shipping options already loaded for address:', currentAddressKey)
         }
+      } else {
+        console.log('Conditions not met for auto-fetch:', {
+          hasEnteredShippingDetails,
+          postalCode: formData.postalCode,
+          province: formData.province,
+          city: formData.city,
+          country: formData.country,
+          cartItemsLength: cartItems.length
+        })
       }
-    }, 100) // Small delay to ensure state is updated
+    }, 300) // Increased delay to ensure state is fully updated, especially on iOS
     
     return () => clearTimeout(timer)
   }, [hasEnteredShippingDetails, formData.postalCode, formData.province, formData.city, formData.country, cartItems.length, shippingOptions.length, savedAddressKey]) // Run when these change
