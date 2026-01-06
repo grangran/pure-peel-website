@@ -244,11 +244,19 @@
   body {
     padding-left: max(0px, env(safe-area-inset-left));
     padding-right: max(0px, env(safe-area-inset-right));
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
   }
   
   nav {
     padding-left: max(12px, calc(12px + env(safe-area-inset-left)));
     padding-right: max(12px, calc(12px + env(safe-area-inset-right)));
+  }
+  
+  /* Checkout page safe area support */
+  section {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
   }
 }
 
@@ -261,10 +269,17 @@
       min-width: 44px;
     }
 
-    input,
+    /* Force 16px font size on iOS to prevent zoom - use !important to override Tailwind */
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    input[type="password"],
     textarea,
     select {
-      font-size: 16px; /* Prevents zoom on iOS */
+      font-size: 16px !important; /* Prevents zoom on iOS */
+      -webkit-appearance: none;
+      -webkit-border-radius: 0;
     }
   }
 
@@ -275,6 +290,26 @@
   select,
   textarea {
     touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  }
+
+  /* iOS specific fixes */
+  @supports (-webkit-touch-callout: none) {
+    /* iOS Safari specific */
+    input,
+    textarea,
+    select {
+      -webkit-appearance: none;
+      border-radius: 0.375rem; /* Match Tailwind rounded-md */
+    }
+    
+    /* Fix for iOS input focus issues */
+    input:focus,
+    textarea:focus,
+    select:focus {
+      -webkit-appearance: none;
+      outline: none;
+    }
   }
 }
 
