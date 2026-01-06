@@ -18,7 +18,8 @@ export const seoData = {
     keywords: 'dehydrated orange, dried orange slices, orange garnish, cocktail garnish, natural orange, Canadian made',
     image: '/images/orange.jpg',
     url: '/orange',
-    type: 'product'
+    type: 'product',
+    noindex: true // Don't index product pages
   },
   pinkOrange: {
     title: 'Dehydrated Pink Orange Slices | Pure Peel Co.',
@@ -26,7 +27,8 @@ export const seoData = {
     keywords: 'dehydrated pink orange, pink orange slices, pink orange garnish, cocktail garnish, natural pink orange',
     image: '/images/pink-orange.jpg',
     url: '/pink-orange',
-    type: 'product'
+    type: 'product',
+    noindex: true // Don't index product pages
   },
   lime: {
     title: 'Dehydrated Lime Slices | Pure Peel Co.',
@@ -34,7 +36,8 @@ export const seoData = {
     keywords: 'dehydrated lime, dried lime slices, lime garnish, cocktail garnish, natural lime, Canadian made',
     image: '/images/lime.jpg',
     url: '/lime',
-    type: 'product'
+    type: 'product',
+    noindex: true // Don't index product pages
   },
   lemon: {
     title: 'Dehydrated Lemon Slices | Pure Peel Co.',
@@ -42,7 +45,8 @@ export const seoData = {
     keywords: 'dehydrated lemon, dried lemon slices, lemon garnish, cocktail garnish, natural lemon, Canadian made',
     image: '/images/lemon-product.jpg',
     url: '/lemon',
-    type: 'product'
+    type: 'product',
+    noindex: true // Don't index product pages
   },
   apple: {
     title: 'Dehydrated Apple Slices | Pure Peel Co.',
@@ -50,7 +54,8 @@ export const seoData = {
     keywords: 'dehydrated apple, dried apple slices, apple garnish, cocktail garnish, natural apple, Canadian made',
     image: '/images/apple-product.png',
     url: '/apple',
-    type: 'product'
+    type: 'product',
+    noindex: true // Don't index product pages
   },
   checkout: {
     title: 'Checkout | Pure Peel Co.',
@@ -67,7 +72,8 @@ export const seoData = {
     keywords: 'order tracking, track order, order status, shipping status',
     image: defaultImage,
     url: '/order-tracking',
-    type: 'website'
+    type: 'website',
+    noindex: true // Don't index order tracking pages
   },
   privacy: {
     title: 'Privacy Policy | Pure Peel Co.',
@@ -75,7 +81,8 @@ export const seoData = {
     keywords: 'privacy policy, data protection, Canadian privacy laws, PIPEDA',
     image: defaultImage,
     url: '/privacy',
-    type: 'website'
+    type: 'website',
+    noindex: true // Don't index privacy policy
   },
   shippingReturns: {
     title: 'Shipping & Returns | Pure Peel Co.',
@@ -83,7 +90,8 @@ export const seoData = {
     keywords: 'shipping, returns, return policy, shipping policy, Canada shipping',
     image: defaultImage,
     url: '/shipping-returns',
-    type: 'website'
+    type: 'website',
+    noindex: true // Don't index shipping & returns page
   },
   terms: {
     title: 'Terms of Service | Pure Peel Co.',
@@ -91,7 +99,17 @@ export const seoData = {
     keywords: 'terms of service, terms and conditions, user agreement, legal terms',
     image: defaultImage,
     url: '/terms',
-    type: 'website'
+    type: 'website',
+    noindex: true // Don't index terms of service
+  },
+  contact: {
+    title: 'Contact Us | Pure Peel Co.',
+    description: 'Contact Pure Peel Co. for inquiries about our premium dehydrated citrus slices, bulk orders, or customer service.',
+    keywords: 'contact, customer service, inquiries, bulk orders',
+    image: defaultImage,
+    url: '/contact',
+    type: 'website',
+    noindex: true // Don't index contact page
   },
   admin: {
     title: 'Admin Dashboard | Pure Peel Co.',
