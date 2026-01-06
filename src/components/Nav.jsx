@@ -142,8 +142,8 @@ export default function Nav() {
           <img 
             src="/logo.png" 
             alt="Pure Peel Co." 
-            className="h-[52px] md:h-[60px] w-auto max-w-[220px] md:max-w-[280px] block object-contain"
-            srcSet="/logo.png 1x, /logo.png 2x"
+            className="h-[64px] md:h-[72px] w-auto max-w-[280px] md:max-w-[360px] block object-contain"
+            srcSet="/logo.png 1x, /logo@2x.png 2x, /logo@3x.png 3x"
             loading="eager"
           />
         </a>
