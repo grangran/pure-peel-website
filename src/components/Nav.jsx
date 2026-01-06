@@ -154,7 +154,7 @@ export default function Nav() {
         </a>
 
         {/* Right: Currency, Language & Cart */}
-        <div className="flex items-center gap-3 sm:gap-4 ml-auto pl-4 md:pl-0">
+        <div className="flex items-center gap-3 sm:gap-4 ml-auto pl-8 md:pl-0">
           {/* Currency Selector */}
           <div className="relative">
             <button
