@@ -132,9 +132,22 @@ export default function Checkout() {
   // Track saved address to match with shipping options
   const [savedAddressKey, setSavedAddressKey] = useState(null)
   
-  // Restore shipping options and selected shipping from localStorage on mount
+  // Restore form data and shipping options from localStorage on mount
   useEffect(() => {
     try {
+      // Reload form data from localStorage to ensure it's up to date
+      const savedFormData = localStorage.getItem('checkoutFormData')
+      if (savedFormData) {
+        const parsed = JSON.parse(savedFormData)
+        setFormData(parsed)
+        
+        // If all address fields are filled, mark as entered
+        if (parsed.postalCode && parsed.province && parsed.city && parsed.country) {
+          setHasEnteredShippingDetails(true)
+        }
+      }
+      
+      // Restore shipping options
       const savedOptions = localStorage.getItem('checkoutShippingOptions')
       const savedSelected = localStorage.getItem('checkoutShippingOption')
       const savedAddress = localStorage.getItem('checkoutAddressKey')
@@ -150,13 +163,8 @@ export default function Checkout() {
         setSelectedShipping(parsedSelected)
         setHasEnteredShippingDetails(true)
       }
-      
-      // If all address fields are filled, mark as entered even if no shipping option is saved
-      if (formData.postalCode && formData.province && formData.city && formData.country) {
-        setHasEnteredShippingDetails(true)
-      }
     } catch (error) {
-      console.error('Error loading saved shipping data:', error)
+      console.error('Error loading saved data:', error)
     }
   }, [])
 
