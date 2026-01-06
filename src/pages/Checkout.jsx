@@ -995,7 +995,35 @@ export default function Checkout() {
                     {clientSecret && (
                       <div id="payment-section" className="mb-6 pt-6 border-t border-gray-200">
                         <h3 className="text-lg font-semibold text-gray-900 mb-4">{getTranslation(language, 'checkout.paymentInformation') || 'Payment Information'}</h3>
-                        <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'stripe' } }}>
+                        <Elements 
+                          stripe={stripePromise} 
+                          options={{ 
+                            clientSecret,
+                            appearance: {
+                              theme: 'stripe',
+                              variables: {
+                                colorPrimary: '#f59e0b',
+                                colorBackground: '#ffffff',
+                                colorText: '#1f2937',
+                                colorDanger: '#ef4444',
+                                fontFamily: 'system-ui, sans-serif',
+                                spacingUnit: '4px',
+                                borderRadius: '8px',
+                              },
+                              rules: {
+                                '.Input': {
+                                  border: '1px solid #d1d5db',
+                                  boxShadow: 'none',
+                                },
+                                '.Input:focus': {
+                                  border: '1px solid #f59e0b',
+                                  boxShadow: '0 0 0 3px rgba(245, 158, 11, 0.1)',
+                                },
+                              },
+                            },
+                            locale: language === 'fr' ? 'fr' : 'en',
+                          }}
+                        >
                           <PaymentForm 
                             paymentIntentId={paymentIntentId}
                             onSuccess={handlePaymentSuccess}
@@ -1265,42 +1293,87 @@ function PaymentForm({ paymentIntentId, onSuccess, onError, language, total, for
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+      <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
         <PaymentElement 
           options={{
-            layout: 'tabs',
+            layout: {
+              type: 'tabs',
+              defaultCollapsed: false,
+            },
             business: {
               name: 'Pure Peel Co.',
+            },
+            fields: {
+              billingDetails: {
+                name: 'auto',
+                email: 'auto',
+                phone: 'auto',
+                address: {
+                  country: 'auto',
+                  line1: 'auto',
+                  line2: 'auto',
+                  city: 'auto',
+                  state: 'auto',
+                  postalCode: 'auto',
+                },
+              },
+            },
+            wallets: {
+              applePay: 'auto',
+              googlePay: 'auto',
             },
           }}
         />
       </div>
       
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-          <p className="text-sm text-red-800">{error}</p>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="flex items-start gap-2">
+            <svg className="w-5 h-5 text-red-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <p className="text-sm font-semibold text-red-800">{language === 'fr' ? 'Erreur de paiement' : 'Payment Error'}</p>
+              <p className="text-sm text-red-700 mt-1">{error}</p>
+            </div>
+          </div>
         </div>
       )}
 
       <button
         type="submit"
-        disabled={!stripe || isProcessing}
+        disabled={!stripe || !elements || isProcessing}
         className="w-full py-4 px-6 text-base font-semibold rounded-xl border-0 cursor-pointer transition-all duration-200 bg-amber-500 text-white hover:bg-amber-600 hover:shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none flex items-center justify-center gap-2 min-h-[56px] shadow-md"
       >
         {isProcessing ? (
-          <LoadingSpinner size="sm" color="white" text={language === 'fr' ? 'Traitement...' : 'Processing...'} />
+          <>
+            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>{language === 'fr' ? 'Traitement...' : 'Processing...'}</span>
+          </>
         ) : (
           <>
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
-            {language === 'fr' 
-              ? `Payer ${formatPrice(total)}`
-              : `Pay ${formatPrice(total)}`
-            }
+            <span>
+              {language === 'fr' 
+                ? `Payer ${formatPrice(total)}`
+                : `Pay ${formatPrice(total)}`
+              }
+            </span>
           </>
         )}
       </button>
+      
+      <p className="text-xs text-gray-500 text-center">
+        {language === 'fr' 
+          ? 'Paiement sécurisé par Stripe'
+          : 'Secured by Stripe'
+        }
+      </p>
     </form>
   )
 }

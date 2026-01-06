@@ -786,13 +786,15 @@ app.post('/api/create-payment-intent', checkoutLimiter, async (req, res) => {
     const finalShippingCostCents = is100PercentDiscount ? 0 : shippingCostCents
     const totalAmount = Math.max(0, subtotal + finalShippingCostCents + tax - discountAmountCents)
 
-    // Create Payment Intent
+    // Create Payment Intent following Stripe's best practices
     const paymentIntent = await stripe.paymentIntents.create({
       amount: totalAmount,
       currency: 'cad',
       automatic_payment_methods: {
         enabled: true,
+        allow_redirects: 'never', // Keep payment on page, no redirects
       },
+      payment_method_types: ['card'],
       metadata: {
         customer_name: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
         customer_email: shippingInfo.email,
@@ -815,7 +817,10 @@ app.post('/api/create-payment-intent', checkoutLimiter, async (req, res) => {
           postal_code: shippingInfo.postalCode || '',
           country: shippingInfo.country === 'United States' ? 'US' : 'CA',
         },
+        phone: shippingInfo.phone || undefined,
       },
+      description: `Order from Pure Peel Co. - ${items.length} item${items.length > 1 ? 's' : ''}`,
+      receipt_email: shippingInfo.email,
     })
 
     res.json({ 
