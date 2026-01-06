@@ -133,9 +133,8 @@ export default function Nav() {
         {/* Center: Logo - Bigger and higher resolution */}
         <a 
           href="/" 
-          className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center no-underline transition-all duration-200 hover:opacity-85 hover:scale-105 z-10 pointer-events-auto touch-manipulation"
+          className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center no-underline transition-all duration-200 hover:opacity-85 hover:scale-105 z-10 pointer-events-auto touch-manipulation max-w-[calc(100%-320px)] md:max-w-[calc(100%-240px)]"
           style={{ 
-            maxWidth: 'calc(100% - 320px)', // Even more space for hamburger (left) and cart/buttons (right) - allows CAD to move right
             minWidth: '100px' // Minimum width to prevent too small on very small screens
           }}
           onClick={(e) => {
@@ -146,7 +145,7 @@ export default function Nav() {
           <img 
             src="/logo.png" 
             alt="Pure Peel Co." 
-            className="h-[48px] sm:h-[56px] md:h-[72px] w-auto max-w-[120px] sm:max-w-[150px] md:max-w-[360px] block object-contain pointer-events-none"
+            className="h-[48px] sm:h-[56px] md:h-[72px] w-auto max-w-[120px] sm:max-w-[180px] md:max-w-[360px] block object-contain pointer-events-none"
             loading="eager"
             onError={(e) => {
               console.error('Logo failed to load:', e.target.src)
@@ -155,7 +154,7 @@ export default function Nav() {
         </a>
 
         {/* Right: Currency, Language & Cart */}
-        <div className="flex items-center gap-3 sm:gap-4 ml-auto min-w-[140px] sm:min-w-[160px]">
+        <div className="flex items-center gap-3 sm:gap-4 ml-auto min-w-[140px] md:min-w-0">
           {/* Currency Selector */}
           <div className="relative">
             <button
