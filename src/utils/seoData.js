@@ -180,7 +180,13 @@ export const organizationData = {
   '@type': 'Organization',
   name: 'Pure Peel Co.',
   url: baseUrl,
-  logo: `${baseUrl}/logo.png`,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${baseUrl}/logo.png`,
+    width: 512,
+    height: 512
+  },
+  image: `${baseUrl}/logo.png`,
   description: 'Premium dehydrated citrus slices made in Canada. 100% Natural • No Preservatives.',
   address: {
     '@type': 'PostalAddress',
