@@ -49,22 +49,22 @@ export default function Cart({ isOpen, onClose }) {
       {/* Cart Panel */}
       <div className="fixed top-0 right-0 w-full sm:max-w-[450px] h-screen bg-white z-1999 flex flex-col shadow-[-4px_0_30px_rgba(0,0,0,0.2)] animate-slideInRight">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-white">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 bg-white">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 m-0">{getTranslation(language, 'cart.title')}</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 m-0">{getTranslation(language, 'cart.title')}</h2>
             {cartItems.length > 0 && (
-              <p className="text-sm text-gray-500 m-0 mt-1">
+              <p className="text-xs sm:text-sm text-gray-500 m-0 mt-1">
                 {cartItems.length} {cartItems.length === 1 ? getTranslation(language, 'cart.item') : getTranslation(language, 'cart.items')}
               </p>
             )}
           </div>
           <button 
-            className="w-10 h-10 flex items-center justify-center bg-transparent border-0 cursor-pointer rounded-lg text-gray-600 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900 active:scale-95 min-w-[44px] min-h-[44px] focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2" 
+            className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-transparent border-0 cursor-pointer rounded-lg text-gray-600 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900 active:scale-95 min-w-[32px] sm:min-w-[44px] min-h-[32px] sm:min-h-[44px] focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2" 
             onClick={onClose} 
             aria-label="Close cart"
           >
             <svg
-              className="w-5 h-5"
+              className="w-4 h-4 sm:w-5 sm:h-5"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="none"
