@@ -51,6 +51,19 @@
     <!-- Canonical URL (will be updated dynamically) -->
     <link rel="canonical" href="https://purepeelco.com/" />
     
+    <!-- Google Places API for address autocomplete -->
+    <!-- Replace YOUR_GOOGLE_PLACES_API_KEY with your actual API key from https://console.cloud.google.com/apis/credentials -->
+    <script>
+      (function() {
+        const apiKey = 'AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbCZyNr6O4'; // Replace with your Google Places API key
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&loading=async`;
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+      })();
+    </script>
+    
     <!-- Google Analytics - Script will be loaded dynamically from analytics.js -->
     <script>
       // Initialize dataLayer and gtag function

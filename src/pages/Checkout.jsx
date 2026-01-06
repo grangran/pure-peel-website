@@ -143,6 +143,101 @@ export default function Checkout() {
   // Track saved address to match with shipping options
   const [savedAddressKey, setSavedAddressKey] = useState(null)
   
+  // Refs for Google Places Autocomplete
+  const addressInputRef = useRef(null)
+  const autocompleteRef = useRef(null)
+  
+  // Initialize Google Places Autocomplete
+  useEffect(() => {
+    // Wait for Google Maps API to load
+    const initAutocomplete = () => {
+      if (!addressInputRef.current || !window.google?.maps?.places) {
+        // Retry after a short delay if Google Maps API isn't loaded yet
+        setTimeout(initAutocomplete, 100)
+        return
+      }
+
+      // Initialize autocomplete with restrictions to Canada and US
+      const autocomplete = new window.google.maps.places.Autocomplete(
+        addressInputRef.current,
+        {
+          componentRestrictions: { country: ['ca', 'us'] },
+          fields: ['address_components', 'formatted_address'],
+          types: ['address']
+        }
+      )
+
+      autocompleteRef.current = autocomplete
+
+      // Handle place selection
+      autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace()
+        
+        if (!place.address_components) {
+          console.warn('No address components found')
+          return
+        }
+
+        // Parse address components
+        let streetNumber = ''
+        let route = ''
+        let city = ''
+        let province = ''
+        let postalCode = ''
+        let country = ''
+
+        place.address_components.forEach(component => {
+          const types = component.types
+
+          if (types.includes('street_number')) {
+            streetNumber = component.long_name
+          } else if (types.includes('route')) {
+            route = component.long_name
+          } else if (types.includes('locality')) {
+            city = component.long_name
+          } else if (types.includes('administrative_area_level_1')) {
+            province = component.long_name
+          } else if (types.includes('postal_code')) {
+            postalCode = component.long_name
+          } else if (types.includes('country')) {
+            // Convert country code to full name
+            const countryCode = component.short_name.toLowerCase()
+            country = countryCode === 'ca' ? 'Canada' : countryCode === 'us' ? 'United States' : component.long_name
+          }
+        })
+
+        // Update form data
+        const fullAddress = streetNumber && route 
+          ? `${streetNumber} ${route}`.trim()
+          : place.formatted_address.split(',')[0] // Fallback to first part of formatted address
+
+        setFormData(prev => ({
+          ...prev,
+          address: fullAddress,
+          city: city || prev.city,
+          province: province || prev.province,
+          postalCode: postalCode || prev.postalCode,
+          country: country || prev.country
+        }))
+
+        // Mark that shipping details have been entered
+        if (city && province && postalCode && country) {
+          setHasEnteredShippingDetails(true)
+        }
+      })
+    }
+
+    // Start initialization
+    initAutocomplete()
+
+    // Cleanup
+    return () => {
+      if (autocompleteRef.current && window.google?.maps?.event) {
+        window.google.maps.event.clearInstanceListeners(autocompleteRef.current)
+      }
+    }
+  }, []) // Only run once on mount
+  
   // Restore shipping options and selected shipping from localStorage on mount
   useEffect(() => {
     try {
@@ -824,8 +919,10 @@ export default function Checkout() {
                     <div className="space-y-4">
                       <div>
                         <input
+                          ref={addressInputRef}
                           type="text"
                           name="address"
+                          id="address-autocomplete"
                           value={formData.address}
                           onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.streetAddress')}
@@ -833,7 +930,11 @@ export default function Checkout() {
                             errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
                           required
+                          autoComplete="street-address"
                         />
+                        <p className="text-xs text-gray-500 mt-1">
+                          {getTranslation(language, 'checkout.addressAutocompleteHint')}
+                        </p>
                         {errors.address && (
                           <p className="text-red-500 text-xs mt-1">{errors.address}</p>
                         )}
