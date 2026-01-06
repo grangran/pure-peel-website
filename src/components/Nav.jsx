@@ -132,11 +132,11 @@ export default function Nav() {
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
           ) : (
-            <>
-              <span className="block w-[22px] h-0.5 bg-gray-900 rounded-sm"></span>
-              <span className="block w-[22px] h-0.5 bg-gray-900 rounded-sm"></span>
-              <span className="block w-[22px] h-0.5 bg-gray-900 rounded-sm"></span>
-            </>
+            <div className="flex flex-col justify-center gap-1.5 w-[22px]">
+              <span className="block w-full h-0.5 bg-gray-900 rounded-sm"></span>
+              <span className="block w-full h-0.5 bg-gray-900 rounded-sm"></span>
+              <span className="block w-full h-0.5 bg-gray-900 rounded-sm"></span>
+            </div>
           )}
         </button>
 
