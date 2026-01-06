@@ -130,7 +130,7 @@ export default function Nav() {
           }`}></span>
         </button>
 
-        {/* Center: Logo - Smaller on mobile */}
+        {/* Center: Logo - Bigger and higher resolution */}
         <a 
           href="/" 
           className="absolute left-1/2 -translate-x-1/2 flex items-center no-underline transition-all duration-200 hover:opacity-85 hover:scale-105 z-10"
@@ -139,7 +139,13 @@ export default function Nav() {
             e.preventDefault()
           }}
         >
-          <img src="/logo.png" alt="Pure Peel Co." className="h-[36px] md:h-[42px] w-auto max-w-[160px] md:max-w-[200px] block object-contain" />
+          <img 
+            src="/logo.png" 
+            alt="Pure Peel Co." 
+            className="h-[52px] md:h-[60px] w-auto max-w-[220px] md:max-w-[280px] block object-contain"
+            srcSet="/logo.png 1x, /logo.png 2x"
+            loading="eager"
+          />
         </a>
 
         {/* Right: Currency, Language & Cart */}
