@@ -500,23 +500,23 @@ export default function Checkout() {
           {
             id: 'regular',
             name: language === 'fr' ? 'Colis Régulier' : 'Regular Parcel',
-            description: language === 'fr' ? '5-7 jours ouvrables' : '5-7 business days',
+            description: language === 'fr' ? 'Livraison standard au Canada avec suivi' : 'Standard delivery within Canada with tracking',
             price: 12.00,
-            estimatedDays: 6
+            estimatedDays: 3
           },
           {
             id: 'expedited',
             name: language === 'fr' ? 'Colis Accéléré' : 'Expedited Parcel',
-            description: language === 'fr' ? '3-5 jours ouvrables' : '3-5 business days',
+            description: language === 'fr' ? 'Livraison plus rapide avec suivi et confirmation de signature' : 'Faster delivery with tracking and signature confirmation (guaranteed delivery)',
             price: 18.00,
-            estimatedDays: 4
+            estimatedDays: 2
           },
           {
             id: 'xpresspost',
             name: 'Xpresspost',
-            description: language === 'fr' ? '2-3 jours ouvrables' : '2-3 business days',
-            price: 25.00,
-            estimatedDays: 2
+            description: language === 'fr' ? 'Livraison express avec confirmation de signature et traitement prioritaire' : 'Express delivery with signature confirmation and priority handling (guaranteed, major centers)',
+            price: 22.00,
+            estimatedDays: 1
           }
         ]
         setShippingOptions(defaultOptions)
@@ -1142,7 +1142,20 @@ export default function Checkout() {
                                   </span>
                                 </div>
                                 <p className="text-xs text-gray-500 mt-0.5">
-                                  {option.estimatedDays} {getTranslation(language, 'checkout.businessDays')}
+                                  {(() => {
+                                    // Map shipping option names to translation keys
+                                    const timeMap = {
+                                      'Regular Parcel': getTranslation(language, 'shipping.shippingInfo.methods.regular.time'),
+                                      'Expedited Parcel': getTranslation(language, 'shipping.shippingInfo.methods.expedited.time'),
+                                      'Xpresspost': getTranslation(language, 'shipping.shippingInfo.methods.xpresspost.time'),
+                                      'Colis Régulier': getTranslation(language, 'shipping.shippingInfo.methods.regular.time'),
+                                      'Colis Accéléré': getTranslation(language, 'shipping.shippingInfo.methods.expedited.time'),
+                                      'Tracked Packet - USA': '4-7 business days',
+                                      'Xpresspost - USA': '2-3 business days',
+                                      'Priority Worldwide - USA': '1-2 business days'
+                                    }
+                                    return timeMap[option.name] || `${option.estimatedDays} ${getTranslation(language, 'checkout.businessDays')}`
+                                  })()}
                                 </p>
                               </div>
                             </label>
