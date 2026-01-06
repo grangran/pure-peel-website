@@ -112,3 +112,4 @@ But **email alerts are automatic** - you'll know immediately when an order comes
 
 **The system already does this** - you just need to configure the `ADMIN_EMAIL` environment variable!
 
+

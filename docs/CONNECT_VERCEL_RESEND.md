@@ -132,3 +132,4 @@ VITE_API_URL=https://pure-peel-website.onrender.com
 
 Once configured in Render, your backend will automatically use Resend to send emails when orders are placed!
 
+

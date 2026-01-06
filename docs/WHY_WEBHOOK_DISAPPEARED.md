@@ -79,3 +79,4 @@ After reconnecting:
    - In Vercel → Deployments
    - Should say "Triggered by GitHub push" (not "Manual deploy")
 
+
