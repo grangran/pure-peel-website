@@ -150,6 +150,11 @@ export default function Checkout() {
         setSelectedShipping(parsedSelected)
         setHasEnteredShippingDetails(true)
       }
+      
+      // If all address fields are filled, mark as entered even if no shipping option is saved
+      if (formData.postalCode && formData.province && formData.city && formData.country) {
+        setHasEnteredShippingDetails(true)
+      }
     } catch (error) {
       console.error('Error loading saved shipping data:', error)
     }
@@ -234,7 +239,7 @@ export default function Checkout() {
       } else {
         // Canadian postal code
         if (!/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/.test(formData.postalCode)) {
-          newErrors.postalCode = "Please enter a valid Canadian postal code"
+      newErrors.postalCode = "Please enter a valid Canadian postal code"
         }
       }
     }
@@ -259,38 +264,38 @@ export default function Checkout() {
       const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout (increased for Canada Post API)
       
       try {
-        const response = await fetch(`${API_URL}/api/get-shipping-rates`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            destination: {
-              postalCode: formData.postalCode,
-              province: formData.province,
+      const response = await fetch(`${API_URL}/api/get-shipping-rates`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          destination: {
+            postalCode: formData.postalCode,
+            province: formData.province,
               city: formData.city,
               country: formData.country
-            },
-            cartItems: cartItems
-          }),
+          },
+          cartItems: cartItems
+        }),
           signal: controller.signal
-        })
+      })
 
         clearTimeout(timeoutId)
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({ error: `Server error: ${response.status}` }))
-          throw new Error(errorData.error || `Failed to get shipping rates (${response.status})`)
-        }
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: `Server error: ${response.status}` }))
+        throw new Error(errorData.error || `Failed to get shipping rates (${response.status})`)
+      }
 
-        const data = await response.json()
+      const data = await response.json()
 
-        if (!data.options || data.options.length === 0) {
-          throw new Error('No shipping options available')
-        }
+      if (!data.options || data.options.length === 0) {
+        throw new Error('No shipping options available')
+      }
 
-        setShippingOptions(data.options)
-        
+      setShippingOptions(data.options)
+      
         // Create address key for matching
         const addressKey = `${formData.postalCode}-${formData.province}-${formData.city}-${formData.country}`
         
@@ -304,7 +309,7 @@ export default function Checkout() {
         }
         
         // Auto-select first option (usually cheapest) or restore previously selected
-        if (data.options.length > 0) {
+      if (data.options.length > 0) {
           // Try to restore previously selected shipping option
           try {
             const savedSelected = localStorage.getItem('checkoutShippingOption')
@@ -324,7 +329,7 @@ export default function Checkout() {
             console.error('Error restoring selected shipping:', error)
           }
           // If no match found, select first option
-          setSelectedShipping(data.options[0])
+        setSelectedShipping(data.options[0])
         }
       } catch (fetchError) {
         clearTimeout(timeoutId)
@@ -432,10 +437,10 @@ export default function Checkout() {
         }
         
         // Debounce to avoid too many API calls
-        const timer = setTimeout(() => {
-          fetchShippingRates()
-        }, 500) // Debounce
-        return () => clearTimeout(timer)
+      const timer = setTimeout(() => {
+        fetchShippingRates()
+      }, 500) // Debounce
+      return () => clearTimeout(timer)
       }
       // If address hasn't changed, keep using saved options (already restored on mount)
     } else if (!hasEnteredShippingDetails) {
@@ -578,7 +583,7 @@ export default function Checkout() {
         console.log('✅ Redirecting to Stripe Checkout:', data.url)
         setIsRedirecting(true)
         // Redirect immediately to Stripe's classic checkout page
-        window.location.href = data.url
+          window.location.href = data.url
       } else {
         console.error('❌ No checkout URL in response:', data)
         throw new Error('Checkout session URL not provided by server')
@@ -747,10 +752,10 @@ export default function Checkout() {
                   <div>
                     <h2 className="text-base font-semibold text-gray-900 mb-4">Contact</h2>
                     <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1.5">
                           {getTranslation(language, 'checkout.email')}
-                        </label>
+                      </label>
                         <input
                           type="email"
                           name="email"
@@ -773,62 +778,62 @@ export default function Checkout() {
                     <h2 className="text-base font-semibold text-gray-900 mb-4">Name</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <input
-                          type="text"
-                          name="firstName"
-                          value={formData.firstName}
-                          onChange={handleInputChange}
+                      <input
+                        type="text"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.firstName')}
                           className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
                             errors.firstName ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
-                          required
-                        />
-                        {errors.firstName && (
-                          <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
-                        )}
-                      </div>
-                      <div>
-                        <input
-                          type="text"
-                          name="lastName"
-                          value={formData.lastName}
-                          onChange={handleInputChange}
+                        required
+                      />
+                      {errors.firstName && (
+                        <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
+                      )}
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        name="lastName"
+                        value={formData.lastName}
+                        onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.lastName')}
                           className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
                             errors.lastName ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
-                          required
-                        />
-                        {errors.lastName && (
-                          <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
-                        )}
-                      </div>
+                        required
+                      />
+                      {errors.lastName && (
+                        <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
+                      )}
                     </div>
+                  </div>
                   </div>
 
                   {/* Shipping Address */}
                   <div>
                     <h2 className="text-base font-semibold text-gray-900 mb-4">Ship to</h2>
                     <div className="space-y-4">
-                      <div>
-                        <input
-                          type="text"
-                          name="address"
-                          value={formData.address}
-                          onChange={handleInputChange}
+                  <div>
+                    <input
+                      type="text"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.streetAddress')}
                           className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
                             errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
-                          required
+                      required
                           autoComplete="street-address"
-                        />
-                        {errors.address && (
-                          <p className="text-red-500 text-xs mt-1">{errors.address}</p>
-                        )}
-                      </div>
-                      
+                    />
+                    {errors.address && (
+                      <p className="text-red-500 text-xs mt-1">{errors.address}</p>
+                    )}
+                  </div>
+
                       <div>
                         <select
                           name="country"
@@ -849,31 +854,31 @@ export default function Checkout() {
 
                       <div className="grid grid-cols-3 gap-3">
                         <div className="col-span-1">
-                          <input
-                            type="text"
-                            name="city"
-                            value={formData.city}
-                            onChange={handleInputChange}
+                      <input
+                        type="text"
+                        name="city"
+                        value={formData.city}
+                        onChange={handleInputChange}
                             placeholder={getTranslation(language, 'checkout.city')}
                             className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
                               errors.city ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                             } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
-                            required
-                          />
-                          {errors.city && (
-                            <p className="text-red-500 text-xs mt-1">{errors.city}</p>
-                          )}
-                        </div>
+                        required
+                      />
+                      {errors.city && (
+                        <p className="text-red-500 text-xs mt-1">{errors.city}</p>
+                      )}
+                    </div>
                         <div className="col-span-1">
-                          <select
-                            name="province"
-                            value={formData.province}
-                            onChange={handleInputChange}
+                      <select
+                        name="province"
+                        value={formData.province}
+                        onChange={handleInputChange}
                             className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
                               errors.province ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                             } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
-                            required
-                          >
+                        required
+                      >
                             <option value="">
                               {formData.country === "United States" 
                                 ? getTranslation(language, 'checkout.selectState')
@@ -882,18 +887,18 @@ export default function Checkout() {
                             </option>
                             {(formData.country === "United States" ? usStates : canadianProvinces).map(region => (
                               <option key={region} value={region}>{region}</option>
-                            ))}
-                          </select>
-                          {errors.province && (
-                            <p className="text-red-500 text-xs mt-1">{errors.province}</p>
-                          )}
-                        </div>
+                        ))}
+                      </select>
+                      {errors.province && (
+                        <p className="text-red-500 text-xs mt-1">{errors.province}</p>
+                      )}
+                    </div>
                         <div className="col-span-1">
-                          <input
-                            type="text"
-                            name="postalCode"
-                            value={formData.postalCode}
-                            onChange={handleInputChange}
+                      <input
+                        type="text"
+                        name="postalCode"
+                        value={formData.postalCode}
+                        onChange={handleInputChange}
                             placeholder={formData.country === "United States" 
                               ? getTranslation(language, 'checkout.zipCode')
                               : getTranslation(language, 'checkout.postalCode')
@@ -901,14 +906,14 @@ export default function Checkout() {
                             className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
                               errors.postalCode ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                             } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 ${formData.country === "Canada" ? 'uppercase' : ''}`}
-                            required
-                          />
-                          {errors.postalCode && (
-                            <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>
-                          )}
-                        </div>
-                      </div>
-                      
+                        required
+                      />
+                      {errors.postalCode && (
+                        <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>
+                      )}
+                    </div>
+                  </div>
+
                       <div>
                         <input
                           type="tel"
@@ -1091,7 +1096,7 @@ export default function Checkout() {
                         >
                           {getTranslation(language, 'checkout.promoCode.apply')}
                         </button>
-                      </div>
+                  </div>
                       {promoCodeError && (
                         <p className="text-red-500 text-xs mt-1">{promoCodeError}</p>
                       )}
