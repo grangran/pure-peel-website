@@ -1009,6 +1009,13 @@ export default function Checkout() {
                       {shippingError && (
                         <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-4">
                           <p className="text-sm text-red-800">{shippingError}</p>
+                          <button
+                            type="button"
+                            onClick={() => fetchShippingRates()}
+                            className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+                          >
+                            {language === 'fr' ? 'Réessayer' : 'Try again'}
+                          </button>
                         </div>
                       )}
 
@@ -1048,7 +1055,29 @@ export default function Checkout() {
                       )}
 
                       {!loadingShipping && shippingOptions.length === 0 && !shippingError && (
-                        <p className="text-sm text-gray-500">{getTranslation(language, 'checkout.enterAddress')}</p>
+                        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
+                          <p className="text-sm text-yellow-800 mb-2">
+                            {language === 'fr' 
+                              ? 'Aucune option d\'expédition disponible. Cliquez pour calculer les tarifs.'
+                              : 'No shipping options available. Click to calculate rates.'}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              console.log('Manual shipping fetch triggered', {
+                                postalCode: formData.postalCode,
+                                province: formData.province,
+                                city: formData.city,
+                                country: formData.country,
+                                hasEnteredShippingDetails
+                              })
+                              fetchShippingRates()
+                            }}
+                            className="text-sm text-yellow-600 hover:text-yellow-800 underline font-medium"
+                          >
+                            {language === 'fr' ? 'Calculer les tarifs d\'expédition' : 'Calculate shipping rates'}
+                          </button>
+                        </div>
                       )}
                     </div>
                   )}
