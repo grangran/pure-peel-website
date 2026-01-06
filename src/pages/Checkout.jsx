@@ -946,7 +946,10 @@ export default function Checkout() {
                           name="phone"
                           value={formData.phone}
                           onChange={handleInputChange}
-                          placeholder={getTranslation(language, 'checkout.phonePlaceholder')}
+                          placeholder={formData.country === "United States" 
+                            ? getTranslation(language, 'checkout.phonePlaceholderUS')
+                            : getTranslation(language, 'checkout.phonePlaceholder')
+                          }
                           className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
                             errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
