@@ -133,7 +133,7 @@ export default function Nav() {
         {/* Center: Logo - Bigger and higher resolution */}
         <a 
           href="/" 
-          className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center no-underline transition-all duration-200 hover:opacity-85 hover:scale-105 z-10 pointer-events-auto touch-manipulation max-w-[calc(100%-320px)] md:max-w-[calc(100%-240px)]"
+          className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center no-underline transition-all duration-200 hover:opacity-85 hover:scale-105 z-10 pointer-events-auto touch-manipulation"
           style={{ 
             minWidth: '100px' // Minimum width to prevent too small on very small screens
           }}
@@ -154,7 +154,7 @@ export default function Nav() {
         </a>
 
         {/* Right: Currency, Language & Cart */}
-        <div className="flex items-center gap-3 sm:gap-4 ml-auto min-w-[140px] md:min-w-0">
+        <div className="flex items-center gap-3 sm:gap-4 ml-auto pl-4 md:pl-0">
           {/* Currency Selector */}
           <div className="relative">
             <button
