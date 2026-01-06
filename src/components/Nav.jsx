@@ -133,7 +133,7 @@ export default function Nav() {
         {/* Center: Logo - Bigger and higher resolution */}
         <a 
           href="/" 
-          className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center no-underline transition-all duration-200 hover:opacity-85 hover:scale-105 z-10 pointer-events-auto touch-manipulation max-w-[calc(50%_-_80px)] md:max-w-none"
+          className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center no-underline transition-all duration-200 hover:opacity-85 hover:scale-105 z-10 pointer-events-auto touch-manipulation"
           style={{ 
             minWidth: '100px' // Minimum width to prevent too small on very small screens
           }}
