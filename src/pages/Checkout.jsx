@@ -567,12 +567,12 @@ export default function Checkout() {
 
       // Redirect to Stripe Checkout using the session URL (classic format)
       if (data.url) {
+        console.log('✅ Redirecting to Stripe Checkout:', data.url)
         setIsRedirecting(true)
-        // Small delay to show loading state
-        setTimeout(() => {
-          window.location.href = data.url
-        }, 300)
+        // Redirect immediately to Stripe's classic checkout page
+        window.location.href = data.url
       } else {
+        console.error('❌ No checkout URL in response:', data)
         throw new Error('Checkout session URL not provided by server')
       }
     } catch (error) {
@@ -1109,7 +1109,7 @@ export default function Checkout() {
                   )}
                 </div>
                 
-              <div className="space-y-3 pt-5 border-t-2 border-gray-100">
+i              <div className="space-y-3 pt-5 border-t-2 border-gray-100">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.subtotal')}</span>
                     <span className="text-gray-900 font-semibold">{formatPrice(subtotal)}</span>
