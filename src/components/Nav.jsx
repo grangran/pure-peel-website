@@ -112,22 +112,32 @@ export default function Nav() {
       <div className="h-full max-w-7xl mx-auto px-2 sm:px-3 md:px-5 flex items-center justify-between relative">
         {/* Left: Hamburger Menu */}
         <button 
-          className={`w-10 h-10 sm:w-11 sm:h-11 p-1.5 sm:p-2 flex flex-col justify-center gap-1 sm:gap-1.5 bg-transparent border-0 cursor-pointer rounded-lg transition-all duration-150 hover:bg-black/5 active:scale-95 touch-manipulation min-w-[40px] sm:min-w-[44px] min-h-[40px] sm:min-h-[44px] ${
-            isMenuOpen ? "is-open" : ""
-          }`}
+          className="w-10 h-10 sm:w-11 sm:h-11 p-1.5 sm:p-2 flex items-center justify-center bg-transparent border-0 cursor-pointer rounded-lg transition-all duration-150 hover:bg-black/5 active:scale-95 touch-manipulation min-w-[40px] sm:min-w-[44px] min-h-[40px] sm:min-h-[44px]"
           onClick={toggleMenu}
           aria-label="Toggle menu"
           aria-expanded={isMenuOpen}
         >
-          <span className={`block w-[22px] h-0.5 bg-gray-900 rounded-sm transition-all duration-250 ${
-            isMenuOpen ? "translate-y-2 rotate-45" : ""
-          }`}></span>
-          <span className={`block w-[22px] h-0.5 bg-gray-900 rounded-sm transition-opacity duration-200 ${
-            isMenuOpen ? "opacity-0" : ""
-          }`}></span>
-          <span className={`block w-[22px] h-0.5 bg-gray-900 rounded-sm transition-all duration-250 ${
-            isMenuOpen ? "-translate-y-2 -rotate-45" : ""
-          }`}></span>
+          {isMenuOpen ? (
+            <svg
+              className="w-5 h-5"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          ) : (
+            <>
+              <span className="block w-[22px] h-0.5 bg-gray-900 rounded-sm"></span>
+              <span className="block w-[22px] h-0.5 bg-gray-900 rounded-sm"></span>
+              <span className="block w-[22px] h-0.5 bg-gray-900 rounded-sm"></span>
+            </>
+          )}
         </button>
 
         {/* Center: Logo - Bigger and higher resolution */}
