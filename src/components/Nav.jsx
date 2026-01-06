@@ -156,7 +156,7 @@ export default function Nav() {
         {/* Right: Currency, Language & Cart */}
         <div className="flex items-center gap-3 sm:gap-4 ml-auto">
           {/* Currency Selector */}
-          <div className="relative ml-6 md:ml-0">
+          <div className="relative ml-2 md:ml-0">
             <button
               onClick={() => {
                 setIsCurrencyDropdownOpen(!isCurrencyDropdownOpen)
