@@ -228,14 +228,19 @@ export default function Checkout() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+    // For Canadian postal codes, convert to uppercase but don't force display
+    let processedValue = value
+    if (name === 'postalCode' && formData.country === "Canada") {
+      processedValue = value.toUpperCase()
+    }
+    setFormData(prev => ({ ...prev, [name]: processedValue }))
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: "" }))
     }
     // Track when user enters shipping details
     if (name === 'postalCode' || name === 'province' || name === 'city' || name === 'country') {
-      if (value && !hasEnteredShippingDetails) {
+      if (processedValue && !hasEnteredShippingDetails) {
         setHasEnteredShippingDetails(true)
       }
       // Clear province/state and postal code when country changes
