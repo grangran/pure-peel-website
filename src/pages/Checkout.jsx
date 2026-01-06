@@ -173,6 +173,8 @@ export default function Checkout() {
       autocomplete.addListener('place_changed', () => {
         const place = autocomplete.getPlace()
         
+        console.log('📍 Place selected:', place)
+        
         if (!place.address_components) {
           console.warn('No address components found')
           return
@@ -186,39 +188,151 @@ export default function Checkout() {
         let postalCode = ''
         let country = ''
 
-        place.address_components.forEach(component => {
-          const types = component.types
+        // Helper function to find component by type
+        const getComponent = (types) => {
+          const component = place.address_components.find(comp => 
+            types.some(type => comp.types.includes(type))
+          )
+          return component ? component.long_name : ''
+        }
 
-          if (types.includes('street_number')) {
-            streetNumber = component.long_name
-          } else if (types.includes('route')) {
-            route = component.long_name
-          } else if (types.includes('locality')) {
-            city = component.long_name
-          } else if (types.includes('administrative_area_level_1')) {
-            province = component.long_name
-          } else if (types.includes('postal_code')) {
-            postalCode = component.long_name
-          } else if (types.includes('country')) {
-            // Convert country code to full name
-            const countryCode = component.short_name.toLowerCase()
-            country = countryCode === 'ca' ? 'Canada' : countryCode === 'us' ? 'United States' : component.long_name
+        const getComponentShort = (types) => {
+          const component = place.address_components.find(comp => 
+            types.some(type => comp.types.includes(type))
+          )
+          return component ? component.short_name : ''
+        }
+
+        // Extract components - try multiple field types for better coverage
+        streetNumber = getComponent(['street_number'])
+        route = getComponent(['route'])
+        
+        // Try multiple city field types
+        city = getComponent(['locality']) || 
+               getComponent(['sublocality']) || 
+               getComponent(['sublocality_level_1']) ||
+               getComponent(['postal_town'])
+        
+        // Get postal code
+        postalCode = getComponent(['postal_code']) || getComponent(['postal_code_prefix'])
+        
+        // Get province/state - use long name for matching
+        const provinceLong = getComponent(['administrative_area_level_1'])
+        
+        // Get country
+        const countryCode = getComponentShort(['country']).toLowerCase()
+        country = countryCode === 'ca' ? 'Canada' : countryCode === 'us' ? 'United States' : ''
+
+        // Map province/state to match our dropdown options
+        if (country === 'Canada') {
+          // Map Canadian provinces - Google returns full names, we need to match our dropdown
+          const provinceMap = {
+            'Ontario': 'Ontario',
+            'Quebec': 'Quebec',
+            'British Columbia': 'British Columbia',
+            'Alberta': 'Alberta',
+            'Manitoba': 'Manitoba',
+            'Saskatchewan': 'Saskatchewan',
+            'Nova Scotia': 'Nova Scotia',
+            'New Brunswick': 'New Brunswick',
+            'Newfoundland and Labrador': 'Newfoundland and Labrador',
+            'Prince Edward Island': 'Prince Edward Island',
+            'Northwest Territories': 'Northwest Territories',
+            'Nunavut': 'Nunavut',
+            'Yukon': 'Yukon'
           }
-        })
+          province = provinceMap[provinceLong] || provinceLong
+        } else if (country === 'United States') {
+          // Map US states - Google returns full names, we need to match our dropdown
+          const stateMap = {
+            'Alabama': 'Alabama',
+            'Alaska': 'Alaska',
+            'Arizona': 'Arizona',
+            'Arkansas': 'Arkansas',
+            'California': 'California',
+            'Colorado': 'Colorado',
+            'Connecticut': 'Connecticut',
+            'Delaware': 'Delaware',
+            'Florida': 'Florida',
+            'Georgia': 'Georgia',
+            'Hawaii': 'Hawaii',
+            'Idaho': 'Idaho',
+            'Illinois': 'Illinois',
+            'Indiana': 'Indiana',
+            'Iowa': 'Iowa',
+            'Kansas': 'Kansas',
+            'Kentucky': 'Kentucky',
+            'Louisiana': 'Louisiana',
+            'Maine': 'Maine',
+            'Maryland': 'Maryland',
+            'Massachusetts': 'Massachusetts',
+            'Michigan': 'Michigan',
+            'Minnesota': 'Minnesota',
+            'Mississippi': 'Mississippi',
+            'Missouri': 'Missouri',
+            'Montana': 'Montana',
+            'Nebraska': 'Nebraska',
+            'Nevada': 'Nevada',
+            'New Hampshire': 'New Hampshire',
+            'New Jersey': 'New Jersey',
+            'New Mexico': 'New Mexico',
+            'New York': 'New York',
+            'North Carolina': 'North Carolina',
+            'North Dakota': 'North Dakota',
+            'Ohio': 'Ohio',
+            'Oklahoma': 'Oklahoma',
+            'Oregon': 'Oregon',
+            'Pennsylvania': 'Pennsylvania',
+            'Rhode Island': 'Rhode Island',
+            'South Carolina': 'South Carolina',
+            'South Dakota': 'South Dakota',
+            'Tennessee': 'Tennessee',
+            'Texas': 'Texas',
+            'Utah': 'Utah',
+            'Vermont': 'Vermont',
+            'Virginia': 'Virginia',
+            'Washington': 'Washington',
+            'West Virginia': 'West Virginia',
+            'Wisconsin': 'Wisconsin',
+            'Wyoming': 'Wyoming'
+          }
+          province = stateMap[provinceLong] || provinceLong
+        }
+
+        // Format postal code (uppercase for Canada, keep as-is for US)
+        if (postalCode && country === 'Canada') {
+          postalCode = postalCode.toUpperCase().replace(/\s+/g, ' ')
+        }
 
         // Update form data
         const fullAddress = streetNumber && route 
           ? `${streetNumber} ${route}`.trim()
           : place.formatted_address.split(',')[0] // Fallback to first part of formatted address
 
-        setFormData(prev => ({
-          ...prev,
+        console.log('📍 Parsed address data:', {
           address: fullAddress,
-          city: city || prev.city,
-          province: province || prev.province,
-          postalCode: postalCode || prev.postalCode,
-          country: country || prev.country
-        }))
+          city,
+          province,
+          postalCode,
+          country,
+          rawComponents: place.address_components
+        })
+
+        // Force update all fields - don't use fallback to prev values
+        setFormData(prev => {
+          const newData = {
+            ...prev,
+            address: fullAddress || prev.address,
+            country: country || prev.country
+          }
+          
+          // Only update if we have a value (don't overwrite with empty)
+          if (city) newData.city = city
+          if (province) newData.province = province
+          if (postalCode) newData.postalCode = postalCode
+          
+          return newData
+        })
 
         // Mark that shipping details have been entered
         if (city && province && postalCode && country) {
