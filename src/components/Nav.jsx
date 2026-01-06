@@ -133,10 +133,9 @@ export default function Nav() {
         {/* Center: Logo - Bigger and higher resolution */}
         <a 
           href="/" 
-          className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center no-underline transition-all duration-200 hover:opacity-85 hover:scale-105 z-10 pointer-events-auto touch-manipulation"
+          className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center no-underline transition-all duration-200 hover:opacity-85 hover:scale-105 z-10 pointer-events-auto touch-manipulation max-w-[calc(50%-80px)] md:max-w-none"
           style={{ 
-            minWidth: '100px', // Minimum width to prevent too small on very small screens
-            maxWidth: window.innerWidth < 768 ? 'calc(50% - 80px)' : 'none' // Limit logo width on mobile to leave space for right buttons
+            minWidth: '100px' // Minimum width to prevent too small on very small screens
           }}
           onClick={(e) => {
             // Let App.jsx handle navigation via its click interceptor
