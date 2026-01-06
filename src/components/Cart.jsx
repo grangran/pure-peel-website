@@ -59,17 +59,17 @@ export default function Cart({ isOpen, onClose }) {
             )}
           </div>
           <button 
-            className="w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 flex items-center justify-center bg-transparent border-0 cursor-pointer rounded-md text-gray-500 hover:text-gray-700 transition-all duration-200 hover:bg-gray-100 active:scale-95 min-w-[28px] sm:min-w-[36px] md:min-w-[44px] min-h-[28px] sm:min-h-[36px] md:min-h-[44px] focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2" 
+            className="w-10 h-10 flex items-center justify-center bg-transparent border-0 cursor-pointer rounded-lg text-gray-600 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900 active:scale-95 min-w-[44px] min-h-[44px] focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2" 
             onClick={onClose} 
             aria-label="Close cart"
           >
             <svg
-              className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5"
+              className="w-5 h-5"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              strokeWidth="2.5"
+              strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
             >
