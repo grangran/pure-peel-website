@@ -133,7 +133,7 @@ export default function Nav() {
         {/* Center: Logo - Bigger and higher resolution */}
         <a 
           href="/" 
-          className="absolute left-1/2 -translate-x-1/2 flex items-center no-underline transition-all duration-200 hover:opacity-85 hover:scale-105 z-10"
+          className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center no-underline transition-all duration-200 hover:opacity-85 hover:scale-105 z-20 pointer-events-auto"
           onClick={(e) => {
             // Let App.jsx handle navigation via its click interceptor
             e.preventDefault()
@@ -142,9 +142,11 @@ export default function Nav() {
           <img 
             src="/logo.png" 
             alt="Pure Peel Co." 
-            className="h-[64px] md:h-[72px] w-auto max-w-[280px] md:max-w-[360px] block object-contain"
-            srcSet="/logo.png 1x, /logo@2x.png 2x, /logo@3x.png 3x"
+            className="h-[64px] md:h-[72px] w-auto max-w-[280px] md:max-w-[360px] block object-contain pointer-events-none"
             loading="eager"
+            onError={(e) => {
+              console.error('Logo failed to load:', e.target.src)
+            }}
           />
         </a>
 
