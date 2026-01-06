@@ -109,10 +109,10 @@ export default function Nav() {
         ? 'border-gray-200/80 shadow-md backdrop-blur-sm bg-[#faf8f5]/95' 
         : 'border-gray-200/50 shadow-sm'
     }`}>
-      <div className="h-full max-w-7xl mx-auto px-5 flex items-center justify-between relative">
+      <div className="h-full max-w-7xl mx-auto px-3 sm:px-4 md:px-5 flex items-center justify-between relative">
         {/* Left: Hamburger Menu */}
         <button 
-          className={`w-11 h-11 p-2 flex flex-col justify-center gap-1.5 bg-transparent border-0 cursor-pointer rounded-lg transition-all duration-150 hover:bg-black/5 active:scale-95 touch-manipulation ${
+          className={`w-11 h-11 p-2 flex flex-col justify-center gap-1.5 bg-transparent border-0 cursor-pointer rounded-lg transition-all duration-150 hover:bg-black/5 active:scale-95 touch-manipulation min-w-[44px] min-h-[44px] ${
             isMenuOpen ? "is-open" : ""
           }`}
           onClick={toggleMenu}
@@ -135,8 +135,8 @@ export default function Nav() {
           href="/" 
           className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center no-underline transition-all duration-200 hover:opacity-85 hover:scale-105 z-10 pointer-events-auto touch-manipulation"
           style={{ 
-            maxWidth: 'calc(100% - 200px)', // Ensure space for hamburger (left) and cart/buttons (right)
-            minWidth: '120px' // Minimum width to prevent too small on very small screens
+            maxWidth: 'calc(100% - 180px)', // Ensure space for hamburger (left) and cart/buttons (right) - reduced for mobile
+            minWidth: '100px' // Minimum width to prevent too small on very small screens
           }}
           onClick={(e) => {
             // Let App.jsx handle navigation via its click interceptor
@@ -146,7 +146,7 @@ export default function Nav() {
           <img 
             src="/logo.png" 
             alt="Pure Peel Co." 
-            className="h-[56px] md:h-[72px] w-auto max-w-[200px] md:max-w-[360px] block object-contain pointer-events-none"
+            className="h-[52px] sm:h-[56px] md:h-[72px] w-auto max-w-[180px] sm:max-w-[200px] md:max-w-[360px] block object-contain pointer-events-none"
             loading="eager"
             onError={(e) => {
               console.error('Logo failed to load:', e.target.src)
@@ -155,7 +155,7 @@ export default function Nav() {
         </a>
 
         {/* Right: Currency, Language & Cart */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Currency Selector */}
           <div className="relative">
             <button

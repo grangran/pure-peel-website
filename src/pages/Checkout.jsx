@@ -757,7 +757,7 @@ export default function Checkout() {
                     window.history.pushState({ page: "/" }, "", "/")
                     window.dispatchEvent(new Event("hashchange"))
                   }}
-                  className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+                  className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 mb-6 transition-colors min-h-[44px] touch-manipulation active:opacity-70"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
@@ -1003,10 +1003,10 @@ export default function Checkout() {
                           {shippingOptions.map((option) => (
                             <label
                               key={option.id}
-                              className={`flex items-center gap-3 p-3.5 border rounded-md cursor-pointer transition-all ${
+                              className={`flex items-center gap-3 p-3.5 border rounded-md cursor-pointer transition-all touch-manipulation min-h-[56px] ${
                                 selectedShipping?.id === option.id
                                   ? 'border-amber-500 bg-amber-50/50'
-                                  : 'border-gray-200 bg-white hover:border-gray-300'
+                                  : 'border-gray-200 bg-white hover:border-gray-300 active:bg-gray-50'
                               }`}
                             >
                               <input
@@ -1050,7 +1050,7 @@ export default function Checkout() {
                     <button
                       type="submit"
                       disabled={isSubmitting || !hasEnteredShippingDetails || !selectedShipping}
-                      className="w-full py-3.5 px-6 text-base font-semibold rounded-md border-0 cursor-pointer transition-all duration-200 bg-amber-500 text-white hover:bg-amber-600 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-h-[48px]"
+                      className="w-full py-3.5 px-6 text-base font-semibold rounded-md border-0 cursor-pointer transition-all duration-200 bg-amber-500 text-white hover:bg-amber-600 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-h-[48px] touch-manipulation"
                     >
                       {isSubmitting ? (
                         <LoadingSpinner size="sm" color="white" text={getTranslation(language, 'checkout.processing')} />
@@ -1123,7 +1123,7 @@ export default function Checkout() {
                         <button
                           type="button"
                           onClick={handleApplyPromoCode}
-                          className="px-5 py-2.5 text-sm font-semibold rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors whitespace-nowrap"
+                          className="px-5 py-2.5 text-sm font-semibold rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors whitespace-nowrap min-h-[44px] touch-manipulation active:scale-95"
                         >
                           {getTranslation(language, 'checkout.promoCode.apply')}
                         </button>

@@ -239,7 +239,20 @@
   }
 
   /* Mobile optimizations */
-  @media (max-width: 640px) {
+  /* Safe area insets for iOS devices */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+  
+  nav {
+    padding-left: max(12px, calc(12px + env(safe-area-inset-left)));
+    padding-right: max(12px, calc(12px + env(safe-area-inset-right)));
+  }
+}
+
+@media (max-width: 640px) {
     button,
     a[role="button"],
     input[type="submit"],
