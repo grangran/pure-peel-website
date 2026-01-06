@@ -30,9 +30,6 @@ export default function Cart({ isOpen, onClose }) {
   const handleCheckout = () => {
     if (cartItems.length === 0) return
     onClose()
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Cart.jsx:25',message:'Navigating to checkout',data:{historyLength:window.history.length,pathname:window.location.pathname},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
-    // #endregion
     // Navigate to checkout page - use pushState and trigger hashchange to sync with App.jsx
     window.history.pushState({ page: "/checkout" }, "", "/checkout")
     // Trigger App.jsx route handler via hashchange event (which App.jsx listens to)

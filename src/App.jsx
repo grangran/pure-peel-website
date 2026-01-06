@@ -69,9 +69,6 @@ export default function App() {
   useEffect(() => {
     // Handle browser navigation
     const handleRoute = (event) => {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.jsx:31',message:'Route handler called',data:{pathname:window.location.pathname,search:window.location.search,historyLength:window.history.length,hasState:!!event?.state},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
-      // #endregion
       const path = window.location.pathname
       const normalizedPath = path.replace(/\/$/, '') // Remove trailing slash
       
@@ -112,9 +109,6 @@ export default function App() {
         setCurrentPage("apple")
       } else if (normalizedPath === "/checkout" || normalizedPath === "/checkout.html") {
         // Always set to checkout, regardless of query parameters
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'App.jsx:61',message:'Setting page to checkout',data:{normalizedPath,search:window.location.search},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
-        // #endregion
         setCurrentPage("checkout")
       } else if (normalizedPath === "/admin" || normalizedPath === "/admin.html") {
         setCurrentPage("admin")

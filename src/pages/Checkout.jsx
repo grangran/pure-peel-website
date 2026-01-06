@@ -38,9 +38,7 @@ export default function Checkout() {
   // Track step changes (only for confirmation)
   useEffect(() => {
     if (currentStep === 2) {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Checkout.jsx:19',message:'Step changed to confirmation',data:{currentStep,pathname:window.location.pathname,search:window.location.search,historyLength:window.history.length},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
+      // Step changed to confirmation
     }
   }, [currentStep])
   
@@ -61,26 +59,17 @@ export default function Checkout() {
   
   // Check for Stripe redirect
   useEffect(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Checkout.jsx:30',message:'Stripe redirect check',data:{pathname:window.location.pathname,search:window.location.search,historyLength:window.history.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-    // #endregion
     const urlParams = new URLSearchParams(window.location.search)
     const success = urlParams.get('success')
     const canceled = urlParams.get('canceled')
     const sessionId = urlParams.get('session_id')
 
     if (success === 'true' && sessionId) {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Checkout.jsx:36',message:'Payment success detected',data:{sessionId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-      // #endregion
       // Payment was successful - clear saved form data
       localStorage.removeItem('checkoutFormData')
       localStorage.removeItem('checkoutShippingOption')
       handlePaymentSuccess(sessionId)
     } else if (canceled === 'true') {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Checkout.jsx:55',message:'Payment canceled - restoring checkout',data:{historyLength:window.history.length,pathname:window.location.pathname,search:window.location.search},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'C'})}).catch(()=>{});
-      // #endregion
       // Payment was canceled - restore form data and return to checkout
       setCurrentStep(1)
       setStripeError('Payment was canceled. Your information has been saved. You can try again when ready.')
