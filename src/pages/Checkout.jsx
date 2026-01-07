@@ -1138,7 +1138,7 @@ export default function Checkout() {
                                 <div className="flex items-center justify-between">
                                   <span className="font-medium text-sm text-gray-900">{option.name}</span>
                                   <span className="font-semibold text-sm text-gray-900">
-                                    {formatPrice(option.price)}
+                                    {formatPrice(option.price)} <span className="text-xs font-normal text-gray-500">{currency}</span>
                                   </span>
                                 </div>
                                 <p className="text-xs text-gray-500 mt-0.5">
@@ -1209,7 +1209,7 @@ export default function Checkout() {
                       ) : (
                         <>
                           {hasEnteredShippingDetails && selectedShipping 
-                            ? `Pay ${formatPrice(total)}`
+                            ? `Pay ${formatPrice(total)} ${currency}`
                             : (language === 'fr' ? 'Entrez les détails d\'expédition' : 'Enter shipping details')
                           }
                         </>
@@ -1229,7 +1229,7 @@ export default function Checkout() {
               <div className="bg-gray-50 rounded-lg p-6 lg:sticky lg:top-8">
                 <div className="mb-6">
                   <h2 className="text-lg font-semibold text-gray-900 mb-1">Pure Peel Co.</h2>
-                  <p className="text-2xl font-semibold text-gray-900">Pay {formatPrice(total)}</p>
+                  <p className="text-2xl font-semibold text-gray-900">Pay {formatPrice(total)} <span className="text-base font-normal text-gray-500">{currency}</span></p>
                 </div>
                 <div className="space-y-4 mb-6">
                   {cartItems.map((item) => (
@@ -1241,7 +1241,7 @@ export default function Checkout() {
                         <p className="text-sm font-medium text-gray-900 truncate">{item.name}</p>
                         <p className="text-xs text-gray-500 mt-0.5">{item.variant}</p>
                         <p className="text-xs text-gray-500 mt-1">
-                          {getTranslation(language, 'checkout.qty')} {item.quantity} × {formatPrice(item.price)}
+                          {getTranslation(language, 'checkout.qty')} {item.quantity} × {formatPrice(item.price)} <span className="text-gray-400">{currency}</span>
                         </p>
                       </div>
                     </div>
@@ -1295,7 +1295,7 @@ export default function Checkout() {
                             {getTranslation(language, 'checkout.promoCode.applied')}: {appliedPromoCode}
                           </p>
                           <p className="text-xs text-green-600">
-                            {getTranslation(language, 'checkout.promoCode.discount')}: {formatPrice(promoCodeDiscount)}
+                            {getTranslation(language, 'checkout.promoCode.discount')}: {formatPrice(promoCodeDiscount)} <span className="text-gray-400">{currency}</span>
                           </p>
                         </div>
                       </div>
