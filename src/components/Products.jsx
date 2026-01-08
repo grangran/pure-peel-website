@@ -73,6 +73,9 @@ function ProductCard({ product, index, onProductClick }) {
           className={`w-full h-full object-cover object-center transition-all duration-700 group-hover:scale-110 ${
             imageLoading ? 'opacity-0' : 'opacity-100'
           }`}
+          width="340"
+          height="305"
+          decoding="async"
           onLoad={() => setImageLoading(false)}
           loading="lazy"
         />

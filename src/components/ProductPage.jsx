@@ -27,6 +27,22 @@ export default function ProductPage({ product }) {
 
   const variantImages = getVariantImages()
 
+  // Preload critical first image for faster loading
+  useEffect(() => {
+    if (variantImages.length > 0 && variantImages[0]) {
+      const link = document.createElement('link')
+      link.rel = 'preload'
+      link.as = 'image'
+      link.href = variantImages[0]
+      link.fetchPriority = 'high'
+      document.head.appendChild(link)
+      
+      return () => {
+        document.head.removeChild(link)
+      }
+    }
+  }, [variantImages])
+
   useEffect(() => {
     // Reset all state when product changes (e.g., navigating back/forward)
     setSelectedVariant(product.variants[0])
@@ -182,19 +198,23 @@ export default function ProductPage({ product }) {
                           className={`w-full h-full object-contain drop-shadow-md ${
                             isImageFading || imageLoading ? "opacity-0" : "opacity-100"
                           }`}
-                        onLoad={() => {
-                          if (index === currentImageIndex) {
-                            setImageLoading(false)
-                          }
-                        }}
-                        onError={(e) => {
-                          console.error("Image failed to load:", image);
-                          if (index === currentImageIndex) {
-                            setImageLoading(false);
-                          }
-                        }}
-                        loading={index === 0 ? "eager" : "lazy"}
-                      />
+                          width="600"
+                          height="600"
+                          fetchPriority={index === 0 && currentImageIndex === 0 ? "high" : "auto"}
+                          decoding="async"
+                          onLoad={() => {
+                            if (index === currentImageIndex) {
+                              setImageLoading(false)
+                            }
+                          }}
+                          onError={(e) => {
+                            console.error("Image failed to load:", image);
+                            if (index === currentImageIndex) {
+                              setImageLoading(false);
+                            }
+                          }}
+                          loading={index === 0 ? "eager" : "lazy"}
+                        />
                       </div>
                     )
                   })}

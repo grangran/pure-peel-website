@@ -183,6 +183,10 @@ export default function Lifestyle() {
                   src={item.image}
                   alt={getTranslation(language, `lifestyle.slides.${item.key}.caption`)}
                   className="w-full h-full object-cover object-center"
+                  width="1200"
+                  height="675"
+                  decoding="async"
+                  fetchPriority={index === 0 ? "high" : "auto"}
                   loading={index === 0 ? 'eager' : 'lazy'}
                 />
                 {/* Enhanced Gradient Overlay */}

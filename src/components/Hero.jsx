@@ -9,6 +9,19 @@ export default function Hero() {
 
   useEffect(() => {
     setIsVisible(true)
+    // Preload hero background image for faster loading
+    const link = document.createElement('link')
+    link.rel = 'preload'
+    link.as = 'image'
+    link.href = '/images/driedcitrusbanner.jpg'
+    link.fetchPriority = 'high'
+    document.head.appendChild(link)
+    
+    return () => {
+      if (document.head.contains(link)) {
+        document.head.removeChild(link)
+      }
+    }
   }, [])
 
   const createRipple = (event, buttonId) => {
