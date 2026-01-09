@@ -6,8 +6,8 @@ const defaultImage = '/images/driedcitrusbanner.jpg'
 export const seoData = {
   home: {
     title: 'Pure Peel Co. | Premium Dehydrated Citrus Slices',
-    description: 'Premium dehydrated citrus slices made in Canada. 100% Natural • No Preservatives • Perfect for cocktails, tea, and gourmet garnishes. Shop Orange, Pink Orange, and Lime slices.',
-    keywords: 'dehydrated citrus, dried orange slices, dehydrated lime, cocktail garnish, tea garnish, Canadian made, natural food, gourmet garnish',
+    description: 'Pure Peel Co. - Premium dehydrated citrus slices made in Canada. 100% Natural • No Preservatives • Perfect for cocktails, tea, and gourmet garnishes. Shop Orange, Pink Orange, and Lime slices.',
+    keywords: 'pure peel, purepeelco, pure peel co, dehydrated citrus, dried orange slices, dehydrated lime, cocktail garnish, tea garnish, Canadian made, natural food, gourmet garnish',
     image: defaultImage,
     url: '/',
     type: 'website'
@@ -179,6 +179,7 @@ export const organizationData = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'Pure Peel Co.',
+  alternateName: ['Pure Peel', 'PurePeelCo', 'purepeelco'],
   url: baseUrl,
   logo: {
     '@type': 'ImageObject',
