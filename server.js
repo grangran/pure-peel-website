@@ -10,6 +10,7 @@ import rateLimit from 'express-rate-limit'
 import { saveOrder, getAllOrders, getOrderById, updateOrderStatus, getOrderStats, markEmailSent, hasEmailBeenSent, updateOrderTracking } from './utils/orderStorage.js'
 import { sendOrderConfirmation, sendShippingNotification, sendAdminNotification } from './utils/emailService.js'
 import { createCanadaPostLabel } from './utils/canadaPostShipping.js'
+import { getAllProducts, getProductById, saveProduct, updateProduct, deleteProduct, bulkSaveProducts } from './utils/productStorage.js'
 
 dotenv.config()
 
@@ -1756,6 +1757,157 @@ app.post('/api/order-lookup', async (req, res) => {
     res.json({ order })
   } catch (error) {
     console.error('❌ Error looking up order:', error)
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// ============================================
+// PRODUCT MANAGEMENT API ENDPOINTS
+// ============================================
+
+// Simple API key authentication for product management
+// Set PRODUCT_API_KEY in environment variables
+const authenticateProductAPI = (req, res, next) => {
+  const apiKey = req.headers['x-api-key'] || req.query.apiKey
+  const expectedKey = process.env.PRODUCT_API_KEY
+  
+  if (!expectedKey) {
+    return res.status(500).json({ error: 'Product API key not configured on server' })
+  }
+  
+  if (apiKey !== expectedKey) {
+    return res.status(401).json({ error: 'Invalid API key' })
+  }
+  
+  next()
+}
+
+// Get all products (public endpoint)
+app.get('/api/products', apiLimiter, (req, res) => {
+  try {
+    const products = getAllProducts()
+    res.json({ products, count: products.length })
+  } catch (error) {
+    console.error('Error fetching products:', error)
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// Get product by ID (public endpoint)
+app.get('/api/products/:id', apiLimiter, (req, res) => {
+  try {
+    const product = getProductById(req.params.id)
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' })
+    }
+    res.json({ product })
+  } catch (error) {
+    console.error('Error fetching product:', error)
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// Create or update a product (requires API key)
+app.post('/api/products', authenticateProductAPI, apiLimiter, (req, res) => {
+  try {
+    const productData = req.body
+    
+    // Validate required fields
+    if (!productData.id) {
+      return res.status(400).json({ error: 'Product ID is required' })
+    }
+    
+    if (!productData.name) {
+      return res.status(400).json({ error: 'Product name is required' })
+    }
+    
+    if (!productData.variants || !Array.isArray(productData.variants) || productData.variants.length === 0) {
+      return res.status(400).json({ error: 'Product must have at least one variant' })
+    }
+    
+    // Validate variants
+    for (const variant of productData.variants) {
+      if (!variant.id || !variant.label || !variant.option || typeof variant.price !== 'number') {
+        return res.status(400).json({ error: 'Each variant must have id, label, option, and price' })
+      }
+    }
+    
+    const product = saveProduct(productData)
+    res.json({ product, message: 'Product saved successfully' })
+  } catch (error) {
+    console.error('Error saving product:', error)
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// Update a product (requires API key)
+app.put('/api/products/:id', authenticateProductAPI, apiLimiter, (req, res) => {
+  try {
+    const productId = req.params.id
+    const updates = req.body
+    
+    // Don't allow changing the ID
+    if (updates.id && updates.id !== productId) {
+      return res.status(400).json({ error: 'Cannot change product ID' })
+    }
+    
+    const product = updateProduct(productId, updates)
+    res.json({ product, message: 'Product updated successfully' })
+  } catch (error) {
+    console.error('Error updating product:', error)
+    if (error.message.includes('not found')) {
+      return res.status(404).json({ error: error.message })
+    }
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// Delete a product (requires API key)
+app.delete('/api/products/:id', authenticateProductAPI, apiLimiter, (req, res) => {
+  try {
+    const productId = req.params.id
+    deleteProduct(productId)
+    res.json({ message: 'Product deleted successfully' })
+  } catch (error) {
+    console.error('Error deleting product:', error)
+    if (error.message.includes('not found')) {
+      return res.status(404).json({ error: error.message })
+    }
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// Bulk upload products (requires API key)
+app.post('/api/products/bulk', authenticateProductAPI, apiLimiter, (req, res) => {
+  try {
+    const products = req.body.products || req.body
+    
+    if (!Array.isArray(products)) {
+      return res.status(400).json({ error: 'Products must be an array' })
+    }
+    
+    if (products.length === 0) {
+      return res.status(400).json({ error: 'Products array cannot be empty' })
+    }
+    
+    // Validate all products
+    for (const product of products) {
+      if (!product.id || !product.name) {
+        return res.status(400).json({ error: 'Each product must have id and name' })
+      }
+      if (!product.variants || !Array.isArray(product.variants) || product.variants.length === 0) {
+        return res.status(400).json({ error: `Product ${product.id} must have at least one variant` })
+      }
+    }
+    
+    const savedProducts = bulkSaveProducts(products)
+    res.json({ 
+      products: savedProducts, 
+      count: savedProducts.length,
+      message: `Successfully saved ${savedProducts.length} products` 
+    })
+  } catch (error) {
+    console.error('Error bulk saving products:', error)
     res.status(500).json({ error: error.message })
   }
 })
