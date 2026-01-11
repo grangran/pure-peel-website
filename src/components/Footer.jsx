@@ -30,7 +30,7 @@ export default function Footer() {
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-12 md:py-16 lg:py-20">
         {/* Main Footer Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8 md:gap-10 lg:gap-16 mb-8 md:mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-6 sm:gap-8 md:gap-10 lg:gap-16 mb-8 md:mb-10">
           {/* Brand Column */}
           <div className="sm:col-span-2 lg:col-span-1">
             <div className="mb-5">
@@ -116,73 +116,82 @@ export default function Footer() {
             </nav>
           </div>
 
-          {/* Info Column */}
+          {/* Support Column */}
           <div>
             <h4 className="text-white mb-6 text-xs font-bold tracking-wider uppercase">
-              {getTranslation(language, 'footer.info')}
+              {getTranslation(language, 'footer.support')}
             </h4>
-                  <nav className="flex flex-col space-y-3.5">
-                    <a 
-                      href="/contact" 
-                      className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
-                      onClick={(e) => {
-                        // Let App.jsx handle navigation via its click interceptor
-                        e.preventDefault()
-                      }}
-                    >
-                      {getTranslation(language, 'footer.contact')}
-                    </a>
-                    <a 
-                      href="/order-tracking" 
-                      className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
-                      onClick={(e) => {
-                        // Let App.jsx handle navigation via its click interceptor
-                        e.preventDefault()
-                      }}
-                    >
-                      {getTranslation(language, 'footer.trackOrder')}
-                    </a>
-                    <a 
-                      href="/shipping-returns" 
-                      className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
-                      onClick={(e) => {
-                        // Let App.jsx handle navigation via its click interceptor
-                        e.preventDefault()
-                      }}
-                    >
-                      {getTranslation(language, 'footer.shippingReturns')}
-                    </a>
-                    <a 
-                      href="/privacy" 
-                      className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
-                      onClick={(e) => {
-                        // Let App.jsx handle navigation via its click interceptor
-                        e.preventDefault()
-                      }}
-                    >
-                      {getTranslation(language, 'footer.privacyPolicy')}
-                    </a>
-                    <a 
-                      href="/terms" 
-                      className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
-                      onClick={(e) => {
-                        // Let App.jsx handle navigation via its click interceptor
-                        e.preventDefault()
-                      }}
-                    >
-                      {getTranslation(language, 'footer.termsOfService')}
-                    </a>
-                    <a 
-                      href="/faq" 
-                      className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
-                      onClick={(e) => {
-                        // Let App.jsx handle navigation via its click interceptor
-                        e.preventDefault()
-                      }}
-                    >
-                      {getTranslation(language, 'footer.faq')}
-                    </a>
-                  </nav>
+            <nav className="flex flex-col space-y-3.5">
+              <a 
+                href="/faq" 
+                className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
+                onClick={(e) => {
+                  // Let App.jsx handle navigation via its click interceptor
+                  e.preventDefault()
+                }}
+              >
+                {getTranslation(language, 'footer.faq')}
+              </a>
+              <a 
+                href="/contact" 
+                className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
+                onClick={(e) => {
+                  // Let App.jsx handle navigation via its click interceptor
+                  e.preventDefault()
+                }}
+              >
+                {getTranslation(language, 'footer.contact')}
+              </a>
+              <a 
+                href="/order-tracking" 
+                className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
+                onClick={(e) => {
+                  // Let App.jsx handle navigation via its click interceptor
+                  e.preventDefault()
+                }}
+              >
+                {getTranslation(language, 'footer.trackOrder')}
+              </a>
+              <a 
+                href="/shipping-returns" 
+                className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
+                onClick={(e) => {
+                  // Let App.jsx handle navigation via its click interceptor
+                  e.preventDefault()
+                }}
+              >
+                {getTranslation(language, 'footer.shippingReturns')}
+              </a>
+            </nav>
+          </div>
+
+          {/* Legal Column */}
+          <div>
+            <h4 className="text-white mb-6 text-xs font-bold tracking-wider uppercase">
+              {getTranslation(language, 'footer.legal')}
+            </h4>
+            <nav className="flex flex-col space-y-3.5">
+              <a 
+                href="/privacy" 
+                className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
+                onClick={(e) => {
+                  // Let App.jsx handle navigation via its click interceptor
+                  e.preventDefault()
+                }}
+              >
+                {getTranslation(language, 'footer.privacyPolicy')}
+              </a>
+              <a 
+                href="/terms" 
+                className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
+                onClick={(e) => {
+                  // Let App.jsx handle navigation via its click interceptor
+                  e.preventDefault()
+                }}
+              >
+                {getTranslation(language, 'footer.termsOfService')}
+              </a>
+            </nav>
           </div>
 
           {/* Social Column */}
