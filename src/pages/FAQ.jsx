@@ -254,3 +254,7 @@ export default function FAQ() {
             {faqData.stillHaveQuestions.button}
           </a>
         </div>
+      </div>
+    </section>
+  )
+}
