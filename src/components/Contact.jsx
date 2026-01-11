@@ -50,27 +50,30 @@ export default function ContactForm() {
     setSubmitStatus(null)
 
     try {
-      const response = await fetch("https://formsubmit.co/purepeel11@gmail.com", {
+      const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
+      
+      const response = await fetch(`${API_URL}/api/contact`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json"
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
-          message: formData.message,
-          _captcha: false
+          message: formData.message
         })
       })
 
-      if (response.ok) {
+      const data = await response.json()
+
+      if (response.ok && data.success) {
         setSubmitStatus("success")
         setFormData({ name: "", email: "", message: "" })
         // Track contact form submission
         trackContactFormSubmit()
       } else {
         setSubmitStatus("error")
+        console.error("Contact form error:", data.error || data.details)
       }
     } catch (error) {
       console.error("Error submitting form:", error)

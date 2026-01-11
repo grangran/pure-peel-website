@@ -7,8 +7,10 @@ import cors from 'cors'
 import Stripe from 'stripe'
 import dotenv from 'dotenv'
 import rateLimit from 'express-rate-limit'
+import fs from 'fs'
+import path from 'path'
 import { saveOrder, getAllOrders, getOrderById, updateOrderStatus, getOrderStats, markEmailSent, hasEmailBeenSent, updateOrderTracking } from './utils/orderStorage.js'
-import { sendOrderConfirmation, sendShippingNotification, sendAdminNotification } from './utils/emailService.js'
+import { sendOrderConfirmation, sendShippingNotification, sendAdminNotification, sendContactForm } from './utils/emailService.js'
 import { createCanadaPostLabel } from './utils/canadaPostShipping.js'
 import { getAllProducts, getProductById, saveProduct, updateProduct, deleteProduct, bulkSaveProducts } from './utils/productStorage.js'
 
@@ -405,6 +407,62 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
       break
     case 'charge.refunded':
       console.log('💰 Charge refunded')
+      try {
+        const charge = event.data.object
+        const refund = event.data.object.refunds?.data?.[0] || event.data.object
+        
+        // Find order by charge ID or payment intent
+        const orders = getAllOrders()
+        const order = orders.find(o => 
+          o.stripeChargeId === charge.id || 
+          o.stripePaymentIntentId === charge.payment_intent ||
+          o.stripeSessionId === charge.metadata?.session_id
+        )
+        
+        if (order) {
+          // Update order with refund information
+          const refundAmount = refund.amount ? refund.amount / 100 : charge.amount_refunded / 100
+          const refundData = {
+            refundId: refund.id || `refund_${Date.now()}`,
+            amount: refundAmount,
+            currency: refund.currency || charge.currency || 'cad',
+            reason: refund.reason || 'requested_by_customer',
+            status: refund.status || 'succeeded',
+            createdAt: new Date(refund.created * 1000).toISOString()
+          }
+          
+          // Add refund to order
+          if (!order.refunds) {
+            order.refunds = []
+          }
+          order.refunds.push(refundData)
+          
+          // Update order status if fully refunded
+          const totalRefunded = order.refunds.reduce((sum, r) => sum + r.amount, 0)
+          if (totalRefunded >= order.total) {
+            order.status = 'refunded'
+            order.refundStatus = 'full'
+          } else if (totalRefunded > 0) {
+            order.refundStatus = 'partial'
+          }
+          
+          order.updatedAt = new Date().toISOString()
+          
+          // Save updated order
+          const allOrders = getAllOrders()
+          const orderIndex = allOrders.findIndex(o => o.id === order.id)
+          if (orderIndex !== -1) {
+            allOrders[orderIndex] = order
+            const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json')
+            fs.writeFileSync(ORDERS_FILE, JSON.stringify(allOrders, null, 2))
+            console.log('✅ Order updated with refund information:', order.id)
+          }
+        } else {
+          console.log('⚠️  Order not found for refunded charge:', charge.id)
+        }
+      } catch (error) {
+        console.error('❌ Error processing refund webhook:', error)
+      }
       break
     default:
       console.log(`Unhandled event type ${event.type}`)
@@ -1720,6 +1778,173 @@ app.get('/api/admin/stats', authenticateAdmin, (req, res) => {
   } catch (error) {
     console.error('Error fetching stats:', error)
     res.status(500).json({ error: error.message })
+  }
+})
+
+// Create a refund (admin only)
+app.post('/api/admin/orders/:orderId/refund', authenticateAdmin, async (req, res) => {
+  try {
+    if (!stripe) {
+      return res.status(500).json({ error: 'Stripe is not configured' })
+    }
+
+    const order = getOrderById(req.params.orderId)
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' })
+    }
+
+    const { amount, reason } = req.body
+    const refundAmount = amount ? Math.round(amount * 100) : null // Convert to cents, null = full refund
+    const refundReason = reason || 'requested_by_customer'
+
+    // Get the charge ID from the order
+    let chargeId = order.stripeChargeId
+    
+    // If no charge ID, try to get it from payment intent or session
+    if (!chargeId && order.stripePaymentIntentId) {
+      try {
+        const paymentIntent = await stripe.paymentIntents.retrieve(order.stripePaymentIntentId)
+        chargeId = paymentIntent.latest_charge
+      } catch (error) {
+        console.error('Error retrieving payment intent:', error)
+      }
+    }
+
+    if (!chargeId) {
+      return res.status(400).json({ error: 'No Stripe charge ID found for this order. Cannot process refund.' })
+    }
+
+    // Create refund in Stripe
+    const refundParams = {
+      charge: chargeId,
+      reason: refundReason
+    }
+
+    if (refundAmount) {
+      refundParams.amount = refundAmount
+    }
+
+    console.log('🔄 Creating refund for order:', order.id, 'Amount:', refundAmount ? `$${(refundAmount / 100).toFixed(2)}` : 'Full refund')
+
+    const refund = await stripe.refunds.create(refundParams)
+
+    // Update order with refund information
+    if (!order.refunds) {
+      order.refunds = []
+    }
+
+    const refundData = {
+      refundId: refund.id,
+      amount: refund.amount / 100,
+      currency: refund.currency,
+      reason: refund.reason,
+      status: refund.status,
+      createdAt: new Date(refund.created * 1000).toISOString()
+    }
+
+    order.refunds.push(refundData)
+
+    // Calculate total refunded
+    const totalRefunded = order.refunds.reduce((sum, r) => sum + r.amount, 0)
+    
+    // Update order status
+    if (totalRefunded >= order.total) {
+      order.status = 'refunded'
+      order.refundStatus = 'full'
+    } else if (totalRefunded > 0) {
+      order.refundStatus = 'partial'
+    }
+
+    order.updatedAt = new Date().toISOString()
+
+    // Save updated order
+    const allOrders = getAllOrders()
+    const orderIndex = allOrders.findIndex(o => o.id === order.id)
+    if (orderIndex !== -1) {
+      allOrders[orderIndex] = order
+      const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json')
+      fs.writeFileSync(ORDERS_FILE, JSON.stringify(allOrders, null, 2))
+    }
+
+    console.log('✅ Refund created successfully:', refund.id)
+
+    res.json({
+      success: true,
+      refund: refundData,
+      order: order
+    })
+  } catch (error) {
+    console.error('Error creating refund:', error)
+    res.status(500).json({ 
+      error: error.message || 'Failed to create refund',
+      stripeError: error.type || null
+    })
+  }
+})
+
+// Get refund information for an order (admin only)
+app.get('/api/admin/orders/:orderId/refunds', authenticateAdmin, (req, res) => {
+  try {
+    const order = getOrderById(req.params.orderId)
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' })
+    }
+
+    res.json({
+      refunds: order.refunds || [],
+      totalRefunded: order.refunds ? order.refunds.reduce((sum, r) => sum + r.amount, 0) : 0,
+      refundStatus: order.refundStatus || 'none'
+    })
+  } catch (error) {
+    console.error('Error fetching refunds:', error)
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// Contact form submission
+app.post('/api/contact', apiLimiter, async (req, res) => {
+  try {
+    const { name, email, message } = req.body
+
+    // Validation
+    if (!name || !name.trim()) {
+      return res.status(400).json({ error: 'Name is required' })
+    }
+    if (!email || !email.trim()) {
+      return res.status(400).json({ error: 'Email is required' })
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: 'Invalid email address' })
+    }
+    if (!message || !message.trim()) {
+      return res.status(400).json({ error: 'Message is required' })
+    }
+
+    console.log('📧 Contact form submission received:', { name, email, messageLength: message.length })
+
+    // Send email using Resend
+    const result = await sendContactForm(name.trim(), email.trim(), message.trim())
+
+    if (result.success) {
+      console.log('✅ Contact form email sent successfully')
+      res.json({ 
+        success: true, 
+        message: 'Thank you for your message! We\'ll get back to you soon.',
+        messageId: result.messageId 
+      })
+    } else {
+      console.error('❌ Failed to send contact form email:', result.error || result.reason)
+      res.status(500).json({ 
+        error: 'Failed to send message. Please try again or email us directly at purepeel11@gmail.com',
+        details: result.error || result.reason
+      })
+    }
+  } catch (error) {
+    console.error('Error processing contact form:', error)
+    res.status(500).json({ 
+      error: 'Something went wrong. Please try again or email us directly at purepeel11@gmail.com',
+      details: error.message
+    })
   }
 })
 

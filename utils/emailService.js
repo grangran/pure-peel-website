@@ -660,3 +660,130 @@ export const sendAdminNotification = async (order) => {
   }
 }
 
+// Contact form email template
+const contactFormTemplate = (name, email, message) => {
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+        .field { margin-bottom: 20px; }
+        .label { font-weight: bold; color: #374151; margin-bottom: 5px; display: block; }
+        .value { color: #1f2937; padding: 10px; background: white; border-radius: 4px; border: 1px solid #e5e7eb; }
+        .message { white-space: pre-wrap; }
+        .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center; color: #6b7280; font-size: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1 style="margin: 0;">New Contact Form Submission</h1>
+          <p style="margin: 10px 0 0 0;">Pure Peel Co. Website</p>
+        </div>
+        <div class="content">
+          <div class="field">
+            <span class="label">Name:</span>
+            <div class="value">${name}</div>
+          </div>
+          <div class="field">
+            <span class="label">Email:</span>
+            <div class="value">${email}</div>
+          </div>
+          <div class="field">
+            <span class="label">Message:</span>
+            <div class="value message">${message}</div>
+          </div>
+        </div>
+        <div class="footer">
+          <p>This email was sent from the contact form on purepeelco.com</p>
+          <p>Reply directly to this email to respond to ${name}</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `
+}
+
+// Send contact form submission
+export const sendContactForm = async (name, email, message) => {
+  try {
+    const adminEmail = process.env.ADMIN_EMAIL || process.env.RESEND_FROM_EMAIL?.split('<')[1]?.replace('>', '') || 'purepeel11@gmail.com'
+    
+    if (!adminEmail) {
+      console.log('Admin email not configured. Contact form submission would be sent.')
+      return { success: false, reason: 'Admin email not configured' }
+    }
+
+    const htmlContent = contactFormTemplate(name, email, message)
+    const subject = `📧 New Contact Form: ${name}`
+    
+    // Use Resend if configured
+    if (resend && process.env.RESEND_FROM_EMAIL) {
+      try {
+        console.log('📧 Attempting to send contact form via Resend...')
+        console.log('   From:', process.env.RESEND_FROM_EMAIL)
+        console.log('   To:', adminEmail)
+        console.log('   Customer:', email)
+        
+        const { data, error } = await resend.emails.send({
+          from: process.env.RESEND_FROM_EMAIL,
+          to: adminEmail,
+          replyTo: email, // Allow replying directly to customer
+          subject: subject,
+          html: htmlContent,
+          headers: {
+            'X-Entity-Ref-ID': `contact-${Date.now()}`
+          },
+          tags: [
+            { name: 'contact-form', value: 'submission' }
+          ]
+        })
+
+        if (error) {
+          console.error('❌ Resend error:', JSON.stringify(error, null, 2))
+          return { success: false, error: error.message || JSON.stringify(error) }
+        }
+
+        console.log('✅ Contact form email sent via Resend to:', adminEmail)
+        console.log('   Message ID:', data?.id)
+        return { success: true, messageId: data?.id }
+      } catch (err) {
+        console.error('❌ Exception sending contact email via Resend:', err)
+        return { success: false, error: err.message }
+      }
+    }
+
+    // Fallback to nodemailer
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+      console.log('Email not configured. Contact form submission would be sent.')
+      return { success: false, reason: 'Email not configured' }
+    }
+
+    const mailOptions = {
+      from: `"Pure Peel Co. Contact Form" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
+      to: adminEmail,
+      replyTo: email,
+      subject: subject,
+      html: htmlContent
+    }
+
+    const transporter = getTransporter()
+    const info = await transporter.sendMail(mailOptions)
+    
+    if (process.env.EMAIL_SERVICE !== 'gmail' && !process.env.SMTP_HOST) {
+      console.log('📧 Contact form would be sent (email not configured)')
+    } else {
+      console.log('✅ Contact form email sent to:', adminEmail)
+    }
+    return { success: true, messageId: info.messageId }
+  } catch (error) {
+    console.error('Error sending contact form email:', error)
+    return { success: false, error: error.message }
+  }
+}
+
