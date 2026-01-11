@@ -34,11 +34,13 @@ export default function ProductPage({ product }) {
       link.rel = 'preload'
       link.as = 'image'
       link.href = variantImages[0]
-      link.fetchPriority = 'high'
+      // Note: fetchPriority is only valid for <img> elements, not <link> elements
       document.head.appendChild(link)
       
       return () => {
-        document.head.removeChild(link)
+        if (document.head.contains(link)) {
+          document.head.removeChild(link)
+        }
       }
     }
   }, [variantImages])

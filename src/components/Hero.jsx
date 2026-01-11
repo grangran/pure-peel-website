@@ -14,7 +14,7 @@ export default function Hero() {
     link.rel = 'preload'
     link.as = 'image'
     link.href = '/images/driedcitrusbanner.jpg'
-    link.fetchPriority = 'high'
+    // Note: fetchPriority is only valid for <img> elements, not <link> elements
     document.head.appendChild(link)
     
     return () => {
