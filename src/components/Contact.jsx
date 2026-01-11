@@ -115,6 +115,8 @@ export default function ContactForm() {
             <input
               type="text"
               name="name"
+              id="contact-name"
+              autoComplete="name"
               placeholder={getTranslation(language, 'contact.name')}
               value={formData.name}
               onChange={handleChange}
@@ -127,6 +129,8 @@ export default function ContactForm() {
             <input
               type="email"
               name="email"
+              id="contact-email"
+              autoComplete="email"
               placeholder={getTranslation(language, 'contact.email')}
               value={formData.email}
               onChange={handleChange}
@@ -138,6 +142,8 @@ export default function ContactForm() {
           <div className="flex flex-col">
             <textarea
               name="message"
+              id="contact-message"
+              autoComplete="off"
               rows="5"
               placeholder={getTranslation(language, 'contact.message')}
               value={formData.message}

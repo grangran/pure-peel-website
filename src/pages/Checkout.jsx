@@ -895,6 +895,8 @@ export default function Checkout() {
                         <input
                           type="email"
                           name="email"
+                          id="checkout-email"
+                          autoComplete="email"
                           value={formData.email}
                           onChange={handleInputChange}
                           className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
@@ -917,6 +919,8 @@ export default function Checkout() {
                       <input
                         type="text"
                         name="firstName"
+                        id="checkout-firstName"
+                        autoComplete="given-name"
                         value={formData.firstName}
                         onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.firstName')}
@@ -933,6 +937,8 @@ export default function Checkout() {
                       <input
                         type="text"
                         name="lastName"
+                        id="checkout-lastName"
+                        autoComplete="family-name"
                         value={formData.lastName}
                         onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.lastName')}
@@ -956,6 +962,8 @@ export default function Checkout() {
                     <input
                       type="text"
                       name="address"
+                      id="checkout-address"
+                      autoComplete="street-address"
                       value={formData.address}
                       onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.streetAddress')}
@@ -963,7 +971,6 @@ export default function Checkout() {
                             errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
                       required
-                          autoComplete="street-address"
                     />
                     {errors.address && (
                       <p className="text-red-500 text-xs mt-1">{errors.address}</p>
@@ -973,6 +980,8 @@ export default function Checkout() {
                       <div>
                         <select
                           name="country"
+                          id="checkout-country"
+                          autoComplete="country"
                           value={formData.country}
                           onChange={handleInputChange}
                           className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
@@ -993,6 +1002,8 @@ export default function Checkout() {
                       <input
                         type="text"
                         name="city"
+                        id="checkout-city"
+                        autoComplete="address-level2"
                         value={formData.city}
                         onChange={handleInputChange}
                             placeholder={getTranslation(language, 'checkout.city')}
@@ -1008,6 +1019,8 @@ export default function Checkout() {
                         <div className="col-span-1">
                       <select
                         name="province"
+                        id="checkout-province"
+                        autoComplete="address-level1"
                         value={formData.province}
                         onChange={handleInputChange}
                             className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
@@ -1033,6 +1046,8 @@ export default function Checkout() {
                       <input
                         type="text"
                         name="postalCode"
+                        id="checkout-postalCode"
+                        autoComplete={formData.country === "United States" ? "postal-code" : "postal-code"}
                         value={formData.postalCode}
                         onChange={handleInputChange}
                             placeholder={formData.country === "United States" 
@@ -1055,13 +1070,14 @@ export default function Checkout() {
                           type="tel"
                           inputMode="tel"
                           name="phone"
+                          id="checkout-phone"
+                          autoComplete="tel"
                           value={formData.phone}
                           onChange={handleInputChange}
                           placeholder={formData.country === "United States" 
                             ? getTranslation(language, 'checkout.phonePlaceholderUS')
                             : getTranslation(language, 'checkout.phonePlaceholder')
                           }
-                          autoComplete="tel"
                           className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
                             errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}

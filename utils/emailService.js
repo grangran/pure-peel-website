@@ -712,7 +712,11 @@ const contactFormTemplate = (name, email, message) => {
 // Send contact form submission
 export const sendContactForm = async (name, email, message) => {
   try {
-    const adminEmail = process.env.ADMIN_EMAIL || process.env.RESEND_FROM_EMAIL?.split('<')[1]?.replace('>', '') || 'purepeel11@gmail.com'
+    // Send contact form emails to orders@purepeelco.com (same as order notifications)
+    // This ensures all business emails go to the same place
+    const adminEmail = process.env.RESEND_FROM_EMAIL?.includes('orders@purepeelco.com')
+      ? 'orders@purepeelco.com'
+      : (process.env.ADMIN_EMAIL || 'orders@purepeelco.com' || 'purepeel11@gmail.com')
     
     if (!adminEmail) {
       console.log('Admin email not configured. Contact form submission would be sent.')
