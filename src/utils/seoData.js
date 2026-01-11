@@ -111,6 +111,14 @@ export const seoData = {
     type: 'website',
     noindex: true // Don't index contact page
   },
+  faq: {
+    title: 'FAQ | Frequently Asked Questions | Pure Peel Co.',
+    description: 'Find answers to frequently asked questions about Pure Peel Co. dehydrated citrus slices, shipping, orders, returns, and product usage.',
+    keywords: 'FAQ, frequently asked questions, help, support, dehydrated citrus questions, shipping questions, order questions',
+    image: defaultImage,
+    url: '/faq',
+    type: 'website'
+  },
   admin: {
     title: 'Admin Dashboard | Pure Peel Co.',
     description: 'Admin dashboard for order management.',

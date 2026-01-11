@@ -83,6 +83,7 @@ export const translations = {
       shippingReturns: "Shipping & Returns",
       privacyPolicy: "Privacy Policy",
       termsOfService: "Terms of Service",
+      faq: "FAQ",
       contact: "Contact",
       followUs: "Follow Us"
     },
@@ -96,6 +97,215 @@ export const translations = {
       sending: "Sending...",
       success: "✓ Message sent successfully! We'll get back to you soon.",
       error: "✗ Something went wrong. Please try again or email us directly at purepeel11@gmail.com"
+    },
+    faq: {
+      title: "Frequently Asked Questions",
+      description: "Find answers to common questions about our products, shipping, orders, and more.",
+      searchPlaceholder: "Search FAQs...",
+      resultsFound: "results found",
+      question: "question",
+      questions: "questions",
+      noResults: "No FAQs found matching your search.",
+      clearSearch: "Clear search",
+      stillHaveQuestions: {
+        title: "Still Have Questions?",
+        text: "Can't find what you're looking for? We're here to help!",
+        button: "Contact Us"
+      },
+      categories: {
+        product: {
+          title: "Product Questions",
+          icon: "🍊",
+          questions: [
+            {
+              question: "How long do dehydrated citrus slices last?",
+              answer: "When stored properly in a cool, dry place in their sealed packaging, our dehydrated citrus slices can last up to 12-18 months. Once opened, store in an airtight container and they'll stay fresh for 6-12 months. The key is keeping them away from moisture."
+            },
+            {
+              question: "How should I store dehydrated citrus slices?",
+              answer: "Store in a cool, dry place away from direct sunlight. Keep in the original sealed packaging until ready to use. Once opened, transfer to an airtight container (glass jar or resealable bag) to maintain freshness and prevent moisture absorption."
+            },
+            {
+              question: "What's the difference between the sizes (Mini, Small, Medium, Large)?",
+              answer: "• Mini Bag (10 pcs): Perfect for trying our products or single servings\n• Small Bag (20 pcs): Great for personal use or small gatherings\n• Medium Bag (40 pcs): Ideal for regular use or medium-sized events\n• Large Bag (80 pcs): Best value for frequent use or larger gatherings\n• Clear Box: Premium presentation, perfect for gifts or display\n\nAll sizes contain the same high-quality dehydrated citrus slices, just different quantities."
+            },
+            {
+              question: "Can I use these in cocktails?",
+              answer: "Absolutely! Our dehydrated citrus slices are perfect for cocktails. They add beautiful visual appeal and subtle citrus flavor. Simply add to your drink as a garnish. They work great in Old Fashioneds, Gin & Tonics, Margaritas, Moscow Mules, and many more!"
+            },
+            {
+              question: "Can I use these in tea?",
+              answer: "Yes! Our dehydrated citrus slices are excellent for tea. Add them to hot or iced tea for a natural citrus flavor. They're perfect for herbal teas, green tea, black tea, iced tea, and more!"
+            },
+            {
+              question: "Are these suitable for baking or cooking?",
+              answer: "Yes! Our dehydrated citrus slices can be used in baking and cooking. They add natural citrus flavor and visual appeal to cakes and desserts, charcuterie boards, salads, cocktails, and other culinary creations."
+            },
+            {
+              question: "Are your products 100% natural?",
+              answer: "Yes! Our dehydrated citrus slices are 100% natural with no preservatives, additives, or artificial ingredients. We use only fresh, high-quality citrus fruits and a natural dehydration process."
+            },
+            {
+              question: "Where are your products made?",
+              answer: "All our products are made in Canada. We're proud to be a Canadian company supporting local agriculture and manufacturing."
+            },
+            {
+              question: "Do you use any preservatives or additives?",
+              answer: "No! Our products are 100% natural with no preservatives, additives, or artificial ingredients. Just pure, dehydrated citrus slices."
+            },
+            {
+              question: "What types of citrus do you offer?",
+              answer: "We currently offer Orange slices, Pink Orange slices, Lime slices, Lemon slices, and Apple slices. Each variety is available in multiple sizes."
+            }
+          ]
+        },
+        shipping: {
+          title: "Shipping & Delivery",
+          icon: "📦",
+          questions: [
+            {
+              question: "How long does shipping take?",
+              answer: "Shipping times vary by service:\n• Regular Parcel: 2-5 business days (Canada)\n• Expedited Parcel: 1-3 business days (Canada)\n• Xpresspost: Next business day (Canada)\n• US Shipping: 4-7 business days (standard)\n\nShipping times are calculated from when your order ships, not when you place it. Orders placed before 2:00 PM EST are typically processed the same day."
+            },
+            {
+              question: "Do you ship to the United States?",
+              answer: "Yes! We ship to all 50 US states. Select \"United States\" as your country during checkout to see available shipping options and rates."
+            },
+            {
+              question: "How much does shipping cost?",
+              answer: "Shipping costs are calculated based on your location (postal code), package weight, and selected shipping method. Rates start at $12 CAD for Regular Parcel within Canada. You'll see exact shipping costs at checkout before completing your purchase."
+            },
+            {
+              question: "Do you ship to remote areas (Yukon, NWT, Nunavut)?",
+              answer: "Yes, we ship to all provinces and territories in Canada. Remote areas (Yukon, Northwest Territories, Nunavut) may have a 25% shipping surcharge applied at checkout due to higher shipping costs."
+            },
+            {
+              question: "When will my order ship?",
+              answer: "Orders placed before 2:00 PM EST (Monday-Thursday) are typically processed and shipped within 24 hours. Orders placed after 2:00 PM EST or on weekends are processed the next business day."
+            },
+            {
+              question: "How will I know when my order ships?",
+              answer: "You'll receive a shipping confirmation email with a tracking number once your order has been shipped. You can also track your order using our order tracking page."
+            },
+            {
+              question: "Can I track my order?",
+              answer: "Yes! Once your order ships, you'll receive a tracking number via email. You can use this tracking number on the Canada Post website (or USPS for US orders) to track your package's progress."
+            }
+          ]
+        },
+        order: {
+          title: "Order Questions",
+          icon: "🛒",
+          questions: [
+            {
+              question: "How do I place an order?",
+              answer: "Simply browse our products, add items to your cart, and proceed to checkout. Fill in your shipping information, select a shipping method, and complete payment securely through Stripe."
+            },
+            {
+              question: "What payment methods do you accept?",
+              answer: "We accept all major credit cards (Visa, Mastercard, American Express) and debit cards through our secure Stripe payment system."
+            },
+            {
+              question: "Is my payment information secure?",
+              answer: "Yes! All payments are processed securely through Stripe, a PCI-compliant payment processor. We never store your full payment information on our servers."
+            },
+            {
+              question: "Can I modify or cancel my order?",
+              answer: "If you need to modify or cancel your order, please contact us immediately at orders@purepeelco.com. We'll do our best to accommodate your request if your order hasn't shipped yet."
+            },
+            {
+              question: "Do you offer bulk pricing?",
+              answer: "Yes! We offer special pricing for bulk orders (10+ units). Contact us at orders@purepeelco.com to discuss your bulk order needs and receive a custom quote."
+            },
+            {
+              question: "Can I add a gift message to my order?",
+              answer: "Currently, we don't have a gift message option at checkout, but you can add special instructions in the \"Order Notes\" field during checkout, and we'll do our best to accommodate your request."
+            }
+          ]
+        },
+        returns: {
+          title: "Returns & Refunds",
+          icon: "↩️",
+          questions: [
+            {
+              question: "What is your return policy?",
+              answer: "We want you to be completely satisfied with your purchase. If you're not happy with your order, please contact us within 14 days of delivery at orders@purepeelco.com. We'll work with you to resolve any issues."
+            },
+            {
+              question: "Can I get a refund?",
+              answer: "Yes, we offer refunds for orders that don't meet your expectations. Please contact us at orders@purepeelco.com within 14 days of delivery to discuss your refund request."
+            },
+            {
+              question: "Do I need to return the product for a refund?",
+              answer: "In most cases, you don't need to return the product. Contact us at orders@purepeelco.com and we'll work with you to resolve the issue."
+            },
+            {
+              question: "What if my order arrives damaged?",
+              answer: "If your order arrives damaged, please contact us immediately at orders@purepeelco.com with photos of the damage. We'll send a replacement or issue a full refund."
+            }
+          ]
+        },
+        usage: {
+          title: "Product Usage",
+          icon: "✨",
+          questions: [
+            {
+              question: "How do I use dehydrated citrus slices in cocktails?",
+              answer: "Simply add the dehydrated slice to your cocktail as a garnish. They add beautiful visual appeal and a subtle citrus aroma. You can also muddle them slightly to release more flavor."
+            },
+            {
+              question: "Can I rehydrate the slices?",
+              answer: "While our products are designed to be used in their dehydrated state, you can rehydrate them by soaking in water for a few minutes if desired. However, they work best as dehydrated garnishes."
+            },
+            {
+              question: "Are these suitable for people with dietary restrictions?",
+              answer: "Our products are gluten-free, vegan, 100% natural, with no preservatives and no additives. However, if you have specific allergies or dietary concerns, please check the product details or contact us before ordering."
+            },
+            {
+              question: "Do you have any recipe suggestions?",
+              answer: "Yes! We're working on a recipe blog section. In the meantime, our dehydrated citrus slices work great in cocktails (Old Fashioned, Gin & Tonic, Margarita), tea (hot or iced), charcuterie boards, baking and desserts, and salads and culinary dishes."
+            }
+          ]
+        },
+        general: {
+          title: "General Questions",
+          icon: "💬",
+          questions: [
+            {
+              question: "How do I contact customer service?",
+              answer: "You can reach us at:\n• Email: orders@purepeelco.com\n• Contact Form: Use the contact form on our website\n• Response Time: We typically respond within 24-48 hours during business days"
+            },
+            {
+              question: "What are your business hours?",
+              answer: "Our customer service team is available:\n• Monday - Friday: 9:00 AM - 5:00 PM EST\n• Saturday - Sunday: Closed\n• Response Time: We respond to emails within 24-48 hours during business days"
+            },
+            {
+              question: "Do you have a physical store?",
+              answer: "Currently, we operate online only. All orders are shipped directly to your address."
+            },
+            {
+              question: "Can I visit your facility?",
+              answer: "We're a home-based business, so we don't offer facility visits at this time. However, you're welcome to contact us if you have specific questions about our products or process."
+            },
+            {
+              question: "Do you offer wholesale pricing?",
+              answer: "Yes! We offer wholesale pricing for businesses, restaurants, and bulk orders. Contact us at orders@purepeelco.com to discuss your needs and receive a custom quote."
+            },
+            {
+              question: "Are your products organic?",
+              answer: "While we use high-quality, natural citrus fruits, our products are not currently certified organic. However, they are 100% natural with no preservatives or additives."
+            },
+            {
+              question: "Do you ship internationally?",
+              answer: "Currently, we ship to Canada and the United States. For international shipping inquiries, please contact us at orders@purepeelco.com."
+            },
+            {
+              question: "What makes your products different?",
+              answer: "Our products are:\n• Made in Canada - Supporting local agriculture\n• 100% Natural - No preservatives or additives\n• Premium Quality - Carefully selected and dehydrated citrus\n• Versatile - Perfect for cocktails, tea, baking, and more\n• Beautiful - Great for presentation and garnishes"
+            }
+          ]
+        }
+      }
     },
     hero: {
       tagline: "Premium Dehydrated Citrus Slices",
@@ -705,6 +915,7 @@ export const translations = {
       shippingReturns: "Expédition et Retours",
       privacyPolicy: "Politique de Confidentialité",
       termsOfService: "Conditions d'utilisation",
+      faq: "FAQ",
       contact: "Contact",
       followUs: "Suivez-Nous"
     },
@@ -718,6 +929,215 @@ export const translations = {
       sending: "Envoi en cours...",
       success: "✓ Message envoyé avec succès! Nous vous répondrons bientôt.",
       error: "✗ Quelque chose s'est mal passé. Veuillez réessayer ou nous envoyer un courriel directement à purepeel11@gmail.com"
+    },
+    faq: {
+      title: "Questions Fréquemment Posées",
+      description: "Trouvez des réponses aux questions courantes sur nos produits, l'expédition, les commandes et plus encore.",
+      searchPlaceholder: "Rechercher dans les FAQ...",
+      resultsFound: "résultats trouvés",
+      question: "question",
+      questions: "questions",
+      noResults: "Aucune FAQ trouvée correspondant à votre recherche.",
+      clearSearch: "Effacer la recherche",
+      stillHaveQuestions: {
+        title: "Vous Avez Encore des Questions?",
+        text: "Vous ne trouvez pas ce que vous cherchez? Nous sommes là pour vous aider!",
+        button: "Contactez-Nous"
+      },
+      categories: {
+        product: {
+          title: "Questions sur les Produits",
+          icon: "🍊",
+          questions: [
+            {
+              question: "Combien de temps durent les tranches d'agrumes déshydratées?",
+              answer: "Lorsqu'elles sont stockées correctement dans un endroit frais et sec dans leur emballage scellé, nos tranches d'agrumes déshydratées peuvent durer jusqu'à 12-18 mois. Une fois ouvertes, conservez-les dans un contenant hermétique et elles resteront fraîches pendant 6-12 mois. La clé est de les garder à l'abri de l'humidité."
+            },
+            {
+              question: "Comment dois-je conserver les tranches d'agrumes déshydratées?",
+              answer: "Conservez-les dans un endroit frais et sec, à l'abri de la lumière directe du soleil. Gardez-les dans l'emballage scellé d'origine jusqu'à ce que vous soyez prêt à les utiliser. Une fois ouvertes, transférez-les dans un contenant hermétique (pot en verre ou sac refermable) pour maintenir la fraîcheur et empêcher l'absorption d'humidité."
+            },
+            {
+              question: "Quelle est la différence entre les tailles (Mini, Petit, Moyen, Grand)?",
+              answer: "• Sac Mini (10 pcs): Parfait pour essayer nos produits ou pour des portions individuelles\n• Sac Petit (20 pcs): Idéal pour un usage personnel ou de petits rassemblements\n• Sac Moyen (40 pcs): Parfait pour un usage régulier ou des événements de taille moyenne\n• Sac Grand (80 pcs): Meilleure valeur pour un usage fréquent ou de plus grands rassemblements\n• Boîte Transparente: Présentation premium, parfaite pour les cadeaux ou l'affichage\n\nToutes les tailles contiennent les mêmes tranches d'agrumes déshydratées de haute qualité, juste des quantités différentes."
+            },
+            {
+              question: "Puis-je les utiliser dans des cocktails?",
+              answer: "Absolument! Nos tranches d'agrumes déshydratées sont parfaites pour les cocktails. Elles ajoutent un bel attrait visuel et une saveur d'agrumes subtile. Ajoutez-les simplement à votre boisson comme garniture. Elles fonctionnent très bien dans les Old Fashioned, Gin & Tonics, Margaritas, Moscow Mules et bien d'autres!"
+            },
+            {
+              question: "Puis-je les utiliser dans le thé?",
+              answer: "Oui! Nos tranches d'agrumes déshydratées sont excellentes pour le thé. Ajoutez-les au thé chaud ou glacé pour une saveur d'agrumes naturelle. Elles sont parfaites pour les tisanes, le thé vert, le thé noir, le thé glacé et plus encore!"
+            },
+            {
+              question: "Sont-elles adaptées à la pâtisserie ou à la cuisine?",
+              answer: "Oui! Nos tranches d'agrumes déshydratées peuvent être utilisées en pâtisserie et en cuisine. Elles ajoutent une saveur d'agrumes naturelle et un attrait visuel aux gâteaux et desserts, plateaux de charcuterie, salades, cocktails et autres créations culinaires."
+            },
+            {
+              question: "Vos produits sont-ils 100% naturels?",
+              answer: "Oui! Nos tranches d'agrumes déshydratées sont 100% naturelles, sans conservateurs, additifs ou ingrédients artificiels. Nous utilisons uniquement des fruits d'agrumes frais et de haute qualité et un processus de déshydratation naturel."
+            },
+            {
+              question: "Où sont fabriqués vos produits?",
+              answer: "Tous nos produits sont fabriqués au Canada. Nous sommes fiers d'être une entreprise canadienne qui soutient l'agriculture et la fabrication locales."
+            },
+            {
+              question: "Utilisez-vous des conservateurs ou des additifs?",
+              answer: "Non! Nos produits sont 100% naturels, sans conservateurs, additifs ou ingrédients artificiels. Juste des tranches d'agrumes déshydratées pures."
+            },
+            {
+              question: "Quels types d'agrumes offrez-vous?",
+              answer: "Nous offrons actuellement des tranches d'orange, des tranches d'orange rose, des tranches de lime, des tranches de citron et des tranches de pomme. Chaque variété est disponible en plusieurs tailles."
+            }
+          ]
+        },
+        shipping: {
+          title: "Expédition et Livraison",
+          icon: "📦",
+          questions: [
+            {
+              question: "Combien de temps prend l'expédition?",
+              answer: "Les délais d'expédition varient selon le service:\n• Colis Régulier: 2-5 jours ouvrables (Canada)\n• Colis Accéléré: 1-3 jours ouvrables (Canada)\n• Poste Xpress: Le jour ouvrable suivant (Canada)\n• Expédition aux États-Unis: 4-7 jours ouvrables (standard)\n\nLes délais d'expédition sont calculés à partir du moment où votre commande est expédiée, et non lorsque vous la passez. Les commandes passées avant 14h00 HNE sont généralement traitées le jour même."
+            },
+            {
+              question: "Livrez-vous aux États-Unis?",
+              answer: "Oui! Nous livrons dans les 50 États américains. Sélectionnez \"États-Unis\" comme pays lors du paiement pour voir les options et tarifs d'expédition disponibles."
+            },
+            {
+              question: "Combien coûte l'expédition?",
+              answer: "Les coûts d'expédition sont calculés en fonction de votre emplacement (code postal), du poids du colis et de la méthode d'expédition sélectionnée. Les tarifs commencent à 12 $ CAD pour le Colis Régulier au Canada. Vous verrez les coûts d'expédition exacts au paiement avant de finaliser votre achat."
+            },
+            {
+              question: "Livrez-vous dans les régions éloignées (Yukon, TNO, Nunavut)?",
+              answer: "Oui, nous livrons dans toutes les provinces et territoires du Canada. Les régions éloignées (Yukon, Territoires du Nord-Ouest, Nunavut) peuvent avoir un supplément d'expédition de 25% appliqué au paiement en raison des coûts d'expédition plus élevés."
+            },
+            {
+              question: "Quand ma commande sera-t-elle expédiée?",
+              answer: "Les commandes passées avant 14h00 HNE (lundi-jeudi) sont généralement traitées et expédiées dans les 24 heures. Les commandes passées après 14h00 HNE ou les week-ends sont traitées le jour ouvrable suivant."
+            },
+            {
+              question: "Comment saurai-je quand ma commande est expédiée?",
+              answer: "Vous recevrez un courriel de confirmation d'expédition avec un numéro de suivi une fois que votre commande aura été expédiée. Vous pouvez également suivre votre commande en utilisant notre page de suivi de commande."
+            },
+            {
+              question: "Puis-je suivre ma commande?",
+              answer: "Oui! Une fois que votre commande est expédiée, vous recevrez un numéro de suivi par courriel. Vous pouvez utiliser ce numéro de suivi sur le site Web de Postes Canada (ou USPS pour les commandes américaines) pour suivre la progression de votre colis."
+            }
+          ]
+        },
+        order: {
+          title: "Questions sur les Commandes",
+          icon: "🛒",
+          questions: [
+            {
+              question: "Comment passer une commande?",
+              answer: "Parcourez simplement nos produits, ajoutez des articles à votre panier et procédez au paiement. Remplissez vos informations d'expédition, sélectionnez une méthode d'expédition et complétez le paiement en toute sécurité via Stripe."
+            },
+            {
+              question: "Quels modes de paiement acceptez-vous?",
+              answer: "Nous acceptons toutes les principales cartes de crédit (Visa, Mastercard, American Express) et les cartes de débit via notre système de paiement sécurisé Stripe."
+            },
+            {
+              question: "Mes informations de paiement sont-elles sécurisées?",
+              answer: "Oui! Tous les paiements sont traités en toute sécurité via Stripe, un processeur de paiement conforme PCI. Nous ne stockons jamais vos informations de paiement complètes sur nos serveurs."
+            },
+            {
+              question: "Puis-je modifier ou annuler ma commande?",
+              answer: "Si vous devez modifier ou annuler votre commande, veuillez nous contacter immédiatement à orders@purepeelco.com. Nous ferons de notre mieux pour répondre à votre demande si votre commande n'a pas encore été expédiée."
+            },
+            {
+              question: "Offrez-vous des prix de gros?",
+              answer: "Oui! Nous offrons des prix spéciaux pour les commandes en gros (10+ unités). Contactez-nous à orders@purepeelco.com pour discuter de vos besoins de commande en gros et recevoir un devis personnalisé."
+            },
+            {
+              question: "Puis-je ajouter un message cadeau à ma commande?",
+              answer: "Actuellement, nous n'avons pas d'option de message cadeau au paiement, mais vous pouvez ajouter des instructions spéciales dans le champ \"Notes de Commande\" lors du paiement, et nous ferons de notre mieux pour répondre à votre demande."
+            }
+          ]
+        },
+        returns: {
+          title: "Retours et Remboursements",
+          icon: "↩️",
+          questions: [
+            {
+              question: "Quelle est votre politique de retour?",
+              answer: "Nous voulons que vous soyez complètement satisfait de votre achat. Si vous n'êtes pas satisfait de votre commande, veuillez nous contacter dans les 14 jours suivant la livraison à orders@purepeelco.com. Nous travaillerons avec vous pour résoudre tout problème."
+            },
+            {
+              question: "Puis-je obtenir un remboursement?",
+              answer: "Oui, nous offrons des remboursements pour les commandes qui ne répondent pas à vos attentes. Veuillez nous contacter à orders@purepeelco.com dans les 14 jours suivant la livraison pour discuter de votre demande de remboursement."
+            },
+            {
+              question: "Dois-je retourner le produit pour un remboursement?",
+              answer: "Dans la plupart des cas, vous n'avez pas besoin de retourner le produit. Contactez-nous à orders@purepeelco.com et nous travaillerons avec vous pour résoudre le problème."
+            },
+            {
+              question: "Que faire si ma commande arrive endommagée?",
+              answer: "Si votre commande arrive endommagée, veuillez nous contacter immédiatement à orders@purepeelco.com avec des photos des dommages. Nous enverrons un remplacement ou émettons un remboursement complet."
+            }
+          ]
+        },
+        usage: {
+          title: "Utilisation des Produits",
+          icon: "✨",
+          questions: [
+            {
+              question: "Comment utiliser les tranches d'agrumes déshydratées dans les cocktails?",
+              answer: "Ajoutez simplement la tranche déshydratée à votre cocktail comme garniture. Elles ajoutent un bel attrait visuel et un arôme d'agrumes subtil. Vous pouvez également les écraser légèrement pour libérer plus de saveur."
+            },
+            {
+              question: "Puis-je réhydrater les tranches?",
+              answer: "Bien que nos produits soient conçus pour être utilisés à l'état déshydraté, vous pouvez les réhydrater en les trempant dans l'eau pendant quelques minutes si vous le souhaitez. Cependant, elles fonctionnent mieux comme garnitures déshydratées."
+            },
+            {
+              question: "Sont-elles adaptées aux personnes ayant des restrictions alimentaires?",
+              answer: "Nos produits sont sans gluten, végétaliens, 100% naturels, sans conservateurs et sans additifs. Cependant, si vous avez des allergies spécifiques ou des préoccupations alimentaires, veuillez vérifier les détails du produit ou nous contacter avant de commander."
+            },
+            {
+              question: "Avez-vous des suggestions de recettes?",
+              answer: "Oui! Nous travaillons sur une section de blog de recettes. En attendant, nos tranches d'agrumes déshydratées fonctionnent très bien dans les cocktails (Old Fashioned, Gin & Tonic, Margarita), le thé (chaud ou glacé), les plateaux de charcuterie, la pâtisserie et les desserts, et les salades et plats culinaires."
+            }
+          ]
+        },
+        general: {
+          title: "Questions Générales",
+          icon: "💬",
+          questions: [
+            {
+              question: "Comment contacter le service client?",
+              answer: "Vous pouvez nous joindre à:\n• Courriel: orders@purepeelco.com\n• Formulaire de Contact: Utilisez le formulaire de contact sur notre site Web\n• Temps de Réponse: Nous répondons généralement dans les 24-48 heures pendant les jours ouvrables"
+            },
+            {
+              question: "Quels sont vos heures d'ouverture?",
+              answer: "Notre équipe de service client est disponible:\n• Lundi - Vendredi: 9h00 - 17h00 HNE\n• Samedi - Dimanche: Fermé\n• Temps de Réponse: Nous répondons aux courriels dans les 24-48 heures pendant les jours ouvrables"
+            },
+            {
+              question: "Avez-vous un magasin physique?",
+              answer: "Actuellement, nous opérons uniquement en ligne. Toutes les commandes sont expédiées directement à votre adresse."
+            },
+            {
+              question: "Puis-je visiter votre installation?",
+              answer: "Nous sommes une entreprise à domicile, donc nous n'offrons pas de visites d'installation pour le moment. Cependant, vous êtes invité à nous contacter si vous avez des questions spécifiques sur nos produits ou notre processus."
+            },
+            {
+              question: "Offrez-vous des prix de gros?",
+              answer: "Oui! Nous offrons des prix de gros pour les entreprises, les restaurants et les commandes en gros. Contactez-nous à orders@purepeelco.com pour discuter de vos besoins et recevoir un devis personnalisé."
+            },
+            {
+              question: "Vos produits sont-ils biologiques?",
+              answer: "Bien que nous utilisions des fruits d'agrumes naturels de haute qualité, nos produits ne sont pas actuellement certifiés biologiques. Cependant, ils sont 100% naturels, sans conservateurs ni additifs."
+            },
+            {
+              question: "Livrez-vous à l'international?",
+              answer: "Actuellement, nous livrons au Canada et aux États-Unis. Pour les demandes d'expédition internationale, veuillez nous contacter à orders@purepeelco.com."
+            },
+            {
+              question: "Qu'est-ce qui rend vos produits différents?",
+              answer: "Nos produits sont:\n• Fabriqués au Canada - Soutenant l'agriculture locale\n• 100% Naturels - Sans conservateurs ni additifs\n• Qualité Premium - Agrumes soigneusement sélectionnés et déshydratés\n• Polyvalents - Parfaits pour les cocktails, le thé, la pâtisserie et plus encore\n• Beaux - Parfaits pour la présentation et les garnitures"
+            }
+          ]
+        }
+      }
     },
     hero: {
       tagline: "Tranches d'Agrumes Déshydratées Premium",

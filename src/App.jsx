@@ -21,6 +21,7 @@ import OrderTracking from "./pages/OrderTracking"
 import PrivacyPolicy from "./pages/PrivacyPolicy"
 import ShippingReturns from "./pages/ShippingReturns"
 import TermsOfService from "./pages/TermsOfService"
+import FAQ from "./pages/FAQ"
 import NotFound from "./pages/NotFound"
 import { seoData, organizationData } from "./utils/seoData"
 import { trackPageView } from "./utils/analytics"
@@ -54,6 +55,8 @@ const getInitialPage = () => {
     return "terms"
   } else if (path === "/contact" || path === "/contact.html") {
     return "contact"
+  } else if (path === "/faq" || path === "/faq.html") {
+    return "faq"
   } else {
     return "not-found"
   }
@@ -87,7 +90,8 @@ export default function App() {
         '/shipping-returns',
         '/terms',
         '/terms-of-service',
-        '/contact'
+        '/contact',
+        '/faq'
       ]
       
       // Check if path is a valid route (ignore query parameters)
@@ -122,6 +126,8 @@ export default function App() {
         setCurrentPage("terms")
       } else if (normalizedPath === "/contact" || normalizedPath === "/contact.html") {
         setCurrentPage("contact")
+      } else if (normalizedPath === "/faq" || normalizedPath === "/faq.html") {
+        setCurrentPage("faq")
       } else {
         // Invalid route - show 404
         setCurrentPage("not-found")
@@ -228,6 +234,8 @@ export default function App() {
         return seoData.shippingReturns
       case "terms":
         return seoData.terms
+      case "faq":
+        return seoData.faq
       case "not-found":
         return seoData.notFound
       default:
@@ -378,6 +386,18 @@ export default function App() {
     return (
       <>
         <ContactPage key={`contact-${currentPage}-${navigationKey}`} />
+        {CartComponent}
+      </>
+    )
+  }
+
+  if (currentPage === "faq") {
+    return (
+      <>
+        <SEO {...currentSEO} />
+        <Nav key={`nav-${currentPage}-${navigationKey}`} />
+        <FAQ key={`faq-${currentPage}-${navigationKey}`} />
+        <Footer key={`footer-${currentPage}-${navigationKey}`} />
         {CartComponent}
       </>
     )

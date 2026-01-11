@@ -172,6 +172,16 @@ export default function Footer() {
                     >
                       {getTranslation(language, 'footer.termsOfService')}
                     </a>
+                    <a 
+                      href="/faq" 
+                      className="text-stone-400 no-underline text-sm transition-all duration-200 hover:text-amber-400 font-medium active:scale-95"
+                      onClick={(e) => {
+                        // Let App.jsx handle navigation via its click interceptor
+                        e.preventDefault()
+                      }}
+                    >
+                      {getTranslation(language, 'footer.faq')}
+                    </a>
                   </nav>
           </div>
 
