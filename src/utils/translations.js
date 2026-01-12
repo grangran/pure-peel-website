@@ -341,6 +341,10 @@ export const translations = {
         charcuterie: {
           caption: "Perfect for Charcuterie Boards",
           description: "Add vibrant color and natural flavor to your cheese and charcuterie spreads."
+        },
+        tea: {
+          caption: "Perfect for Tea",
+          description: "Add natural citrus flavor and beautiful presentation to your hot or iced tea."
         }
       }
     },
@@ -1174,6 +1178,10 @@ export const translations = {
         charcuterie: {
           caption: "Parfait pour les Plateaux de Charcuterie",
           description: "Ajoutez de la couleur vibrante et une saveur naturelle à vos plateaux de fromage et charcuterie."
+        },
+        tea: {
+          caption: "Parfait pour le Thé",
+          description: "Ajoutez une saveur d'agrumes naturelle et une belle présentation à votre thé chaud ou glacé."
         }
       }
     },

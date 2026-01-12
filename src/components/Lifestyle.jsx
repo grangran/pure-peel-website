@@ -23,6 +23,11 @@ const lifestyleItems = [
     id: 4,
     image: "/images/decorated-boxes.png",
     key: "giftOrange"
+  },
+  {
+    id: 5,
+    image: "/images/tea.jpg",
+    key: "tea"
   }
 ]
 
