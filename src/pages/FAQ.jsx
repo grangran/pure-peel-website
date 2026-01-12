@@ -181,7 +181,7 @@ export default function FAQ() {
                       isCategoryOpen ? 'max-h-[5000px] opacity-100' : 'max-h-0 opacity-0'
                     }`}
                   >
-                    <div className="px-4 sm:px-6 pb-4 md:pb-6 space-y-3 border-t border-gray-100">
+                    <div className="px-4 sm:px-6 pb-4 md:pb-6 space-y-4 border-t border-gray-100">
                       {category.questions.map((item, index) => {
                         const questionKey = `${categoryKey}-${index}`
                         const isQuestionOpen = openQuestion === questionKey
