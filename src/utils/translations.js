@@ -323,28 +323,28 @@ export const translations = {
       subtitle: "From cocktails and teas to charcuterie boards and decoration — discover endless ways to use our dehydrated citrus slices.",
       slides: {
         cocktails: {
-          caption: "Perfect for Cocktails",
-          description: "Elevate your drinks with natural citrus flavor and beautiful presentation."
+          caption: "Craft Cocktail Essential",
+          description: "The secret ingredient for premium mixology. Enhance classic cocktails with authentic citrus notes and stunning visual appeal."
         },
         drinks: {
           caption: "Beautiful Beverages",
-          description: "Transform any drink into an elegant, Instagram-worthy creation."
+          description: "Transform any drink into an elegant, Instagram-worthy creation that impresses at first sight."
         },
         gift: {
           caption: "Elegant Gift Presentation",
-          description: "Beautifully packaged, perfect for gifting or special occasions."
+          description: "Show someone you care with thoughtfully curated gifts that celebrate life's special moments."
         },
         giftOrange: {
           caption: "Premium Gift Box",
-          description: "Thoughtfully packaged with a golden ribbon, ideal for any celebration."
+          description: "Luxuriously wrapped with golden ribbon, these gift boxes make every celebration unforgettable."
         },
         charcuterie: {
-          caption: "Perfect for Charcuterie Boards",
-          description: "Add vibrant color and natural flavor to your cheese and charcuterie spreads."
+          caption: "Gourmet Charcuterie Boards",
+          description: "Elevate your cheese boards with vibrant pops of color and zesty flavor that complement every bite."
         },
         tea: {
-          caption: "Perfect for Tea",
-          description: "Add natural citrus flavor and beautiful presentation to your hot or iced tea."
+          caption: "Tea Time Elevated",
+          description: "Infuse warmth and comfort into every cup. A natural citrus boost that transforms your daily ritual."
         }
       }
     },
@@ -434,10 +434,47 @@ export const translations = {
       dataBreach: {
         title: "Data Breach Notification",
         text1: "In the event of a data breach that poses a real risk of significant harm to your personal information, we will:",
-        step1: "Notify the Office of the Privacy Commissioner of Canada as soon as feasible",
-        step2: "Notify affected individuals as soon as possible after we become aware of the breach",
+        step1: "Notify the Office of the Privacy Commissioner of Canada as soon as feasible, and in any event within 72 hours of becoming aware of the breach",
+        step2: "Notify affected individuals as soon as possible after we become aware of the breach, and in any event within 72 hours",
         step3: "Provide information about the breach, including what information was compromised, what we are doing to address it, and steps you can take to protect yourself",
-        text2: "We maintain security measures to prevent unauthorized access, but in the unlikely event of a breach, we will take immediate action to contain the breach and notify affected parties in accordance with PIPEDA requirements."
+        text2: "We maintain security measures to prevent unauthorized access, but in the unlikely event of a breach, we will take immediate action to contain the breach and notify affected parties in accordance with PIPEDA requirements and applicable provincial privacy legislation."
+      },
+      dataPortability: {
+        title: "Data Portability",
+        text: "You have the right to receive your personal information in a structured, commonly used, and machine-readable format. If you wish to receive a copy of your personal information in a portable format, please contact our Privacy Officer. We will provide your information within 30 days of your request, subject to verification of your identity."
+      },
+      automatedDecisionMaking: {
+        title: "Automated Decision-Making",
+        text: "We do not use automated decision-making processes, including profiling, that would have legal or similarly significant effects on you. All decisions regarding your orders, customer service, and communications are made by human personnel."
+      },
+      crossBorderTransfers: {
+        title: "Cross-Border Data Transfers",
+        text: "Your personal information is primarily stored and processed in Canada. However, some third-party service providers we use (such as Stripe for payment processing and Resend for email delivery) may process data in other jurisdictions, including the United States. These service providers are contractually obligated to maintain appropriate security measures and comply with applicable privacy laws. By using our services, you consent to the transfer of your information to these service providers as necessary to fulfill your orders and provide our services."
+      },
+      californiaPrivacy: {
+        title: "California Privacy Rights (CCPA)",
+        text: "If you are a California resident, you have additional rights under the California Consumer Privacy Act (CCPA), including:",
+        rights: [
+          "The right to know what personal information we collect, use, disclose, and sell",
+          "The right to delete personal information we have collected from you (subject to certain exceptions)",
+          "The right to opt-out of the sale of personal information (we do not sell your personal information)",
+          "The right to non-discrimination for exercising your privacy rights"
+        ],
+        text2: "To exercise your California privacy rights, please contact our Privacy Officer using the contact information provided in this Privacy Policy. We will respond to your request within 45 days."
+      },
+      gdprCompliance: {
+        title: "European Privacy Rights (GDPR)",
+        text: "If you are located in the European Economic Area (EEA), you have additional rights under the General Data Protection Regulation (GDPR), including:",
+        rights: [
+          "The right to access your personal data",
+          "The right to rectification of inaccurate data",
+          "The right to erasure ('right to be forgotten')",
+          "The right to restrict processing",
+          "The right to data portability",
+          "The right to object to processing",
+          "The right to withdraw consent at any time"
+        ],
+        text2: "To exercise your GDPR rights, please contact our Privacy Officer. We will respond to your request within one month. If you are not satisfied with our response, you have the right to lodge a complaint with your local data protection authority."
       },
       limitingCollection: {
         title: "Limiting Collection",
@@ -704,7 +741,36 @@ export const translations = {
       liability: {
         title: "Limitation of Liability",
         text: "To the fullest extent permitted by law, Pure Peel Co. shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses resulting from your use of our website or products.",
-        limitation: "Our total liability to you for all claims arising from or related to your use of our website or products shall not exceed the amount you paid to us in the 12 months preceding the claim."
+        limitation: "Our total liability to you for all claims arising from or related to your use of our website or products shall not exceed the amount you paid to us in the 12 months preceding the claim.",
+        foodProducts: "Food Product Disclaimer: Our products are dehydrated food items. While we take every precaution to ensure product quality and safety, we are not liable for any allergic reactions, food sensitivities, or health issues that may arise from consumption of our products. Customers are responsible for reviewing product ingredients and determining suitability for their dietary needs and restrictions.",
+        noWarranty: "No Warranties: Our products are provided 'as is' without warranties of any kind, either express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement. We do not warrant that our products will meet your requirements or that the operation of our website will be uninterrupted or error-free."
+      },
+      forceMajeure: {
+        title: "Force Majeure",
+        text: "Pure Peel Co. shall not be liable for any failure or delay in performance under these Terms which is due to earthquake, fire, flood, act of God, act of war, terrorism, epidemic, pandemic, government action, labor dispute, or other cause which is beyond our reasonable control, including but not limited to shipping carrier delays, supply chain disruptions, or manufacturing issues."
+      },
+      websiteUse: {
+        title: "Website Use and Restrictions",
+        text: "You agree to use our website only for lawful purposes and in accordance with these Terms. You agree not to:",
+        restrictions: [
+          "Use the website in any way that violates any applicable federal, provincial, or local law or regulation",
+          "Attempt to gain unauthorized access to any portion of the website or any systems or networks connected to the website",
+          "Interfere with or disrupt the website or servers or networks connected to the website",
+          "Use any robot, spider, or other automatic device to access the website for any purpose without our express written permission",
+          "Reproduce, duplicate, copy, sell, or exploit any portion of the website without our express written permission"
+        ]
+      },
+      productImages: {
+        title: "Product Images and Descriptions",
+        text: "We strive to display accurate colors and images of our products. However, we cannot guarantee that your computer monitor's display of any color will be accurate. Product images are for illustrative purposes only and may not reflect the exact appearance, size, or condition of the product you receive. Actual products may vary slightly in appearance, color, or size from images shown on the website."
+      },
+      ageRestriction: {
+        title: "Age Restrictions",
+        text: "You must be at least 18 years of age to use this website and make purchases. By using this website, you represent and warrant that you are at least 18 years old and have the legal capacity to enter into these Terms. If you are under 18, you may only use this website with the involvement and consent of a parent or guardian."
+      },
+      disputeResolution: {
+        title: "Dispute Resolution",
+        text: "Any dispute, controversy, or claim arising out of or relating to these Terms, or the breach, termination, or validity thereof, shall first be addressed through good faith negotiation. If the dispute cannot be resolved through negotiation within 30 days, the parties agree to submit the dispute to binding arbitration in accordance with the Arbitration Act (Ontario) or, if applicable, the rules of the ADR Institute of Canada. The arbitration shall take place in Ontario, Canada. Notwithstanding the foregoing, either party may seek injunctive relief in any court of competent jurisdiction to protect intellectual property rights or to prevent irreparable harm."
       },
       governingLaw: {
         title: "Governing Law and Jurisdiction",
@@ -1160,28 +1226,28 @@ export const translations = {
       subtitle: "Des cocktails et thés aux plateaux de charcuterie et à la décoration — découvrez d'innombrables façons d'utiliser nos tranches d'agrumes déshydratées.",
       slides: {
         cocktails: {
-          caption: "Parfait pour les Cocktails",
-          description: "Rehaussez vos boissons avec une saveur d'agrumes naturelle et une belle présentation."
+          caption: "Essentiel pour les Cocktails Artisanaux",
+          description: "L'ingrédient secret de la mixologie premium. Rehaussez vos cocktails classiques avec des notes d'agrumes authentiques et un attrait visuel saisissant."
         },
         drinks: {
           caption: "Boissons Magnifiques",
-          description: "Transformez n'importe quelle boisson en une création élégante et digne d'Instagram."
+          description: "Transformez n'importe quelle boisson en une création élégante et digne d'Instagram qui impressionne au premier regard."
         },
         gift: {
           caption: "Présentation Cadeau Élégante",
-          description: "Magnifiquement emballé, parfait pour offrir ou pour des occasions spéciales."
+          description: "Montrez à quelqu'un que vous tenez à lui avec des cadeaux soigneusement sélectionnés qui célèbrent les moments spéciaux de la vie."
         },
         giftOrange: {
           caption: "Boîte Cadeau Premium",
-          description: "Emballé avec soin avec un ruban doré, idéal pour toute célébration."
+          description: "Emballées luxueusement avec un ruban doré, ces boîtes cadeaux rendent chaque célébration inoubliable."
         },
         charcuterie: {
-          caption: "Parfait pour les Plateaux de Charcuterie",
-          description: "Ajoutez de la couleur vibrante et une saveur naturelle à vos plateaux de fromage et charcuterie."
+          caption: "Plateaux de Charcuterie Gourmets",
+          description: "Élevez vos plateaux de fromage avec des touches de couleur vibrantes et une saveur piquante qui complète chaque bouchée."
         },
         tea: {
-          caption: "Parfait pour le Thé",
-          description: "Ajoutez une saveur d'agrumes naturelle et une belle présentation à votre thé chaud ou glacé."
+          caption: "L'Heure du Thé Rehaussée",
+          description: "Infusez chaleur et réconfort dans chaque tasse. Un boost d'agrumes naturel qui transforme votre rituel quotidien."
         }
       }
     },
@@ -1280,10 +1346,47 @@ export const translations = {
       dataBreach: {
         title: "Notification de Violation de Données",
         text1: "En cas de violation de données qui présente un risque réel de préjudice important pour vos informations personnelles, nous :",
-        step1: "Aviserons le Commissariat à la protection de la vie privée du Canada dès que possible",
-        step2: "Aviserons les personnes concernées dès que possible après avoir pris connaissance de la violation",
+        step1: "Aviserons le Commissariat à la protection de la vie privée du Canada dès que possible, et en tout état de cause dans les 72 heures suivant la prise de connaissance de la violation",
+        step2: "Aviserons les personnes concernées dès que possible après avoir pris connaissance de la violation, et en tout état de cause dans les 72 heures",
         step3: "Fournirons des informations sur la violation, y compris quelles informations ont été compromises, ce que nous faisons pour y remédier et les mesures que vous pouvez prendre pour vous protéger",
-        text2: "Nous maintenons des mesures de sécurité pour prévenir l'accès non autorisé, mais dans l'éventualité peu probable d'une violation, nous prendrons des mesures immédiates pour contenir la violation et aviser les parties concernées conformément aux exigences de la LPRPDE."
+        text2: "Nous maintenons des mesures de sécurité pour prévenir l'accès non autorisé, mais dans l'éventualité peu probable d'une violation, nous prendrons des mesures immédiates pour contenir la violation et aviser les parties concernées conformément aux exigences de la LPRPDE et à la législation provinciale applicable sur la confidentialité."
+      },
+      dataPortability: {
+        title: "Portabilité des Données",
+        text: "Vous avez le droit de recevoir vos informations personnelles dans un format structuré, couramment utilisé et lisible par machine. Si vous souhaitez recevoir une copie de vos informations personnelles dans un format portable, veuillez contacter notre Responsable de la Protection de la Vie Privée. Nous fournirons vos informations dans les 30 jours suivant votre demande, sous réserve de vérification de votre identité."
+      },
+      automatedDecisionMaking: {
+        title: "Prise de Décision Automatisée",
+        text: "Nous n'utilisons pas de processus de prise de décision automatisée, y compris le profilage, qui aurait des effets juridiques ou similaires sur vous. Toutes les décisions concernant vos commandes, le service client et les communications sont prises par du personnel humain."
+      },
+      crossBorderTransfers: {
+        title: "Transferts Transfrontaliers de Données",
+        text: "Vos informations personnelles sont principalement stockées et traitées au Canada. Cependant, certains fournisseurs de services tiers que nous utilisons (tels que Stripe pour le traitement des paiements et Resend pour la livraison d'e-mails) peuvent traiter des données dans d'autres juridictions, y compris les États-Unis. Ces fournisseurs de services sont contractuellement tenus de maintenir des mesures de sécurité appropriées et de se conformer aux lois sur la confidentialité applicables. En utilisant nos services, vous consentez au transfert de vos informations à ces fournisseurs de services selon les besoins pour exécuter vos commandes et fournir nos services."
+      },
+      californiaPrivacy: {
+        title: "Droits à la Confidentialité de la Californie (CCPA)",
+        text: "Si vous êtes résident de la Californie, vous avez des droits supplémentaires en vertu de la California Consumer Privacy Act (CCPA), notamment :",
+        rights: [
+          "Le droit de savoir quelles informations personnelles nous collectons, utilisons, divulguons et vendons",
+          "Le droit de supprimer les informations personnelles que nous avons collectées auprès de vous (sous réserve de certaines exceptions)",
+          "Le droit de refuser la vente d'informations personnelles (nous ne vendons pas vos informations personnelles)",
+          "Le droit à la non-discrimination pour avoir exercé vos droits à la vie privée"
+        ],
+        text2: "Pour exercer vos droits à la confidentialité de la Californie, veuillez contacter notre Responsable de la Protection de la Vie Privée en utilisant les informations de contact fournies dans cette Politique de Confidentialité. Nous répondrons à votre demande dans les 45 jours."
+      },
+      gdprCompliance: {
+        title: "Droits à la Confidentialité Européens (RGPD)",
+        text: "Si vous êtes situé dans l'Espace économique européen (EEE), vous avez des droits supplémentaires en vertu du Règlement général sur la protection des données (RGPD), notamment :",
+        rights: [
+          "Le droit d'accès à vos données personnelles",
+          "Le droit de rectification des données inexactes",
+          "Le droit à l'effacement (« droit à l'oubli »)",
+          "Le droit de limiter le traitement",
+          "Le droit à la portabilité des données",
+          "Le droit de s'opposer au traitement",
+          "Le droit de retirer le consentement à tout moment"
+        ],
+        text2: "Pour exercer vos droits RGPD, veuillez contacter notre Responsable de la Protection de la Vie Privée. Nous répondrons à votre demande dans un délai d'un mois. Si vous n'êtes pas satisfait de notre réponse, vous avez le droit de déposer une plainte auprès de votre autorité locale de protection des données."
       },
       canadianPrivacyLaws: {
         title: "Lois Canadiennes sur la Confidentialité (Conformité LPRPDE)",
@@ -1318,6 +1421,43 @@ export const translations = {
         item1: "Cliquant sur le lien \"se désabonner\" dans tout e-mail marketing",
         item2: "Nous contactant directement à",
         text2: "Veuillez noter que même si vous vous désinscrivez des communications marketing, nous pouvons toujours vous envoyer des e-mails transactionnels liés à vos commandes, tels que des confirmations de commande et des notifications d'expédition."
+      },
+      dataPortability: {
+        title: "Portabilité des Données",
+        text: "Vous avez le droit de recevoir vos informations personnelles dans un format structuré, couramment utilisé et lisible par machine. Si vous souhaitez recevoir une copie de vos informations personnelles dans un format portable, veuillez contacter notre Responsable de la Protection de la Vie Privée. Nous fournirons vos informations dans les 30 jours suivant votre demande, sous réserve de vérification de votre identité."
+      },
+      automatedDecisionMaking: {
+        title: "Prise de Décision Automatisée",
+        text: "Nous n'utilisons pas de processus de prise de décision automatisée, y compris le profilage, qui aurait des effets juridiques ou similaires sur vous. Toutes les décisions concernant vos commandes, le service client et les communications sont prises par du personnel humain."
+      },
+      crossBorderTransfers: {
+        title: "Transferts Transfrontaliers de Données",
+        text: "Vos informations personnelles sont principalement stockées et traitées au Canada. Cependant, certains fournisseurs de services tiers que nous utilisons (tels que Stripe pour le traitement des paiements et Resend pour la livraison d'e-mails) peuvent traiter des données dans d'autres juridictions, y compris les États-Unis. Ces fournisseurs de services sont contractuellement tenus de maintenir des mesures de sécurité appropriées et de se conformer aux lois sur la confidentialité applicables. En utilisant nos services, vous consentez au transfert de vos informations à ces fournisseurs de services selon les besoins pour exécuter vos commandes et fournir nos services."
+      },
+      californiaPrivacy: {
+        title: "Droits à la Confidentialité de la Californie (CCPA)",
+        text: "Si vous êtes résident de la Californie, vous avez des droits supplémentaires en vertu de la California Consumer Privacy Act (CCPA), notamment :",
+        rights: [
+          "Le droit de savoir quelles informations personnelles nous collectons, utilisons, divulguons et vendons",
+          "Le droit de supprimer les informations personnelles que nous avons collectées auprès de vous (sous réserve de certaines exceptions)",
+          "Le droit de refuser la vente d'informations personnelles (nous ne vendons pas vos informations personnelles)",
+          "Le droit à la non-discrimination pour avoir exercé vos droits à la vie privée"
+        ],
+        text2: "Pour exercer vos droits à la confidentialité de la Californie, veuillez contacter notre Responsable de la Protection de la Vie Privée en utilisant les informations de contact fournies dans cette Politique de Confidentialité. Nous répondrons à votre demande dans les 45 jours."
+      },
+      gdprCompliance: {
+        title: "Droits à la Confidentialité Européens (RGPD)",
+        text: "Si vous êtes situé dans l'Espace économique européen (EEE), vous avez des droits supplémentaires en vertu du Règlement général sur la protection des données (RGPD), notamment :",
+        rights: [
+          "Le droit d'accès à vos données personnelles",
+          "Le droit de rectification des données inexactes",
+          "Le droit à l'effacement (« droit à l'oubli »)",
+          "Le droit de limiter le traitement",
+          "Le droit à la portabilité des données",
+          "Le droit de s'opposer au traitement",
+          "Le droit de retirer le consentement à tout moment"
+        ],
+        text2: "Pour exercer vos droits RGPD, veuillez contacter notre Responsable de la Protection de la Vie Privée. Nous répondrons à votre demande dans un délai d'un mois. Si vous n'êtes pas satisfait de notre réponse, vous avez le droit de déposer une plainte auprès de votre autorité locale de protection des données."
       },
       dataSecurity: {
         title: "Sécurité des Données",
@@ -1568,7 +1708,36 @@ export const translations = {
       liability: {
         title: "Limitation de Responsabilité",
         text: "Dans la mesure maximale permise par la loi, Pure Peel Co. ne sera pas responsable de tout dommage indirect, accessoire, spécial, consécutif ou punitif, ou de toute perte de profits ou de revenus, qu'elle soit encourue directement ou indirectement, ou de toute perte de données, d'utilisation, de bonne volonté ou d'autres pertes intangibles résultant de votre utilisation de notre site Web ou de nos produits.",
-        limitation: "Notre responsabilité totale envers vous pour toutes les réclamations découlant de ou liées à votre utilisation de notre site Web ou de nos produits ne dépassera pas le montant que vous nous avez payé au cours des 12 mois précédant la réclamation."
+        limitation: "Notre responsabilité totale envers vous pour toutes les réclamations découlant de ou liées à votre utilisation de notre site Web ou de nos produits ne dépassera pas le montant que vous nous avez payé au cours des 12 mois précédant la réclamation.",
+        foodProducts: "Avertissement sur les Produits Alimentaires : Nos produits sont des aliments déshydratés. Bien que nous prenions toutes les précautions pour assurer la qualité et la sécurité des produits, nous ne sommes pas responsables de toute réaction allergique, sensibilité alimentaire ou problème de santé qui pourrait résulter de la consommation de nos produits. Les clients sont responsables de vérifier les ingrédients des produits et de déterminer leur adéquation à leurs besoins et restrictions alimentaires.",
+        noWarranty: "Aucune Garantie : Nos produits sont fournis « tels quels » sans garanties d'aucune sorte, expresse ou implicite, y compris, mais sans s'y limiter, les garanties de qualité marchande, d'adéquation à un usage particulier ou de non-contrefaçon. Nous ne garantissons pas que nos produits répondront à vos exigences ou que le fonctionnement de notre site Web sera ininterrompu ou sans erreur."
+      },
+      forceMajeure: {
+        title: "Force Majeure",
+        text: "Pure Peel Co. ne sera pas responsable de tout échec ou retard dans l'exécution en vertu de ces Conditions qui est dû à un tremblement de terre, un incendie, une inondation, un acte de Dieu, un acte de guerre, le terrorisme, une épidémie, une pandémie, une action gouvernementale, un conflit de travail ou toute autre cause qui est hors de notre contrôle raisonnable, y compris, mais sans s'y limiter, les retards des transporteurs, les perturbations de la chaîne d'approvisionnement ou les problèmes de fabrication."
+      },
+      websiteUse: {
+        title: "Utilisation du Site Web et Restrictions",
+        text: "Vous acceptez d'utiliser notre site Web uniquement à des fins légales et conformément à ces Conditions. Vous acceptez de ne pas :",
+        restrictions: [
+          "Utiliser le site Web de toute manière qui viole toute loi fédérale, provinciale ou locale applicable ou réglementation",
+          "Tenter d'obtenir un accès non autorisé à toute partie du site Web ou à tout système ou réseau connecté au site Web",
+          "Interférer avec ou perturber le site Web ou les serveurs ou réseaux connectés au site Web",
+          "Utiliser tout robot, araignée ou autre dispositif automatique pour accéder au site Web à quelque fin que ce soit sans notre permission écrite expresse",
+          "Reproduire, dupliquer, copier, vendre ou exploiter toute partie du site Web sans notre permission écrite expresse"
+        ]
+      },
+      productImages: {
+        title: "Images et Descriptions de Produits",
+        text: "Nous nous efforçons d'afficher des couleurs et des images précises de nos produits. Cependant, nous ne pouvons pas garantir que l'affichage de toute couleur sur le moniteur de votre ordinateur sera précis. Les images de produits sont à titre illustratif uniquement et peuvent ne pas refléter l'apparence, la taille ou l'état exact du produit que vous recevez. Les produits réels peuvent varier légèrement en apparence, couleur ou taille par rapport aux images affichées sur le site Web."
+      },
+      ageRestriction: {
+        title: "Restrictions d'Âge",
+        text: "Vous devez avoir au moins 18 ans pour utiliser ce site Web et effectuer des achats. En utilisant ce site Web, vous déclarez et garantissez que vous avez au moins 18 ans et avez la capacité légale de conclure ces Conditions. Si vous avez moins de 18 ans, vous ne pouvez utiliser ce site Web qu'avec la participation et le consentement d'un parent ou d'un tuteur."
+      },
+      disputeResolution: {
+        title: "Résolution des Litiges",
+        text: "Tout litige, controverse ou réclamation découlant de ou liée à ces Conditions, ou à la violation, la résiliation ou la validité de celles-ci, sera d'abord traitée par une négociation de bonne foi. Si le litige ne peut pas être résolu par négociation dans les 30 jours, les parties conviennent de soumettre le litige à un arbitrage contraignant conformément à la Loi sur l'arbitrage (Ontario) ou, le cas échéant, aux règles de l'Institut canadien de résolution des différends. L'arbitrage aura lieu en Ontario, Canada. Nonobstant ce qui précède, toute partie peut demander une injonction devant tout tribunal compétent pour protéger les droits de propriété intellectuelle ou pour prévenir un préjudice irréparable."
       },
       governingLaw: {
         title: "Loi Applicable et Juridiction",

@@ -111,8 +111,57 @@ export default function TermsOfService() {
             <p className="text-gray-700 leading-relaxed mb-3">
               {getTranslation(language, 'terms.liability.text')}
             </p>
-            <p className="text-gray-700 leading-relaxed">
+            <p className="text-gray-700 leading-relaxed mb-3">
               {getTranslation(language, 'terms.liability.limitation')}
+            </p>
+            <p className="text-gray-700 leading-relaxed mb-3">
+              {getTranslation(language, 'terms.liability.foodProducts')}
+            </p>
+            <p className="text-gray-700 leading-relaxed">
+              {getTranslation(language, 'terms.liability.noWarranty')}
+            </p>
+          </div>
+
+          {/* Force Majeure */}
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'terms.forceMajeure.title')}</h2>
+            <p className="text-gray-700 leading-relaxed">
+              {getTranslation(language, 'terms.forceMajeure.text')}
+            </p>
+          </div>
+
+          {/* Website Use and Restrictions */}
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'terms.websiteUse.title')}</h2>
+            <p className="text-gray-700 mb-3">{getTranslation(language, 'terms.websiteUse.text')}</p>
+            <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
+              {getTranslation(language, 'terms.websiteUse.restrictions').map((restriction, index) => (
+                <li key={index}>{restriction}</li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Product Images and Descriptions */}
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'terms.productImages.title')}</h2>
+            <p className="text-gray-700 leading-relaxed">
+              {getTranslation(language, 'terms.productImages.text')}
+            </p>
+          </div>
+
+          {/* Age Restrictions */}
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'terms.ageRestriction.title')}</h2>
+            <p className="text-gray-700 leading-relaxed">
+              {getTranslation(language, 'terms.ageRestriction.text')}
+            </p>
+          </div>
+
+          {/* Dispute Resolution */}
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{getTranslation(language, 'terms.disputeResolution.title')}</h2>
+            <p className="text-gray-700 leading-relaxed">
+              {getTranslation(language, 'terms.disputeResolution.text')}
             </p>
           </div>
 

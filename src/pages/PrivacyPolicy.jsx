@@ -187,6 +187,58 @@ export default function PrivacyPolicy() {
             </p>
           </div>
 
+          {/* Data Portability */}
+          <div>
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.dataPortability.title')}</h2>
+            <p className="text-sm md:text-base text-gray-700 leading-relaxed">
+              {getTranslation(language, 'privacy.dataPortability.text')}
+            </p>
+          </div>
+
+          {/* Automated Decision-Making */}
+          <div>
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.automatedDecisionMaking.title')}</h2>
+            <p className="text-sm md:text-base text-gray-700 leading-relaxed">
+              {getTranslation(language, 'privacy.automatedDecisionMaking.text')}
+            </p>
+          </div>
+
+          {/* Cross-Border Data Transfers */}
+          <div>
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.crossBorderTransfers.title')}</h2>
+            <p className="text-sm md:text-base text-gray-700 leading-relaxed">
+              {getTranslation(language, 'privacy.crossBorderTransfers.text')}
+            </p>
+          </div>
+
+          {/* California Privacy Rights */}
+          <div>
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.californiaPrivacy.title')}</h2>
+            <p className="text-sm md:text-base text-gray-700 mb-3">{getTranslation(language, 'privacy.californiaPrivacy.text')}</p>
+            <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 ml-2 md:ml-4">
+              {getTranslation(language, 'privacy.californiaPrivacy.rights').map((right, index) => (
+                <li key={index}>{right}</li>
+              ))}
+            </ul>
+            <p className="text-sm md:text-base text-gray-700 mt-4">
+              {getTranslation(language, 'privacy.californiaPrivacy.text2')}
+            </p>
+          </div>
+
+          {/* European Privacy Rights (GDPR) */}
+          <div>
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.gdprCompliance.title')}</h2>
+            <p className="text-sm md:text-base text-gray-700 mb-3">{getTranslation(language, 'privacy.gdprCompliance.text')}</p>
+            <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 ml-2 md:ml-4">
+              {getTranslation(language, 'privacy.gdprCompliance.rights').map((right, index) => (
+                <li key={index}>{right}</li>
+              ))}
+            </ul>
+            <p className="text-sm md:text-base text-gray-700 mt-4">
+              {getTranslation(language, 'privacy.gdprCompliance.text2')}
+            </p>
+          </div>
+
           {/* Marketing Communications */}
           <div>
             <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.marketingCommunications.title')}</h2>
