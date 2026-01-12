@@ -206,7 +206,9 @@ export default function Lifestyle() {
                 <img
                   src={item.image}
                   alt={getTranslation(language, `lifestyle.slides.${item.key}.caption`)}
-                  className="w-full h-full object-cover object-center"
+                  className={`w-full h-full ${
+                    item.key === 'tea' ? 'object-contain' : 'object-cover'
+                  } object-center`}
                   width="1200"
                   height="675"
                   decoding="async"
