@@ -294,7 +294,7 @@ export const translations = {
             },
             {
               question: "Are your products organic?",
-              answer: "While we use high-quality, natural citrus fruits, our products are not currently certified organic. However, they are 100% natural with no preservatives or additives."
+              answer: "Yes! Our products are organic. We use certified organic citrus fruits and follow organic processing methods. Our dehydrated citrus slices are 100% organic, natural, and contain no preservatives or additives."
             },
             {
               question: "Do you ship internationally?",
@@ -1127,7 +1127,7 @@ export const translations = {
             },
             {
               question: "Vos produits sont-ils biologiques?",
-              answer: "Bien que nous utilisions des fruits d'agrumes naturels de haute qualité, nos produits ne sont pas actuellement certifiés biologiques. Cependant, ils sont 100% naturels, sans conservateurs ni additifs."
+              answer: "Oui! Nos produits sont biologiques. Nous utilisons des fruits d'agrumes certifiés biologiques et suivons des méthodes de transformation biologiques. Nos tranches d'agrumes déshydratées sont 100% biologiques, naturelles et ne contiennent aucun conservateur ni additif."
             },
             {
               question: "Livrez-vous à l'international?",
