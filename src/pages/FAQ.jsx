@@ -148,7 +148,7 @@ export default function FAQ() {
                   {/* Category Header */}
                   <button
                     onClick={() => toggleCategory(categoryKey)}
-                    className="w-full px-4 sm:px-6 py-4 md:py-5 flex items-center justify-between text-left focus:outline-none focus:ring-2 focus:ring-amber-500/20 rounded-t-xl transition-colors hover:bg-gray-50"
+                    className="w-full px-4 py-3 md:py-4 flex items-center justify-between text-left focus:outline-none focus:ring-2 focus:ring-amber-500/20 rounded-t-xl transition-colors hover:bg-gray-50"
                   >
                     <div className="flex items-center gap-3">
                       <div className="text-amber-600 text-xl md:text-2xl">
@@ -181,7 +181,7 @@ export default function FAQ() {
                       isCategoryOpen ? 'max-h-[5000px] opacity-100' : 'max-h-0 opacity-0'
                     }`}
                   >
-                    <div className="px-4 sm:px-6 pb-4 md:pb-6 space-y-4 border-t border-gray-100">
+                    <div className="px-4 pb-4 md:pb-6 space-y-4 border-t border-gray-100">
                       {category.questions.map((item, index) => {
                         const questionKey = `${categoryKey}-${index}`
                         const isQuestionOpen = openQuestion === questionKey
