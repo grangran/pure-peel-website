@@ -12,7 +12,7 @@ export default function About() {
   return (
     <section id="about" ref={sectionRef} className="py-12 md:py-20 px-4 sm:px-6 text-center bg-brand-bg">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-5 md:mb-6">
+        <div className="text-center mb-5 md:mb-6 hidden md:block">
           <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[10px] md:text-xs font-semibold uppercase tracking-wider text-amber-700/90 bg-linear-to-r from-amber-50/80 to-amber-100/40 rounded-full border border-amber-200/40">
             Our Story
           </span>
