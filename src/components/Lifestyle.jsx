@@ -188,6 +188,12 @@ export default function Lifestyle() {
                   decoding="async"
                   fetchPriority={index === 0 ? "high" : "auto"}
                   loading={index === 0 ? 'eager' : 'lazy'}
+                  onError={(e) => {
+                    console.error("Failed to load image:", item.image, e);
+                  }}
+                  onLoad={() => {
+                    console.log("Image loaded successfully:", item.image);
+                  }}
                 />
                 {/* Enhanced Gradient Overlay */}
                 <div className="absolute inset-0 bg-linear-to-b from-black/30 via-transparent to-black/70 z-2"></div>
