@@ -186,10 +186,11 @@ export default function Lifestyle() {
                   width="1200"
                   height="675"
                   decoding="async"
-                  fetchPriority={index === 0 ? "high" : "auto"}
-                  loading={index === 0 ? 'eager' : 'lazy'}
+                  fetchPriority={index <= 1 ? "high" : "auto"}
+                  loading="eager"
                   onError={(e) => {
                     console.error("Failed to load image:", item.image, e);
+                    e.target.style.display = 'none';
                   }}
                   onLoad={() => {
                     console.log("Image loaded successfully:", item.image);
