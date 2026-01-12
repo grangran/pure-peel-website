@@ -26,7 +26,7 @@ const lifestyleItems = [
   },
   {
     id: 5,
-    image: "/images/tea.jpg",
+    image: "/images/tea.png",
     key: "tea"
   }
 ]
