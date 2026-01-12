@@ -230,19 +230,19 @@ export const translations = {
           questions: [
             {
               question: "What is your return policy?",
-              answer: "We want you to be completely satisfied with your purchase. If you're not happy with your order, please contact us within 14 days of delivery at orders@purepeelco.com. We'll work with you to resolve any issues."
+              answer: "Due to food safety regulations and hygiene concerns, we do not accept returns or exchanges on food products. However, we stand behind the quality of our products. If you receive a damaged, defective, or incorrect product, please contact us immediately at orders@purepeelco.com with your order number and photos of the issue. We will replace any product that is damaged, defective, or incorrect at no cost to you."
             },
             {
               question: "Can I get a refund?",
-              answer: "Yes, we offer refunds for orders that don't meet your expectations. Please contact us at orders@purepeelco.com within 14 days of delivery to discuss your refund request."
+              answer: "Due to food safety regulations, we do not offer refunds for food products. However, if you receive a damaged, defective, or incorrect product, we will replace it at no cost to you. Please contact us immediately at orders@purepeelco.com within 48 hours of delivery with your order number and photos of the issue."
             },
             {
               question: "Do I need to return the product for a refund?",
-              answer: "In most cases, you don't need to return the product. Contact us at orders@purepeelco.com and we'll work with you to resolve the issue."
+              answer: "We do not accept returns or refunds for food products due to food safety regulations. However, if you receive a damaged, defective, or incorrect product, we will send a replacement at no cost to you. Please contact us at orders@purepeelco.com with your order number and photos."
             },
             {
               question: "What if my order arrives damaged?",
-              answer: "If your order arrives damaged, please contact us immediately at orders@purepeelco.com with photos of the damage. We'll send a replacement or issue a full refund."
+              answer: "If your order arrives damaged, please contact us immediately at orders@purepeelco.com within 48 hours of delivery with your order number and photos of the damage. We will send a replacement at no cost to you. Due to food safety regulations, we cannot accept returns of food products, but we will ensure you receive a replacement for any damaged items."
             }
           ]
         },
@@ -1063,19 +1063,19 @@ export const translations = {
           questions: [
             {
               question: "Quelle est votre politique de retour?",
-              answer: "Nous voulons que vous soyez complètement satisfait de votre achat. Si vous n'êtes pas satisfait de votre commande, veuillez nous contacter dans les 14 jours suivant la livraison à orders@purepeelco.com. Nous travaillerons avec vous pour résoudre tout problème."
+              answer: "En raison des réglementations sur la salubrité des aliments et des préoccupations d'hygiène, nous n'acceptons pas les retours ou les échanges sur les produits alimentaires. Cependant, nous garantissons la qualité de nos produits. Si vous recevez un produit endommagé, défectueux ou incorrect, veuillez nous contacter immédiatement à orders@purepeelco.com avec votre numéro de commande et des photos du problème. Nous remplacerons tout produit endommagé, défectueux ou incorrect sans frais pour vous."
             },
             {
               question: "Puis-je obtenir un remboursement?",
-              answer: "Oui, nous offrons des remboursements pour les commandes qui ne répondent pas à vos attentes. Veuillez nous contacter à orders@purepeelco.com dans les 14 jours suivant la livraison pour discuter de votre demande de remboursement."
+              answer: "En raison des réglementations sur la salubrité des aliments, nous n'offrons pas de remboursements pour les produits alimentaires. Cependant, si vous recevez un produit endommagé, défectueux ou incorrect, nous le remplacerons sans frais pour vous. Veuillez nous contacter immédiatement à orders@purepeelco.com dans les 48 heures suivant la livraison avec votre numéro de commande et des photos du problème."
             },
             {
               question: "Dois-je retourner le produit pour un remboursement?",
-              answer: "Dans la plupart des cas, vous n'avez pas besoin de retourner le produit. Contactez-nous à orders@purepeelco.com et nous travaillerons avec vous pour résoudre le problème."
+              answer: "Nous n'acceptons pas les retours ou les remboursements pour les produits alimentaires en raison des réglementations sur la salubrité des aliments. Cependant, si vous recevez un produit endommagé, défectueux ou incorrect, nous enverrons un remplacement sans frais pour vous. Veuillez nous contacter à orders@purepeelco.com avec votre numéro de commande et des photos."
             },
             {
               question: "Que faire si ma commande arrive endommagée?",
-              answer: "Si votre commande arrive endommagée, veuillez nous contacter immédiatement à orders@purepeelco.com avec des photos des dommages. Nous enverrons un remplacement ou émettons un remboursement complet."
+              answer: "Si votre commande arrive endommagée, veuillez nous contacter immédiatement à orders@purepeelco.com dans les 48 heures suivant la livraison avec votre numéro de commande et des photos des dommages. Nous enverrons un remplacement sans frais pour vous. En raison des réglementations sur la salubrité des aliments, nous ne pouvons pas accepter les retours de produits alimentaires, mais nous nous assurerons que vous receviez un remplacement pour tout article endommagé."
             }
           ]
         },
