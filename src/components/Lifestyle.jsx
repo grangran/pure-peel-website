@@ -119,6 +119,10 @@ export default function Lifestyle() {
   const onTouchStart = (e) => {
     touchEndRef.current = null
     touchStartRef.current = e.targetTouches[0].clientX
+    // Pause auto-rotate on touch
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+    }
   }
 
   const onTouchMove = (e) => {
@@ -126,7 +130,15 @@ export default function Lifestyle() {
   }
 
   const onTouchEnd = () => {
-    if (!touchStartRef.current || !touchEndRef.current) return
+    if (!touchStartRef.current || !touchEndRef.current) {
+      // Resume auto-rotate if no swipe
+      if (isSectionVisible && !intervalRef.current) {
+        intervalRef.current = setInterval(() => {
+          setCurrentIndex((prevIndex) => (prevIndex + 1) % lifestyleItems.length)
+        }, SLIDE_DURATION)
+      }
+      return
+    }
     const distance = touchStartRef.current - touchEndRef.current
     const isLeftSwipe = distance > minSwipeDistance
     const isRightSwipe = distance < -minSwipeDistance
@@ -136,6 +148,13 @@ export default function Lifestyle() {
     } else if (isRightSwipe) {
       setCurrentIndex((prev) => (prev === 0 ? lifestyleItems.length - 1 : prev - 1))
     }
+    
+    // Resume auto-rotate after swipe
+    if (isSectionVisible && !intervalRef.current) {
+      intervalRef.current = setInterval(() => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % lifestyleItems.length)
+      }, SLIDE_DURATION)
+    }
   }
 
   const currentItem = lifestyleItems[currentIndex]
@@ -143,36 +162,36 @@ export default function Lifestyle() {
   return (
     <section 
       ref={sectionRef}
-      className="relative py-16 md:py-24 px-4 sm:px-5 bg-white overflow-hidden"
+      className="relative py-12 sm:py-16 md:py-24 px-3 sm:px-4 md:px-5 bg-white overflow-hidden"
     >
       <div className="max-w-7xl mx-auto">
         {/* Section Header - Cleaner on mobile */}
-        <div className={`text-center mb-10 md:mb-16 transition-all duration-800 ease-out ${
+        <div className={`text-center mb-8 sm:mb-10 md:mb-16 transition-all duration-800 ease-out ${
           isSectionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
         }`}>
           {/* Hide tag on mobile for cleaner look */}
-          <div className="text-center mb-4 md:mb-6 hidden md:block">
+          <div className="text-center mb-3 sm:mb-4 md:mb-6 hidden md:block">
             <span className="inline-block px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-amber-700 bg-amber-50 rounded-full">
               Lifestyle
             </span>
           </div>
-          <h2 className="text-[clamp(1.75rem,5vw,3.5rem)] font-bold mb-3 md:mb-6 text-stone-900 tracking-tight">
+          <h2 className="text-[clamp(1.5rem,4vw,3.5rem)] font-bold mb-2 sm:mb-3 md:mb-6 text-stone-900 tracking-tight px-2">
             {getTranslation(language, 'lifestyle.title')}
           </h2>
-          <p className="text-stone-600 text-base md:text-xl max-w-3xl mx-auto leading-relaxed px-4">
+          <p className="text-stone-600 text-sm sm:text-base md:text-xl max-w-3xl mx-auto leading-relaxed px-3 sm:px-4">
             {getTranslation(language, 'lifestyle.subtitle')}
           </p>
         </div>
 
         {/* Carousel Container */}
         <div 
-          className="relative w-full max-w-5xl mx-auto px-4 sm:px-6 md:px-0"
+          className="relative w-full max-w-5xl mx-auto px-2 sm:px-4 md:px-6 lg:px-0"
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
         >
           {/* Image Frame - Responsive aspect ratio */}
-          <div className="relative w-full aspect-4/3 sm:aspect-16/10 md:aspect-video lg:aspect-5/3 rounded-2xl md:rounded-3xl overflow-hidden shadow-xl md:shadow-2xl border border-stone-200/50">
+          <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] md:aspect-video lg:aspect-[5/3] rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden shadow-lg sm:shadow-xl md:shadow-2xl border border-stone-200/50">
             {/* Images with cover sizing */}
             {lifestyleItems.map((item, index) => (
               <div
@@ -192,7 +211,8 @@ export default function Lifestyle() {
                   height="675"
                   decoding="async"
                   fetchPriority={index <= 1 ? "high" : "auto"}
-                  loading="eager"
+                  loading={index <= 1 ? "eager" : "lazy"}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1280px"
                   onError={(e) => {
                     console.error("Failed to load image:", item.image, e);
                     e.target.style.display = 'none';
@@ -207,23 +227,23 @@ export default function Lifestyle() {
             ))}
 
             {/* Caption Overlay with per-slide animation */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 md:p-12 z-2">
+            <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 lg:p-12 z-2">
               <div className={`transition-all duration-700 ease-out ${
                 captionVisible && isSectionVisible 
                   ? 'opacity-100 translate-y-0' 
                   : 'opacity-0 translate-y-4'
               }`}>
-                <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2 sm:mb-3 drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+                <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-1 sm:mb-2 md:mb-3 drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)] leading-tight">
                   {getTranslation(language, `lifestyle.slides.${currentItem.key}.caption`)}
                 </h3>
-                <p className="text-white/90 text-base sm:text-lg md:text-xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
+                <p className="text-white/90 text-sm sm:text-base md:text-lg lg:text-xl drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)] leading-snug sm:leading-relaxed">
                   {getTranslation(language, `lifestyle.slides.${currentItem.key}.description`)}
                 </p>
               </div>
             </div>
 
             {/* Progress Bar - Integrated at bottom of image (like video player) */}
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20 z-3">
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 sm:h-1 bg-black/20 z-3">
               <div
                 className="absolute top-0 left-0 h-full bg-amber-500 transition-all ease-linear"
                 style={{
@@ -235,8 +255,8 @@ export default function Lifestyle() {
             </div>
 
             {/* Slide Counter - More subtle on mobile */}
-            <div className="absolute top-4 right-4 md:top-6 md:right-6 z-3 bg-black/30 md:bg-black/40 backdrop-blur-sm px-2.5 py-1.5 md:px-4 md:py-2 rounded-full">
-              <span className="text-white text-xs md:text-sm font-medium">
+            <div className="absolute top-2 right-2 sm:top-3 sm:right-3 md:top-6 md:right-6 z-3 bg-black/30 md:bg-black/40 backdrop-blur-sm px-2 py-1 sm:px-2.5 sm:py-1.5 md:px-4 md:py-2 rounded-full">
+              <span className="text-white text-[10px] sm:text-xs md:text-sm font-medium">
                 {currentIndex + 1} / {lifestyleItems.length}
               </span>
             </div>
