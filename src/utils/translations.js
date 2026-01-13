@@ -353,7 +353,7 @@ export const translations = {
       lastUpdated: "Last updated:",
       introduction: {
         title: "Introduction",
-        text: "Pure Peel Co. (\"we,\" \"our,\" or \"us\") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and make purchases. Please read this privacy policy carefully."
+        text: "Pure Peel Co. (\"we,\" \"our,\" or \"us\") is a Canadian business operating in Ontario, Canada, committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and make purchases. This policy is designed to comply with Canadian privacy laws, including the Personal Information Protection and Electronic Documents Act (PIPEDA) and applicable provincial privacy legislation. For customers in the United States, we also respect applicable US privacy laws. Please read this privacy policy carefully."
       },
       informationWeCollect: {
         title: "Information We Collect",
@@ -449,32 +449,19 @@ export const translations = {
       },
       crossBorderTransfers: {
         title: "Cross-Border Data Transfers",
-        text: "Your personal information is primarily stored and processed in Canada. However, some third-party service providers we use (such as Stripe for payment processing and Resend for email delivery) may process data in other jurisdictions, including the United States. These service providers are contractually obligated to maintain appropriate security measures and comply with applicable privacy laws. By using our services, you consent to the transfer of your information to these service providers as necessary to fulfill your orders and provide our services."
+        text: "Your personal information is primarily stored and processed in Canada, in compliance with Canadian privacy laws. However, some third-party service providers we use (such as Stripe for payment processing and Resend for email delivery) may process data in other jurisdictions, including the United States. These service providers are contractually obligated to maintain appropriate security measures and comply with applicable privacy laws, including Canadian privacy requirements. For customers in the United States, your data may be processed by US-based service providers in accordance with applicable US privacy laws. By using our services, you consent to the transfer of your information to these service providers as necessary to fulfill your orders and provide our services."
       },
-      californiaPrivacy: {
-        title: "California Privacy Rights (CCPA)",
-        text: "If you are a California resident, you have additional rights under the California Consumer Privacy Act (CCPA), including:",
+      usPrivacyRights: {
+        title: "United States Privacy Rights",
+        text: "For customers located in the United States, you may have additional privacy rights under applicable US federal and state laws. While we are a Canadian business and primarily governed by Canadian privacy law (PIPEDA), we respect the privacy rights of our US customers:",
         rights: [
-          "The right to know what personal information we collect, use, disclose, and sell",
-          "The right to delete personal information we have collected from you (subject to certain exceptions)",
+          "The right to know what personal information we collect, use, and disclose",
+          "The right to request deletion of your personal information (subject to legal obligations and our need to retain certain information for order fulfillment)",
           "The right to opt-out of the sale of personal information (we do not sell your personal information)",
           "The right to non-discrimination for exercising your privacy rights"
         ],
-        text2: "To exercise your California privacy rights, please contact our Privacy Officer using the contact information provided in this Privacy Policy. We will respond to your request within 45 days."
-      },
-      gdprCompliance: {
-        title: "European Privacy Rights (GDPR)",
-        text: "If you are located in the European Economic Area (EEA), you have additional rights under the General Data Protection Regulation (GDPR), including:",
-        rights: [
-          "The right to access your personal data",
-          "The right to rectification of inaccurate data",
-          "The right to erasure ('right to be forgotten')",
-          "The right to restrict processing",
-          "The right to data portability",
-          "The right to object to processing",
-          "The right to withdraw consent at any time"
-        ],
-        text2: "To exercise your GDPR rights, please contact our Privacy Officer. We will respond to your request within one month. If you are not satisfied with our response, you have the right to lodge a complaint with your local data protection authority."
+        california: "California Residents: If you are a California resident, you have additional rights under the California Consumer Privacy Act (CCPA), including the rights listed above. To exercise your California privacy rights, please contact our Privacy Officer using the contact information provided in this Privacy Policy. We will respond to your request within 45 days.",
+        text2: "To exercise your US privacy rights, please contact our Privacy Officer using the contact information provided in this Privacy Policy. We will respond to your request in accordance with applicable US privacy laws."
       },
       limitingCollection: {
         title: "Limiting Collection",
@@ -517,7 +504,7 @@ export const translations = {
       },
       dataStorage: {
         title: "Data Storage and Location",
-        text: "Your personal information is stored on secure servers located in Canada. We take appropriate measures to ensure that your data is protected and handled in accordance with Canadian privacy laws. Some third-party services we use (such as Stripe and Resend) may process data in other jurisdictions, but they are required to maintain appropriate security measures and comply with applicable privacy laws."
+        text: "Your personal information is primarily stored on secure servers located in Canada. We take appropriate measures to ensure that your data is protected and handled in accordance with Canadian privacy laws, including PIPEDA and applicable provincial privacy legislation. Some third-party services we use (such as Stripe for payment processing and Resend for email delivery) may process data in other jurisdictions, including the United States, but they are contractually required to maintain appropriate security measures and comply with applicable privacy laws, including Canadian privacy requirements where applicable."
       },
       contact: {
         title: "Contact Us - Privacy Inquiries",
@@ -689,7 +676,7 @@ export const translations = {
       lastUpdated: "Last updated:",
       introduction: {
         title: "Introduction",
-        text: "Welcome to Pure Peel Co. These Terms of Service (\"Terms\") govern your access to and use of our website and services. By accessing or using our website, placing an order, or making a purchase, you agree to be bound by these Terms. If you do not agree to these Terms, please do not use our website or services."
+        text: "Welcome to Pure Peel Co., a Canadian business operating in Ontario, Canada. These Terms of Service (\"Terms\") govern your access to and use of our website and services. By accessing or using our website, placing an order, or making a purchase, you agree to be bound by these Terms. If you do not agree to these Terms, please do not use our website or services. These Terms are governed by Canadian law, with specific provisions for customers in Canada and the United States."
       },
       acceptance: {
         title: "Acceptance of Terms",
@@ -770,12 +757,12 @@ export const translations = {
       },
       disputeResolution: {
         title: "Dispute Resolution",
-        text: "Any dispute, controversy, or claim arising out of or relating to these Terms, or the breach, termination, or validity thereof, shall first be addressed through good faith negotiation. If the dispute cannot be resolved through negotiation within 30 days, the parties agree to submit the dispute to binding arbitration in accordance with the Arbitration Act (Ontario) or, if applicable, the rules of the ADR Institute of Canada. The arbitration shall take place in Ontario, Canada. Notwithstanding the foregoing, either party may seek injunctive relief in any court of competent jurisdiction to protect intellectual property rights or to prevent irreparable harm."
+        text: "Any dispute, controversy, or claim arising out of or relating to these Terms, or the breach, termination, or validity thereof, shall first be addressed through good faith negotiation. If the dispute cannot be resolved through negotiation within 30 days, the parties agree to submit the dispute to binding arbitration in accordance with the Arbitration Act (Ontario) or, if applicable, the rules of the ADR Institute of Canada. The arbitration shall take place in Ontario, Canada. For customers in the United States, disputes may be resolved through arbitration in accordance with applicable US law, but the primary jurisdiction remains Ontario, Canada. Notwithstanding the foregoing, either party may seek injunctive relief in any court of competent jurisdiction to protect intellectual property rights or to prevent irreparable harm."
       },
       governingLaw: {
         title: "Governing Law and Jurisdiction",
-        text: "These Terms shall be governed by and construed in accordance with the laws of the Province of Ontario and the federal laws of Canada applicable therein, without regard to its conflict of law provisions. Any disputes arising from these Terms or your use of our website shall be subject to the exclusive jurisdiction of the courts of Ontario, Canada.",
-        consumerProtection: "Consumer Protection: As a business operating in Ontario, we comply with the Ontario Consumer Protection Act (OCPA). If you are a consumer in Ontario, you have certain rights and protections under OCPA, including the right to receive accurate information about products and services, fair contract terms, and protection against unfair business practices."
+        text: "These Terms shall be governed by and construed in accordance with the laws of the Province of Ontario and the federal laws of Canada applicable therein, without regard to its conflict of law provisions. Any disputes arising from these Terms or your use of our website shall be subject to the exclusive jurisdiction of the courts of Ontario, Canada. For customers located in the United States, while these Terms are governed by Canadian law, you may have additional rights under applicable US consumer protection laws.",
+        consumerProtection: "Consumer Protection: As a Canadian business operating in Ontario, we comply with the Ontario Consumer Protection Act (OCPA) and all applicable Canadian consumer protection legislation. If you are a consumer in Ontario or elsewhere in Canada, you have certain rights and protections under OCPA and provincial consumer protection laws, including the right to receive accurate information about products and services, fair contract terms, and protection against unfair business practices. Customers in the United States may have additional rights under applicable US state and federal consumer protection laws."
       },
       changes: {
         title: "Changes to Terms",
@@ -1256,7 +1243,7 @@ export const translations = {
       lastUpdated: "Dernière mise à jour :",
       introduction: {
         title: "Introduction",
-        text: "Pure Peel Co. (« nous », « notre » ou « nos ») s'engage à protéger votre vie privée. Cette Politique de Confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous visitez notre site Web et effectuez des achats. Veuillez lire attentivement cette politique de confidentialité."
+        text: "Pure Peel Co. (« nous », « notre » ou « nos ») est une entreprise canadienne opérant en Ontario, Canada, engagée à protéger votre vie privée. Cette Politique de Confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous visitez notre site Web et effectuez des achats. Cette politique est conçue pour se conformer aux lois canadiennes sur la confidentialité, y compris la Loi sur la protection des renseignements personnels et les documents électroniques (LPRPDE) et la législation provinciale applicable sur la confidentialité. Pour les clients aux États-Unis, nous respectons également les lois américaines sur la confidentialité applicables. Veuillez lire attentivement cette politique de confidentialité."
       },
       informationWeCollect: {
         title: "Informations que Nous Collectons",
@@ -1432,32 +1419,19 @@ export const translations = {
       },
       crossBorderTransfers: {
         title: "Transferts Transfrontaliers de Données",
-        text: "Vos informations personnelles sont principalement stockées et traitées au Canada. Cependant, certains fournisseurs de services tiers que nous utilisons (tels que Stripe pour le traitement des paiements et Resend pour la livraison d'e-mails) peuvent traiter des données dans d'autres juridictions, y compris les États-Unis. Ces fournisseurs de services sont contractuellement tenus de maintenir des mesures de sécurité appropriées et de se conformer aux lois sur la confidentialité applicables. En utilisant nos services, vous consentez au transfert de vos informations à ces fournisseurs de services selon les besoins pour exécuter vos commandes et fournir nos services."
+        text: "Vos informations personnelles sont principalement stockées et traitées au Canada, en conformité avec les lois canadiennes sur la confidentialité. Cependant, certains fournisseurs de services tiers que nous utilisons (tels que Stripe pour le traitement des paiements et Resend pour la livraison d'e-mails) peuvent traiter des données dans d'autres juridictions, y compris les États-Unis. Ces fournisseurs de services sont contractuellement tenus de maintenir des mesures de sécurité appropriées et de se conformer aux lois sur la confidentialité applicables, y compris les exigences canadiennes en matière de confidentialité. Pour les clients aux États-Unis, vos données peuvent être traitées par des fournisseurs de services basés aux États-Unis conformément aux lois américaines sur la confidentialité applicables. En utilisant nos services, vous consentez au transfert de vos informations à ces fournisseurs de services selon les besoins pour exécuter vos commandes et fournir nos services."
       },
-      californiaPrivacy: {
-        title: "Droits à la Confidentialité de la Californie (CCPA)",
-        text: "Si vous êtes résident de la Californie, vous avez des droits supplémentaires en vertu de la California Consumer Privacy Act (CCPA), notamment :",
+      usPrivacyRights: {
+        title: "Droits à la Confidentialité aux États-Unis",
+        text: "Pour les clients situés aux États-Unis, vous pouvez avoir des droits supplémentaires à la confidentialité en vertu des lois fédérales et étatiques américaines applicables. Bien que nous soyons une entreprise canadienne et principalement régis par la loi canadienne sur la confidentialité (LPRPDE), nous respectons les droits à la vie privée de nos clients américains :",
         rights: [
-          "Le droit de savoir quelles informations personnelles nous collectons, utilisons, divulguons et vendons",
-          "Le droit de supprimer les informations personnelles que nous avons collectées auprès de vous (sous réserve de certaines exceptions)",
+          "Le droit de savoir quelles informations personnelles nous collectons, utilisons et divulguons",
+          "Le droit de demander la suppression de vos informations personnelles (sous réserve d'obligations légales et de notre besoin de conserver certaines informations pour l'exécution des commandes)",
           "Le droit de refuser la vente d'informations personnelles (nous ne vendons pas vos informations personnelles)",
           "Le droit à la non-discrimination pour avoir exercé vos droits à la vie privée"
         ],
-        text2: "Pour exercer vos droits à la confidentialité de la Californie, veuillez contacter notre Responsable de la Protection de la Vie Privée en utilisant les informations de contact fournies dans cette Politique de Confidentialité. Nous répondrons à votre demande dans les 45 jours."
-      },
-      gdprCompliance: {
-        title: "Droits à la Confidentialité Européens (RGPD)",
-        text: "Si vous êtes situé dans l'Espace économique européen (EEE), vous avez des droits supplémentaires en vertu du Règlement général sur la protection des données (RGPD), notamment :",
-        rights: [
-          "Le droit d'accès à vos données personnelles",
-          "Le droit de rectification des données inexactes",
-          "Le droit à l'effacement (« droit à l'oubli »)",
-          "Le droit de limiter le traitement",
-          "Le droit à la portabilité des données",
-          "Le droit de s'opposer au traitement",
-          "Le droit de retirer le consentement à tout moment"
-        ],
-        text2: "Pour exercer vos droits RGPD, veuillez contacter notre Responsable de la Protection de la Vie Privée. Nous répondrons à votre demande dans un délai d'un mois. Si vous n'êtes pas satisfait de notre réponse, vous avez le droit de déposer une plainte auprès de votre autorité locale de protection des données."
+        california: "Résidents de la Californie : Si vous êtes résident de la Californie, vous avez des droits supplémentaires en vertu de la California Consumer Privacy Act (CCPA), y compris les droits énumérés ci-dessus. Pour exercer vos droits à la confidentialité de la Californie, veuillez contacter notre Responsable de la Protection de la Vie Privée en utilisant les informations de contact fournies dans cette Politique de Confidentialité. Nous répondrons à votre demande dans les 45 jours.",
+        text2: "Pour exercer vos droits à la confidentialité aux États-Unis, veuillez contacter notre Responsable de la Protection de la Vie Privée en utilisant les informations de contact fournies dans cette Politique de Confidentialité. Nous répondrons à votre demande conformément aux lois américaines sur la confidentialité applicables."
       },
       dataSecurity: {
         title: "Sécurité des Données",
@@ -1484,7 +1458,7 @@ export const translations = {
       },
       dataStorage: {
         title: "Stockage et Emplacement des Données",
-        text: "Vos informations personnelles sont stockées sur des serveurs sécurisés situés au Canada. Nous prenons des mesures appropriées pour garantir que vos données sont protégées et traitées conformément aux lois canadiennes sur la confidentialité. Certains services tiers que nous utilisons (tels que Stripe et Resend) peuvent traiter des données dans d'autres juridictions, mais ils sont tenus de maintenir des mesures de sécurité appropriées et de se conformer aux lois sur la confidentialité applicables."
+        text: "Vos informations personnelles sont principalement stockées sur des serveurs sécurisés situés au Canada. Nous prenons des mesures appropriées pour garantir que vos données sont protégées et traitées conformément aux lois canadiennes sur la confidentialité, y compris la LPRPDE et la législation provinciale applicable sur la confidentialité. Certains services tiers que nous utilisons (tels que Stripe pour le traitement des paiements et Resend pour la livraison d'e-mails) peuvent traiter des données dans d'autres juridictions, y compris les États-Unis, mais ils sont contractuellement tenus de maintenir des mesures de sécurité appropriées et de se conformer aux lois sur la confidentialité applicables, y compris les exigences canadiennes en matière de confidentialité le cas échéant."
       },
       contact: {
         title: "Nous Contacter - Demandes de Confidentialité",
@@ -1656,7 +1630,7 @@ export const translations = {
       lastUpdated: "Dernière mise à jour :",
       introduction: {
         title: "Introduction",
-        text: "Bienvenue chez Pure Peel Co. Ces Conditions d'utilisation (« Conditions ») régissent votre accès et votre utilisation de notre site Web et de nos services. En accédant ou en utilisant notre site Web, en passant une commande ou en effectuant un achat, vous acceptez d'être lié par ces Conditions. Si vous n'acceptez pas ces Conditions, veuillez ne pas utiliser notre site Web ou nos services."
+        text: "Bienvenue chez Pure Peel Co., une entreprise canadienne opérant en Ontario, Canada. Ces Conditions d'utilisation (« Conditions ») régissent votre accès et votre utilisation de notre site Web et de nos services. En accédant ou en utilisant notre site Web, en passant une commande ou en effectuant un achat, vous acceptez d'être lié par ces Conditions. Si vous n'acceptez pas ces Conditions, veuillez ne pas utiliser notre site Web ou nos services. Ces Conditions sont régies par la loi canadienne, avec des dispositions spécifiques pour les clients au Canada et aux États-Unis."
       },
       acceptance: {
         title: "Acceptation des Conditions",
@@ -1737,12 +1711,12 @@ export const translations = {
       },
       disputeResolution: {
         title: "Résolution des Litiges",
-        text: "Tout litige, controverse ou réclamation découlant de ou liée à ces Conditions, ou à la violation, la résiliation ou la validité de celles-ci, sera d'abord traitée par une négociation de bonne foi. Si le litige ne peut pas être résolu par négociation dans les 30 jours, les parties conviennent de soumettre le litige à un arbitrage contraignant conformément à la Loi sur l'arbitrage (Ontario) ou, le cas échéant, aux règles de l'Institut canadien de résolution des différends. L'arbitrage aura lieu en Ontario, Canada. Nonobstant ce qui précède, toute partie peut demander une injonction devant tout tribunal compétent pour protéger les droits de propriété intellectuelle ou pour prévenir un préjudice irréparable."
+        text: "Tout litige, controverse ou réclamation découlant de ou liée à ces Conditions, ou à la violation, la résiliation ou la validité de celles-ci, sera d'abord traitée par une négociation de bonne foi. Si le litige ne peut pas être résolu par négociation dans les 30 jours, les parties conviennent de soumettre le litige à un arbitrage contraignant conformément à la Loi sur l'arbitrage (Ontario) ou, le cas échéant, aux règles de l'Institut canadien de résolution des différends. L'arbitrage aura lieu en Ontario, Canada. Pour les clients aux États-Unis, les litiges peuvent être résolus par arbitrage conformément à la loi américaine applicable, mais la juridiction principale reste l'Ontario, Canada. Nonobstant ce qui précède, toute partie peut demander une injonction devant tout tribunal compétent pour protéger les droits de propriété intellectuelle ou pour prévenir un préjudice irréparable."
       },
       governingLaw: {
         title: "Loi Applicable et Juridiction",
-        text: "Ces Conditions seront régies et interprétées conformément aux lois de la province de l'Ontario et aux lois fédérales du Canada applicables, sans égard à ses dispositions de conflit de lois. Tout litige découlant de ces Conditions ou de votre utilisation de notre site Web sera soumis à la juridiction exclusive des tribunaux de l'Ontario, Canada.",
-        consumerProtection: "Protection du Consommateur : En tant qu'entreprise opérant en Ontario, nous nous conformons à la Loi sur la protection du consommateur de l'Ontario (LPCO). Si vous êtes un consommateur en Ontario, vous avez certains droits et protections en vertu de la LPCO, notamment le droit de recevoir des informations exactes sur les produits et services, des conditions contractuelles équitables et une protection contre les pratiques commerciales déloyales."
+        text: "Ces Conditions seront régies et interprétées conformément aux lois de la province de l'Ontario et aux lois fédérales du Canada applicables, sans égard à ses dispositions de conflit de lois. Tout litige découlant de ces Conditions ou de votre utilisation de notre site Web sera soumis à la juridiction exclusive des tribunaux de l'Ontario, Canada. Pour les clients situés aux États-Unis, bien que ces Conditions soient régies par la loi canadienne, vous pouvez avoir des droits supplémentaires en vertu des lois américaines de protection du consommateur applicables.",
+        consumerProtection: "Protection du Consommateur : En tant qu'entreprise canadienne opérant en Ontario, nous nous conformons à la Loi sur la protection du consommateur de l'Ontario (LPCO) et à toute la législation canadienne de protection du consommateur applicable. Si vous êtes un consommateur en Ontario ou ailleurs au Canada, vous avez certains droits et protections en vertu de la LPCO et des lois provinciales de protection du consommateur, notamment le droit de recevoir des informations exactes sur les produits et services, des conditions contractuelles équitables et une protection contre les pratiques commerciales déloyales. Les clients aux États-Unis peuvent avoir des droits supplémentaires en vertu des lois américaines fédérales et étatiques de protection du consommateur applicables."
       },
       changes: {
         title: "Modifications des Conditions",
