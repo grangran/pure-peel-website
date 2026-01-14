@@ -410,6 +410,34 @@ export default function Nav() {
             {getTranslation(language, 'nav.contact')}
           </a>
 
+          <div className="h-px bg-gray-200 my-7"></div>
+
+          <div className="mb-6">
+            <span className="text-xs uppercase tracking-widest text-gray-400 mb-3.5 block">{getTranslation(language, 'footer.legal')}</span>
+            <a 
+              href="/privacy" 
+              className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 active:scale-95 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
+              onClick={(e) => {
+                // Let App.jsx handle navigation via its click interceptor
+                e.preventDefault()
+                closeMenu()
+              }}
+            >
+              {getTranslation(language, 'footer.privacyPolicy')}
+            </a>
+            <a 
+              href="/terms" 
+              className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 active:scale-95 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
+              onClick={(e) => {
+                // Let App.jsx handle navigation via its click interceptor
+                e.preventDefault()
+                closeMenu()
+              }}
+            >
+              {getTranslation(language, 'footer.termsOfService')}
+            </a>
+          </div>
+
           <a 
             href="#" 
             className="mt-6 py-3.5 px-4 rounded-lg bg-amber-500 text-white font-semibold text-center block no-underline transition-all duration-200 hover:bg-amber-600 active:scale-95 after:hidden min-h-[44px] flex items-center justify-center"
