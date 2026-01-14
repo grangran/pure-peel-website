@@ -19,7 +19,10 @@ createRoot(document.getElementById('root')).render(
             <ToastProvider>
               <App />
               <Analytics />
-              <SpeedInsights sampleRate={1} />
+              <SpeedInsights 
+                sampleRate={1}
+                route={window.location.pathname}
+              />
             </ToastProvider>
           </CartProvider>
         </CurrencyProvider>
