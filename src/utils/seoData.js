@@ -99,8 +99,7 @@ export const seoData = {
     keywords: 'terms of service, terms and conditions, user agreement, legal terms',
     image: defaultImage,
     url: '/terms',
-    type: 'website',
-    noindex: true // Don't index terms of service
+    type: 'website'
   },
   contact: {
     title: 'Contact Us | Pure Peel Co.',
@@ -108,8 +107,7 @@ export const seoData = {
     keywords: 'contact, customer service, inquiries, bulk orders',
     image: defaultImage,
     url: '/contact',
-    type: 'website',
-    noindex: true // Don't index contact page
+    type: 'website'
   },
   faq: {
     title: 'FAQ | Frequently Asked Questions | Pure Peel Co.',
