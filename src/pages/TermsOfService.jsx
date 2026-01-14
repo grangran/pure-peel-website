@@ -9,8 +9,8 @@ export default function TermsOfService() {
   return (
     <section 
       ref={sectionRef} 
-      className={`py-8 sm:py-12 px-4 sm:px-5 bg-gray-50 min-h-screen transition-all duration-800 ${
-        isSectionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+      className={`py-8 sm:py-12 px-4 sm:px-5 bg-gray-50 min-h-screen transition-all duration-500 ${
+        isSectionVisible ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0 md:opacity-0 md:translate-y-8'
       }`}
     >
       <div className="max-w-4xl mx-auto">
