@@ -54,25 +54,76 @@ export const initGA = () => {
 
   // gtag is loaded from the script in index.html
   if (typeof window !== 'undefined' && window.gtag) {
+    const deviceType = getDeviceType()
+    const isMobileDevice = isMobile()
+
     window.gtag('config', GA_MEASUREMENT_ID, {
       page_path: window.location.pathname,
-      page_title: document.title
+      page_title: document.title,
+      page_location: window.location.href,
+      // Track device information
+      custom_map: {
+        dimension1: 'device_type',
+        dimension2: 'is_mobile'
+      }
     })
+
+    // Send initial page view with device info
+    window.gtag('event', 'page_view', {
+      device_type: deviceType,
+      is_mobile: isMobileDevice ? 'yes' : 'no',
+      screen_width: window.innerWidth,
+      screen_height: window.innerHeight
+    })
+
+    if (import.meta.env.DEV) {
+      console.log('GA Initialized:', { deviceType, isMobile: isMobileDevice })
+    }
   }
+}
+
+// Detect device type
+const getDeviceType = () => {
+  if (typeof window === 'undefined') return 'desktop'
+  const width = window.innerWidth
+  if (width < 768) return 'mobile'
+  if (width < 1024) return 'tablet'
+  return 'desktop'
+}
+
+// Detect if user is on mobile
+const isMobile = () => {
+  if (typeof window === 'undefined') return false
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768
 }
 
 // Track page view
 export const trackPageView = (url, title) => {
   if (!isGAEnabled()) return
 
+  const deviceType = getDeviceType()
+  const isMobileDevice = isMobile()
+
   window.gtag('config', GA_MEASUREMENT_ID, {
     page_path: url,
     page_title: title,
-    page_location: window.location.href
+    page_location: window.location.href,
+    custom_map: {
+      dimension1: 'device_type',
+      dimension2: 'is_mobile'
+    }
+  })
+
+  // Track device type as custom dimension
+  window.gtag('event', 'page_view', {
+    device_type: deviceType,
+    is_mobile: isMobileDevice ? 'yes' : 'no',
+    screen_width: window.innerWidth,
+    screen_height: window.innerHeight
   })
 
   if (import.meta.env.DEV) {
-    console.log('GA Page View:', { url, title })
+    console.log('GA Page View:', { url, title, deviceType, isMobile: isMobileDevice })
   }
 }
 
@@ -80,14 +131,21 @@ export const trackPageView = (url, title) => {
 export const trackEvent = (eventName, parameters = {}) => {
   if (!isGAEnabled()) return
 
+  const deviceType = getDeviceType()
+  const isMobileDevice = isMobile()
+
   window.gtag('event', eventName, {
     ...parameters,
     page_location: window.location.href,
-    page_title: document.title
+    page_title: document.title,
+    device_type: deviceType,
+    is_mobile: isMobileDevice ? 'yes' : 'no',
+    screen_width: typeof window !== 'undefined' ? window.innerWidth : 0,
+    screen_height: typeof window !== 'undefined' ? window.innerHeight : 0
   })
 
   if (import.meta.env.DEV) {
-    console.log('GA Event:', eventName, parameters)
+    console.log('GA Event:', eventName, { ...parameters, deviceType, isMobile: isMobileDevice })
   }
 }
 
