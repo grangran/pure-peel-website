@@ -144,15 +144,11 @@ export const translations = {
             },
             {
               question: "Are your products 100% natural?",
-              answer: "Yes! Our dehydrated citrus slices are 100% natural with no preservatives, additives, or artificial ingredients. We use only fresh, high-quality citrus fruits and a natural dehydration process."
+              answer: "Yes! Our dehydrated citrus slices are 100% natural with no preservatives, additives, or artificial ingredients. We use only fresh, high-quality citrus fruits and a natural dehydration process. All our products are made in Canada, and we're proud to be a Canadian company supporting local agriculture and manufacturing."
             },
             {
               question: "Where are your products made?",
               answer: "All our products are made in Canada. We're proud to be a Canadian company supporting local agriculture and manufacturing."
-            },
-            {
-              question: "Do you use any preservatives or additives?",
-              answer: "No! Our products are 100% natural with no preservatives, additives, or artificial ingredients. Just pure, dehydrated citrus slices."
             },
             {
               question: "What types of citrus do you offer?",
@@ -233,16 +229,8 @@ export const translations = {
               answer: "Due to food safety regulations and hygiene concerns, we do not accept returns or exchanges on food products. However, we stand behind the quality of our products. If you receive a damaged, defective, or incorrect product, please contact us immediately at orders@purepeelco.com with your order number and photos of the issue. We will replace any product that is damaged, defective, or incorrect at no cost to you."
             },
             {
-              question: "Can I get a refund?",
-              answer: "Due to food safety regulations, we do not offer refunds for food products. However, if you receive a damaged, defective, or incorrect product, we will replace it at no cost to you. Please contact us immediately at orders@purepeelco.com within 48 hours of delivery with your order number and photos of the issue."
-            },
-            {
-              question: "Do I need to return the product for a refund?",
-              answer: "We do not accept returns or refunds for food products due to food safety regulations. However, if you receive a damaged, defective, or incorrect product, we will send a replacement at no cost to you. Please contact us at orders@purepeelco.com with your order number and photos."
-            },
-            {
-              question: "What if my order arrives damaged?",
-              answer: "If your order arrives damaged, please contact us immediately at orders@purepeelco.com within 48 hours of delivery with your order number and photos of the damage. We will send a replacement at no cost to you. Due to food safety regulations, we cannot accept returns of food products, but we will ensure you receive a replacement for any damaged items."
+              question: "Can I get a refund or return my order?",
+              answer: "Due to food safety regulations, we do not accept returns or offer refunds for food products. However, if you receive a damaged, defective, or incorrect product, we will send a replacement at no cost to you. Please contact us immediately at orders@purepeelco.com within 48 hours of delivery with your order number and photos of the issue. You do not need to return the original product - we'll send a replacement right away."
             }
           ]
         },
@@ -274,11 +262,7 @@ export const translations = {
           questions: [
             {
               question: "How do I contact customer service?",
-              answer: "You can reach us at:\n• Email: orders@purepeelco.com\n• Contact Form: Use the contact form on our website\n• Response Time: We typically respond within 24-48 hours during business days"
-            },
-            {
-              question: "What are your business hours?",
-              answer: "Our customer service team is available:\n• Monday - Friday: 9:00 AM - 5:00 PM EST\n• Saturday - Sunday: Closed\n• Response Time: We respond to emails within 24-48 hours during business days"
+              answer: "You can reach us at:\n• Email: orders@purepeelco.com\n• Contact Form: Use the contact form on our website\n\nOur customer service team is available Monday - Friday, 9:00 AM - 5:00 PM EST (Saturday - Sunday: Closed). We typically respond to emails within 24-48 hours during business days."
             },
             {
               question: "Do you have a physical store?",
@@ -293,16 +277,8 @@ export const translations = {
               answer: "Yes! We offer wholesale pricing for businesses, restaurants, and bulk orders. Contact us at orders@purepeelco.com to discuss your needs and receive a custom quote."
             },
             {
-              question: "Are your products organic?",
-              answer: "Yes! Our products are organic. We use certified organic citrus fruits and follow organic processing methods. Our dehydrated citrus slices are 100% organic, natural, and contain no preservatives or additives."
-            },
-            {
               question: "Do you ship internationally?",
               answer: "Currently, we ship to Canada and the United States. For international shipping inquiries, please contact us at orders@purepeelco.com."
-            },
-            {
-              question: "What makes your products different?",
-              answer: "Our products are:\n• Made in Canada - Supporting local agriculture\n• 100% Natural - No preservatives or additives\n• Premium Quality - Carefully selected and dehydrated citrus\n• Versatile - Perfect for cocktails, tea, baking, and more\n• Beautiful - Great for presentation and garnishes"
             }
           ]
         }
@@ -1034,15 +1010,11 @@ export const translations = {
             },
             {
               question: "Vos produits sont-ils 100% naturels?",
-              answer: "Oui! Nos tranches d'agrumes déshydratées sont 100% naturelles, sans conservateurs, additifs ou ingrédients artificiels. Nous utilisons uniquement des fruits d'agrumes frais et de haute qualité et un processus de déshydratation naturel."
+              answer: "Oui! Nos tranches d'agrumes déshydratées sont 100% naturelles, sans conservateurs, additifs ou ingrédients artificiels. Nous utilisons uniquement des fruits d'agrumes frais et de haute qualité et un processus de déshydratation naturel. Tous nos produits sont fabriqués au Canada, et nous sommes fiers d'être une entreprise canadienne qui soutient l'agriculture et la fabrication locales."
             },
             {
               question: "Où sont fabriqués vos produits?",
               answer: "Tous nos produits sont fabriqués au Canada. Nous sommes fiers d'être une entreprise canadienne qui soutient l'agriculture et la fabrication locales."
-            },
-            {
-              question: "Utilisez-vous des conservateurs ou des additifs?",
-              answer: "Non! Nos produits sont 100% naturels, sans conservateurs, additifs ou ingrédients artificiels. Juste des tranches d'agrumes déshydratées pures."
             },
             {
               question: "Quels types d'agrumes offrez-vous?",
@@ -1123,16 +1095,8 @@ export const translations = {
               answer: "En raison des réglementations sur la salubrité des aliments et des préoccupations d'hygiène, nous n'acceptons pas les retours ou les échanges sur les produits alimentaires. Cependant, nous garantissons la qualité de nos produits. Si vous recevez un produit endommagé, défectueux ou incorrect, veuillez nous contacter immédiatement à orders@purepeelco.com avec votre numéro de commande et des photos du problème. Nous remplacerons tout produit endommagé, défectueux ou incorrect sans frais pour vous."
             },
             {
-              question: "Puis-je obtenir un remboursement?",
-              answer: "En raison des réglementations sur la salubrité des aliments, nous n'offrons pas de remboursements pour les produits alimentaires. Cependant, si vous recevez un produit endommagé, défectueux ou incorrect, nous le remplacerons sans frais pour vous. Veuillez nous contacter immédiatement à orders@purepeelco.com dans les 48 heures suivant la livraison avec votre numéro de commande et des photos du problème."
-            },
-            {
-              question: "Dois-je retourner le produit pour un remboursement?",
-              answer: "Nous n'acceptons pas les retours ou les remboursements pour les produits alimentaires en raison des réglementations sur la salubrité des aliments. Cependant, si vous recevez un produit endommagé, défectueux ou incorrect, nous enverrons un remplacement sans frais pour vous. Veuillez nous contacter à orders@purepeelco.com avec votre numéro de commande et des photos."
-            },
-            {
-              question: "Que faire si ma commande arrive endommagée?",
-              answer: "Si votre commande arrive endommagée, veuillez nous contacter immédiatement à orders@purepeelco.com dans les 48 heures suivant la livraison avec votre numéro de commande et des photos des dommages. Nous enverrons un remplacement sans frais pour vous. En raison des réglementations sur la salubrité des aliments, nous ne pouvons pas accepter les retours de produits alimentaires, mais nous nous assurerons que vous receviez un remplacement pour tout article endommagé."
+              question: "Puis-je obtenir un remboursement ou retourner ma commande?",
+              answer: "En raison des réglementations sur la salubrité des aliments, nous n'acceptons pas les retours ni n'offrons de remboursements pour les produits alimentaires. Cependant, si vous recevez un produit endommagé, défectueux ou incorrect, nous enverrons un remplacement sans frais pour vous. Veuillez nous contacter immédiatement à orders@purepeelco.com dans les 48 heures suivant la livraison avec votre numéro de commande et des photos du problème. Vous n'avez pas besoin de retourner le produit original - nous enverrons un remplacement immédiatement."
             }
           ]
         },
@@ -1164,11 +1128,7 @@ export const translations = {
           questions: [
             {
               question: "Comment contacter le service client?",
-              answer: "Vous pouvez nous joindre à:\n• Courriel: orders@purepeelco.com\n• Formulaire de Contact: Utilisez le formulaire de contact sur notre site Web\n• Temps de Réponse: Nous répondons généralement dans les 24-48 heures pendant les jours ouvrables"
-            },
-            {
-              question: "Quels sont vos heures d'ouverture?",
-              answer: "Notre équipe de service client est disponible:\n• Lundi - Vendredi: 9h00 - 17h00 HNE\n• Samedi - Dimanche: Fermé\n• Temps de Réponse: Nous répondons aux courriels dans les 24-48 heures pendant les jours ouvrables"
+              answer: "Vous pouvez nous joindre à:\n• Courriel: orders@purepeelco.com\n• Formulaire de Contact: Utilisez le formulaire de contact sur notre site Web\n\nNotre équipe de service client est disponible Lundi - Vendredi, 9h00 - 17h00 HNE (Samedi - Dimanche: Fermé). Nous répondons généralement aux courriels dans les 24-48 heures pendant les jours ouvrables."
             },
             {
               question: "Avez-vous un magasin physique?",
@@ -1183,16 +1143,8 @@ export const translations = {
               answer: "Oui! Nous offrons des prix de gros pour les entreprises, les restaurants et les commandes en gros. Contactez-nous à orders@purepeelco.com pour discuter de vos besoins et recevoir un devis personnalisé."
             },
             {
-              question: "Vos produits sont-ils biologiques?",
-              answer: "Oui! Nos produits sont biologiques. Nous utilisons des fruits d'agrumes certifiés biologiques et suivons des méthodes de transformation biologiques. Nos tranches d'agrumes déshydratées sont 100% biologiques, naturelles et ne contiennent aucun conservateur ni additif."
-            },
-            {
               question: "Livrez-vous à l'international?",
               answer: "Actuellement, nous livrons au Canada et aux États-Unis. Pour les demandes d'expédition internationale, veuillez nous contacter à orders@purepeelco.com."
-            },
-            {
-              question: "Qu'est-ce qui rend vos produits différents?",
-              answer: "Nos produits sont:\n• Fabriqués au Canada - Soutenant l'agriculture locale\n• 100% Naturels - Sans conservateurs ni additifs\n• Qualité Premium - Agrumes soigneusement sélectionnés et déshydratés\n• Polyvalents - Parfaits pour les cocktails, le thé, la pâtisserie et plus encore\n• Beaux - Parfaits pour la présentation et les garnitures"
             }
           ]
         }
