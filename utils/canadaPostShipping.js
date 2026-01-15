@@ -233,7 +233,7 @@ function getServiceCode(shippingMethod, isUS = false) {
 /**
  * Build XML for Canada Post shipment creation
  */
-function buildShipmentXML({ customerNumber, shippingName, shippingAddress, weight, dimensions, serviceCode, isUS, orderId }) {
+function buildShipmentXML({ customerNumber, contractNumber, shippingName, shippingAddress, weight, dimensions, serviceCode, isUS, orderId }) {
   // Use environment variables or defaults - you can use generic values if preferred
   const originPostalCode = (process.env.SHIPPING_ORIGIN_POSTAL_CODE || 'M5H 2N2').replace(/\s+/g, '')
   const originCity = process.env.SHIPPING_ORIGIN_CITY || 'Toronto'
