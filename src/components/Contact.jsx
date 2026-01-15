@@ -20,11 +20,19 @@ export default function ContactForm() {
   const [formRef, isFormVisible] = useScrollReveal({ threshold: 0.1, delay: 200 })
   const { language } = useLanguage()
 
-  // Handle URL parameters for pre-filling form (e.g., from bulk inquiry button)
+  // Handle URL parameters for pre-filling form (e.g., from bulk inquiry button or email links)
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const subject = urlParams.get('subject')
     const message = urlParams.get('message')
+    const inquiryType = urlParams.get('inquiryType')
+    
+    if (inquiryType) {
+      setFormData(prev => ({
+        ...prev,
+        inquiryType: inquiryType
+      }))
+    }
     
     if (message) {
       setFormData(prev => ({
@@ -34,7 +42,7 @@ export default function ContactForm() {
     }
     
     // Clean up URL parameters after reading them
-    if (subject || message) {
+    if (subject || message || inquiryType) {
       const newUrl = window.location.pathname
       window.history.replaceState({}, '', newUrl)
     }

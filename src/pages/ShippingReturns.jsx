@@ -208,7 +208,7 @@ export default function ShippingReturns() {
           <div>
             <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'shipping.internationalShipping.title')}</h3>
             <p className="text-sm md:text-base text-gray-700 mb-3">
-              {getTranslation(language, 'shipping.internationalShipping.text1')} <a href="mailto:shipping@purepeelco.com" className="text-amber-600 hover:text-amber-700">shipping@purepeelco.com</a>.
+              {getTranslation(language, 'shipping.internationalShipping.text1')} <a href="/contact?inquiryType=shipping" className="text-amber-600 hover:text-amber-700">shipping@purepeelco.com</a>.
             </p>
             <p className="text-sm md:text-base text-gray-700">
               {getTranslation(language, 'shipping.internationalShipping.text2')}
@@ -242,7 +242,7 @@ export default function ShippingReturns() {
             </p>
             <ol className="list-decimal list-inside space-y-2 md:space-y-3 text-xs md:text-sm text-gray-700 ml-2 md:ml-4">
               <li>
-                <strong>{getTranslation(language, 'shipping.returns.howWeResolve.step1')}</strong> <a href="mailto:support@purepeelco.com" className="text-amber-600 hover:text-amber-700">support@purepeelco.com</a> {getTranslation(language, 'shipping.returns.howWeResolve.step1Text')}
+                <strong>{getTranslation(language, 'shipping.returns.howWeResolve.step1')}</strong> <a href="/contact?inquiryType=support" className="text-amber-600 hover:text-amber-700">support@purepeelco.com</a> {getTranslation(language, 'shipping.returns.howWeResolve.step1Text')}
               </li>
               <li>
                 <strong>{getTranslation(language, 'shipping.returns.howWeResolve.step2')}</strong>
@@ -305,7 +305,7 @@ export default function ShippingReturns() {
             </p>
             <div className="bg-gray-50 rounded-lg p-3 md:p-4">
               <p className="text-sm md:text-base text-gray-700 mb-2">
-                <strong>{getTranslation(language, 'shipping.returns.needHelp.email')}</strong> <a href="mailto:support@purepeelco.com" className="text-amber-600 hover:text-amber-700">support@purepeelco.com</a>
+                <strong>{getTranslation(language, 'shipping.returns.needHelp.email')}</strong> <a href="/contact?inquiryType=support" className="text-amber-600 hover:text-amber-700">support@purepeelco.com</a>
               </p>
               <p className="text-xs md:text-sm text-gray-700">
                 {getTranslation(language, 'shipping.returns.needHelp.text2')}
@@ -355,7 +355,7 @@ export default function ShippingReturns() {
               <li>{getTranslation(language, 'shipping.additionalInfo.specialOrders.item3')}</li>
             </ul>
             <p className="text-sm md:text-base text-gray-700 mt-4">
-              {getTranslation(language, 'shipping.additionalInfo.specialOrders.text2')} <a href="mailto:orders@purepeelco.com" className="text-amber-600 hover:text-amber-700">orders@purepeelco.com</a> {getTranslation(language, 'shipping.additionalInfo.specialOrders.text3')}
+              {getTranslation(language, 'shipping.additionalInfo.specialOrders.text2')} <a href="/contact?inquiryType=bulk" className="text-amber-600 hover:text-amber-700">orders@purepeelco.com</a> {getTranslation(language, 'shipping.additionalInfo.specialOrders.text3')}
             </p>
           </div>
         </div>
@@ -368,16 +368,16 @@ export default function ShippingReturns() {
           </p>
           <div className="bg-gray-50 rounded-lg p-3 md:p-4 space-y-2">
             <p className="text-sm md:text-base text-gray-700">
-              <strong>{getTranslation(language, 'shipping.contact.shippingInquiries')}</strong> <a href="mailto:shipping@purepeelco.com" className="text-amber-600 hover:text-amber-700">shipping@purepeelco.com</a>
+              <strong>{getTranslation(language, 'shipping.contact.shippingInquiries')}</strong> <a href="/contact?inquiryType=shipping" className="text-amber-600 hover:text-amber-700">shipping@purepeelco.com</a>
             </p>
             <p className="text-sm md:text-base text-gray-700">
-              <strong>{getTranslation(language, 'shipping.contact.productIssues')}</strong> <a href="mailto:support@purepeelco.com" className="text-amber-600 hover:text-amber-700">support@purepeelco.com</a>
+              <strong>{getTranslation(language, 'shipping.contact.productIssues')}</strong> <a href="/contact?inquiryType=support" className="text-amber-600 hover:text-amber-700">support@purepeelco.com</a>
             </p>
             <p className="text-sm md:text-base text-gray-700">
-              <strong>{getTranslation(language, 'shipping.contact.generalInquiries')}</strong> <a href="mailto:info@purepeelco.com" className="text-amber-600 hover:text-amber-700">info@purepeelco.com</a>
+              <strong>{getTranslation(language, 'shipping.contact.generalInquiries')}</strong> <a href="/contact?inquiryType=general" className="text-amber-600 hover:text-amber-700">info@purepeelco.com</a>
             </p>
             <p className="text-sm md:text-base text-gray-700">
-              <strong>{getTranslation(language, 'shipping.contact.bulkOrders')}</strong> <a href="mailto:orders@purepeelco.com" className="text-amber-600 hover:text-amber-700">orders@purepeelco.com</a>
+              <strong>{getTranslation(language, 'shipping.contact.bulkOrders')}</strong> <a href="/contact?inquiryType=bulk" className="text-amber-600 hover:text-amber-700">orders@purepeelco.com</a>
             </p>
             <p className="text-xs md:text-sm text-gray-700 mt-3">
               <strong>{getTranslation(language, 'shipping.contact.responseTime')}</strong>

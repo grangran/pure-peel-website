@@ -384,7 +384,7 @@ export default function OrderTracking() {
             <div className="border-t border-gray-200 pt-6">
               <p className="text-sm text-gray-600 text-center">
                 {getTranslation(language, 'orderTracking.questions')}{' '}
-                <a href="mailto:support@purepeelco.com" className="text-amber-600 hover:text-amber-700">
+                <a href="/contact?inquiryType=support" className="text-amber-600 hover:text-amber-700">
                   support@purepeelco.com
                 </a>
               </p>

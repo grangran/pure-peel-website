@@ -162,7 +162,7 @@ export default function PrivacyPolicy() {
             <p className="text-sm md:text-base text-gray-700 mb-3">{getTranslation(language, 'privacy.privacyOfficer.text1')}</p>
             <div className="bg-gray-50 rounded-lg p-3 md:p-4 space-y-2 mb-3">
               <p className="text-sm md:text-base text-gray-700">
-                <strong>{getTranslation(language, 'privacy.privacyOfficer.email')}</strong> <a href="mailto:privacy@purepeelco.com" className="text-amber-600 hover:text-amber-700">privacy@purepeelco.com</a>
+                <strong>{getTranslation(language, 'privacy.privacyOfficer.email')}</strong> <a href="/contact?inquiryType=general" className="text-amber-600 hover:text-amber-700">privacy@purepeelco.com</a>
               </p>
               <p className="text-sm md:text-base text-gray-700">
                 <strong>{getTranslation(language, 'privacy.privacyOfficer.address')}</strong> {getTranslation(language, 'privacy.privacyOfficer.addressText')}
@@ -236,7 +236,7 @@ export default function PrivacyPolicy() {
             </p>
             <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 ml-2 md:ml-4">
               <li>{getTranslation(language, 'privacy.marketingCommunications.item1')}</li>
-              <li>{getTranslation(language, 'privacy.marketingCommunications.item2')} <a href="mailto:privacy@purepeelco.com" className="text-amber-600 hover:text-amber-700">privacy@purepeelco.com</a></li>
+              <li>{getTranslation(language, 'privacy.marketingCommunications.item2')} <a href="/contact?inquiryType=general" className="text-amber-600 hover:text-amber-700">privacy@purepeelco.com</a></li>
             </ul>
             <p className="text-sm md:text-base text-gray-700 mt-4">
               {getTranslation(language, 'privacy.marketingCommunications.text2')}
@@ -304,10 +304,10 @@ export default function PrivacyPolicy() {
             <p className="text-sm md:text-base text-gray-700 mb-3">{getTranslation(language, 'privacy.contact.text')}</p>
             <div className="bg-gray-50 rounded-lg p-3 md:p-4 space-y-2">
               <p className="text-sm md:text-base text-gray-700">
-                <strong>{getTranslation(language, 'privacy.contact.privacyEmail')}</strong> <a href="mailto:privacy@purepeelco.com" className="text-amber-600 hover:text-amber-700">privacy@purepeelco.com</a>
+                <strong>{getTranslation(language, 'privacy.contact.privacyEmail')}</strong> <a href="/contact?inquiryType=general" className="text-amber-600 hover:text-amber-700">privacy@purepeelco.com</a>
               </p>
               <p className="text-sm md:text-base text-gray-700">
-                <strong>{getTranslation(language, 'privacy.contact.generalEmail')}</strong> <a href="mailto:info@purepeelco.com" className="text-amber-600 hover:text-amber-700">info@purepeelco.com</a>
+                <strong>{getTranslation(language, 'privacy.contact.generalEmail')}</strong> <a href="/contact?inquiryType=general" className="text-amber-600 hover:text-amber-700">info@purepeelco.com</a>
               </p>
               <p className="text-sm md:text-base text-gray-700">
                 <strong>{getTranslation(language, 'privacy.contact.address')}</strong> {getTranslation(language, 'privacy.contact.addressText')}
