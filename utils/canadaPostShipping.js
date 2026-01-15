@@ -58,6 +58,13 @@ export async function createCanadaPostLabel(order) {
     const serviceCode = getServiceCode(shippingMethod, isUS)
 
     // Build XML for shipment creation
+    console.log('📋 Contract number check:', {
+      contractNumberSet: !!canadaPostContractNumber,
+      contractNumber: canadaPostContractNumber,
+      customerNumber: canadaPostCustomerNumber,
+      willIncludeContractId: !!canadaPostContractNumber
+    })
+    
     const shipmentXml = buildShipmentXML({
       customerNumber: canadaPostCustomerNumber,
       contractNumber: canadaPostContractNumber,
@@ -69,6 +76,17 @@ export async function createCanadaPostLabel(order) {
       isUS,
       orderId: order.id
     })
+    
+    // Log if contract-id is in XML for debugging
+    if (shipmentXml.includes('<contract-id>')) {
+      console.log('⚠️ WARNING: contract-id is included in XML!')
+      const contractIdMatch = shipmentXml.match(/<contract-id>(.*?)<\/contract-id>/)
+      if (contractIdMatch) {
+        console.log('   Contract ID value:', contractIdMatch[1])
+      }
+    } else {
+      console.log('✅ contract-id is NOT included in XML (as expected)')
+    }
 
     // Canada Post Shipping API endpoint
     // Format: /rs/{mailed by customer}/{mobo}/shipment
@@ -347,7 +365,7 @@ function buildShipmentXML({ customerNumber, contractNumber, shippingName, shippi
     <settlement-info>
       <paid-by-customer>${customerNumber}</paid-by-customer>
       ${contractNumber ? `<contract-id>${contractNumber}</contract-id>` : ''}
-      <intended-method-of-payment>Account</intended-method-of-payment>
+      <intended-method-of-payment>${contractNumber ? 'Account' : 'CreditCard'}</intended-method-of-payment>
     </settlement-info>
   </delivery-spec>
 </shipment>`
