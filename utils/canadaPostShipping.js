@@ -105,13 +105,16 @@ export async function createCanadaPostLabel(order) {
         // Enhanced error logging for 403 errors
         if (response.status === 403) {
           console.error('🚫 Authorization failed (403). Possible causes:')
-          console.error('   1. Account not activated for production API access')
-          console.error('   2. Account does not have permission for shipment creation')
-          console.error('   3. Customer number does not have shipping API access')
+          console.error('   1. Customer number in URL does not match your account')
+          console.error('      Current customer number:', canadaPostCustomerNumber)
+          console.error('      Check your Canada Post developer portal for the correct customer number')
+          console.error('   2. Account not activated for production API access')
+          console.error('   3. Account does not have permission for shipment creation')
           console.error('   4. Wrong endpoint URL format')
           console.error('   5. Service code or options not enabled in your contract')
           console.error('   Full error:', errorText)
           console.error('   Contact Canada Post support: 1-866-511-0546')
+          console.error('   Update CANADA_POST_CUSTOMER_NUMBER in Render with the correct value')
         }
         
         throw new Error(`Canada Post API error: ${response.status} - ${errorText.substring(0, 200)}`)
