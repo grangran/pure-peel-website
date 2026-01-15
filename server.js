@@ -1306,12 +1306,20 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
 
     // Real Canada Post API integration (supports both Canada and US)
     try {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'server.js:1308',message:'Canada Post API request - credentials check',data:{usernameSet:!!canadaPostUsername,usernamePrefix:canadaPostUsername?.substring(0,4)||'NONE',passwordSet:!!canadaPostPassword,passwordLength:canadaPostPassword?.length||0,customerNumber:canadaPostCustomerNumber,useProduction:process.env.CANADA_POST_USE_PRODUCTION,envUsername:process.env.CANADA_POST_USERNAME?.substring(0,4)||'NONE',envPasswordSet:!!process.env.CANADA_POST_PASSWORD},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
+      
       const auth = Buffer.from(`${canadaPostUsername}:${canadaPostPassword}`).toString('base64')
       
       // Use development/sandbox endpoint for testing
       const apiUrl = process.env.CANADA_POST_USE_PRODUCTION === 'true'
         ? 'https://soa-gw.canadapost.ca/rs/ship/price'
         : 'https://ct.soa-gw.canadapost.ca/rs/ship/price'
+      
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'server.js:1315',message:'Canada Post API request - endpoint and auth',data:{apiUrl,useProduction:process.env.CANADA_POST_USE_PRODUCTION==='true',authHeaderPrefix:auth.substring(0,10)||'NONE',authLength:auth.length,customerNumberInXml:canadaPostCustomerNumber},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
 
       // Build XML based on destination country
       let destinationXml
@@ -1343,12 +1351,20 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
     ${destinationXml}
   </destination>
 </mailing-scenario>`
+      
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'server.js:1345',message:'Canada Post API request - XML body',data:{xmlBodyLength:xmlBody.length,xmlContainsCustomerNumber:xmlBody.includes(canadaPostCustomerNumber),customerNumberInXml:canadaPostCustomerNumber,originPostalCode:origin.postalCode.replace(/\s+/g,''),destinationPostalCode:destination.postalCode.replace(/\s+/g,''),country},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+      // #endregion
 
       // Add timeout to Canada Post API call (20 seconds)
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), 20000)
       
       try {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'server.js:1352',message:'Canada Post API request - before fetch',data:{apiUrl,method:'POST',hasAuthHeader:true,authHeaderPrefix:auth.substring(0,10)||'NONE',contentType:'application/vnd.cpc.ship.rate-v4+xml',xmlBodyLength:xmlBody.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+        // #endregion
+        
         const response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
@@ -1361,9 +1377,18 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
         })
         
         clearTimeout(timeoutId)
+        
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'server.js:1365',message:'Canada Post API response received',data:{status:response.status,statusText:response.statusText,ok:response.ok,headers:Object.fromEntries(response.headers.entries())},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+        // #endregion
 
         if (!response.ok) {
           const errorText = await response.text()
+          
+          // #region agent log
+          fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'server.js:1368',message:'Canada Post API error response',data:{status:response.status,errorText:errorText.substring(0,500),errorTextLength:errorText.length,is401:response.status===401,usernamePrefix:canadaPostUsername?.substring(0,4)||'NONE',customerNumber:canadaPostCustomerNumber,apiUrl},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+          // #endregion
+          
           console.error('❌ Canada Post API error:', response.status, errorText)
           
           // Enhanced error logging for 401 errors
