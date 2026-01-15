@@ -97,7 +97,7 @@ export const translations = {
       sendMessage: "Send Message",
       sending: "Sending...",
       success: "✓ Message sent successfully! We'll get back to you soon.",
-      error: "✗ Something went wrong. Please try again or email us directly at purepeel11@gmail.com"
+      error: "✗ Something went wrong. Please try again or email us directly at info@purepeelco.com"
     },
     faq: {
       title: "Frequently Asked Questions",
@@ -196,11 +196,11 @@ export const translations = {
             },
             {
               question: "Can I modify or cancel my order?",
-              answer: "If you need to modify or cancel your order, please contact us immediately at purepeel11@gmail.com. We'll do our best to accommodate your request if your order hasn't shipped yet."
+              answer: "If you need to modify or cancel your order, please contact us immediately at orders@purepeelco.com. We'll do our best to accommodate your request if your order hasn't shipped yet."
             },
             {
               question: "Do you offer bulk pricing?",
-              answer: "Yes! We offer special pricing for bulk orders (10+ units). Contact us at purepeel11@gmail.com to discuss your bulk order needs and receive a custom quote."
+              answer: "Yes! We offer special pricing for bulk orders (10+ units). Contact us at orders@purepeelco.com to discuss your bulk order needs and receive a custom quote."
             },
             {
               question: "Can I add a gift message to my order?",
@@ -214,11 +214,11 @@ export const translations = {
           questions: [
             {
               question: "What is your return policy?",
-              answer: "Due to food safety regulations and hygiene concerns, we do not accept returns or exchanges on food products. However, we stand behind the quality of our products. If you receive a damaged, defective, or incorrect product, please contact us immediately at purepeel11@gmail.com with your order number and photos of the issue. We will replace any product that is damaged, defective, or incorrect at no cost to you."
+              answer: "Due to food safety regulations and hygiene concerns, we do not accept returns or exchanges on food products. However, we stand behind the quality of our products. If you receive a damaged, defective, or incorrect product, please contact us immediately at support@purepeelco.com with your order number and photos of the issue. We will replace any product that is damaged, defective, or incorrect at no cost to you."
             },
             {
               question: "Can I get a refund or return my order?",
-              answer: "Due to food safety regulations, we do not accept returns or offer refunds for food products. However, if you receive a damaged, defective, or incorrect product, we will send a replacement at no cost to you. Please contact us immediately at purepeel11@gmail.com within 48 hours of delivery with your order number and photos of the issue. You do not need to return the original product - we'll send a replacement right away."
+              answer: "Due to food safety regulations, we do not accept returns or offer refunds for food products. However, if you receive a damaged, defective, or incorrect product, we will send a replacement at no cost to you. Please contact us immediately at support@purepeelco.com within 48 hours of delivery with your order number and photos of the issue. You do not need to return the original product - we'll send a replacement right away."
             }
           ]
         },
@@ -250,7 +250,7 @@ export const translations = {
           questions: [
             {
               question: "How do I contact customer service?",
-              answer: "You can reach us at:\n• Email: purepeel11@gmail.com\n• Contact Form: Use the contact form on our website\n\nOur customer service team is available 7 days a week, Monday - Sunday, 9:00 AM - 5:00 PM EST. We typically respond to emails within 24-48 hours."
+              answer: "You can reach us at:\n• General Inquiries: info@purepeelco.com\n• Product Issues & Support: support@purepeelco.com\n• Shipping Inquiries: shipping@purepeelco.com\n• Bulk Orders: orders@purepeelco.com\n• Contact Form: Use the contact form on our website\n\nOur customer service team is available 7 days a week, Monday - Sunday, 9:00 AM - 5:00 PM EST. We typically respond to emails within 24-48 hours."
             },
             {
               question: "Do you have a physical store?",
@@ -262,11 +262,11 @@ export const translations = {
             },
             {
               question: "Do you offer wholesale pricing?",
-              answer: "Yes! We offer wholesale pricing for businesses, restaurants, and bulk orders. Contact us at purepeel11@gmail.com to discuss your needs and receive a custom quote."
+              answer: "Yes! We offer wholesale pricing for businesses, restaurants, and bulk orders. Contact us at orders@purepeelco.com to discuss your needs and receive a custom quote."
             },
             {
               question: "Do you ship internationally?",
-              answer: "Currently, we ship to Canada and the United States. For international shipping inquiries, please contact us at purepeel11@gmail.com."
+              answer: "Currently, we ship to Canada and the United States. For international shipping inquiries, please contact us at shipping@purepeelco.com."
             }
           ]
         }
@@ -679,7 +679,7 @@ export const translations = {
         title: "Returns and Refunds",
         text: "Due to food safety regulations and hygiene concerns, we do not accept returns or exchanges on food products. However, we stand behind the quality of our products:",
         noReturns: "Returns are not accepted for food safety reasons",
-        qualityGuarantee: "If you receive a damaged, defective, or incorrect product, contact us immediately at purepeel11@gmail.com with your order number and photos of the issue",
+        qualityGuarantee: "If you receive a damaged, defective, or incorrect product, contact us immediately at support@purepeelco.com with your order number and photos of the issue",
         replacement: "We will replace any product that is damaged, defective, or incorrect at no cost to you",
         refunds: "Refunds may be issued at our discretion for damaged, defective, or incorrect products",
         contact: "Please contact us within 48 hours of delivery if you experience any issues with your order"
@@ -950,7 +950,7 @@ export const translations = {
       sendMessage: "Envoyer le Message",
       sending: "Envoi en cours...",
       success: "✓ Message envoyé avec succès! Nous vous répondrons bientôt.",
-      error: "✗ Quelque chose s'est mal passé. Veuillez réessayer ou nous envoyer un courriel directement à purepeel11@gmail.com"
+      error: "✗ Quelque chose s'est mal passé. Veuillez réessayer ou nous envoyer un courriel directement à info@purepeelco.com"
     },
     faq: {
       title: "Questions Fréquemment Posées",
@@ -1049,11 +1049,11 @@ export const translations = {
             },
             {
               question: "Puis-je modifier ou annuler ma commande?",
-              answer: "Si vous devez modifier ou annuler votre commande, veuillez nous contacter immédiatement à purepeel11@gmail.com. Nous ferons de notre mieux pour répondre à votre demande si votre commande n'a pas encore été expédiée."
+              answer: "Si vous devez modifier ou annuler votre commande, veuillez nous contacter immédiatement à orders@purepeelco.com. Nous ferons de notre mieux pour répondre à votre demande si votre commande n'a pas encore été expédiée."
             },
             {
               question: "Offrez-vous des prix de gros?",
-              answer: "Oui! Nous offrons des prix spéciaux pour les commandes en gros (10+ unités). Contactez-nous à purepeel11@gmail.com pour discuter de vos besoins de commande en gros et recevoir un devis personnalisé."
+              answer: "Oui! Nous offrons des prix spéciaux pour les commandes en gros (10+ unités). Contactez-nous à orders@purepeelco.com pour discuter de vos besoins de commande en gros et recevoir un devis personnalisé."
             },
             {
               question: "Puis-je ajouter un message cadeau à ma commande?",
@@ -1067,11 +1067,11 @@ export const translations = {
           questions: [
             {
               question: "Quelle est votre politique de retour?",
-              answer: "En raison des réglementations sur la salubrité des aliments et des préoccupations d'hygiène, nous n'acceptons pas les retours ou les échanges sur les produits alimentaires. Cependant, nous garantissons la qualité de nos produits. Si vous recevez un produit endommagé, défectueux ou incorrect, veuillez nous contacter immédiatement à purepeel11@gmail.com avec votre numéro de commande et des photos du problème. Nous remplacerons tout produit endommagé, défectueux ou incorrect sans frais pour vous."
+              answer: "En raison des réglementations sur la salubrité des aliments et des préoccupations d'hygiène, nous n'acceptons pas les retours ou les échanges sur les produits alimentaires. Cependant, nous garantissons la qualité de nos produits. Si vous recevez un produit endommagé, défectueux ou incorrect, veuillez nous contacter immédiatement à support@purepeelco.com avec votre numéro de commande et des photos du problème. Nous remplacerons tout produit endommagé, défectueux ou incorrect sans frais pour vous."
             },
             {
               question: "Puis-je obtenir un remboursement ou retourner ma commande?",
-              answer: "En raison des réglementations sur la salubrité des aliments, nous n'acceptons pas les retours ni n'offrons de remboursements pour les produits alimentaires. Cependant, si vous recevez un produit endommagé, défectueux ou incorrect, nous enverrons un remplacement sans frais pour vous. Veuillez nous contacter immédiatement à purepeel11@gmail.com dans les 48 heures suivant la livraison avec votre numéro de commande et des photos du problème. Vous n'avez pas besoin de retourner le produit original - nous enverrons un remplacement immédiatement."
+              answer: "En raison des réglementations sur la salubrité des aliments, nous n'acceptons pas les retours ni n'offrons de remboursements pour les produits alimentaires. Cependant, si vous recevez un produit endommagé, défectueux ou incorrect, nous enverrons un remplacement sans frais pour vous. Veuillez nous contacter immédiatement à support@purepeelco.com dans les 48 heures suivant la livraison avec votre numéro de commande et des photos du problème. Vous n'avez pas besoin de retourner le produit original - nous enverrons un remplacement immédiatement."
             }
           ]
         },
@@ -1103,7 +1103,7 @@ export const translations = {
           questions: [
             {
               question: "Comment contacter le service client?",
-              answer: "Vous pouvez nous joindre à:\n• Courriel: purepeel11@gmail.com\n• Formulaire de Contact: Utilisez le formulaire de contact sur notre site Web\n\nNotre équipe de service client est disponible 7 jours par semaine, Lundi - Dimanche, 9h00 - 17h00 HNE. Nous répondons généralement aux courriels dans les 24-48 heures."
+              answer: "Vous pouvez nous joindre à:\n• Demandes générales: info@purepeelco.com\n• Problèmes de produits et support: support@purepeelco.com\n• Demandes d'expédition: shipping@purepeelco.com\n• Commandes en gros: orders@purepeelco.com\n• Formulaire de Contact: Utilisez le formulaire de contact sur notre site Web\n\nNotre équipe de service client est disponible 7 jours par semaine, Lundi - Dimanche, 9h00 - 17h00 HNE. Nous répondons généralement aux courriels dans les 24-48 heures."
             },
             {
               question: "Avez-vous un magasin physique?",
@@ -1115,11 +1115,11 @@ export const translations = {
             },
             {
               question: "Offrez-vous des prix de gros?",
-              answer: "Oui! Nous offrons des prix de gros pour les entreprises, les restaurants et les commandes en gros. Contactez-nous à purepeel11@gmail.com pour discuter de vos besoins et recevoir un devis personnalisé."
+              answer: "Oui! Nous offrons des prix de gros pour les entreprises, les restaurants et les commandes en gros. Contactez-nous à orders@purepeelco.com pour discuter de vos besoins et recevoir un devis personnalisé."
             },
             {
               question: "Livrez-vous à l'international?",
-              answer: "Actuellement, nous livrons au Canada et aux États-Unis. Pour les demandes d'expédition internationale, veuillez nous contacter à purepeel11@gmail.com."
+              answer: "Actuellement, nous livrons au Canada et aux États-Unis. Pour les demandes d'expédition internationale, veuillez nous contacter à shipping@purepeelco.com."
             }
           ]
         }
@@ -1596,7 +1596,7 @@ export const translations = {
         title: "Retours et Remboursements",
         text: "En raison des réglementations sur la salubrité des aliments et des préoccupations d'hygiène, nous n'acceptons pas les retours ou les échanges sur les produits alimentaires. Cependant, nous garantissons la qualité de nos produits :",
         noReturns: "Les retours ne sont pas acceptés pour des raisons de salubrité des aliments",
-        qualityGuarantee: "Si vous recevez un produit endommagé, défectueux ou incorrect, contactez-nous immédiatement à purepeel11@gmail.com avec votre numéro de commande et des photos du problème",
+        qualityGuarantee: "Si vous recevez un produit endommagé, défectueux ou incorrect, contactez-nous immédiatement à support@purepeelco.com avec votre numéro de commande et des photos du problème",
         replacement: "Nous remplacerons tout produit endommagé, défectueux ou incorrect sans frais pour vous",
         refunds: "Des remboursements peuvent être émis à notre discrétion pour les produits endommagés, défectueux ou incorrects",
         contact: "Veuillez nous contacter dans les 48 heures suivant la livraison si vous rencontrez des problèmes avec votre commande"
