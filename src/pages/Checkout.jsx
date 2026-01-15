@@ -760,8 +760,13 @@ export default function Checkout() {
       const response = await fetch(`${API_URL}/api/checkout-session/${sessionId}`)
       const session = await response.json()
 
-      if (session.payment_status === 'paid') {
-        // Get order number from saved order or generate one
+      // For free orders, payment_status might be 'no_payment_required' or 'unpaid'
+      const isFreeOrder = (session.amount_total || 0) === 0
+      const isPaidOrFree = session.payment_status === 'paid' || 
+                          (isFreeOrder && (session.payment_status === 'no_payment_required' || session.payment_status === 'unpaid'))
+      
+      if (isPaidOrFree) {
+        // Get order number from metadata (should match what we sent)
         const newOrderNumber = session.metadata?.order_id || `PP-${Date.now().toString().slice(-8)}`
         setOrderNumber(newOrderNumber)
         
