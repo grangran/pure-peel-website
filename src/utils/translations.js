@@ -128,7 +128,7 @@ export const translations = {
             },
             {
               question: "What's the difference between the sizes (Mini, Small, Medium, Large)?",
-              answer: "• Mini Bag (10 pcs): Perfect for trying our products or single servings\n• Small Bag (20 pcs): Great for personal use or small gatherings\n• Medium Bag (40 pcs): Ideal for regular use or medium-sized events\n• Large Bag (80 pcs): Best value for frequent use or larger gatherings\n• Clear Box: Premium presentation, perfect for gifts or display\n\nAll sizes contain the same high-quality dehydrated citrus slices, just different quantities."
+              answer: "All our sizes contain the same high-quality dehydrated citrus slices—the only difference is quantity. Choose the size that fits your needs:\n\n• Mini Bag (10 pcs): Sample size perfect for first-time customers or testing recipes. Great for 1-2 cocktails or a single tea session.\n\n• Small Bag (20 pcs): Personal use size ideal for home bartenders or tea enthusiasts. Perfect for 3-5 drinks or small dinner parties.\n\n• Medium Bag (40 pcs): Family size for regular use. Great for weekly meal prep, multiple cocktails, or medium gatherings of 6-10 people.\n\n• Large Bag (80 pcs): Best value for frequent users, restaurants, or large events. Ideal for catering, regular entertaining, or stocking up.\n\n• Clear Box: Premium gift-ready packaging with the same quality product. Perfect for special occasions, corporate gifts, or elegant displays."
             },
             {
               question: "Can I use these in cocktails?",
@@ -994,7 +994,7 @@ export const translations = {
             },
             {
               question: "Quelle est la différence entre les tailles (Mini, Petit, Moyen, Grand)?",
-              answer: "• Sac Mini (10 pcs): Parfait pour essayer nos produits ou pour des portions individuelles\n• Sac Petit (20 pcs): Idéal pour un usage personnel ou de petits rassemblements\n• Sac Moyen (40 pcs): Parfait pour un usage régulier ou des événements de taille moyenne\n• Sac Grand (80 pcs): Meilleure valeur pour un usage fréquent ou de plus grands rassemblements\n• Boîte Transparente: Présentation premium, parfaite pour les cadeaux ou l'affichage\n\nToutes les tailles contiennent les mêmes tranches d'agrumes déshydratées de haute qualité, juste des quantités différentes."
+              answer: "Toutes nos tailles contiennent les mêmes tranches d'agrumes déshydratées de haute qualité—la seule différence est la quantité. Choisissez la taille qui correspond à vos besoins :\n\n• Sac Mini (10 pcs): Taille d'échantillon parfaite pour les nouveaux clients ou tester des recettes. Idéal pour 1-2 cocktails ou une seule séance de thé.\n\n• Sac Petit (20 pcs): Taille personnelle idéale pour les barmen à domicile ou les amateurs de thé. Parfait pour 3-5 boissons ou de petits dîners.\n\n• Sac Moyen (40 pcs): Taille familiale pour un usage régulier. Idéal pour la préparation de repas hebdomadaire, plusieurs cocktails ou des rassemblements moyens de 6-10 personnes.\n\n• Sac Grand (80 pcs): Meilleure valeur pour les utilisateurs fréquents, les restaurants ou les grands événements. Idéal pour le traiteur, les divertissements réguliers ou le stockage.\n\n• Boîte Transparente: Emballage premium prêt pour cadeau avec le même produit de qualité. Parfait pour les occasions spéciales, les cadeaux d'entreprise ou les présentations élégantes."
             },
             {
               question: "Puis-je les utiliser dans des cocktails?",
