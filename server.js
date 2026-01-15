@@ -203,11 +203,31 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
             shipping: {
               name: fullSession.shipping_details?.name || fullSession.customer_details?.name || fullSession.metadata?.customer_name || 'N/A',
               address: (() => {
-                const addr = fullSession.shipping_details?.address || fullSession.shipping?.address || {}
-                // Log address structure for debugging
-                if (!addr.line1 && !addr.line_1) {
-                  console.error('⚠️ WARNING: Shipping address missing line1:', JSON.stringify(addr, null, 2))
+                // First try Stripe's shipping_details address
+                let addr = fullSession.shipping_details?.address || fullSession.shipping?.address || {}
+                
+                // If address is empty (common for free orders), use address from form metadata
+                if ((!addr.line1 && !addr.line_1) || Object.keys(addr).length === 0) {
+                  console.log('📋 Using shipping address from form metadata (Stripe address missing)')
+                  addr = {
+                    line1: fullSession.metadata?.shipping_address_line1 || '',
+                    line2: fullSession.metadata?.shipping_address_line2 || '',
+                    city: fullSession.metadata?.shipping_address_city || '',
+                    province: fullSession.metadata?.shipping_address_province || '',
+                    state: fullSession.metadata?.shipping_address_province || '',
+                    postal_code: fullSession.metadata?.shipping_address_postal || '',
+                    postalCode: fullSession.metadata?.shipping_address_postal || '',
+                    country: fullSession.metadata?.shipping_address_country || 'Canada'
+                  }
+                  
+                  // Log if we're using fallback address
+                  if (addr.line1) {
+                    console.log('✅ Using form address as fallback:', { city: addr.city, province: addr.province, postal: addr.postal_code })
+                  } else {
+                    console.error('⚠️ WARNING: Both Stripe and form addresses are missing!')
+                  }
                 }
+                
                 return addr
               })(),
               method: fullSession.shipping_cost?.display_name || fullSession.shipping_options?.[0]?.shipping_rate?.display_name || 'Standard Shipping'
@@ -220,17 +240,7 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
               total: (item.price.unit_amount * item.quantity) / 100
             })) || [],
             subtotal: (fullSession.amount_subtotal || 0) / 100,
-            // For free orders, shipping_cost might be 50 cents (to force address collection)
-            // Adjust it back to 0 for our records
-            shippingCost: (() => {
-              const shippingFromStripe = (fullSession.shipping_cost?.amount_total || 0) / 100
-              const orderTotal = (fullSession.amount_total || 0) / 100
-              // If total is 0 or very small (free order), and shipping is 0.50, set it to 0
-              if (orderTotal <= 0.50 && shippingFromStripe === 0.50) {
-                return 0
-              }
-              return shippingFromStripe
-            })(),
+            shippingCost: (fullSession.shipping_cost?.amount_total || 0) / 100,
             tax: (fullSession.total_details?.amount_tax || 0) / 100,
             total: (fullSession.amount_total || 0) / 100,
             currency: fullSession.currency?.toUpperCase() || 'CAD',
@@ -788,16 +798,22 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
         timezone: shippingInfo.timezone || 'America/Toronto', // Store customer timezone
         promo_code: promoCode || '',
         order_id: shippingInfo.order_id || `PP-${Date.now().toString().slice(-8)}`, // Use order_id from frontend or generate one
+        // Store shipping address from form as fallback (in case Stripe doesn't collect it for free orders)
+        shipping_address_line1: shippingInfo.address || '',
+        shipping_address_line2: shippingInfo.address2 || '',
+        shipping_address_city: shippingInfo.city || '',
+        shipping_address_province: shippingInfo.province || shippingInfo.state || '',
+        shipping_address_postal: shippingInfo.postalCode || '',
+        shipping_address_country: shippingInfo.country || 'Canada',
       },
       // Add shipping cost (finalShippingCostCents is already in cents, no need to multiply again)
       // Always provide a shipping option (even if $0) when shipping_address_collection is enabled
-      // For free orders, use minimum $0.50 to ensure address collection (Stripe minimum is $0.50 CAD)
-      // Note: Stripe may skip address collection for $0 shipping, so we use $0.50 minimum
+      // Note: For free orders, Stripe may not collect shipping address, so labels will need to be created manually
       shipping_options: [{
         shipping_rate_data: {
           type: 'fixed_amount',
           fixed_amount: {
-            amount: finalShippingCostCents > 0 ? finalShippingCostCents : 50, // Use 50 cents minimum for free orders to force address collection (Stripe minimum)
+            amount: finalShippingCostCents, // Can be 0 for free shipping
             currency: 'cad',
           },
           display_name: finalShippingCostCents > 0 
@@ -1053,17 +1069,7 @@ app.get('/api/checkout-session/:sessionId', async (req, res) => {
             total: (item.price.unit_amount * item.quantity) / 100
           })) || [],
           subtotal: (session.amount_subtotal || 0) / 100,
-          // For free orders, shipping_cost might be 50 cents (to force address collection)
-          // Adjust it back to 0 for our records
-          shippingCost: (() => {
-            const shippingFromStripe = (session.shipping_cost?.amount_total || 0) / 100
-            const orderTotal = (session.amount_total || 0) / 100
-            // If total is 0 or very small (free order), and shipping is 0.50, set it to 0
-            if (orderTotal <= 0.50 && shippingFromStripe === 0.50) {
-              return 0
-            }
-            return shippingFromStripe
-          })(),
+          shippingCost: (session.shipping_cost?.amount_total || 0) / 100,
           tax: (session.total_details?.amount_tax || 0) / 100,
           total: (session.amount_total || 0) / 100,
           currency: session.currency?.toUpperCase() || 'CAD',
