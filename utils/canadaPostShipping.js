@@ -21,6 +21,10 @@ export async function createCanadaPostLabel(order) {
   }
 
   try {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'canadaPostShipping.js:23',message:'Label creation - credentials check',data:{usernameSet:!!canadaPostUsername,usernamePrefix:canadaPostUsername?.substring(0,4)||'NONE',passwordSet:!!canadaPostPassword,passwordLength:canadaPostPassword?.length||0,customerNumber:canadaPostCustomerNumber,useProduction,orderId:order.id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+    // #endregion
+    
     // Extract shipping information
     const shippingAddress = order.shipping?.address || {}
     const shippingName = order.shipping?.name || order.customer?.name || 'Customer'
@@ -56,6 +60,10 @@ export async function createCanadaPostLabel(order) {
       : `https://ct.soa-gw.canadapost.ca/rs/${canadaPostCustomerNumber}/${mobo}/shipment`
 
     const auth = Buffer.from(`${canadaPostUsername}:${canadaPostPassword}`).toString('base64')
+    
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'canadaPostShipping.js:56',message:'Label creation - endpoint and auth',data:{apiUrl,useProduction,mobo,customerNumber:canadaPostCustomerNumber,authHeaderPrefix:auth.substring(0,10)||'NONE',authLength:auth.length,xmlLength:shipmentXml.length,xmlContainsCustomerNumber:shipmentXml.includes(canadaPostCustomerNumber)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+    // #endregion
 
     console.log('📦 Creating Canada Post shipping label for order:', order.id)
 
@@ -64,6 +72,10 @@ export async function createCanadaPostLabel(order) {
     const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout
 
     try {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'canadaPostShipping.js:67',message:'Label creation - before fetch',data:{apiUrl,method:'POST',hasAuthHeader:true,authHeaderPrefix:auth.substring(0,10)||'NONE',contentType:'application/vnd.cpc.shipment-v8+xml',xmlLength:shipmentXml.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+      // #endregion
+      
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -76,9 +88,18 @@ export async function createCanadaPostLabel(order) {
       })
 
       clearTimeout(timeoutId)
+      
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'canadaPostShipping.js:80',message:'Label creation - response received',data:{status:response.status,statusText:response.statusText,ok:response.ok},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+      // #endregion
 
       if (!response.ok) {
         const errorText = await response.text()
+        
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'canadaPostShipping.js:84',message:'Label creation - error response',data:{status:response.status,errorText:errorText.substring(0,500),errorTextLength:errorText.length,is401:response.status===401,usernamePrefix:canadaPostUsername?.substring(0,4)||'NONE',customerNumber:canadaPostCustomerNumber,apiUrl,mobo,useProduction},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
+        
         console.error('❌ Canada Post API error:', response.status, errorText)
         throw new Error(`Canada Post API error: ${response.status} - ${errorText.substring(0, 200)}`)
       }
