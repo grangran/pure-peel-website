@@ -793,12 +793,11 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       // Always provide a shipping option (even if $0) when shipping_address_collection is enabled
       // For free orders, use minimum $0.01 to ensure address collection, then we'll handle it
       // Note: Stripe may skip address collection for $0 shipping, so we use $0.01 minimum
-      const shippingAmountForStripe = finalShippingCostCents > 0 ? finalShippingCostCents : 1 // Use 1 cent minimum to force address collection
       shipping_options: [{
         shipping_rate_data: {
           type: 'fixed_amount',
           fixed_amount: {
-            amount: shippingAmountForStripe,
+            amount: finalShippingCostCents > 0 ? finalShippingCostCents : 1, // Use 1 cent minimum for free orders to force address collection
             currency: 'cad',
           },
           display_name: finalShippingCostCents > 0 
