@@ -1058,7 +1058,34 @@ app.get('/api/checkout-session/:sessionId', async (req, res) => {
           },
           shipping: {
             name: session.shipping_details?.name || session.metadata?.customer_name || 'N/A',
-            address: session.shipping_details?.address || {},
+            address: (() => {
+              // First try Stripe's shipping_details address
+              let addr = session.shipping_details?.address || {}
+              
+              // If address is empty (common for free orders), use address from form metadata
+              if ((!addr.line1 && !addr.line_1) || Object.keys(addr).length === 0) {
+                console.log('📋 Using shipping address from form metadata (Stripe address missing - checkout session)')
+                addr = {
+                  line1: session.metadata?.shipping_address_line1 || '',
+                  line2: session.metadata?.shipping_address_line2 || '',
+                  city: session.metadata?.shipping_address_city || '',
+                  province: session.metadata?.shipping_address_province || '',
+                  state: session.metadata?.shipping_address_province || '',
+                  postal_code: session.metadata?.shipping_address_postal || '',
+                  postalCode: session.metadata?.shipping_address_postal || '',
+                  country: session.metadata?.shipping_address_country || 'Canada'
+                }
+                
+                // Log if we're using fallback address
+                if (addr.line1) {
+                  console.log('✅ Using form address as fallback (checkout session):', { city: addr.city, province: addr.province, postal: addr.postal_code })
+                } else {
+                  console.error('⚠️ WARNING: Both Stripe and form addresses are missing (checkout session)!')
+                }
+              }
+              
+              return addr
+            })(),
             method: session.shipping_cost?.display_name || 'Standard Shipping'
           },
           items: session.line_items?.data?.map(item => ({
