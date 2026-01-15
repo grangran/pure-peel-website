@@ -254,7 +254,7 @@ export const translations = {
           questions: [
             {
               question: "How do I contact customer service?",
-              answer: "You can reach us at:\n• Email: orders@purepeelco.com\n• Contact Form: Use the contact form on our website\n\nOur customer service team is available Monday - Friday, 9:00 AM - 5:00 PM EST (Saturday - Sunday: Closed). We typically respond to emails within 24-48 hours during business days."
+              answer: "You can reach us at:\n• Email: orders@purepeelco.com\n• Contact Form: Use the contact form on our website\n\nOur customer service team is available 7 days a week, Monday - Sunday, 9:00 AM - 5:00 PM EST. We typically respond to emails within 24-48 hours."
             },
             {
               question: "Do you have a physical store?",
@@ -607,10 +607,9 @@ export const translations = {
         businessHours: {
           title: "Business Hours",
           text1: "Our customer service team is available to assist you:",
-          mondayFriday: "Monday - Friday:",
-          saturdaySunday: "Saturday - Sunday:",
-          closed: "Closed",
-          responseTime: "We respond to emails within 24-48 hours during business days."
+          mondaySunday: "Monday - Sunday:",
+          hours: "9:00 AM - 5:00 PM EST",
+          responseTime: "We respond to emails within 24-48 hours."
         },
         packaging: {
           title: "Packaging",
@@ -636,7 +635,7 @@ export const translations = {
         productIssues: "Product Issues & Support:",
         generalInquiries: "General Inquiries:",
         bulkOrders: "Bulk Orders:",
-        responseTime: "Response Time: We typically respond within 24-48 hours during business days (Monday-Friday, 9 AM - 5 PM EST)."
+        responseTime: "Response Time: We typically respond within 24-48 hours. Our customer service team is available 7 days a week, Monday - Sunday, 9:00 AM - 5:00 PM EST."
       }
     },
     terms: {
@@ -1112,7 +1111,7 @@ export const translations = {
           questions: [
             {
               question: "Comment contacter le service client?",
-              answer: "Vous pouvez nous joindre à:\n• Courriel: orders@purepeelco.com\n• Formulaire de Contact: Utilisez le formulaire de contact sur notre site Web\n\nNotre équipe de service client est disponible Lundi - Vendredi, 9h00 - 17h00 HNE (Samedi - Dimanche: Fermé). Nous répondons généralement aux courriels dans les 24-48 heures pendant les jours ouvrables."
+              answer: "Vous pouvez nous joindre à:\n• Courriel: orders@purepeelco.com\n• Formulaire de Contact: Utilisez le formulaire de contact sur notre site Web\n\nNotre équipe de service client est disponible 7 jours par semaine, Lundi - Dimanche, 9h00 - 17h00 HNE. Nous répondons généralement aux courriels dans les 24-48 heures."
             },
             {
               question: "Avez-vous un magasin physique?",
@@ -1558,7 +1557,7 @@ export const translations = {
         productIssues: "Problèmes de Produit et Support :",
         generalInquiries: "Demandes Générales :",
         bulkOrders: "Commandes en Gros :",
-        responseTime: "Temps de Réponse : Nous répondons généralement dans les 24 à 48 heures pendant les jours ouvrables (lundi-vendredi, 9 h - 17 h HNE)."
+        responseTime: "Temps de Réponse : Nous répondons généralement dans les 24 à 48 heures. Notre équipe de service client est disponible 7 jours par semaine, Lundi - Dimanche, 9h00 - 17h00 HNE."
       }
     },
     terms: {

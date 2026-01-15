@@ -325,8 +325,7 @@ export default function ShippingReturns() {
               {getTranslation(language, 'shipping.additionalInfo.businessHours.text1')}
             </p>
             <div className="bg-gray-50 rounded-lg p-3 md:p-4">
-              <p className="text-sm md:text-base text-gray-700"><strong>{getTranslation(language, 'shipping.additionalInfo.businessHours.mondayFriday')}</strong> 9:00 AM - 5:00 PM EST</p>
-              <p className="text-sm md:text-base text-gray-700 mt-2"><strong>{getTranslation(language, 'shipping.additionalInfo.businessHours.saturdaySunday')}</strong> {getTranslation(language, 'shipping.additionalInfo.businessHours.closed')}</p>
+              <p className="text-sm md:text-base text-gray-700"><strong>{getTranslation(language, 'shipping.additionalInfo.businessHours.mondaySunday')}</strong> {getTranslation(language, 'shipping.additionalInfo.businessHours.hours')}</p>
               <p className="text-xs md:text-sm text-gray-700 mt-2">{getTranslation(language, 'shipping.additionalInfo.businessHours.responseTime')}</p>
             </div>
           </div>
