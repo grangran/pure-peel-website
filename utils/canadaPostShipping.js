@@ -12,6 +12,7 @@ export async function createCanadaPostLabel(order) {
   const canadaPostUsername = process.env.CANADA_POST_USERNAME
   const canadaPostPassword = process.env.CANADA_POST_PASSWORD
   const canadaPostCustomerNumber = process.env.CANADA_POST_CUSTOMER_NUMBER || '0001238590'
+  const canadaPostContractNumber = process.env.CANADA_POST_CONTRACT_NUMBER || canadaPostCustomerNumber // Use contract number if set, otherwise use customer number
   const useProduction = process.env.CANADA_POST_USE_PRODUCTION === 'true'
 
   // Check if credentials are configured
@@ -59,6 +60,7 @@ export async function createCanadaPostLabel(order) {
     // Build XML for shipment creation
     const shipmentXml = buildShipmentXML({
       customerNumber: canadaPostCustomerNumber,
+      contractNumber: canadaPostContractNumber,
       shippingName,
       shippingAddress,
       weight,
@@ -344,7 +346,7 @@ function buildShipmentXML({ customerNumber, shippingName, shippingAddress, weigh
     </preferences>
     <settlement-info>
       <paid-by-customer>${customerNumber}</paid-by-customer>
-      <contract-id>${customerNumber}</contract-id>
+      ${contractNumber ? `<contract-id>${contractNumber}</contract-id>` : ''}
       <intended-method-of-payment>Account</intended-method-of-payment>
     </settlement-info>
   </delivery-spec>
