@@ -220,13 +220,13 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
               total: (item.price.unit_amount * item.quantity) / 100
             })) || [],
             subtotal: (fullSession.amount_subtotal || 0) / 100,
-            // For free orders, shipping_cost might be 1 cent (to force address collection)
+            // For free orders, shipping_cost might be 50 cents (to force address collection)
             // Adjust it back to 0 for our records
             shippingCost: (() => {
               const shippingFromStripe = (fullSession.shipping_cost?.amount_total || 0) / 100
               const orderTotal = (fullSession.amount_total || 0) / 100
-              // If total is 0 or very small (free order), and shipping is 0.01, set it to 0
-              if (orderTotal <= 0.01 && shippingFromStripe === 0.01) {
+              // If total is 0 or very small (free order), and shipping is 0.50, set it to 0
+              if (orderTotal <= 0.50 && shippingFromStripe === 0.50) {
                 return 0
               }
               return shippingFromStripe
@@ -791,13 +791,13 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       },
       // Add shipping cost (finalShippingCostCents is already in cents, no need to multiply again)
       // Always provide a shipping option (even if $0) when shipping_address_collection is enabled
-      // For free orders, use minimum $0.01 to ensure address collection, then we'll handle it
-      // Note: Stripe may skip address collection for $0 shipping, so we use $0.01 minimum
+      // For free orders, use minimum $0.50 to ensure address collection (Stripe minimum is $0.50 CAD)
+      // Note: Stripe may skip address collection for $0 shipping, so we use $0.50 minimum
       shipping_options: [{
         shipping_rate_data: {
           type: 'fixed_amount',
           fixed_amount: {
-            amount: finalShippingCostCents > 0 ? finalShippingCostCents : 1, // Use 1 cent minimum for free orders to force address collection
+            amount: finalShippingCostCents > 0 ? finalShippingCostCents : 50, // Use 50 cents minimum for free orders to force address collection (Stripe minimum)
             currency: 'cad',
           },
           display_name: finalShippingCostCents > 0 
@@ -1053,13 +1053,13 @@ app.get('/api/checkout-session/:sessionId', async (req, res) => {
             total: (item.price.unit_amount * item.quantity) / 100
           })) || [],
           subtotal: (session.amount_subtotal || 0) / 100,
-          // For free orders, shipping_cost might be 1 cent (to force address collection)
+          // For free orders, shipping_cost might be 50 cents (to force address collection)
           // Adjust it back to 0 for our records
           shippingCost: (() => {
             const shippingFromStripe = (session.shipping_cost?.amount_total || 0) / 100
             const orderTotal = (session.amount_total || 0) / 100
-            // If total is 0 or very small (free order), and shipping is 0.01, set it to 0
-            if (orderTotal <= 0.01 && shippingFromStripe === 0.01) {
+            // If total is 0 or very small (free order), and shipping is 0.50, set it to 0
+            if (orderTotal <= 0.50 && shippingFromStripe === 0.50) {
               return 0
             }
             return shippingFromStripe
