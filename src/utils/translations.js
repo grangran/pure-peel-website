@@ -165,7 +165,7 @@ export const translations = {
           questions: [
             {
               question: "How long does shipping take?",
-              answer: "Shipping times vary by service and destination:\n\nCanada:\n• Regular Parcel: 2-5 business days\n• Expedited Parcel: 1-3 business days\n• Xpresspost: Next business day\n\nUnited States:\n• Tracked Packet - USA: 4-7 business days\n• Xpresspost - USA: 2-3 business days\n• Priority Worldwide - USA: 1-2 business days\n\nShipping times are calculated from when your order ships, not when you place it. Orders placed before 2:00 PM EST (Monday-Thursday) are typically processed the same day. Orders placed Friday-Sunday are processed the following Monday. Prices are calculated at checkout based on your destination, package weight, and selected shipping method."
+              answer: "Shipping times vary by service and destination:\n\nCanada:\n• Regular Parcel: 2-5 business days\n• Expedited Parcel: 1-3 business days\n• Xpresspost: Next business day\n\nUnited States:\n• Tracked Packet - USA: 4-7 business days\n• Xpresspost - USA: 2-3 business days\n• Priority Worldwide - USA: 1-2 business days\n\nShipping times are calculated from when your order ships, not when you place it. Orders placed before 2:00 PM EST (Monday-Friday) are typically processed the same day. Orders placed Saturday-Sunday are processed the following Monday. Prices are calculated at checkout based on your destination, package weight, and selected shipping method."
             },
             {
               question: "Do you ship to the United States?",
@@ -177,7 +177,7 @@ export const translations = {
             },
             {
               question: "When will my order ship?",
-              answer: "Orders placed before 2:00 PM EST (Monday-Thursday) are typically processed the same day and shipped within 24 hours. Orders placed after 2:00 PM EST (Monday-Thursday) are processed the next business day. Orders placed Friday-Sunday are processed the following Monday. Once your order ships, you'll receive a shipping confirmation email with a tracking number."
+              answer: "Orders placed before 2:00 PM EST (Monday-Friday) are typically processed the same day and shipped within 24 hours. Orders placed after 2:00 PM EST (Monday-Friday) are processed the next business day. Orders placed Saturday-Sunday are processed the following Monday. Once your order ships, you'll receive a shipping confirmation email with a tracking number."
             },
             {
               question: "How can I track my order?",
@@ -516,10 +516,10 @@ export const translations = {
       },
       shippingTimes: {
         title: "Shipping Times",
-        text1: "Orders placed before 2:00 PM EST (Monday-Thursday) are typically processed the same day. Orders placed after 2:00 PM EST (Monday-Thursday) or on weekends are processed the next business day. Orders placed Friday-Sunday are processed the following Monday.",
+        text1: "Orders placed before 2:00 PM EST (Monday-Friday) are typically processed the same day. Orders placed after 2:00 PM EST (Monday-Friday) or on weekends are processed the next business day. Orders placed Saturday-Sunday are processed the following Monday.",
         processingSchedule: "Processing Schedule",
-        schedule1: "Orders placed Monday-Thursday before 2:00 PM EST: Processed within 24 hours",
-        schedule2: "Orders placed Friday-Sunday: Processed the following Monday",
+        schedule1: "Orders placed Monday-Friday before 2:00 PM EST: Processed within 24 hours",
+        schedule2: "Orders placed Saturday-Sunday: Processed the following Monday",
         schedule3: "Holiday orders: May experience additional processing delays",
         text2: "Shipping times are calculated from the date your order ships, not from the date you place your order. You will receive a shipping confirmation email with a tracking number once your order has been shipped. Delivery times vary by distance and destination - local deliveries are typically faster, while cross-country shipments may take longer.",
         note: "Note: Shipping times may be longer during peak seasons (holidays, special promotions) or due to weather conditions, postal service delays, or remote locations. Regular Parcel delivery times (2-5 business days) vary by distance. Expedited Parcel (1-3 business days) and Xpresspost (next business day) offer guaranteed delivery. We will notify you via email if there are any significant delays."
@@ -1027,7 +1027,7 @@ export const translations = {
           questions: [
             {
               question: "Combien de temps prend l'expédition?",
-              answer: "Les délais d'expédition varient selon le service et la destination:\n\nCanada:\n• Colis Régulier: 2-5 jours ouvrables\n• Colis Accéléré: 1-3 jours ouvrables\n• Poste Xpress: Le jour ouvrable suivant\n\nÉtats-Unis:\n• Colis Suivi - USA: 4-7 jours ouvrables\n• Poste Xpress - USA: 2-3 jours ouvrables\n• Priorité Mondiale - USA: 1-2 jours ouvrables\n\nLes délais d'expédition sont calculés à partir du moment où votre commande est expédiée, et non lorsque vous la passez. Les commandes passées avant 14h00 HNE (lundi-jeudi) sont généralement traitées le jour même. Les commandes passées vendredi-dimanche sont traitées le lundi suivant. Les prix sont calculés à la caisse en fonction de votre destination, du poids du colis et de la méthode d'expédition sélectionnée."
+              answer: "Les délais d'expédition varient selon le service et la destination:\n\nCanada:\n• Colis Régulier: 2-5 jours ouvrables\n• Colis Accéléré: 1-3 jours ouvrables\n• Poste Xpress: Le jour ouvrable suivant\n\nÉtats-Unis:\n• Colis Suivi - USA: 4-7 jours ouvrables\n• Poste Xpress - USA: 2-3 jours ouvrables\n• Priorité Mondiale - USA: 1-2 jours ouvrables\n\nLes délais d'expédition sont calculés à partir du moment où votre commande est expédiée, et non lorsque vous la passez. Les commandes passées avant 14h00 HNE (lundi-vendredi) sont généralement traitées le jour même. Les commandes passées samedi-dimanche sont traitées le lundi suivant. Les prix sont calculés à la caisse en fonction de votre destination, du poids du colis et de la méthode d'expédition sélectionnée."
             },
             {
               question: "Livrez-vous aux États-Unis?",
@@ -1039,7 +1039,7 @@ export const translations = {
             },
             {
               question: "Quand ma commande sera-t-elle expédiée?",
-              answer: "Les commandes passées avant 14h00 HNE (lundi-jeudi) sont généralement traitées le jour même et expédiées dans les 24 heures. Les commandes passées après 14h00 HNE (lundi-jeudi) sont traitées le jour ouvrable suivant. Les commandes passées vendredi-dimanche sont traitées le lundi suivant. Une fois que votre commande est expédiée, vous recevrez un courriel de confirmation d'expédition avec un numéro de suivi."
+              answer: "Les commandes passées avant 14h00 HNE (lundi-vendredi) sont généralement traitées le jour même et expédiées dans les 24 heures. Les commandes passées après 14h00 HNE (lundi-vendredi) sont traitées le jour ouvrable suivant. Les commandes passées samedi-dimanche sont traitées le lundi suivant. Une fois que votre commande est expédiée, vous recevrez un courriel de confirmation d'expédition avec un numéro de suivi."
             },
             {
               question: "Comment puis-je suivre ma commande?",
@@ -1440,10 +1440,10 @@ export const translations = {
       },
       shippingTimes: {
         title: "Délais d'Expédition",
-        text1: "Les commandes passées avant 14h00 HNE (lundi-jeudi) sont généralement traitées le jour même. Les commandes passées après 14h00 HNE (lundi-jeudi) ou les week-ends sont traitées le jour ouvrable suivant. Les commandes passées vendredi-dimanche sont traitées le lundi suivant.",
+        text1: "Les commandes passées avant 14h00 HNE (lundi-vendredi) sont généralement traitées le jour même. Les commandes passées après 14h00 HNE (lundi-vendredi) ou les week-ends sont traitées le jour ouvrable suivant. Les commandes passées samedi-dimanche sont traitées le lundi suivant.",
         processingSchedule: "Calendrier de Traitement",
-        schedule1: "Commandes passées lundi-jeudi avant 14 h 00 HNE : Traitées dans les 24 heures",
-        schedule2: "Commandes passées vendredi-dimanche : Traitées le lundi suivant",
+        schedule1: "Commandes passées lundi-vendredi avant 14 h 00 HNE : Traitées dans les 24 heures",
+        schedule2: "Commandes passées samedi-dimanche : Traitées le lundi suivant",
         schedule3: "Commandes de jours fériés : Peuvent subir des retards de traitement supplémentaires",
         text2: "Les délais d'expédition sont calculés à partir de la date d'expédition de votre commande, et non de la date à laquelle vous passez votre commande. Vous recevrez un e-mail de confirmation d'expédition avec un numéro de suivi une fois votre commande expédiée. Les délais de livraison varient selon la distance et la destination - les livraisons locales sont généralement plus rapides, tandis que les expéditions transcontinentales peuvent prendre plus de temps.",
         note: "Note : Les délais d'expédition peuvent être plus longs pendant les périodes de pointe (jours fériés, promotions spéciales) ou en raison des conditions météorologiques, des retards du service postal ou des emplacements éloignés. Les délais de livraison du Colis Régulier (2-5 jours ouvrables) varient selon la distance. Le Colis Accéléré (1-3 jours ouvrables) et Xpresspost (prochain jour ouvrable) offrent une livraison garantie. Nous vous informerons par e-mail en cas de retards importants."
