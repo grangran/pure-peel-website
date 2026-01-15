@@ -1093,7 +1093,7 @@ export default function Checkout() {
                   {/* Order Notes */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                      {getTranslation(language, 'checkout.orderNotes')} ({getTranslation(language, 'checkout.optional')})
+                      {getTranslation(language, 'checkout.orderNotes')}
                     </label>
                     <textarea
                       name="notes"
