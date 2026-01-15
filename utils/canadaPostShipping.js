@@ -12,7 +12,7 @@ export async function createCanadaPostLabel(order) {
   const canadaPostUsername = process.env.CANADA_POST_USERNAME
   const canadaPostPassword = process.env.CANADA_POST_PASSWORD
   const canadaPostCustomerNumber = process.env.CANADA_POST_CUSTOMER_NUMBER || '0001238590'
-  const canadaPostContractNumber = process.env.CANADA_POST_CONTRACT_NUMBER || canadaPostCustomerNumber // Use contract number if set, otherwise use customer number
+  const canadaPostContractNumber = process.env.CANADA_POST_CONTRACT_NUMBER || null // Only use contract number if explicitly set
   const useProduction = process.env.CANADA_POST_USE_PRODUCTION === 'true'
 
   // Check if credentials are configured
