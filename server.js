@@ -1617,6 +1617,12 @@ function parseCanadaPostResponse(xml, country = 'Canada') {
       if (!serviceCodeMatch) continue
       
       const serviceCode = serviceCodeMatch[1]
+      
+      // Skip Priority (DOM.PC) - only show original 3 options: Regular, Expedited, Xpresspost
+      if (serviceCode === 'DOM.PC') {
+        continue
+      }
+      
       const serviceInfo = serviceMap[serviceCode]
       if (!serviceInfo) {
         // Log unmapped service codes for debugging
