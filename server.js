@@ -1522,10 +1522,45 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
         }
 
         const xmlData = await response.text()
-        const rates = parseCanadaPostResponse(xmlData, country)
+        let rates = parseCanadaPostResponse(xmlData, country)
         
-        // If we got rates from API, return them
+        // Ensure price hierarchy: Regular < Expedited < Xpresspost
         if (rates && rates.length > 0) {
+          // Sort by service type priority
+          const servicePriority = {
+            'Regular Parcel': 1,
+            'Expedited Parcel': 2,
+            'Xpresspost': 3
+          }
+          
+          rates.sort((a, b) => {
+            const priorityA = servicePriority[a.name] || 999
+            const priorityB = servicePriority[b.name] || 999
+            return priorityA - priorityB
+          })
+          
+          // Ensure Expedited is at least $1 more than Regular
+          const regularIndex = rates.findIndex(r => r.name === 'Regular Parcel')
+          const expeditedIndex = rates.findIndex(r => r.name === 'Expedited Parcel')
+          const xpresspostIndex = rates.findIndex(r => r.name === 'Xpresspost')
+          
+          if (regularIndex !== -1 && expeditedIndex !== -1) {
+            const regularPrice = rates[regularIndex].price
+            const expeditedPrice = rates[expeditedIndex].price
+            if (expeditedPrice <= regularPrice) {
+              rates[expeditedIndex].price = Math.ceil((regularPrice + 1) * 100) / 100
+            }
+          }
+          
+          // Ensure Xpresspost is at least $1 more than Expedited
+          if (expeditedIndex !== -1 && xpresspostIndex !== -1) {
+            const expeditedPrice = rates[expeditedIndex].price
+            const xpresspostPrice = rates[xpresspostIndex].price
+            if (xpresspostPrice <= expeditedPrice) {
+              rates[xpresspostIndex].price = Math.ceil((expeditedPrice + 1) * 100) / 100
+            }
+          }
+          
           console.log(`✅ Canada Post API returned ${rates.length} rates for ${country}`)
           return res.json({ options: rates })
         }
