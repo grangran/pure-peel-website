@@ -147,10 +147,6 @@ export const translations = {
               answer: "Yes! Our dehydrated citrus slices are 100% natural with no preservatives, additives, or artificial ingredients. We use only fresh, high-quality citrus fruits and a natural dehydration process. All our products are made in Canada, and we're proud to be a Canadian company supporting local agriculture and manufacturing."
             },
             {
-              question: "Where are your products made?",
-              answer: "All our products are made in Canada. We're proud to be a Canadian company supporting local agriculture and manufacturing."
-            },
-            {
               question: "What types of citrus do you offer?",
               answer: "We currently offer Orange slices, Pink Orange slices, Lime slices, Lemon slices, and Apple slices. Each variety is available in multiple sizes."
             }
@@ -1011,10 +1007,6 @@ export const translations = {
             {
               question: "Vos produits sont-ils 100% naturels?",
               answer: "Oui! Nos tranches d'agrumes déshydratées sont 100% naturelles, sans conservateurs, additifs ou ingrédients artificiels. Nous utilisons uniquement des fruits d'agrumes frais et de haute qualité et un processus de déshydratation naturel. Tous nos produits sont fabriqués au Canada, et nous sommes fiers d'être une entreprise canadienne qui soutient l'agriculture et la fabrication locales."
-            },
-            {
-              question: "Où sont fabriqués vos produits?",
-              answer: "Tous nos produits sont fabriqués au Canada. Nous sommes fiers d'être une entreprise canadienne qui soutient l'agriculture et la fabrication locales."
             },
             {
               question: "Quels types d'agrumes offrez-vous?",
