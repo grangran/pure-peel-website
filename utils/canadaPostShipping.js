@@ -281,6 +281,7 @@ function buildShipmentXML({ customerNumber, shippingName, shippingAddress, weigh
       </address-details>
     </destination>`
   } else {
+    // Canadian destination - country-code is required
     destinationXml = `<destination>
       <name>${escapeXml(firstName)} ${escapeXml(lastName)}</name>
       <address-details>
@@ -289,6 +290,7 @@ function buildShipmentXML({ customerNumber, shippingName, shippingAddress, weigh
         <city>${escapeXml(destCity)}</city>
         <prov-state>${escapeXml(destProvince)}</prov-state>
         <postal-zip-code>${destPostalCode}</postal-zip-code>
+        <country-code>CA</country-code>
       </address-details>
     </destination>`
   }
