@@ -153,17 +153,22 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
           shippingAddressCollection: fullSession.shipping_address_collection
         })
 
-        // Check if order already exists
-        const existingOrder = getOrderById(fullSession.id.replace('cs_', 'PP-'))
-        
         // For free orders (total = 0), payment_status might be 'no_payment_required' instead of 'paid'
         const isFreeOrder = (fullSession.amount_total || 0) === 0
         const isPaidOrFree = fullSession.payment_status === 'paid' || 
                             (isFreeOrder && (fullSession.payment_status === 'no_payment_required' || fullSession.payment_status === 'unpaid'))
 
+        // Check if order already exists by Stripe session ID
+        const allOrders = getAllOrders()
+        const existingOrder = allOrders.find(o => o.stripeSessionId === fullSession.id)
+
         if (!existingOrder && isPaidOrFree) {
+          // Generate order ID from timestamp (8 digits) to match frontend format
+          const orderId = `PP-${Date.now().toString().slice(-8)}`
+          
           // Extract order information
           const orderData = {
+            id: orderId,
             stripeSessionId: fullSession.id,
             stripePaymentIntentId: fullSession.payment_intent,
             language: fullSession.metadata?.language || 'en',
@@ -933,8 +938,9 @@ app.get('/api/checkout-session/:sessionId', async (req, res) => {
       expand: ['line_items']
     })
     
-    // Check if order already exists
-    const existingOrder = getOrderById(session.metadata?.order_id || `PP-${Date.now().toString().slice(-8)}`)
+    // Check if order already exists by Stripe session ID
+    const allOrders = getAllOrders()
+    const existingOrder = allOrders.find(o => o.stripeSessionId === session.id)
     
     // If order doesn't exist and payment is successful (or free order), save it (fallback if webhook didn't fire)
     const isFreeOrder = (session.amount_total || 0) === 0
@@ -943,6 +949,9 @@ app.get('/api/checkout-session/:sessionId', async (req, res) => {
     
     if (!existingOrder && isPaidOrFree) {
       try {
+        // Generate order ID from timestamp (8 digits) to match frontend format
+        const orderId = session.metadata?.order_id || `PP-${Date.now().toString().slice(-8)}`
+        
         // Debug logging for shipping address (checkout session handler)
         console.log('📦 Shipping address debug (checkout session):', {
           hasShippingDetails: !!session.shipping_details,
@@ -957,6 +966,7 @@ app.get('/api/checkout-session/:sessionId', async (req, res) => {
         })
 
         const orderData = {
+          id: orderId,
           stripeSessionId: session.id,
           stripePaymentIntentId: session.payment_intent,
           language: session.metadata?.language || 'en', // Store language from metadata
