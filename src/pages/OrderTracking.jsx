@@ -329,7 +329,7 @@ export default function OrderTracking() {
                 </div>
                 <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray-200">
                   <span className="text-gray-900">{getTranslation(language, 'orderTracking.total')}</span>
-                  <span className="text-gray-900">${order.total?.toFixed(2)} {order.currency}</span>
+                  <span className="text-gray-900">${(order.total || (order.subtotal || 0) + (order.shippingCost || 0) + (order.tax || 0)).toFixed(2)} {order.currency}</span>
                 </div>
               </div>
             </div>
