@@ -169,10 +169,6 @@ export const translations = {
               answer: "Shipping costs are calculated based on your location (postal code), package weight, and selected shipping method. Rates start at $12 CAD for Regular Parcel within Canada. You'll see exact shipping costs at checkout before completing your purchase."
             },
             {
-              question: "Do you ship to remote areas (Yukon, NWT, Nunavut)?",
-              answer: "Yes, we ship to all provinces and territories in Canada. Remote areas (Yukon, Northwest Territories, Nunavut) may have a 25% shipping surcharge applied at checkout due to higher shipping costs."
-            },
-            {
               question: "When will my order ship?",
               answer: "Orders placed before 2:00 PM EST (Monday-Thursday) are typically processed and shipped within 24 hours. Orders placed after 2:00 PM EST or on weekends are processed the next business day. Once your order ships, you'll receive a shipping confirmation email with a tracking number."
             },
@@ -1024,10 +1020,6 @@ export const translations = {
             {
               question: "Combien coûte l'expédition?",
               answer: "Les coûts d'expédition sont calculés en fonction de votre emplacement (code postal), du poids du colis et de la méthode d'expédition sélectionnée. Les tarifs commencent à 12 $ CAD pour le Colis Régulier au Canada. Vous verrez les coûts d'expédition exacts au paiement avant de finaliser votre achat."
-            },
-            {
-              question: "Livrez-vous dans les régions éloignées (Yukon, TNO, Nunavut)?",
-              answer: "Oui, nous livrons dans toutes les provinces et territoires du Canada. Les régions éloignées (Yukon, Territoires du Nord-Ouest, Nunavut) peuvent avoir un supplément d'expédition de 25% appliqué au paiement en raison des coûts d'expédition plus élevés."
             },
             {
               question: "Quand ma commande sera-t-elle expédiée?",
