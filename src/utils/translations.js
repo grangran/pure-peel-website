@@ -170,7 +170,7 @@ export const translations = {
             },
             {
               question: "When will my order ship?",
-              answer: "Orders placed before 2:00 PM EST (Monday-Thursday) are typically processed and shipped within 24 hours. Orders placed after 2:00 PM EST or on weekends are processed the next business day. Once your order ships, you'll receive a shipping confirmation email with a tracking number."
+              answer: "Orders placed before 2:00 PM EST (Monday-Thursday) are typically processed the same day and shipped within 24 hours. Orders placed after 2:00 PM EST (Monday-Thursday) are processed the next business day. Orders placed Friday-Sunday are processed the following Monday. Once your order ships, you'll receive a shipping confirmation email with a tracking number."
             },
             {
               question: "How can I track my order?",
@@ -1023,7 +1023,7 @@ export const translations = {
             },
             {
               question: "Quand ma commande sera-t-elle expédiée?",
-              answer: "Les commandes passées avant 14h00 HNE (lundi-jeudi) sont généralement traitées et expédiées dans les 24 heures. Les commandes passées après 14h00 HNE ou les week-ends sont traitées le jour ouvrable suivant. Une fois que votre commande est expédiée, vous recevrez un courriel de confirmation d'expédition avec un numéro de suivi."
+              answer: "Les commandes passées avant 14h00 HNE (lundi-jeudi) sont généralement traitées le jour même et expédiées dans les 24 heures. Les commandes passées après 14h00 HNE (lundi-jeudi) sont traitées le jour ouvrable suivant. Les commandes passées vendredi-dimanche sont traitées le lundi suivant. Une fois que votre commande est expédiée, vous recevrez un courriel de confirmation d'expédition avec un numéro de suivi."
             },
             {
               question: "Comment puis-je suivre ma commande?",
