@@ -723,6 +723,9 @@ const contactFormTemplate = (name, email, inquiryType, message) => {
 // Send contact form submission
 export const sendContactForm = async (name, email, inquiryType, message) => {
   try {
+    // Normalize inquiryType to lowercase to ensure matching
+    const normalizedInquiryType = (inquiryType || '').toLowerCase().trim()
+    
     // Route to appropriate email alias based on inquiry type
     const emailAliases = {
       'general': 'info@purepeelco.com',
@@ -731,7 +734,15 @@ export const sendContactForm = async (name, email, inquiryType, message) => {
       'bulk': 'orders@purepeelco.com'
     }
     
-    const adminEmail = emailAliases[inquiryType] || emailAliases['general']
+    const adminEmail = emailAliases[normalizedInquiryType] || emailAliases['general']
+    
+    // Log routing decision for debugging
+    console.log('📧 Contact form routing:', {
+      inquiryType: inquiryType,
+      normalizedInquiryType: normalizedInquiryType,
+      routingTo: adminEmail,
+      availableTypes: Object.keys(emailAliases)
+    })
     
     if (!adminEmail) {
       console.log('Admin email not configured. Contact form submission would be sent.')
@@ -745,8 +756,8 @@ export const sendContactForm = async (name, email, inquiryType, message) => {
       'bulk': 'Bulk Order Inquiry'
     }
     
-    const htmlContent = contactFormTemplate(name, email, inquiryType, message)
-    const subject = `📧 ${inquiryTypeLabels[inquiryType] || 'Contact Form'}: ${name}`
+    const htmlContent = contactFormTemplate(name, email, normalizedInquiryType, message)
+    const subject = `📧 ${inquiryTypeLabels[normalizedInquiryType] || 'Contact Form'}: ${name}`
     
     // Use Resend if configured
     if (resend && process.env.RESEND_FROM_EMAIL) {
