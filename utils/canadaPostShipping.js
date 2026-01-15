@@ -345,6 +345,7 @@ function buildShipmentXML({ customerNumber, shippingName, shippingAddress, weigh
     <settlement-info>
       <paid-by-customer>${customerNumber}</paid-by-customer>
       <contract-id>${customerNumber}</contract-id>
+      <intended-method-of-payment>Account</intended-method-of-payment>
     </settlement-info>
   </delivery-spec>
 </shipment>`
