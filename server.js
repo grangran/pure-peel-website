@@ -202,7 +202,14 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
             },
             shipping: {
               name: fullSession.shipping_details?.name || fullSession.customer_details?.name || fullSession.metadata?.customer_name || 'N/A',
-              address: fullSession.shipping_details?.address || fullSession.shipping?.address || {},
+              address: (() => {
+                const addr = fullSession.shipping_details?.address || fullSession.shipping?.address || {}
+                // Log address structure for debugging
+                if (!addr.line1 && !addr.line_1) {
+                  console.error('⚠️ WARNING: Shipping address missing line1:', JSON.stringify(addr, null, 2))
+                }
+                return addr
+              })(),
               method: fullSession.shipping_cost?.display_name || fullSession.shipping_options?.[0]?.shipping_rate?.display_name || 'Standard Shipping'
             },
             items: fullSession.line_items?.data?.map(item => ({
