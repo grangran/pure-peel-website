@@ -232,25 +232,30 @@ function buildShipmentXML({ customerNumber, shippingName, shippingAddress, weigh
   const destCountry = isUS ? 'US' : 'CA'
 
   // Build destination XML based on country
+  // Note: destination must use address-details wrapper, similar to sender
   let destinationXml
   if (isUS) {
     destinationXml = `<destination>
       <name>${escapeXml(firstName)} ${escapeXml(lastName)}</name>
-      <address-line-1>${escapeXml(shippingAddress.line1 || '')}</address-line-1>
-      ${shippingAddress.line2 ? `<address-line-2>${escapeXml(shippingAddress.line2)}</address-line-2>` : ''}
-      <city>${escapeXml(destCity)}</city>
-      <prov-state>${escapeXml(destProvince)}</prov-state>
-      <postal-zip-code>${destPostalCode.substring(0, 5)}</postal-zip-code>
-      <country-code>US</country-code>
+      <address-details>
+        <address-line-1>${escapeXml(shippingAddress.line1 || '')}</address-line-1>
+        ${shippingAddress.line2 ? `<address-line-2>${escapeXml(shippingAddress.line2)}</address-line-2>` : ''}
+        <city>${escapeXml(destCity)}</city>
+        <prov-state>${escapeXml(destProvince)}</prov-state>
+        <postal-zip-code>${destPostalCode.substring(0, 5)}</postal-zip-code>
+        <country-code>US</country-code>
+      </address-details>
     </destination>`
   } else {
     destinationXml = `<destination>
       <name>${escapeXml(firstName)} ${escapeXml(lastName)}</name>
-      <address-line-1>${escapeXml(shippingAddress.line1 || '')}</address-line-1>
-      ${shippingAddress.line2 ? `<address-line-2>${escapeXml(shippingAddress.line2)}</address-line-2>` : ''}
-      <city>${escapeXml(destCity)}</city>
-      <prov-state>${escapeXml(destProvince)}</prov-state>
-      <postal-zip-code>${destPostalCode}</postal-zip-code>
+      <address-details>
+        <address-line-1>${escapeXml(shippingAddress.line1 || '')}</address-line-1>
+        ${shippingAddress.line2 ? `<address-line-2>${escapeXml(shippingAddress.line2)}</address-line-2>` : ''}
+        <city>${escapeXml(destCity)}</city>
+        <prov-state>${escapeXml(destProvince)}</prov-state>
+        <postal-zip-code>${destPostalCode}</postal-zip-code>
+      </address-details>
     </destination>`
   }
 
