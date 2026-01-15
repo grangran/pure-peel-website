@@ -174,15 +174,11 @@ export const translations = {
             },
             {
               question: "When will my order ship?",
-              answer: "Orders placed before 2:00 PM EST (Monday-Thursday) are typically processed and shipped within 24 hours. Orders placed after 2:00 PM EST or on weekends are processed the next business day."
+              answer: "Orders placed before 2:00 PM EST (Monday-Thursday) are typically processed and shipped within 24 hours. Orders placed after 2:00 PM EST or on weekends are processed the next business day. Once your order ships, you'll receive a shipping confirmation email with a tracking number."
             },
             {
-              question: "How will I know when my order ships?",
-              answer: "You'll receive a shipping confirmation email with a tracking number once your order has been shipped. You can also track your order using our order tracking page."
-            },
-            {
-              question: "Can I track my order?",
-              answer: "Yes! Once your order ships, you'll receive a tracking number via email. You can use this tracking number on the Canada Post website (or USPS for US orders) to track your package's progress."
+              question: "How can I track my order?",
+              answer: "Once your order ships, you'll receive a tracking number via email. You can track your package in two ways:\n\n• Use our order tracking page: Enter your order number and email address\n• Use the carrier's website: Enter your tracking number on Canada Post (for Canadian orders) or USPS (for US orders) to see real-time delivery updates"
             }
           ]
         },
@@ -1036,15 +1032,11 @@ export const translations = {
             },
             {
               question: "Quand ma commande sera-t-elle expédiée?",
-              answer: "Les commandes passées avant 14h00 HNE (lundi-jeudi) sont généralement traitées et expédiées dans les 24 heures. Les commandes passées après 14h00 HNE ou les week-ends sont traitées le jour ouvrable suivant."
+              answer: "Les commandes passées avant 14h00 HNE (lundi-jeudi) sont généralement traitées et expédiées dans les 24 heures. Les commandes passées après 14h00 HNE ou les week-ends sont traitées le jour ouvrable suivant. Une fois que votre commande est expédiée, vous recevrez un courriel de confirmation d'expédition avec un numéro de suivi."
             },
             {
-              question: "Comment saurai-je quand ma commande est expédiée?",
-              answer: "Vous recevrez un courriel de confirmation d'expédition avec un numéro de suivi une fois que votre commande aura été expédiée. Vous pouvez également suivre votre commande en utilisant notre page de suivi de commande."
-            },
-            {
-              question: "Puis-je suivre ma commande?",
-              answer: "Oui! Une fois que votre commande est expédiée, vous recevrez un numéro de suivi par courriel. Vous pouvez utiliser ce numéro de suivi sur le site Web de Postes Canada (ou USPS pour les commandes américaines) pour suivre la progression de votre colis."
+              question: "Comment puis-je suivre ma commande?",
+              answer: "Une fois que votre commande est expédiée, vous recevrez un numéro de suivi par courriel. Vous pouvez suivre votre colis de deux façons :\n\n• Utilisez notre page de suivi de commande : Entrez votre numéro de commande et votre adresse e-mail\n• Utilisez le site Web du transporteur : Entrez votre numéro de suivi sur Postes Canada (pour les commandes canadiennes) ou USPS (pour les commandes américaines) pour voir les mises à jour de livraison en temps réel"
             }
           ]
         },
