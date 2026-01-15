@@ -155,8 +155,13 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
 
         // Check if order already exists
         const existingOrder = getOrderById(fullSession.id.replace('cs_', 'PP-'))
+        
+        // For free orders (total = 0), payment_status might be 'no_payment_required' instead of 'paid'
+        const isFreeOrder = (fullSession.amount_total || 0) === 0
+        const isPaidOrFree = fullSession.payment_status === 'paid' || 
+                            (isFreeOrder && (fullSession.payment_status === 'no_payment_required' || fullSession.payment_status === 'unpaid'))
 
-        if (!existingOrder && fullSession.payment_status === 'paid') {
+        if (!existingOrder && isPaidOrFree) {
           // Extract order information
           const orderData = {
             stripeSessionId: fullSession.id,
@@ -927,8 +932,12 @@ app.get('/api/checkout-session/:sessionId', async (req, res) => {
     // Check if order already exists
     const existingOrder = getOrderById(session.metadata?.order_id || `PP-${Date.now().toString().slice(-8)}`)
     
-    // If order doesn't exist and payment is successful, save it (fallback if webhook didn't fire)
-    if (!existingOrder && session.payment_status === 'paid') {
+    // If order doesn't exist and payment is successful (or free order), save it (fallback if webhook didn't fire)
+    const isFreeOrder = (session.amount_total || 0) === 0
+    const isPaidOrFree = session.payment_status === 'paid' || 
+                        (isFreeOrder && (session.payment_status === 'no_payment_required' || session.payment_status === 'unpaid'))
+    
+    if (!existingOrder && isPaidOrFree) {
       try {
         // Debug logging for shipping address (checkout session handler)
         console.log('📦 Shipping address debug (checkout session):', {
