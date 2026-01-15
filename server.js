@@ -129,9 +129,10 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
       
       try {
         // Retrieve full session details to get line items
-        // Note: shipping_details is included by default when shipping_address_collection is enabled, no need to expand
+        // Retrieve full session with shipping details expanded
+        // For free orders, shipping_details might not be included by default
         const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
-          expand: ['line_items']
+          expand: ['line_items', 'shipping_details']
         })
 
         // Debug logging for shipping address (webhook handler)
