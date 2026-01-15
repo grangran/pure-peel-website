@@ -15,8 +15,8 @@ This means:
 ## Root Cause
 
 The customer number `0001238590` in your environment variables doesn't match the account associated with your credentials:
-- Username: `9e4989e8c7da2594`
-- Password: `9fa07857e4f3b920f75fbd`
+- Username: `e66359fc2eb7d4c2`
+- Password: `14d81da04ebb17bb918d48`
 
 ## Solution: Find Your Correct Customer Number
 
@@ -61,7 +61,7 @@ If you can't find your customer number:
 1. **Call Canada Post Support**: 1-866-511-0546
 2. Tell them:
    - You're getting a 403 error: "customer number in URL does not belong to web service authorization"
-   - Your API username: `9e4989e8c7da2594`
+   - Your API username: `e66359fc2eb7d4c2`
    - Ask them for the correct customer number associated with this account
 
 ## Important Notes
@@ -75,7 +75,7 @@ If you can't find your customer number:
 ## Current Configuration
 
 **Production Credentials:**
-- `CANADA_POST_USERNAME`: `9e4989e8c7da2594`
-- `CANADA_POST_PASSWORD`: `9fa07857e4f3b920f75fbd`
+- `CANADA_POST_USERNAME`: `e66359fc2eb7d4c2`
+- `CANADA_POST_PASSWORD`: `14d81da04ebb17bb918d48`
 - `CANADA_POST_CUSTOMER_NUMBER`: `0001238590` ← **This needs to be updated**
 - `CANADA_POST_USE_PRODUCTION`: `true`

@@ -106,7 +106,7 @@ After updating environment variables:
 
 **Solution:**
 - Make sure you're using **production** credentials when `CANADA_POST_USE_PRODUCTION=true`
-- Production credentials: `9e4989e8c7da2594` / `9fa07857e4f3b920f75fbd`
+- Production credentials: `e66359fc2eb7d4c2` / `14d81da04ebb17bb918d48`
 
 ### Issue 3: Using Production Credentials in Development
 
