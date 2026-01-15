@@ -1528,10 +1528,9 @@ export const translations = {
         businessHours: {
           title: "Heures d'Ouverture",
           text1: "Notre équipe de service à la clientèle est disponible pour vous aider :",
-          mondayFriday: "Lundi - Vendredi :",
-          saturdaySunday: "Samedi - Dimanche :",
-          closed: "Fermé",
-          responseTime: "Nous répondons aux e-mails dans les 24 à 48 heures pendant les jours ouvrables."
+          mondaySunday: "Lundi - Dimanche :",
+          hours: "9h00 - 17h00 HNE",
+          responseTime: "Nous répondons aux e-mails dans les 24 à 48 heures."
         },
         packaging: {
           title: "Emballage",
