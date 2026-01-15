@@ -36,7 +36,7 @@ Based on the credentials you provided, update these in Render:
 
 **For Production (Live Site):**
 ```
-CANADA_POST_USERNAME=h9e4989e8c7da2594
+CANADA_POST_USERNAME=9e4989e8c7da2594
 CANADA_POST_PASSWORD=9fa07857e4f3b920f75fbd
 CANADA_POST_CUSTOMER_NUMBER=0001238590
 CANADA_POST_USE_PRODUCTION=true
@@ -106,7 +106,7 @@ After updating environment variables:
 
 **Solution:**
 - Make sure you're using **production** credentials when `CANADA_POST_USE_PRODUCTION=true`
-- Production credentials: `h9e4989e8c7da2594` / `9fa07857e4f3b920f75fbd`
+- Production credentials: `9e4989e8c7da2594` / `9fa07857e4f3b920f75fbd`
 
 ### Issue 3: Using Production Credentials in Development
 
