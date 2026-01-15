@@ -1962,11 +1962,34 @@ app.post('/api/order-lookup', async (req, res) => {
       return res.status(400).json({ error: 'Order ID and email are required' })
     }
 
-    const order = getOrderById(orderId)
+    // Normalize order ID (remove spaces, ensure uppercase)
+    const normalizedOrderId = orderId.trim().toUpperCase()
+    
+    // Try exact match first
+    let order = getOrderById(normalizedOrderId)
+    
+    // If not found, try with different formats
+    if (!order) {
+      // Try with original format
+      order = getOrderById(orderId.trim())
+      
+      // If still not found, try searching all orders for partial match
+      if (!order) {
+        const allOrders = getAllOrders()
+        order = allOrders.find(o => 
+          o.id?.toUpperCase() === normalizedOrderId ||
+          o.id?.replace(/[^A-Z0-9-]/g, '').toUpperCase() === normalizedOrderId.replace(/[^A-Z0-9-]/g, '').toUpperCase()
+        )
+      }
+    }
 
     if (!order) {
-      console.log('❌ Order not found:', orderId)
-      return res.status(404).json({ error: 'Order not found' })
+      console.log('❌ Order not found:', normalizedOrderId)
+      console.log('   Total orders in database:', getAllOrders().length)
+      console.log('   Recent order IDs:', getAllOrders().slice(0, 5).map(o => o.id))
+      return res.status(404).json({ 
+        error: 'Order not found. Please check your order number and try again. If you just placed the order, it may take a few moments to appear.' 
+      })
     }
 
     // Verify email matches order email (case-insensitive)
@@ -1975,10 +1998,10 @@ app.post('/api/order-lookup', async (req, res) => {
         provided: email.substring(0, 3) + '***',
         expected: order.customer?.email ? order.customer.email.substring(0, 3) + '***' : 'missing'
       })
-      return res.status(403).json({ error: 'Email does not match this order' })
+      return res.status(403).json({ error: 'Email does not match this order. Please use the email address you used when placing the order.' })
     }
 
-    console.log('✅ Order lookup successful:', orderId)
+    console.log('✅ Order lookup successful:', order.id)
     console.log('   Shipping address available:', !!(order.shipping?.address && (order.shipping.address.line1 || order.shipping.address.city)))
 
     // Return order details (without sensitive info)
