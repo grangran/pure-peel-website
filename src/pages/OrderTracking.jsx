@@ -16,7 +16,19 @@ export default function OrderTracking() {
 
   const [sectionRef, isSectionVisible] = useScrollReveal({ threshold: 0.1 })
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+  // Get API URL - use environment variable or try to detect from current domain
+  const getApiUrl = () => {
+    if (import.meta.env.VITE_API_URL) {
+      return import.meta.env.VITE_API_URL.replace(/\/$/, '')
+    }
+    // In production, if VITE_API_URL is not set, try to use same origin
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+      // For production, we need VITE_API_URL set, but as fallback use same origin
+      return window.location.origin
+    }
+    return 'http://localhost:3001'
+  }
+  const API_URL = getApiUrl()
 
   // Check for order ID and email in URL params
   useEffect(() => {
@@ -52,7 +64,13 @@ export default function OrderTracking() {
             setOrder(null)
           }
         } catch (err) {
-          setError('Unable to connect to server. Please try again later.')
+          console.error('Order lookup error:', err)
+          // Provide more helpful error message
+          if (err.message?.includes('Failed to fetch') || err.message?.includes('NetworkError')) {
+            setError('Unable to connect to server. Please check your internet connection and try again. If the problem persists, the server may be temporarily unavailable.')
+          } else {
+            setError('Unable to connect to server. Please try again later.')
+          }
           setOrder(null)
         } finally {
           setLoading(false)
@@ -99,7 +117,13 @@ export default function OrderTracking() {
         setError(null)
       }
     } catch (err) {
-      setError('Unable to connect to server. Please try again later.')
+      console.error('Order lookup error:', err)
+      // Provide more helpful error message
+      if (err.message?.includes('Failed to fetch') || err.message?.includes('NetworkError')) {
+        setError('Unable to connect to server. Please check your internet connection and try again. If the problem persists, the server may be temporarily unavailable.')
+      } else {
+        setError('Unable to connect to server. Please try again later.')
+      }
       setOrder(null)
     } finally {
       setLoading(false)
