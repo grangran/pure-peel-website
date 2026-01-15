@@ -44,7 +44,7 @@ export default function ShippingReturns() {
                   </div>
                   <div className="text-right sm:text-left sm:ml-4">
                     <span className="text-sm md:text-base font-semibold text-gray-900 block">{getTranslation(language, 'shipping.shippingInfo.methods.regular.time')}</span>
-                    <span className="text-xs text-gray-500">Starting at $12 CAD</span>
+                    <span className="text-xs text-gray-500">Starting at $12 CAD (varies by weight and destination)</span>
                   </div>
                 </div>
               </div>
@@ -57,7 +57,7 @@ export default function ShippingReturns() {
                   </div>
                   <div className="text-right sm:text-left sm:ml-4">
                     <span className="text-sm md:text-base font-semibold text-gray-900 block">{getTranslation(language, 'shipping.shippingInfo.methods.expedited.time')}</span>
-                    <span className="text-xs text-gray-500">Starting at $18 CAD</span>
+                    <span className="text-xs text-gray-500">Starting at $18 CAD (varies by weight and destination)</span>
                   </div>
                 </div>
               </div>
@@ -70,7 +70,7 @@ export default function ShippingReturns() {
                   </div>
                   <div className="text-right sm:text-left sm:ml-4">
                     <span className="text-sm md:text-base font-semibold text-gray-900 block">{getTranslation(language, 'shipping.shippingInfo.methods.xpresspost.time')}</span>
-                    <span className="text-xs text-gray-500">Starting at $22 CAD</span>
+                    <span className="text-xs text-gray-500">Starting at $22 CAD (varies by weight and destination)</span>
                   </div>
                 </div>
               </div>
@@ -161,8 +161,8 @@ export default function ShippingReturns() {
               <ul className="list-disc list-inside space-y-1.5 text-xs md:text-sm text-gray-700 ml-2">
                 <li>Shipping costs are calculated automatically at checkout based on your destination</li>
                 <li>Rates vary by location, package weight, and selected shipping method</li>
-                <li>Canada: Starting at {formatPrice(12)} {currency} for Regular Parcel</li>
-                <li>United States: Starting at {formatPrice(18)} {currency} for Tracked Packet</li>
+                <li>Canada: Starting at {formatPrice(12)} {currency} for Regular Parcel (varies by weight and destination)</li>
+                <li>United States: Starting at {formatPrice(18)} {currency} for Tracked Packet (varies by weight and destination)</li>
                 <li>All prices shown are in {currency} - use the currency selector in the navigation to switch between CAD and USD</li>
               </ul>
             </div>

@@ -165,15 +165,15 @@ export const translations = {
           questions: [
             {
               question: "How long does shipping take?",
-              answer: "Shipping times vary by service and destination:\n\nCanada:\n• Regular Parcel: 2-5 business days (Starting at $12 CAD)\n• Expedited Parcel: 1-3 business days (Starting at $18 CAD)\n• Xpresspost: Next business day (Starting at $22 CAD)\n\nUnited States:\n• Tracked Packet - USA: 4-7 business days (Starting at $18 CAD)\n• Xpresspost - USA: 2-3 business days (Starting at $28 CAD)\n• Priority Worldwide - USA: 1-2 business days (Starting at $45 CAD)\n\nShipping times are calculated from when your order ships, not when you place it. Orders placed before 2:00 PM EST (Monday-Thursday) are typically processed the same day. Orders placed Friday-Sunday are processed the following Monday."
+              answer: "Shipping times vary by service and destination:\n\nCanada:\n• Regular Parcel: 2-5 business days (Starting at $12 CAD, varies by weight and destination)\n• Expedited Parcel: 1-3 business days (Starting at $18 CAD, varies by weight and destination)\n• Xpresspost: Next business day (Starting at $22 CAD, varies by weight and destination)\n\nUnited States:\n• Tracked Packet - USA: 4-7 business days (Starting at $18 CAD, varies by weight and destination)\n• Xpresspost - USA: 2-3 business days (Starting at $28 CAD, varies by weight and destination)\n• Priority Worldwide - USA: 1-2 business days (Starting at $45 CAD, varies by weight and destination)\n\nShipping times are calculated from when your order ships, not when you place it. Orders placed before 2:00 PM EST (Monday-Thursday) are typically processed the same day. Orders placed Friday-Sunday are processed the following Monday."
             },
             {
               question: "Do you ship to the United States?",
-              answer: "Yes! We ship to all 50 US states. Select \"United States\" as your country during checkout to see available shipping options:\n\n• Tracked Packet - USA: 4-7 business days (Starting at $18 CAD)\n• Xpresspost - USA: 2-3 business days (Starting at $28 CAD)\n• Priority Worldwide - USA: 1-2 business days (Starting at $45 CAD)\n\nPackages are shipped via Canada Post and delivered by USPS within the United States."
+              answer: "Yes! We ship to all 50 US states. Select \"United States\" as your country during checkout to see available shipping options:\n\n• Tracked Packet - USA: 4-7 business days (Starting at $18 CAD, varies by weight and destination)\n• Xpresspost - USA: 2-3 business days (Starting at $28 CAD, varies by weight and destination)\n• Priority Worldwide - USA: 1-2 business days (Starting at $45 CAD, varies by weight and destination)\n\nPackages are shipped via Canada Post and delivered by USPS within the United States."
             },
             {
               question: "How much does shipping cost?",
-              answer: "Shipping costs are calculated automatically at checkout based on your destination, package weight, and selected shipping method. Rates vary by location:\n\n• Canada: Starting at $12 CAD for Regular Parcel\n• United States: Starting at $18 CAD for Tracked Packet\n\nAll prices are shown in CAD (use the currency selector to switch to USD). You'll see exact shipping costs at checkout before completing your purchase."
+              answer: "Shipping costs are calculated automatically at checkout based on your destination, package weight, and selected shipping method. Rates vary by location, weight, and destination:\n\n• Canada: Starting at $12 CAD for Regular Parcel (varies by weight and destination)\n• United States: Starting at $18 CAD for Tracked Packet (varies by weight and destination)\n\nAll prices are shown in CAD (use the currency selector to switch to USD). You'll see exact shipping costs at checkout before completing your purchase."
             },
             {
               question: "When will my order ship?",
@@ -525,7 +525,7 @@ export const translations = {
       shippingCosts: {
         title: "Shipping Costs",
         text1: "Shipping costs are calculated based on your location, package weight, and selected shipping method. Rates are displayed at checkout before you complete your purchase.",
-        text2: "All orders require shipping fees. Rates start from approximately $12 CAD for Regular Parcel within Canada. Remote locations (Yukon, Northwest Territories, Nunavut) may have additional surcharges applied at checkout."
+        text2: "All orders require shipping fees. Rates start from approximately $12 CAD for Regular Parcel within Canada (varies by weight and destination). Remote locations (Yukon, Northwest Territories, Nunavut) may have additional surcharges applied at checkout."
       },
       orderTracking: {
         title: "Order Tracking",
@@ -553,9 +553,9 @@ export const translations = {
         title: "Shipping to the United States",
         text1: "We now ship from Canada to the United States! Select 'United States' as your country during checkout to see available shipping options.",
         text2: "US shipping options include:",
-        item1: "Tracked Packet - USA: Standard delivery (4-7 business days) - Starting at $18 CAD",
-        item2: "Xpresspost - USA: Faster delivery (2-3 business days) - Starting at $28 CAD",
-        item3: "Priority Worldwide - USA: Express delivery (1-2 business days) - Starting at $45 CAD",
+        item1: "Tracked Packet - USA: Standard delivery (4-7 business days) - Starting at $18 CAD (varies by weight and destination)",
+        item2: "Xpresspost - USA: Faster delivery (2-3 business days) - Starting at $28 CAD (varies by weight and destination)",
+        item3: "Priority Worldwide - USA: Express delivery (1-2 business days) - Starting at $45 CAD (varies by weight and destination)",
         note: "All prices are in Canadian dollars (CAD). Delivery times are estimates and may vary based on destination and customs processing. Packages are shipped via Canada Post and delivered by USPS within the United States."
       },
       returns: {
@@ -1449,7 +1449,7 @@ export const translations = {
       shippingCosts: {
         title: "Frais d'Expédition",
         text1: "Les frais d'expédition sont calculés en fonction de votre emplacement, du poids du colis et de la méthode d'expédition sélectionnée. Les tarifs sont affichés à la caisse avant de finaliser votre achat.",
-        text2: "Toutes les commandes nécessitent des frais d'expédition. Les tarifs commencent à environ 12 $ CAD pour le Colis Régulier au Canada. Les emplacements éloignés (Yukon, Territoires du Nord-Ouest, Nunavut) peuvent avoir des frais supplémentaires appliqués à la caisse."
+        text2: "Toutes les commandes nécessitent des frais d'expédition. Les tarifs commencent à environ 12 $ CAD pour le Colis Régulier au Canada (varie selon le poids et la destination). Les emplacements éloignés (Yukon, Territoires du Nord-Ouest, Nunavut) peuvent avoir des frais supplémentaires appliqués à la caisse."
       },
       orderTracking: {
         title: "Suivi de Commande",
