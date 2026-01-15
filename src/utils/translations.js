@@ -128,7 +128,7 @@ export const translations = {
             },
             {
               question: "What's the difference between the sizes (Mini, Small, Medium, Large)?",
-              answer: "All our sizes contain the same high-quality dehydrated citrus slices—the only difference is quantity. Choose the size that fits your needs:\n\n• Mini Bag (10 pcs): Sample size perfect for first-time customers or testing recipes. Great for 1-2 cocktails or a single tea session.\n\n• Small Bag (20 pcs): Personal use size ideal for home bartenders or tea enthusiasts. Perfect for 3-5 drinks or small dinner parties.\n\n• Medium Bag (40 pcs): Family size for regular use. Great for weekly meal prep, multiple cocktails, or medium gatherings of 6-10 people.\n\n• Large Bag (80 pcs): Best value for frequent users, restaurants, or large events. Ideal for catering, regular entertaining, or stocking up.\n\n• Clear Box: Premium gift-ready packaging with the same quality product. Perfect for special occasions, corporate gifts, or elegant displays."
+              answer: "All our sizes contain the same high-quality dehydrated citrus slices—the only difference is quantity. Choose the size that fits your needs:\n\n• Mini Bag (10 pcs): Sample size perfect for first-time customers or testing recipes. Great for 1-2 cocktails or a single tea session.\n\n• Small Bag (20 pcs): Personal use size ideal for home bartenders or tea enthusiasts. Perfect for 3-5 drinks or small dinner parties.\n\n• Medium Bag (40 pcs): Family size for regular use. Great for weekly meal prep, multiple cocktails, or medium gatherings of 6-10 people.\n\n• Large Bag (75 pcs): Best value for frequent users, restaurants, or large events. Ideal for catering, regular entertaining, or stocking up.\n\n• Clear Box: Premium gift-ready packaging with the same quality product. Perfect for special occasions, corporate gifts, or elegant displays."
             },
             {
               question: "Can I use these in cocktails?",
@@ -158,7 +158,7 @@ export const translations = {
           questions: [
             {
               question: "How long does shipping take?",
-              answer: "Shipping times vary by service:\n• Regular Parcel: 2-5 business days (Canada)\n• Expedited Parcel: 1-3 business days (Canada)\n• Xpresspost: Next business day (Canada)\n• US Shipping: 4-7 business days (standard)\n\nShipping times are calculated from when your order ships, not when you place it. Orders placed before 2:00 PM EST are typically processed the same day."
+              answer: "Shipping times vary by service:\n• Regular Parcel: 2-5 business days (Canada)\n• Expedited Parcel: 1-3 business days (Canada)\n• Xpresspost: Next business day (Canada)\n• US Shipping: 4-7 business days (standard)\n\nShipping times are calculated from when your order ships, not when you place it. Orders placed before 2:00 PM EST (Monday-Thursday) are typically processed the same day."
             },
             {
               question: "Do you ship to the United States?",
@@ -507,7 +507,7 @@ export const translations = {
       },
       shippingTimes: {
         title: "Shipping Times",
-        text1: "Orders are typically processed within 1-2 business days (Monday-Friday, excluding holidays). Orders placed after 2:00 PM EST may be processed the next business day.",
+        text1: "Orders placed before 2:00 PM EST (Monday-Thursday) are typically processed the same day. Orders placed after 2:00 PM EST (Monday-Thursday) or on weekends are processed the next business day. Orders placed Friday-Sunday are processed the following Monday.",
         processingSchedule: "Processing Schedule",
         schedule1: "Orders placed Monday-Thursday before 2:00 PM EST: Processed within 24 hours",
         schedule2: "Orders placed Friday-Sunday: Processed the following Monday",
@@ -981,7 +981,7 @@ export const translations = {
             },
             {
               question: "Quelle est la différence entre les tailles (Mini, Petit, Moyen, Grand)?",
-              answer: "Toutes nos tailles contiennent les mêmes tranches d'agrumes déshydratées de haute qualité—la seule différence est la quantité. Choisissez la taille qui correspond à vos besoins :\n\n• Sac Mini (10 pcs): Taille d'échantillon parfaite pour les nouveaux clients ou tester des recettes. Idéal pour 1-2 cocktails ou une seule séance de thé.\n\n• Sac Petit (20 pcs): Taille personnelle idéale pour les barmen à domicile ou les amateurs de thé. Parfait pour 3-5 boissons ou de petits dîners.\n\n• Sac Moyen (40 pcs): Taille familiale pour un usage régulier. Idéal pour la préparation de repas hebdomadaire, plusieurs cocktails ou des rassemblements moyens de 6-10 personnes.\n\n• Sac Grand (80 pcs): Meilleure valeur pour les utilisateurs fréquents, les restaurants ou les grands événements. Idéal pour le traiteur, les divertissements réguliers ou le stockage.\n\n• Boîte Transparente: Emballage premium prêt pour cadeau avec le même produit de qualité. Parfait pour les occasions spéciales, les cadeaux d'entreprise ou les présentations élégantes."
+              answer: "Toutes nos tailles contiennent les mêmes tranches d'agrumes déshydratées de haute qualité—la seule différence est la quantité. Choisissez la taille qui correspond à vos besoins :\n\n• Sac Mini (10 pcs): Taille d'échantillon parfaite pour les nouveaux clients ou tester des recettes. Idéal pour 1-2 cocktails ou une seule séance de thé.\n\n• Sac Petit (20 pcs): Taille personnelle idéale pour les barmen à domicile ou les amateurs de thé. Parfait pour 3-5 boissons ou de petits dîners.\n\n• Sac Moyen (40 pcs): Taille familiale pour un usage régulier. Idéal pour la préparation de repas hebdomadaire, plusieurs cocktails ou des rassemblements moyens de 6-10 personnes.\n\n• Sac Grand (75 pcs): Meilleure valeur pour les utilisateurs fréquents, les restaurants ou les grands événements. Idéal pour le traiteur, les divertissements réguliers ou le stockage.\n\n• Boîte Transparente: Emballage premium prêt pour cadeau avec le même produit de qualité. Parfait pour les occasions spéciales, les cadeaux d'entreprise ou les présentations élégantes."
             },
             {
               question: "Puis-je les utiliser dans des cocktails?",
@@ -1011,7 +1011,7 @@ export const translations = {
           questions: [
             {
               question: "Combien de temps prend l'expédition?",
-              answer: "Les délais d'expédition varient selon le service:\n• Colis Régulier: 2-5 jours ouvrables (Canada)\n• Colis Accéléré: 1-3 jours ouvrables (Canada)\n• Poste Xpress: Le jour ouvrable suivant (Canada)\n• Expédition aux États-Unis: 4-7 jours ouvrables (standard)\n\nLes délais d'expédition sont calculés à partir du moment où votre commande est expédiée, et non lorsque vous la passez. Les commandes passées avant 14h00 HNE sont généralement traitées le jour même."
+              answer: "Les délais d'expédition varient selon le service:\n• Colis Régulier: 2-5 jours ouvrables (Canada)\n• Colis Accéléré: 1-3 jours ouvrables (Canada)\n• Poste Xpress: Le jour ouvrable suivant (Canada)\n• Expédition aux États-Unis: 4-7 jours ouvrables (standard)\n\nLes délais d'expédition sont calculés à partir du moment où votre commande est expédiée, et non lorsque vous la passez. Les commandes passées avant 14h00 HNE (lundi-jeudi) sont généralement traitées le jour même."
             },
             {
               question: "Livrez-vous aux États-Unis?",
@@ -1424,7 +1424,7 @@ export const translations = {
       },
       shippingTimes: {
         title: "Délais d'Expédition",
-        text1: "Les commandes sont généralement traitées dans un délai de 1 à 2 jours ouvrables (lundi-vendredi, jours fériés exclus). Les commandes passées après 14 h 00 HNE peuvent être traitées le jour ouvrable suivant.",
+        text1: "Les commandes passées avant 14h00 HNE (lundi-jeudi) sont généralement traitées le jour même. Les commandes passées après 14h00 HNE (lundi-jeudi) ou les week-ends sont traitées le jour ouvrable suivant. Les commandes passées vendredi-dimanche sont traitées le lundi suivant.",
         processingSchedule: "Calendrier de Traitement",
         schedule1: "Commandes passées lundi-jeudi avant 14 h 00 HNE : Traitées dans les 24 heures",
         schedule2: "Commandes passées vendredi-dimanche : Traitées le lundi suivant",
