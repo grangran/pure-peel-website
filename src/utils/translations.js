@@ -165,15 +165,15 @@ export const translations = {
           questions: [
             {
               question: "How long does shipping take?",
-              answer: "Shipping times vary by service and destination:\n\nCanada:\n• Regular Parcel: 2-5 business days (Starting at $12 CAD, varies by weight and destination)\n• Expedited Parcel: 1-3 business days (Starting at $18 CAD, varies by weight and destination)\n• Xpresspost: Next business day (Starting at $22 CAD, varies by weight and destination)\n\nUnited States:\n• Tracked Packet - USA: 4-7 business days (Starting at $18 CAD, varies by weight and destination)\n• Xpresspost - USA: 2-3 business days (Starting at $28 CAD, varies by weight and destination)\n• Priority Worldwide - USA: 1-2 business days (Starting at $45 CAD, varies by weight and destination)\n\nShipping times are calculated from when your order ships, not when you place it. Orders placed before 2:00 PM EST (Monday-Thursday) are typically processed the same day. Orders placed Friday-Sunday are processed the following Monday."
+              answer: "Shipping times vary by service and destination:\n\nCanada:\n• Regular Parcel: 2-5 business days\n• Expedited Parcel: 1-3 business days\n• Xpresspost: Next business day\n\nUnited States:\n• Tracked Packet - USA: 4-7 business days\n• Xpresspost - USA: 2-3 business days\n• Priority Worldwide - USA: 1-2 business days\n\nShipping times are calculated from when your order ships, not when you place it. Orders placed before 2:00 PM EST (Monday-Thursday) are typically processed the same day. Orders placed Friday-Sunday are processed the following Monday. Prices are calculated at checkout based on your destination, package weight, and selected shipping method."
             },
             {
               question: "Do you ship to the United States?",
-              answer: "Yes! We ship to all 50 US states. Select \"United States\" as your country during checkout to see available shipping options:\n\n• Tracked Packet - USA: 4-7 business days (Starting at $18 CAD, varies by weight and destination)\n• Xpresspost - USA: 2-3 business days (Starting at $28 CAD, varies by weight and destination)\n• Priority Worldwide - USA: 1-2 business days (Starting at $45 CAD, varies by weight and destination)\n\nPackages are shipped via Canada Post and delivered by USPS within the United States."
+              answer: "Yes! We ship to all 50 US states. Select \"United States\" as your country during checkout to see available shipping options:\n\n• Tracked Packet - USA: 4-7 business days\n• Xpresspost - USA: 2-3 business days\n• Priority Worldwide - USA: 1-2 business days\n\nPackages are shipped via Canada Post and delivered by USPS within the United States. Prices are calculated at checkout based on your destination, package weight, and selected shipping method."
             },
             {
               question: "How much does shipping cost?",
-              answer: "Shipping costs are calculated automatically at checkout based on your destination, package weight, and selected shipping method. Rates vary by location, weight, and destination:\n\n• Canada: Starting at $12 CAD for Regular Parcel (varies by weight and destination)\n• United States: Starting at $18 CAD for Tracked Packet (varies by weight and destination)\n\nAll prices are shown in CAD (use the currency selector to switch to USD). You'll see exact shipping costs at checkout before completing your purchase."
+              answer: "Shipping costs are calculated automatically at checkout based on your destination, package weight, and selected shipping method. Rates vary by location, weight, and destination:\n\n• Canada: Prices are calculated dynamically at checkout\n• United States: Prices are calculated dynamically at checkout\n\nAll prices are shown in CAD (use the currency selector to switch to USD). You'll see exact shipping costs at checkout before completing your purchase."
             },
             {
               question: "When will my order ship?",
@@ -555,9 +555,9 @@ export const translations = {
         title: "Shipping to the United States",
         text1: "We now ship from Canada to the United States! Select 'United States' as your country during checkout to see available shipping options.",
         text2: "US shipping options include:",
-        item1: "Tracked Packet - USA: Standard delivery (4-7 business days) - Starting at $18 CAD (varies by weight and destination)",
-        item2: "Xpresspost - USA: Faster delivery (2-3 business days) - Starting at $28 CAD (varies by weight and destination)",
-        item3: "Priority Worldwide - USA: Express delivery (1-2 business days) - Starting at $45 CAD (varies by weight and destination)",
+        item1: "Tracked Packet - USA: Standard delivery (4-7 business days) - Price calculated at checkout",
+        item2: "Xpresspost - USA: Faster delivery (2-3 business days) - Price calculated at checkout",
+        item3: "Priority Worldwide - USA: Express delivery (1-2 business days) - Price calculated at checkout",
         note: "All prices are in Canadian dollars (CAD). Delivery times are estimates and may vary based on destination and customs processing. Packages are shipped via Canada Post and delivered by USPS within the United States."
       },
       returns: {
@@ -1027,15 +1027,15 @@ export const translations = {
           questions: [
             {
               question: "Combien de temps prend l'expédition?",
-              answer: "Les délais d'expédition varient selon le service et la destination:\n\nCanada:\n• Colis Régulier: 2-5 jours ouvrables (À partir de 12 $ CAD)\n• Colis Accéléré: 1-3 jours ouvrables (À partir de 18 $ CAD)\n• Poste Xpress: Le jour ouvrable suivant (À partir de 22 $ CAD)\n\nÉtats-Unis:\n• Colis Suivi - USA: 4-7 jours ouvrables (À partir de 18 $ CAD)\n• Poste Xpress - USA: 2-3 jours ouvrables (À partir de 28 $ CAD)\n• Priorité Mondiale - USA: 1-2 jours ouvrables (À partir de 45 $ CAD)\n\nLes délais d'expédition sont calculés à partir du moment où votre commande est expédiée, et non lorsque vous la passez. Les commandes passées avant 14h00 HNE (lundi-jeudi) sont généralement traitées le jour même. Les commandes passées vendredi-dimanche sont traitées le lundi suivant."
+              answer: "Les délais d'expédition varient selon le service et la destination:\n\nCanada:\n• Colis Régulier: 2-5 jours ouvrables\n• Colis Accéléré: 1-3 jours ouvrables\n• Poste Xpress: Le jour ouvrable suivant\n\nÉtats-Unis:\n• Colis Suivi - USA: 4-7 jours ouvrables\n• Poste Xpress - USA: 2-3 jours ouvrables\n• Priorité Mondiale - USA: 1-2 jours ouvrables\n\nLes délais d'expédition sont calculés à partir du moment où votre commande est expédiée, et non lorsque vous la passez. Les commandes passées avant 14h00 HNE (lundi-jeudi) sont généralement traitées le jour même. Les commandes passées vendredi-dimanche sont traitées le lundi suivant. Les prix sont calculés à la caisse en fonction de votre destination, du poids du colis et de la méthode d'expédition sélectionnée."
             },
             {
               question: "Livrez-vous aux États-Unis?",
-              answer: "Oui! Nous livrons dans les 50 États américains. Sélectionnez \"États-Unis\" comme pays lors du paiement pour voir les options d'expédition disponibles:\n\n• Colis Suivi - USA: 4-7 jours ouvrables (À partir de 18 $ CAD)\n• Poste Xpress - USA: 2-3 jours ouvrables (À partir de 28 $ CAD)\n• Priorité Mondiale - USA: 1-2 jours ouvrables (À partir de 45 $ CAD)\n\nLes colis sont expédiés via Postes Canada et livrés par USPS aux États-Unis."
+              answer: "Oui! Nous livrons dans les 50 États américains. Sélectionnez \"États-Unis\" comme pays lors du paiement pour voir les options d'expédition disponibles:\n\n• Colis Suivi - USA: 4-7 jours ouvrables\n• Poste Xpress - USA: 2-3 jours ouvrables\n• Priorité Mondiale - USA: 1-2 jours ouvrables\n\nLes colis sont expédiés via Postes Canada et livrés par USPS aux États-Unis. Les prix sont calculés à la caisse en fonction de votre destination, du poids du colis et de la méthode d'expédition sélectionnée."
             },
             {
               question: "Combien coûte l'expédition?",
-              answer: "Les coûts d'expédition sont calculés automatiquement au paiement en fonction de votre destination, du poids du colis et de la méthode d'expédition sélectionnée. Les tarifs varient selon l'emplacement:\n\n• Canada: À partir de 12 $ CAD pour le Colis Régulier\n• États-Unis: À partir de 18 $ CAD pour le Colis Suivi\n\nTous les prix sont affichés en CAD (utilisez le sélecteur de devise pour passer à USD). Vous verrez les coûts d'expédition exacts au paiement avant de finaliser votre achat."
+              answer: "Les coûts d'expédition sont calculés automatiquement au paiement en fonction de votre destination, du poids du colis et de la méthode d'expédition sélectionnée. Les tarifs varient selon l'emplacement, le poids et la destination:\n\n• Canada: Les prix sont calculés dynamiquement à la caisse\n• États-Unis: Les prix sont calculés dynamiquement à la caisse\n\nTous les prix sont affichés en CAD (utilisez le sélecteur de devise pour passer à USD). Vous verrez les coûts d'expédition exacts au paiement avant de finaliser votre achat."
             },
             {
               question: "Quand ma commande sera-t-elle expédiée?",
