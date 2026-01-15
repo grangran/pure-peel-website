@@ -762,13 +762,18 @@ export const sendContactForm = async (name, email, inquiryType, message) => {
     // Use Resend if configured
     if (resend && process.env.RESEND_FROM_EMAIL) {
       try {
+        // Send FROM the same alias as TO, so the sender matches the inquiry type
+        // Format: "Display Name <email@domain.com>"
+        const fromEmail = `Pure Peel Co. <${adminEmail}>`
+        
         console.log('📧 Attempting to send contact form via Resend...')
-        console.log('   From:', process.env.RESEND_FROM_EMAIL)
+        console.log('   From:', fromEmail)
         console.log('   To:', adminEmail)
         console.log('   Customer:', email)
+        console.log('   Inquiry Type:', normalizedInquiryType)
         
         const { data, error } = await resend.emails.send({
-          from: process.env.RESEND_FROM_EMAIL,
+          from: fromEmail,
           to: adminEmail,
           replyTo: email, // Allow replying directly to customer
           subject: subject,
