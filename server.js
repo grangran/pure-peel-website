@@ -745,6 +745,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
         language: shippingInfo.language || 'en', // Store language preference
         timezone: shippingInfo.timezone || 'America/Toronto', // Store customer timezone
         promo_code: promoCode || '',
+        order_id: shippingInfo.order_id || `PP-${Date.now().toString().slice(-8)}`, // Use order_id from frontend or generate one
       },
       // Add shipping cost (finalShippingCostCents is already in cents, no need to multiply again)
       // Always provide a shipping option (even if $0) when shipping_address_collection is enabled

@@ -685,6 +685,9 @@ export default function Checkout() {
       const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
       let response
       try {
+        // Generate order ID BEFORE creating checkout session to ensure consistency
+        const orderId = `PP-${Date.now().toString().slice(-8)}`
+        
         response = await fetch(`${API_URL}/api/create-checkout-session`, {
           method: 'POST',
           headers: {
@@ -696,6 +699,7 @@ export default function Checkout() {
               ...formData,
               selectedShipping: selectedShipping,
               language: language,
+              order_id: orderId, // Pass order ID to backend
               timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
             },
             total: getCartTotal(),
