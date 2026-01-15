@@ -1364,8 +1364,23 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
 
         if (!response.ok) {
           const errorText = await response.text()
-          console.error('Canada Post API error:', response.status, errorText)
-          throw new Error(`Canada Post API error: ${response.statusText}`)
+          console.error('❌ Canada Post API error:', response.status, errorText)
+          
+          // Enhanced error logging for 401 errors
+          if (response.status === 401) {
+            console.error('🔐 Authentication failed. Check:')
+            console.error('   - Username:', canadaPostUsername ? `${canadaPostUsername.substring(0, 4)}...` : 'NOT SET')
+            console.error('   - Password:', canadaPostPassword ? 'SET' : 'NOT SET')
+            console.error('   - Customer Number:', canadaPostCustomerNumber)
+            console.error('   - Use Production:', process.env.CANADA_POST_USE_PRODUCTION)
+            console.error('   - Endpoint:', apiUrl)
+            console.error('   - Possible causes:')
+            console.error('     1. Credentials expired or rotated')
+            console.error('     2. Account not activated (contact Canada Post support: 1-866-511-0546)')
+            console.error('     3. Wrong credentials for environment (production vs development)')
+          }
+          
+          throw new Error(`Canada Post API error: ${response.status} - ${errorText.substring(0, 200)}`)
         }
 
         const xmlData = await response.text()
