@@ -48,9 +48,10 @@ export async function createCanadaPostLabel(order) {
     })
 
     // Canada Post Shipping API endpoint
+    // Note: Customer number must be included in the URL path
     const apiUrl = useProduction
-      ? 'https://soa-gw.canadapost.ca/rs/ship/package'
-      : 'https://ct.soa-gw.canadapost.ca/rs/ship/package'
+      ? `https://soa-gw.canadapost.ca/rs/${canadaPostCustomerNumber}/ship/package`
+      : `https://ct.soa-gw.canadapost.ca/rs/${canadaPostCustomerNumber}/ship/package`
 
     const auth = Buffer.from(`${canadaPostUsername}:${canadaPostPassword}`).toString('base64')
 
