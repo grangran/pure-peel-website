@@ -951,8 +951,23 @@ app.get('/api/checkout-session/:sessionId', async (req, res) => {
     
     if (!existingOrder && isPaidOrFree) {
       try {
+        // Use order_id from metadata (set during checkout session creation)
+        const orderIdFromMetadata = session.metadata?.order_id
+        
+        if (!orderIdFromMetadata) {
+          console.error('⚠️ WARNING: order_id not found in session metadata (checkout session handler)!')
+          console.error('   Session metadata:', JSON.stringify(session.metadata, null, 2))
+        }
+        
         // Generate order ID from timestamp (8 digits) to match frontend format
-        const orderId = session.metadata?.order_id || `PP-${Date.now().toString().slice(-8)}`
+        // ONLY if not found in metadata (should always be there)
+        const orderId = orderIdFromMetadata || `PP-${Date.now().toString().slice(-8)}`
+        
+        console.log('📋 Order ID resolution (checkout session):', {
+          fromMetadata: session.metadata?.order_id,
+          finalOrderId: orderId,
+          wasGenerated: !orderIdFromMetadata
+        })
         
         // Debug logging for shipping address (checkout session handler)
         console.log('📦 Shipping address debug (checkout session):', {
