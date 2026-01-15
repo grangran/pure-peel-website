@@ -164,8 +164,25 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
         const existingOrder = allOrders.find(o => o.stripeSessionId === fullSession.id)
 
         if (!existingOrder && isPaidOrFree) {
+          // Use order_id from metadata (set during checkout session creation)
+          const orderIdFromMetadata = fullSession.metadata?.order_id || session.metadata?.order_id
+          
+          if (!orderIdFromMetadata) {
+            console.error('⚠️ WARNING: order_id not found in session metadata (webhook handler)!')
+            console.error('   FullSession metadata:', JSON.stringify(fullSession.metadata, null, 2))
+            console.error('   Event metadata:', JSON.stringify(session.metadata, null, 2))
+          }
+          
           // Generate order ID from timestamp (8 digits) to match frontend format
-          const orderId = `PP-${Date.now().toString().slice(-8)}`
+          // ONLY if not found in metadata (should always be there)
+          const orderId = orderIdFromMetadata || `PP-${Date.now().toString().slice(-8)}`
+          
+          console.log('📋 Order ID resolution (webhook):', {
+            fromFullSessionMetadata: fullSession.metadata?.order_id,
+            fromEventMetadata: session.metadata?.order_id,
+            finalOrderId: orderId,
+            wasGenerated: !orderIdFromMetadata
+          })
           
           // Extract order information
           const orderData = {
