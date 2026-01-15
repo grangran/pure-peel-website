@@ -509,7 +509,9 @@ export const translations = {
             name: "Xpresspost",
             time: "Next business day",
             description: "Express delivery with signature confirmation and priority handling (guaranteed, major centers)"
-          }
+          },
+          priceNote: "Prix calculé à la caisse",
+          priceNote: "Price calculated at checkout"
         }
       },
       shippingTimes: {
@@ -525,7 +527,7 @@ export const translations = {
       shippingCosts: {
         title: "Shipping Costs",
         text1: "Shipping costs are calculated based on your location, package weight, and selected shipping method. Rates are displayed at checkout before you complete your purchase.",
-        text2: "All orders require shipping fees. Rates start from approximately $12 CAD for Regular Parcel within Canada (varies by weight and destination). Remote locations (Yukon, Northwest Territories, Nunavut) may have additional surcharges applied at checkout."
+        text2: "All orders require shipping fees. Rates are calculated dynamically at checkout based on your destination, package weight, and selected shipping method. Remote locations (Yukon, Northwest Territories, Nunavut) may have additional surcharges applied."
       },
       orderTracking: {
         title: "Order Tracking",
@@ -1449,7 +1451,7 @@ export const translations = {
       shippingCosts: {
         title: "Frais d'Expédition",
         text1: "Les frais d'expédition sont calculés en fonction de votre emplacement, du poids du colis et de la méthode d'expédition sélectionnée. Les tarifs sont affichés à la caisse avant de finaliser votre achat.",
-        text2: "Toutes les commandes nécessitent des frais d'expédition. Les tarifs commencent à environ 12 $ CAD pour le Colis Régulier au Canada (varie selon le poids et la destination). Les emplacements éloignés (Yukon, Territoires du Nord-Ouest, Nunavut) peuvent avoir des frais supplémentaires appliqués à la caisse."
+        text2: "Toutes les commandes nécessitent des frais d'expédition. Les tarifs sont calculés dynamiquement à la caisse en fonction de votre destination, du poids du colis et de la méthode d'expédition sélectionnée. Les emplacements éloignés (Yukon, Territoires du Nord-Ouest, Nunavut) peuvent avoir des frais supplémentaires appliqués."
       },
       orderTracking: {
         title: "Suivi de Commande",
