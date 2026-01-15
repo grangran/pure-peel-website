@@ -30,6 +30,18 @@ export async function createCanadaPostLabel(order) {
     const shippingName = order.shipping?.name || order.customer?.name || 'Customer'
     const country = shippingAddress.country || 'CA'
     const isUS = country === 'US' || country === 'United States'
+    
+    // Validate required address fields
+    const addressLine1 = shippingAddress.line1 || shippingAddress.line_1 || shippingAddress.address_line_1 || ''
+    if (!addressLine1 || addressLine1.trim() === '') {
+      console.error('❌ Missing required shipping address line1 for order:', order.id)
+      console.error('   Shipping address:', JSON.stringify(shippingAddress, null, 2))
+      console.error('   Full order shipping:', JSON.stringify(order.shipping, null, 2))
+      return {
+        success: false,
+        error: 'Shipping address line1 is required but missing. Cannot create label without complete address.'
+      }
+    }
 
     // Calculate package weight and dimensions from order items
     const weight = calculatePackageWeight(order.items || [])
@@ -226,10 +238,27 @@ function buildShipmentXML({ customerNumber, shippingName, shippingAddress, weigh
   const lastName = nameParts.slice(1).join(' ') || 'Name'
 
   // Format destination address
+  // Handle different field name variations from Stripe
+  const addressLine1 = shippingAddress.line1 || shippingAddress.line_1 || shippingAddress.address_line_1 || ''
+  const addressLine2 = shippingAddress.line2 || shippingAddress.line_2 || shippingAddress.address_line_2 || ''
   const destPostalCode = (shippingAddress.postal_code || shippingAddress.postalCode || '').replace(/\s+/g, '').replace(/-/g, '')
   const destCity = shippingAddress.city || ''
   const destProvince = shippingAddress.province || shippingAddress.state || ''
   const destCountry = isUS ? 'US' : 'CA'
+  
+  // Validate required fields
+  if (!addressLine1 || addressLine1.trim() === '') {
+    throw new Error('address-line-1 is required but missing')
+  }
+  if (!destCity || destCity.trim() === '') {
+    throw new Error('city is required but missing')
+  }
+  if (!destProvince || destProvince.trim() === '') {
+    throw new Error('province/state is required but missing')
+  }
+  if (!destPostalCode || destPostalCode.trim() === '') {
+    throw new Error('postal code is required but missing')
+  }
 
   // Build destination XML based on country
   // Note: destination must use address-details wrapper, similar to sender
@@ -238,8 +267,8 @@ function buildShipmentXML({ customerNumber, shippingName, shippingAddress, weigh
     destinationXml = `<destination>
       <name>${escapeXml(firstName)} ${escapeXml(lastName)}</name>
       <address-details>
-        <address-line-1>${escapeXml(shippingAddress.line1 || '')}</address-line-1>
-        ${shippingAddress.line2 ? `<address-line-2>${escapeXml(shippingAddress.line2)}</address-line-2>` : ''}
+        <address-line-1>${escapeXml(addressLine1)}</address-line-1>
+        ${addressLine2 ? `<address-line-2>${escapeXml(addressLine2)}</address-line-2>` : ''}
         <city>${escapeXml(destCity)}</city>
         <prov-state>${escapeXml(destProvince)}</prov-state>
         <postal-zip-code>${destPostalCode.substring(0, 5)}</postal-zip-code>
@@ -250,8 +279,8 @@ function buildShipmentXML({ customerNumber, shippingName, shippingAddress, weigh
     destinationXml = `<destination>
       <name>${escapeXml(firstName)} ${escapeXml(lastName)}</name>
       <address-details>
-        <address-line-1>${escapeXml(shippingAddress.line1 || '')}</address-line-1>
-        ${shippingAddress.line2 ? `<address-line-2>${escapeXml(shippingAddress.line2)}</address-line-2>` : ''}
+        <address-line-1>${escapeXml(addressLine1)}</address-line-1>
+        ${addressLine2 ? `<address-line-2>${escapeXml(addressLine2)}</address-line-2>` : ''}
         <city>${escapeXml(destCity)}</city>
         <prov-state>${escapeXml(destProvince)}</prov-state>
         <postal-zip-code>${destPostalCode}</postal-zip-code>
