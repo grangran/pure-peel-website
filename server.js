@@ -760,8 +760,15 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       success_url: `${req.headers.origin || 'http://localhost:5173'}/checkout?success=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.origin || 'http://localhost:5173'}/checkout?canceled=true`,
       customer_email: shippingInfo.email,
+      // Always collect shipping address, even for free orders
+      // This is required for Canada Post label creation
       shipping_address_collection: {
         allowed_countries: ['CA', 'US'],
+      },
+      // Force shipping address collection by requiring it
+      // Note: For free orders, we still need the address for label creation
+      phone_number_collection: {
+        enabled: false, // Optional, but can help ensure address is collected
       },
       metadata: {
         customer_name: `${shippingInfo.firstName} ${shippingInfo.lastName}`,

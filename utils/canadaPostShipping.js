@@ -37,9 +37,14 @@ export async function createCanadaPostLabel(order) {
       console.error('❌ Missing required shipping address line1 for order:', order.id)
       console.error('   Shipping address:', JSON.stringify(shippingAddress, null, 2))
       console.error('   Full order shipping:', JSON.stringify(order.shipping, null, 2))
+      console.error('   Full order object keys:', Object.keys(order))
+      console.error('   Order shipping keys:', order.shipping ? Object.keys(order.shipping) : 'shipping is null/undefined')
+      
+      // For free orders, Stripe might not collect shipping address
+      // Return a more helpful error message
       return {
         success: false,
-        error: 'Shipping address line1 is required but missing. Cannot create label without complete address.'
+        error: 'Shipping address is missing. This may occur for free orders if Stripe did not collect the shipping address. Please create the label manually or ensure shipping_address_collection is enabled for all orders.'
       }
     }
 
