@@ -97,10 +97,23 @@ export async function createCanadaPostLabel(order) {
         const errorText = await response.text()
         
         // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'canadaPostShipping.js:84',message:'Label creation - error response',data:{status:response.status,errorText:errorText.substring(0,500),errorTextLength:errorText.length,is401:response.status===401,usernamePrefix:canadaPostUsername?.substring(0,4)||'NONE',customerNumber:canadaPostCustomerNumber,apiUrl,mobo,useProduction},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+        fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'canadaPostShipping.js:84',message:'Label creation - error response',data:{status:response.status,errorText:errorText.substring(0,500),errorTextLength:errorText.length,is401:response.status===401,is403:response.status===403,usernamePrefix:canadaPostUsername?.substring(0,4)||'NONE',customerNumber:canadaPostCustomerNumber,apiUrl,mobo,useProduction},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
         // #endregion
         
         console.error('❌ Canada Post API error:', response.status, errorText)
+        
+        // Enhanced error logging for 403 errors
+        if (response.status === 403) {
+          console.error('🚫 Authorization failed (403). Possible causes:')
+          console.error('   1. Account not activated for production API access')
+          console.error('   2. Account does not have permission for shipment creation')
+          console.error('   3. Customer number does not have shipping API access')
+          console.error('   4. Wrong endpoint URL format')
+          console.error('   5. Service code or options not enabled in your contract')
+          console.error('   Full error:', errorText)
+          console.error('   Contact Canada Post support: 1-866-511-0546')
+        }
+        
         throw new Error(`Canada Post API error: ${response.status} - ${errorText.substring(0, 200)}`)
       }
 
