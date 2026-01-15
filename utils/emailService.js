@@ -661,7 +661,14 @@ export const sendAdminNotification = async (order) => {
 }
 
 // Contact form email template
-const contactFormTemplate = (name, email, message) => {
+const contactFormTemplate = (name, email, inquiryType, message) => {
+  const inquiryTypeLabels = {
+    'general': 'General Inquiry',
+    'support': 'Product Issue & Support',
+    'shipping': 'Shipping Inquiry',
+    'bulk': 'Bulk Order Inquiry'
+  }
+  
   return `
     <!DOCTYPE html>
     <html>
@@ -695,6 +702,10 @@ const contactFormTemplate = (name, email, message) => {
             <div class="value">${email}</div>
           </div>
           <div class="field">
+            <span class="label">Inquiry Type:</span>
+            <div class="value">${inquiryTypeLabels[inquiryType] || inquiryType}</div>
+          </div>
+          <div class="field">
             <span class="label">Message:</span>
             <div class="value message">${message}</div>
           </div>
@@ -710,21 +721,32 @@ const contactFormTemplate = (name, email, message) => {
 }
 
 // Send contact form submission
-export const sendContactForm = async (name, email, message) => {
+export const sendContactForm = async (name, email, inquiryType, message) => {
   try {
-    // Send contact form emails to orders@purepeelco.com (same as order notifications)
-    // This ensures all business emails go to the same place
-    const adminEmail = process.env.RESEND_FROM_EMAIL?.includes('orders@purepeelco.com')
-      ? 'orders@purepeelco.com'
-      : (process.env.ADMIN_EMAIL || 'orders@purepeelco.com' || 'purepeel11@gmail.com')
+    // Route to appropriate email alias based on inquiry type
+    const emailAliases = {
+      'general': 'info@purepeelco.com',
+      'support': 'support@purepeelco.com',
+      'shipping': 'shipping@purepeelco.com',
+      'bulk': 'orders@purepeelco.com'
+    }
+    
+    const adminEmail = emailAliases[inquiryType] || emailAliases['general']
     
     if (!adminEmail) {
       console.log('Admin email not configured. Contact form submission would be sent.')
       return { success: false, reason: 'Admin email not configured' }
     }
 
-    const htmlContent = contactFormTemplate(name, email, message)
-    const subject = `📧 New Contact Form: ${name}`
+    const inquiryTypeLabels = {
+      'general': 'General Inquiry',
+      'support': 'Product Issue & Support',
+      'shipping': 'Shipping Inquiry',
+      'bulk': 'Bulk Order Inquiry'
+    }
+    
+    const htmlContent = contactFormTemplate(name, email, inquiryType, message)
+    const subject = `📧 ${inquiryTypeLabels[inquiryType] || 'Contact Form'}: ${name}`
     
     // Use Resend if configured
     if (resend && process.env.RESEND_FROM_EMAIL) {

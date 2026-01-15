@@ -9,6 +9,7 @@ export default function ContactForm() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    inquiryType: "",
     message: ""
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -60,6 +61,7 @@ export default function ContactForm() {
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
+          inquiryType: formData.inquiryType,
           message: formData.message
         })
       })
@@ -68,7 +70,7 @@ export default function ContactForm() {
 
       if (response.ok && data.success) {
         setSubmitStatus("success")
-        setFormData({ name: "", email: "", message: "" })
+        setFormData({ name: "", email: "", inquiryType: "", message: "" })
         // Track contact form submission
         trackContactFormSubmit()
       } else {
@@ -137,6 +139,23 @@ export default function ContactForm() {
               required
               className="w-full py-3.5 px-4 rounded-lg border border-gray-300 font-sans text-base transition-all duration-200 bg-white focus:outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 placeholder:text-gray-400"
             />
+          </div>
+
+          <div className="flex flex-col">
+            <select
+              name="inquiryType"
+              id="contact-inquiry-type"
+              value={formData.inquiryType}
+              onChange={handleChange}
+              required
+              className="w-full py-3.5 px-4 rounded-lg border border-gray-300 font-sans text-base transition-all duration-200 bg-white focus:outline-none focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 text-gray-900 appearance-none cursor-pointer"
+            >
+              <option value="">{getTranslation(language, 'contact.inquiryTypePlaceholder')}</option>
+              <option value="general">{getTranslation(language, 'contact.inquiryType.general')}</option>
+              <option value="support">{getTranslation(language, 'contact.inquiryType.support')}</option>
+              <option value="shipping">{getTranslation(language, 'contact.inquiryType.shipping')}</option>
+              <option value="bulk">{getTranslation(language, 'contact.inquiryType.bulk')}</option>
+            </select>
           </div>
 
           <div className="flex flex-col">

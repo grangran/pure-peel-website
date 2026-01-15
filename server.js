@@ -1904,7 +1904,7 @@ app.get('/api/admin/orders/:orderId/refunds', authenticateAdmin, (req, res) => {
 // Contact form submission
 app.post('/api/contact', apiLimiter, async (req, res) => {
   try {
-    const { name, email, message } = req.body
+    const { name, email, inquiryType, message } = req.body
 
     // Validation
     if (!name || !name.trim()) {
@@ -1916,14 +1916,17 @@ app.post('/api/contact', apiLimiter, async (req, res) => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ error: 'Invalid email address' })
     }
+    if (!inquiryType || !inquiryType.trim()) {
+      return res.status(400).json({ error: 'Inquiry type is required' })
+    }
     if (!message || !message.trim()) {
       return res.status(400).json({ error: 'Message is required' })
     }
 
-    console.log('📧 Contact form submission received:', { name, email, messageLength: message.length })
+    console.log('📧 Contact form submission received:', { name, email, inquiryType, messageLength: message.length })
 
     // Send email using Resend
-    const result = await sendContactForm(name.trim(), email.trim(), message.trim())
+    const result = await sendContactForm(name.trim(), email.trim(), inquiryType.trim(), message.trim())
 
     if (result.success) {
       console.log('✅ Contact form email sent successfully')

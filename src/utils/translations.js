@@ -93,6 +93,13 @@ export const translations = {
       description: "Have a question? We'd love to hear from you. Send us a message and we'll respond as soon as possible.",
       name: "Your name",
       email: "Your email",
+      inquiryTypePlaceholder: "Select inquiry type",
+      inquiryType: {
+        general: "General Inquiry",
+        support: "Product Issue & Support",
+        shipping: "Shipping Inquiry",
+        bulk: "Bulk Order Inquiry"
+      },
       message: "Your message",
       sendMessage: "Send Message",
       sending: "Sending...",
@@ -946,6 +953,13 @@ export const translations = {
       description: "Vous avez une question? Nous serions ravis de vous entendre. Envoyez-nous un message et nous vous répondrons dès que possible.",
       name: "Votre nom",
       email: "Votre courriel",
+      inquiryTypePlaceholder: "Sélectionnez le type de demande",
+      inquiryType: {
+        general: "Demande générale",
+        support: "Problème de produit et support",
+        shipping: "Demande d'expédition",
+        bulk: "Demande de commande en gros"
+      },
       message: "Votre message",
       sendMessage: "Envoyer le Message",
       sending: "Envoi en cours...",
