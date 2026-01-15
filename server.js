@@ -303,7 +303,11 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
         // Check if order already exists
         const existingOrder = getOrderById(paymentIntent.id.replace('pi_', 'PP-'))
         
-        if (!existingOrder && paymentIntent.status === 'succeeded') {
+        // For free orders, status might be 'succeeded' even with $0 amount
+        const isFreeOrder = (paymentIntent.amount || 0) === 0
+        const isSucceededOrFree = paymentIntent.status === 'succeeded' || isFreeOrder
+        
+        if (!existingOrder && isSucceededOrFree) {
           // Extract order information from Payment Intent
           const items = JSON.parse(paymentIntent.metadata?.items || '[]')
           const orderData = {
