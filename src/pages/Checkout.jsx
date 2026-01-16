@@ -56,7 +56,6 @@ export default function Checkout() {
   const [appliedPromoCode, setAppliedPromoCode] = useState(null)
   const [promoCodeError, setPromoCodeError] = useState('')
   const [promoCodeDiscount, setPromoCodeDiscount] = useState(0) // Discount amount in CAD
-  const [promoCodeType, setPromoCodeType] = useState(null) // 'percent' or 'free_shipping'
   
   // Check for Stripe redirect
   useEffect(() => {
@@ -593,7 +592,6 @@ export default function Checkout() {
       const result = validatePromoCode(appliedPromoCode)
       if (result.valid) {
         setPromoCodeDiscount(result.discount)
-        setPromoCodeType(result.promoType)
       }
     }
   }, [selectedShipping, cartItems, appliedPromoCode])
@@ -606,8 +604,6 @@ export default function Checkout() {
     const validCodes = {
       'FREETEST': { discount: 100, type: 'percent' }, // 100% off for testing
       'TEST100': { discount: 100, type: 'percent' }, // Alternative test code
-      'FREESHIP': { type: 'free_shipping' }, // Free shipping
-      'FREESHIPPING': { type: 'free_shipping' }, // Free shipping (alternative)
     }
     
     if (validCodes[codeUpper]) {
@@ -621,15 +617,11 @@ export default function Checkout() {
       if (promo.type === 'percent') {
         // Calculate discount in CAD
         const discountAmountCAD = (orderTotalCAD * promo.discount) / 100
-        return { valid: true, discount: discountAmountCAD, code: codeUpper, promoType: 'percent' }
-      } else if (promo.type === 'free_shipping') {
-        // Free shipping - discount equals shipping cost
-        const discountAmountCAD = shippingCAD
-        return { valid: true, discount: discountAmountCAD, code: codeUpper, promoType: 'free_shipping' }
+        return { valid: true, discount: discountAmountCAD, code: codeUpper }
       }
     }
     
-    return { valid: false, discount: 0, code: null, promoType: null }
+    return { valid: false, discount: 0, code: null }
   }
 
   const handleApplyPromoCode = () => {
@@ -645,20 +637,17 @@ export default function Checkout() {
     if (result.valid) {
       setAppliedPromoCode(result.code)
       setPromoCodeDiscount(result.discount)
-      setPromoCodeType(result.promoType)
       setPromoCodeError('')
     } else {
       setPromoCodeError(getTranslation(language, 'checkout.promoCode.invalid'))
       setAppliedPromoCode(null)
       setPromoCodeDiscount(0)
-      setPromoCodeType(null)
     }
   }
 
   const handleRemovePromoCode = () => {
     setAppliedPromoCode(null)
     setPromoCodeDiscount(0)
-    setPromoCodeType(null)
     setPromoCode('')
     setPromoCodeError('')
   }
@@ -684,7 +673,7 @@ export default function Checkout() {
     // Zero-rated goods under Schedule VI Part III of the Excise Tax Act
     // Dehydrated citrus products (unsweetened, no preservatives) qualify as zero-rated basic groceries
     const tax = 0 // 0% HST/GST - Products are zero-rated as unsweetened dried fruits
-    const totalCAD = Math.max(0, subtotal + shippingCAD + tax - promoCodeDiscount)
+    const totalCAD = subtotal + shippingCAD + tax
     const total = currency === 'USD' ? convertPrice(totalCAD) : totalCAD
     trackCheckoutStarted(cartItems, total)
     
@@ -836,17 +825,16 @@ export default function Checkout() {
   }
 
   const shippingCostCAD = calculateShipping() // Shipping is always in CAD from backend
-  const subtotalCAD = getCartTotal() // Already in CAD
+  const subtotal = getCartTotal()
   // Zero-rated goods under Schedule VI Part III of the Excise Tax Act
   // Dehydrated citrus products (unsweetened, no preservatives) qualify as zero-rated basic groceries
   // Tax is 0% - Products are zero-rated as unsweetened dried fruits
   const tax = 0
-  // Calculate total in CAD first
-  // promoCodeDiscount is already in CAD, so subtract it from CAD total before converting
+  // Calculate total - formatPrice will handle currency conversion, so use CAD prices for calculation
   const totalCAD = hasEnteredShippingDetails && selectedShipping 
-    ? Math.max(0, subtotalCAD + shippingCostCAD + tax - promoCodeDiscount)
-    : subtotalCAD
-  // formatPrice will handle currency conversion automatically, so we always use CAD values
+    ? Math.max(0, subtotal + shippingCostCAD + tax - promoCodeDiscount)
+    : subtotal
+  const total = currency === 'USD' ? convertPrice(totalCAD) : totalCAD
 
   if (cartItems.length === 0 && currentStep !== 2) {
     return (
@@ -874,21 +862,21 @@ export default function Checkout() {
   }
 
   return (
-    <section ref={sectionRef} className="py-0 md:py-0 px-0 bg-gray-900 min-h-[calc(100vh-72px)]">
+    <section ref={sectionRef} className="py-8 md:py-12 px-4 md:px-6 bg-white min-h-[calc(100vh-72px)]">
       <div className="max-w-7xl mx-auto">
         {/* Stripe-style Checkout Layout */}
         {currentStep === 1 && (
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-0">
-            {/* Product Showcase - Left Side (Dark Background - Stripe-style) */}
-            <div className="order-1 lg:order-1 bg-gray-900 lg:min-h-screen flex flex-col">
-              <div className="p-6 lg:p-8 lg:sticky lg:top-0 flex flex-col h-full">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-0 lg:gap-12">
+            {/* Checkout Form (Shipping + Payment) - Right Side */}
+            <div className="order-2 lg:order-1">
+              <div className="max-w-2xl mx-auto lg:mx-0">
                 {/* Back button */}
                 <button
                   onClick={() => {
                     window.history.pushState({ page: "/" }, "", "/")
                     window.dispatchEvent(new Event("hashchange"))
                   }}
-                  className="flex items-center gap-2 text-gray-300 hover:text-white mb-8 transition-colors min-h-[44px] touch-manipulation active:opacity-70 lg:hidden"
+                  className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 mb-6 transition-colors min-h-[44px] touch-manipulation active:opacity-70"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
@@ -896,195 +884,23 @@ export default function Checkout() {
                   {getTranslation(language, 'checkout.continueShopping')}
                 </button>
 
-                {/* Brand Header */}
                 <div className="mb-8">
-                  <h2 className="text-2xl font-semibold text-white mb-2">Pure Peel Co.</h2>
-                  <p className="text-3xl font-bold text-white">
-                    {hasEnteredShippingDetails && selectedShipping 
-                      ? formatPrice(totalCAD) 
-                      : (language === 'fr' ? 'Paiement' : 'Payment')
-                    }
-                    {hasEnteredShippingDetails && selectedShipping && (
-                      <span className="text-xl font-normal text-gray-400 ml-1">{currency}</span>
-                    )}
+                  <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2">
+                    {getTranslation(language, 'checkout.shippingInformation')}
+                  </h1>
+                  <p className="text-sm text-gray-600">
+                    {getTranslation(language, 'checkout.completeOrder')}
                   </p>
                 </div>
-
-                {/* Product Images - Centered */}
-                <div className="flex-1 flex items-center justify-center my-8">
-                  {cartItems.length === 1 ? (
-                    <div className="relative w-full max-w-xs">
-                      <div className="aspect-square bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-2xl">
-                        <div className="aspect-square bg-white rounded-xl overflow-hidden">
-                          <img 
-                            src={cartItems[0].image} 
-                            alt={cartItems[0].name} 
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-2 gap-4 w-full max-w-xs">
-                      {cartItems.slice(0, 4).map((item, index) => (
-                        <div 
-                          key={`${item.id}-${item.variant}`}
-                          className={`bg-white/10 backdrop-blur-sm rounded-xl p-3 shadow-xl ${
-                            index === 1 ? 'mt-8' : index === 2 ? '-mt-4' : index === 3 ? 'mt-4' : ''
-                          }`}
-                        >
-                          <div className="aspect-square bg-white rounded-lg overflow-hidden">
-                            <img 
-                              src={item.image} 
-                              alt={item.name} 
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Promo Code Section */}
-                {cartItems.length > 0 && (
-                  <div className="mb-6 pt-6 border-t border-gray-700">
-                    {!appliedPromoCode ? (
-                      <div className="space-y-2">
-                        <label className="block text-sm font-semibold text-gray-300 mb-2">
-                          {getTranslation(language, 'checkout.promoCode.label')}
-                        </label>
-                        <div className="flex gap-2">
-                          <input
-                            type="text"
-                            value={promoCode}
-                            onChange={(e) => {
-                              setPromoCode(e.target.value.toUpperCase())
-                              setPromoCodeError('')
-                            }}
-                            onKeyPress={(e) => {
-                              if (e.key === 'Enter') {
-                                e.preventDefault()
-                                handleApplyPromoCode()
-                              }
-                            }}
-                            placeholder={getTranslation(language, 'checkout.promoCode.placeholder')}
-                            className="flex-1 px-3 py-2 text-sm rounded-lg border border-gray-600 bg-gray-800 text-white placeholder-gray-400 hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-gray-500"
-                          />
-                          <button
-                            type="button"
-                            onClick={handleApplyPromoCode}
-                            className="px-4 py-2 text-sm font-semibold rounded-lg bg-white text-gray-900 hover:bg-gray-100 transition-colors whitespace-nowrap min-h-[40px] touch-manipulation active:scale-95"
-                          >
-                            {getTranslation(language, 'checkout.promoCode.apply')}
-                          </button>
-                        </div>
-                        {promoCodeError && (
-                          <p className="text-red-400 text-xs mt-1">{promoCodeError}</p>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-between p-3 bg-green-900/30 border border-green-700/50 rounded-lg">
-                        <div className="flex items-center gap-2">
-                          <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                          </svg>
-                          <div>
-                            <p className="text-sm font-semibold text-green-300">
-                              {getTranslation(language, 'checkout.promoCode.applied')}: {appliedPromoCode}
-                            </p>
-                            <p className="text-xs text-green-400">
-                              {getTranslation(language, 'checkout.promoCode.discount')}: {formatPrice(promoCodeDiscount)} <span className="text-gray-400">{currency}</span>
-                            </p>
-                          </div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={handleRemovePromoCode}
-                          className="text-green-400 hover:text-green-300 text-sm font-medium"
-                        >
-                          {getTranslation(language, 'checkout.promoCode.remove')}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Order Summary */}
-                <div className="mt-auto space-y-4 pt-8 border-t border-gray-700">
-                  <div className="space-y-3">
-                    {cartItems.map((item) => (
-                      <div key={`${item.id}-${item.variant}`} className="flex items-center justify-between text-sm">
-                        <div className="flex-1 min-w-0">
-                          <p className="text-white font-medium truncate">{item.name}</p>
-                          <p className="text-gray-400 text-xs">{item.variant} × {item.quantity}</p>
-                        </div>
-                        <p className="text-white font-semibold ml-4">{formatPrice(item.price * item.quantity)}</p>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <div className="space-y-2 pt-4 border-t border-gray-700">
-                    <div className="flex justify-between text-sm text-gray-400">
-                      <span>{getTranslation(language, 'checkout.subtotal')}</span>
-                      <span className="text-white">
-                        {formatPrice(subtotalCAD)} {currency}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm text-gray-400">
-                      <span>{getTranslation(language, 'checkout.shipping')}</span>
-                      <span className="text-white">
-                        {!hasEnteredShippingDetails || !selectedShipping 
-                          ? (language === 'fr' ? 'À calculer' : 'To be calculated')
-                          : (promoCodeType === 'free_shipping' || shippingCostCAD === 0 
-                              ? getTranslation(language, 'checkout.free') 
-                              : `${formatPrice(shippingCostCAD)} ${currency}`)
-                        }
-                      </span>
-                    </div>
-                    {appliedPromoCode && hasEnteredShippingDetails && selectedShipping && promoCodeDiscount > 0 && (
-                      <div className="flex justify-between text-sm text-green-400">
-                        <span>
-                          {promoCodeType === 'free_shipping' 
-                            ? (language === 'fr' ? 'Expédition gratuite' : 'Free Shipping')
-                            : getTranslation(language, 'checkout.promoCode.discount')
-                          }
-                        </span>
-                        <span>-{formatPrice(promoCodeDiscount)} {currency}</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between text-base font-semibold text-white pt-2 border-t border-gray-700">
-                      <span>Total</span>
-                      <span>
-                        {hasEnteredShippingDetails && selectedShipping 
-                          ? `${formatPrice(totalCAD)} ${currency}`
-                          : (language === 'fr' ? 'À calculer' : 'To be calculated')
-                        }
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Checkout Form - Right Side (White Background) */}
-            <div className="order-2 lg:order-2 bg-white">
-              <div className="p-6 md:p-8 lg:p-12 max-w-2xl mx-auto lg:mx-0">
-                {/* Domain header (like Stripe's checkout.stripe.com) */}
-                <div className="text-xs text-gray-500 mb-6 hidden lg:block">
-                  checkout.purepeelco.com
-                </div>
-
                 <form onSubmit={handlePaymentSubmit} className="space-y-6">
-                  {/* Shipping Information Section */}
+                  {/* Contact Information */}
                   <div>
-                    <h2 className="text-base font-semibold text-gray-900 mb-4">Shipping information</h2>
+                    <h2 className="text-base font-semibold text-gray-900 mb-4">Contact</h2>
                     <div className="space-y-4">
-                      {/* Email */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1.5">
                           {getTranslation(language, 'checkout.email')}
-                        </label>
+                      </label>
                         <input
                           type="email"
                           name="email"
@@ -1101,72 +917,74 @@ export default function Checkout() {
                           <p className="text-red-500 text-xs mt-1">{errors.email}</p>
                         )}
                       </div>
+                    </div>
+                  </div>
 
                   {/* Name */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Name</label>
+                    <h2 className="text-base font-semibold text-gray-900 mb-4">Name</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <input
-                          type="text"
-                          name="firstName"
-                          id="checkout-firstName"
-                          autoComplete="given-name"
-                          value={formData.firstName}
-                          onChange={handleInputChange}
+                      <input
+                        type="text"
+                        name="firstName"
+                        id="checkout-firstName"
+                        autoComplete="given-name"
+                        value={formData.firstName}
+                        onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.firstName')}
                           className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
                             errors.firstName ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
-                          required
-                        />
-                        {errors.firstName && (
-                          <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
-                        )}
-                      </div>
-                      <div>
-                        <input
-                          type="text"
-                          name="lastName"
-                          id="checkout-lastName"
-                          autoComplete="family-name"
-                          value={formData.lastName}
-                          onChange={handleInputChange}
+                        required
+                      />
+                      {errors.firstName && (
+                        <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
+                      )}
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        name="lastName"
+                        id="checkout-lastName"
+                        autoComplete="family-name"
+                        value={formData.lastName}
+                        onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.lastName')}
                           className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
                             errors.lastName ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
-                          required
-                        />
-                        {errors.lastName && (
-                          <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
-                        )}
-                      </div>
+                        required
+                      />
+                      {errors.lastName && (
+                        <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
+                      )}
                     </div>
+                  </div>
                   </div>
 
                   {/* Shipping Address */}
-                  <div className="mt-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Ship to</label>
+                  <div>
+                    <h2 className="text-base font-semibold text-gray-900 mb-4">Ship to</h2>
                     <div className="space-y-4">
-                      <div>
-                        <input
-                          type="text"
-                          name="address"
-                          id="checkout-address"
-                          autoComplete="street-address"
-                          value={formData.address}
-                          onChange={handleInputChange}
+                  <div>
+                    <input
+                      type="text"
+                      name="address"
+                      id="checkout-address"
+                      autoComplete="street-address"
+                      value={formData.address}
+                      onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.streetAddress')}
                           className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
                             errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
-                          required
-                        />
-                        {errors.address && (
-                          <p className="text-red-500 text-xs mt-1">{errors.address}</p>
-                        )}
-                      </div>
+                      required
+                    />
+                    {errors.address && (
+                      <p className="text-red-500 text-xs mt-1">{errors.address}</p>
+                    )}
+                  </div>
 
                       <div>
                         <select
@@ -1190,35 +1008,35 @@ export default function Checkout() {
 
                       <div className="grid grid-cols-3 gap-3">
                         <div className="col-span-1">
-                          <input
-                            type="text"
-                            name="city"
-                            id="checkout-city"
-                            autoComplete="address-level2"
-                            value={formData.city}
-                            onChange={handleInputChange}
+                      <input
+                        type="text"
+                        name="city"
+                        id="checkout-city"
+                        autoComplete="address-level2"
+                        value={formData.city}
+                        onChange={handleInputChange}
                             placeholder={getTranslation(language, 'checkout.city')}
                             className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
                               errors.city ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                             } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
-                            required
-                          />
-                          {errors.city && (
-                            <p className="text-red-500 text-xs mt-1">{errors.city}</p>
-                          )}
-                        </div>
+                        required
+                      />
+                      {errors.city && (
+                        <p className="text-red-500 text-xs mt-1">{errors.city}</p>
+                      )}
+                    </div>
                         <div className="col-span-1">
-                          <select
-                            name="province"
-                            id="checkout-province"
-                            autoComplete="address-level1"
-                            value={formData.province}
-                            onChange={handleInputChange}
+                      <select
+                        name="province"
+                        id="checkout-province"
+                        autoComplete="address-level1"
+                        value={formData.province}
+                        onChange={handleInputChange}
                             className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
                               errors.province ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                             } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
-                            required
-                          >
+                        required
+                      >
                             <option value="">
                               {formData.country === "United States" 
                                 ? getTranslation(language, 'checkout.selectState')
@@ -1227,20 +1045,20 @@ export default function Checkout() {
                             </option>
                             {(formData.country === "United States" ? usStates : canadianProvinces).map(region => (
                               <option key={region} value={region}>{region}</option>
-                            ))}
-                          </select>
-                          {errors.province && (
-                            <p className="text-red-500 text-xs mt-1">{errors.province}</p>
-                          )}
-                        </div>
+                        ))}
+                      </select>
+                      {errors.province && (
+                        <p className="text-red-500 text-xs mt-1">{errors.province}</p>
+                      )}
+                    </div>
                         <div className="col-span-1">
-                          <input
-                            type="text"
-                            name="postalCode"
-                            id="checkout-postalCode"
-                            autoComplete={formData.country === "United States" ? "postal-code" : "postal-code"}
-                            value={formData.postalCode}
-                            onChange={handleInputChange}
+                      <input
+                        type="text"
+                        name="postalCode"
+                        id="checkout-postalCode"
+                        autoComplete={formData.country === "United States" ? "postal-code" : "postal-code"}
+                        value={formData.postalCode}
+                        onChange={handleInputChange}
                             placeholder={formData.country === "United States" 
                               ? getTranslation(language, 'checkout.zipCode')
                               : getTranslation(language, 'checkout.postalCode')
@@ -1248,13 +1066,13 @@ export default function Checkout() {
                             className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
                               errors.postalCode ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                             } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
-                            required
-                          />
-                          {errors.postalCode && (
-                            <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>
-                          )}
-                        </div>
-                      </div>
+                        required
+                      />
+                      {errors.postalCode && (
+                        <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>
+                      )}
+                    </div>
+                  </div>
 
                       <div>
                         <input
@@ -1280,10 +1098,8 @@ export default function Checkout() {
                       </div>
                     </div>
                   </div>
-                    </div>
-                  </div>
 
-                  {/* Order Notes - Optional */}
+                  {/* Order Notes */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1.5">
                       {getTranslation(language, 'checkout.orderNotes')}
@@ -1400,67 +1216,8 @@ export default function Checkout() {
                     </div>
                   )}
 
-                  {/* Payment Method Section */}
-                  {hasEnteredShippingDetails && selectedShipping && (
-                    <div className="mt-8 pt-8 border-t border-gray-200">
-                      <h2 className="text-base font-semibold text-gray-900 mb-4">Payment method</h2>
-                      
-                      <div className="space-y-3 mb-6">
-                        {/* Card Payment - Primary */}
-                        <label className="flex items-center gap-3 p-4 border-2 border-amber-500 bg-amber-50/50 rounded-lg cursor-pointer">
-                          <input
-                            type="radio"
-                            name="paymentMethod"
-                            value="card"
-                            defaultChecked
-                            className="w-4 h-4 text-amber-500 focus:ring-amber-500"
-                          />
-                          <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
-                            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                            </svg>
-                          </div>
-                          <span className="flex-1 font-medium text-gray-900">Card</span>
-                          <div className="flex items-center gap-1">
-                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%231A1F71' d='M23 4H1a1 1 0 00-1 1v14a1 1 0 001 1h22a1 1 0 001-1V5a1 1 0 00-1-1z'/%3E%3C/svg%3E" alt="Visa" className="w-8 h-5 object-contain" />
-                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23EB001B' d='M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 1c6.075 0 11 4.925 11 11s-4.925 11-11 11S1 18.075 1 12 5.925 1 12 1z'/%3E%3C/svg%3E" alt="Mastercard" className="w-8 h-5 object-contain" />
-                            <span className="text-xs text-gray-500">+ more</span>
-                          </div>
-                        </label>
-
-                        {/* Bank Transfer */}
-                        <label className="flex items-center gap-3 p-4 border-2 border-gray-200 bg-white rounded-lg cursor-pointer hover:border-gray-300 transition-colors">
-                          <input
-                            type="radio"
-                            name="paymentMethod"
-                            value="bank"
-                            className="w-4 h-4 text-amber-500 focus:ring-amber-500"
-                          />
-                          <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
-                            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                            </svg>
-                          </div>
-                          <span className="flex-1 font-medium text-gray-900">Bank transfer</span>
-                        </label>
-
-                        {/* Apple Pay (if available) */}
-                        <label className="flex items-center gap-3 p-4 border-2 border-gray-200 bg-white rounded-lg cursor-pointer hover:border-gray-300 transition-colors">
-                          <input
-                            type="radio"
-                            name="paymentMethod"
-                            value="apple_pay"
-                            className="w-4 h-4 text-amber-500 focus:ring-amber-500"
-                          />
-                          <div className="w-8 h-8 rounded-lg bg-black flex items-center justify-center">
-                            <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-                            </svg>
-                          </div>
-                          <span className="flex-1 font-medium text-gray-900">Apple Pay</span>
-                        </label>
-                      </div>
-
+                  {/* Payment Button */}
+                  <div className="mt-8 pt-8 border-t border-gray-200">
                     {stripeError && (
                       <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-4">
                         <p className="text-sm text-red-800">{stripeError}</p>
@@ -1470,26 +1227,152 @@ export default function Checkout() {
                     <button
                       type="submit"
                       disabled={isSubmitting || !hasEnteredShippingDetails || !selectedShipping}
-                        className="w-full py-4 px-6 text-base font-semibold rounded-lg border-0 cursor-pointer transition-all duration-200 bg-gray-900 text-white hover:bg-gray-800 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-h-[52px] touch-manipulation shadow-md hover:shadow-lg"
+                      className="w-full py-3.5 px-6 text-base font-semibold rounded-md border-0 cursor-pointer transition-all duration-200 bg-amber-500 text-white hover:bg-amber-600 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-h-[48px] touch-manipulation"
                     >
                       {isSubmitting ? (
                         <LoadingSpinner size="sm" color="white" text={getTranslation(language, 'checkout.processing')} />
                       ) : (
-                          <>Pay {formatPrice(totalCAD)} {currency}</>
+                        <>
+                          {hasEnteredShippingDetails && selectedShipping 
+                            ? `Pay ${formatPrice(total)} ${currency}`
+                            : (language === 'fr' ? 'Entrez les détails d\'expédition' : 'Enter shipping details')
+                          }
+                        </>
                       )}
                     </button>
 
-                    <p className="text-xs text-gray-400 text-center mt-6 flex items-center justify-center gap-1.5">
-                      <span>Powered by</span>
-                      <span className="font-semibold text-gray-500">stripe</span>
-                      <span className="mx-1.5">·</span>
-                      <a href="/terms" className="hover:underline text-gray-500">Terms</a>
-                      <span className="mx-1">·</span>
-                      <a href="/privacy" className="hover:underline text-gray-500">Privacy</a>
+                    <p className="text-xs text-gray-500 text-center mt-3">
+                      {getTranslation(language, 'checkout.termsAgreement')}
                     </p>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            {/* Order Summary - Left Side (Stripe-style) */}
+            <div className="order-1 lg:order-2">
+              <div className="bg-gray-50 rounded-lg p-6 lg:sticky lg:top-8">
+                <div className="mb-6">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-1">Pure Peel Co.</h2>
+                  <p className="text-2xl font-semibold text-gray-900">Pay {formatPrice(total)} <span className="text-base font-normal text-gray-500">{currency}</span></p>
+                </div>
+                <div className="space-y-4 mb-6">
+                  {cartItems.map((item) => (
+                    <div key={`${item.id}-${item.variant}`} className="flex gap-3 pb-4 border-b border-gray-200 last:border-0 last:pb-0">
+                      <div className="w-16 h-16 rounded overflow-hidden bg-white shrink-0">
+                        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                      </div>
+                      <div className="flex-1 min-w-0 flex flex-col justify-center">
+                        <p className="text-sm font-medium text-gray-900 truncate">{item.name}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">{item.variant}</p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {getTranslation(language, 'checkout.qty')} {item.quantity} × {formatPrice(item.price)} <span className="text-gray-400">{currency}</span>
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Promo Code Section */}
+                <div className="pt-5 border-t border-gray-200 mb-5">
+                  {!appliedPromoCode ? (
+                    <div className="space-y-2">
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        {getTranslation(language, 'checkout.promoCode.label')}
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={promoCode}
+                          onChange={(e) => {
+                            setPromoCode(e.target.value.toUpperCase())
+                            setPromoCodeError('')
+                          }}
+                          onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault()
+                              handleApplyPromoCode()
+                            }
+                          }}
+                          placeholder={getTranslation(language, 'checkout.promoCode.placeholder')}
+                          className="flex-1 px-4 py-2.5 text-sm rounded-lg border border-gray-300 bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleApplyPromoCode}
+                          className="px-5 py-2.5 text-sm font-semibold rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors whitespace-nowrap min-h-[44px] touch-manipulation active:scale-95"
+                        >
+                          {getTranslation(language, 'checkout.promoCode.apply')}
+                        </button>
+                  </div>
+                      {promoCodeError && (
+                        <p className="text-red-500 text-xs mt-1">{promoCodeError}</p>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <div>
+                          <p className="text-sm font-semibold text-green-800">
+                            {getTranslation(language, 'checkout.promoCode.applied')}: {appliedPromoCode}
+                          </p>
+                          <p className="text-xs text-green-600">
+                            {getTranslation(language, 'checkout.promoCode.discount')}: {formatPrice(promoCodeDiscount)} <span className="text-gray-400">{currency}</span>
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleRemovePromoCode}
+                        className="text-green-600 hover:text-green-800 text-sm font-medium"
+                      >
+                        {getTranslation(language, 'checkout.promoCode.remove')}
+                      </button>
                     </div>
                   )}
-                </form>
+                </div>
+                
+                <div className="space-y-3 pt-5 border-t border-gray-200">
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.subtotal')}</span>
+                    <span className="text-gray-900 font-semibold">{formatPrice(subtotal)}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.shipping')}</span>
+                    <span className="text-gray-900 font-semibold">
+                      {!hasEnteredShippingDetails || !selectedShipping 
+                        ? (language === 'fr' ? 'À calculer' : 'To be calculated')
+                        : (shippingCostCAD === 0 ? getTranslation(language, 'checkout.free') : formatPrice(shippingCostCAD))
+                      }
+                    </span>
+                  </div>
+                  {/* Tax line - Products are zero-rated under Schedule VI Part III */}
+                  {hasEnteredShippingDetails && selectedShipping && (
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.taxHST')}</span>
+                      <span className="text-gray-900 font-semibold">{formatPrice(tax)}</span>
+                    </div>
+                  )}
+                  {/* Discount line */}
+                  {appliedPromoCode && hasEnteredShippingDetails && selectedShipping && (
+                    <div className="flex justify-between items-center text-sm text-green-600">
+                      <span className="font-medium">{getTranslation(language, 'checkout.promoCode.discount')}</span>
+                      <span className="font-semibold">-{formatPrice(promoCodeDiscount)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between items-center text-lg font-semibold pt-4 border-t border-gray-200 mt-4">
+                    <span className="text-gray-900">Total due</span>
+                    <span className="text-gray-900">
+                      {hasEnteredShippingDetails && selectedShipping 
+                        ? formatPrice(total)
+                        : (language === 'fr' ? 'À calculer' : 'To be calculated')
+                      }
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
