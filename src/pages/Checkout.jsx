@@ -985,63 +985,6 @@ export default function Checkout() {
             {/* Checkout Form - Right Side (White Background) */}
             <div className="order-2 lg:order-2 bg-white">
               <div className="p-6 md:p-8 lg:p-12 max-w-2xl mx-auto lg:mx-0">
-                {/* Brand Header */}
-                <div className="mb-8 pb-6 border-b border-gray-200">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Pure Peel Co.</h2>
-                  <p className="text-3xl font-bold text-gray-900">
-                    {hasEnteredShippingDetails && selectedShipping 
-                      ? `Pay ${formatPrice(total)}` 
-                      : (language === 'fr' ? 'Paiement' : 'Payment')
-                    }
-                    {hasEnteredShippingDetails && selectedShipping && (
-                      <span className="text-lg font-normal text-gray-500 ml-1">{currency}</span>
-                    )}
-                  </p>
-                </div>
-
-                {/* Order Summary */}
-                <div className="mt-auto space-y-4 pt-8 border-t border-gray-700">
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.subtotal')}</span>
-                    <span className="text-gray-900 font-semibold">{formatPrice(subtotal)}</span>
-                  </div>
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.shipping')}</span>
-                    <span className="text-gray-900 font-semibold">
-                      {!hasEnteredShippingDetails || !selectedShipping 
-                        ? (language === 'fr' ? 'À calculer' : 'To be calculated')
-                        : (shippingCostCAD === 0 ? getTranslation(language, 'checkout.free') : formatPrice(shippingCostCAD))
-                      }
-                    </span>
-                  </div>
-                  {hasEnteredShippingDetails && selectedShipping && (
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.taxHST')}</span>
-                      <span className="text-gray-900 font-semibold">{formatPrice(tax)}</span>
-                    </div>
-                  )}
-                  {appliedPromoCode && hasEnteredShippingDetails && selectedShipping && (
-                    <div className="flex justify-between items-center text-sm text-green-600">
-                      <span className="font-medium">{getTranslation(language, 'checkout.promoCode.discount')}</span>
-                      <span className="font-semibold">-{formatPrice(promoCodeDiscount)}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between items-center text-lg font-bold pt-4 border-t-2 border-gray-300 mt-4">
-                    <span className="text-gray-900">Total</span>
-                    <span className="text-gray-900">
-                      {hasEnteredShippingDetails && selectedShipping 
-                        ? formatPrice(total)
-                        : (language === 'fr' ? 'À calculer' : 'To be calculated')
-                      }
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Checkout Form (Shipping + Payment) - Right Side */}
-            <div className="order-2 lg:order-2">
-              <div>
                 {/* Domain header (like Stripe's checkout.stripe.com) */}
                 <div className="text-xs text-gray-500 mb-6 hidden lg:block">
                   checkout.purepeelco.com
