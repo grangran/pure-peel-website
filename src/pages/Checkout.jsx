@@ -684,7 +684,7 @@ export default function Checkout() {
     // Zero-rated goods under Schedule VI Part III of the Excise Tax Act
     // Dehydrated citrus products (unsweetened, no preservatives) qualify as zero-rated basic groceries
     const tax = 0 // 0% HST/GST - Products are zero-rated as unsweetened dried fruits
-    const totalCAD = subtotal + shippingCAD + tax
+    const totalCAD = Math.max(0, subtotal + shippingCAD + tax - promoCodeDiscount)
     const total = currency === 'USD' ? convertPrice(totalCAD) : totalCAD
     trackCheckoutStarted(cartItems, total)
     
