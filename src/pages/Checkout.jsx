@@ -8,8 +8,7 @@ import { trackCheckoutStarted, trackPurchase } from "../utils/analytics"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Skeleton from "../components/Skeleton"
 import PageLoader from "../components/PageLoader"
-import { loadStripe } from '@stripe/stripe-js'
-import { EmbeddedCheckoutProvider, EmbeddedCheckout } from '@stripe/react-stripe-js/checkout'
+import { EmbeddedCheckoutProvider, EmbeddedCheckout } from '@stripe/react-stripe-js'
 import stripePromise from '../config/stripe'
 
 const canadianProvinces = [
