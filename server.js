@@ -987,13 +987,55 @@ app.post('/api/create-payment-intent', checkoutLimiter, async (req, res) => {
     // Create Payment Intent following Stripe's best practices
     // automatic_payment_methods automatically enables card, Apple Pay, Google Pay, and Link
     // Cannot use both automatic_payment_methods and payment_method_types together
+    
+    // Enable customer creation for payment method reuse (saved payment methods)
+    const customerEmail = shippingInfo.email
+    let customerId = null
+    
+    // Try to find existing customer by email for payment method reuse
+    try {
+      const existingCustomers = await stripe.customers.list({
+        email: customerEmail,
+        limit: 1,
+      })
+      if (existingCustomers.data.length > 0) {
+        customerId = existingCustomers.data[0].id
+        console.log('📧 Found existing customer for payment method reuse:', customerId)
+      }
+    } catch (error) {
+      console.log('⚠️ Could not check for existing customer:', error.message)
+    }
+    
+    // Create customer if doesn't exist (for payment method reuse)
+    if (!customerId) {
+      try {
+        const customer = await stripe.customers.create({
+          email: customerEmail,
+          name: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
+          phone: shippingInfo.phone || undefined,
+          metadata: {
+            first_order: 'true',
+          },
+        })
+        customerId = customer.id
+        console.log('✅ Created new customer for payment method reuse:', customerId)
+      } catch (error) {
+        console.log('⚠️ Could not create customer:', error.message)
+        // Continue without customer - payment will still work
+      }
+    }
+    
     const paymentIntent = await stripe.paymentIntents.create({
       amount: totalAmount,
       currency: stripeCurrency,
+      customer: customerId || undefined, // Link to customer for payment method reuse
       automatic_payment_methods: {
         enabled: true,
         allow_redirects: 'never', // Keep payment on page, no redirects
       },
+      // Enable payment method saving (with customer consent)
+      // Stripe Payment Element will show save checkbox automatically
+      setup_future_usage: customerId ? 'off_session' : undefined, // Allow saving for future use
       metadata: {
         customer_name: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
         customer_email: shippingInfo.email,

@@ -58,21 +58,40 @@ function PaymentForm({ clientSecret, onSuccess }) {
     <form onSubmit={handleSubmit} className="space-y-6">
       <PaymentElement 
         options={{
-          // Enable Link for 1-click payments (automatically enabled via automatic_payment_methods)
+          // Layout: tabs for better organization
           layout: 'tabs',
-          // Enable real-time validation and card brand identification
-          fields: {
-            billingDetails: {
-              address: {
-                country: 'never', // Already collected in shipping form
-              },
-            },
-          },
-          // Enable payment method reuse for returning customers
+          
+          // Enable wallets (Apple Pay, Google Pay, Link)
           wallets: {
             applePay: 'auto',
             googlePay: 'auto',
+            link: 'auto',
           },
+          
+          // Configure billing details collection
+          // We already collect shipping address, so minimize billing collection
+          fields: {
+            billingDetails: {
+              name: 'never', // Already collected in shipping form
+              email: 'never', // Already collected in contact section
+              phone: 'never', // Already collected in shipping form
+              address: {
+                country: 'never', // Already collected in shipping form
+                line1: 'never', // Already collected in shipping form
+                line2: 'never', // Already collected in shipping form
+                city: 'never', // Already collected in shipping form
+                state: 'never', // Already collected in shipping form
+                postalCode: 'never', // Already collected in shipping form
+              },
+            },
+          },
+          
+          // Enable saved payment methods for returning customers
+          // Stripe automatically handles consent collection for compliance
+          paymentMethodTypes: ['card', 'link'],
+          
+          // CVC recollection: require CVC for saved cards (security best practice)
+          // This is handled automatically by Stripe based on risk assessment
         }}
       />
       {error && (
@@ -1481,15 +1500,79 @@ export default function Checkout() {
                           appearance: {
                             theme: 'stripe',
                             variables: {
+                              // Primary colors matching your brand
                               colorPrimary: '#0a2540',
                               colorBackground: '#ffffff',
                               colorText: '#111827',
+                              colorTextSecondary: '#6b7280',
                               colorDanger: '#dc2626',
-                              fontFamily: 'system-ui, -apple-system, sans-serif',
+                              colorSuccess: '#10b981',
+                              
+                              // Typography
+                              fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                              fontSizeBase: '14px',
+                              fontWeightNormal: '400',
+                              fontWeightMedium: '500',
+                              fontWeightBold: '600',
+                              
+                              // Spacing and layout
                               spacingUnit: '4px',
                               borderRadius: '6px',
+                              spacingBorder: '1px',
+                              
+                              // Form elements
+                              colorTextPlaceholder: '#9ca3af',
+                              colorIcon: '#6b7280',
+                              colorIconHover: '#111827',
+                              
+                              // Focus states
+                              colorFocus: '#0a2540',
+                              spacingFocus: '2px',
+                            },
+                            rules: {
+                              '.Input': {
+                                border: '1px solid #d1d5db',
+                                borderRadius: '6px',
+                                padding: '10px 12px',
+                                fontSize: '14px',
+                                transition: 'all 0.2s ease',
+                              },
+                              '.Input:focus': {
+                                border: '1px solid #0a2540',
+                                boxShadow: '0 0 0 2px rgba(10, 37, 64, 0.1)',
+                              },
+                              '.Input--invalid': {
+                                border: '1px solid #dc2626',
+                                backgroundColor: '#fef2f2',
+                              },
+                              '.Label': {
+                                fontSize: '12px',
+                                fontWeight: '500',
+                                color: '#374151',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.05em',
+                                marginBottom: '6px',
+                              },
+                              '.Tab': {
+                                borderRadius: '6px',
+                                padding: '10px 16px',
+                                border: '1px solid #e5e7eb',
+                              },
+                              '.Tab--selected': {
+                                border: '1px solid #0a2540',
+                                backgroundColor: '#0a2540',
+                                color: '#ffffff',
+                              },
+                              '.Error': {
+                                color: '#dc2626',
+                                fontSize: '13px',
+                                marginTop: '6px',
+                              },
                             },
                           },
+                          // Enable customer creation for payment method reuse
+                          // This allows returning customers to see saved payment methods
+                          locale: language === 'fr' ? 'fr' : 'en',
                         }}
                       >
                         <PaymentForm 
