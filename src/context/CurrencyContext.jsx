@@ -106,6 +106,38 @@ export function CurrencyProvider({ children }) {
     }
   }, [currency])
 
+  // Listen for localStorage changes and sync currency when navigating between pages
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const handleStorageChange = (e) => {
+      if (e.key === 'currency' && e.newValue && e.newValue !== currency) {
+        setCurrency(e.newValue)
+      }
+    }
+
+    // Listen for storage events from other tabs/windows
+    window.addEventListener('storage', handleStorageChange)
+
+    // Check localStorage on window focus (e.g., when navigating back to tab)
+    const handleFocus = () => {
+      const stored = localStorage.getItem('currency')
+      if (stored && stored !== currency) {
+        setCurrency(stored)
+      }
+    }
+
+    // Check immediately to sync on mount/navigation
+    handleFocus()
+
+    window.addEventListener('focus', handleFocus)
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+      window.removeEventListener('focus', handleFocus)
+    }
+  }, [currency])
+
   const convertPrice = (cadPrice) => {
     if (currency === 'USD') {
       return cadPrice * exchangeRate

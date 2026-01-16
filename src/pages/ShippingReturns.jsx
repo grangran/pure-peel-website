@@ -10,6 +10,7 @@ export default function ShippingReturns() {
 
   return (
     <section 
+      key={`shipping-returns-${currency}`}
       ref={sectionRef} 
       className={`py-0 md:py-0 px-0 bg-gray-900 min-h-screen transition-all duration-800 ${
         isSectionVisible ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0 md:opacity-0 md:translate-y-8'
