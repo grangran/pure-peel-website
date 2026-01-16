@@ -985,7 +985,6 @@ app.post('/api/create-payment-intent', checkoutLimiter, async (req, res) => {
     const totalAmount = useUSD ? Math.round(totalAmountCAD * exchangeRate) : totalAmountCAD
 
     // Create Payment Intent following Stripe's best practices
-    // Create Payment Intent following Stripe's best practices
     // automatic_payment_methods automatically enables card, Apple Pay, Google Pay, and Link
     // Cannot use both automatic_payment_methods and payment_method_types together
     const paymentIntent = await stripe.paymentIntents.create({
