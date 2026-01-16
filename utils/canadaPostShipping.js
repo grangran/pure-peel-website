@@ -188,46 +188,99 @@ export async function createCanadaPostLabel(order) {
   }
 }
 
+// Product weights (UPDATE with your actual weights in kg)
+// These are product-only weights - packaging is added separately
+const PRODUCT_WEIGHTS = {
+  'mini': 0.05,   // kg - UPDATE with actual Mini Bag weight
+  'small': 0.1,   // kg - UPDATE with actual Small Bag weight
+  'medium': 0.2,  // kg - UPDATE with actual Medium Bag weight
+  'large': 0.35,  // kg - UPDATE with actual Large Bag weight
+  'clearbox': 0.2 // kg - UPDATE with actual Clear Box weight
+}
+
+// Box sizes with dimensions and packaging weights (UPDATE with your actual boxes)
+const BOX_SIZES = {
+  small: {
+    length: 20,   // cm - UPDATE with your actual small box length
+    width: 15,    // cm - UPDATE with your actual small box width
+    height: 5,    // cm - UPDATE with your actual small box height
+    packagingWeight: 0.1, // kg - Weight of box, padding, label, tape - UPDATE
+    maxItems: 3
+  },
+  medium: {
+    length: 25,   // cm - UPDATE with your actual medium box length
+    width: 20,    // cm - UPDATE with your actual medium box width
+    height: 8,    // cm - UPDATE with your actual medium box height
+    packagingWeight: 0.15, // kg - Weight of box, padding, label, tape - UPDATE
+    maxItems: 8
+  },
+  large: {
+    length: 30,   // cm - UPDATE with your actual large box length
+    width: 25,    // cm - UPDATE with your actual large box width
+    height: 10,   // cm - UPDATE with your actual large box height
+    packagingWeight: 0.2, // kg - Weight of box, padding, label, tape - UPDATE
+    maxItems: 999
+  }
+}
+
 /**
  * Calculate package weight from order items
+ * Includes both product weight and packaging weight
  */
 function calculatePackageWeight(items) {
-  const weightPerItem = {
-    'mini': 0.05,
-    'small': 0.1,
-    'medium': 0.2,
-    'large': 0.35,
-    'clearbox': 0.2
-  }
-
-  let totalWeight = 0
+  // Calculate product weight
+  let productWeight = 0
   items.forEach(item => {
     const variantLower = (item.variant || '').toLowerCase()
     let itemWeight = 0.1 // Default weight
-    if (variantLower.includes('mini')) itemWeight = weightPerItem.mini
-    else if (variantLower.includes('small')) itemWeight = weightPerItem.small
-    else if (variantLower.includes('medium')) itemWeight = weightPerItem.medium
-    else if (variantLower.includes('large')) itemWeight = weightPerItem.large
-    else if (variantLower.includes('clear')) itemWeight = weightPerItem.clearbox
+    
+    if (variantLower.includes('mini')) itemWeight = PRODUCT_WEIGHTS.mini
+    else if (variantLower.includes('small')) itemWeight = PRODUCT_WEIGHTS.small
+    else if (variantLower.includes('medium')) itemWeight = PRODUCT_WEIGHTS.medium
+    else if (variantLower.includes('large')) itemWeight = PRODUCT_WEIGHTS.large
+    else if (variantLower.includes('clear')) itemWeight = PRODUCT_WEIGHTS.clearbox
 
-    totalWeight += itemWeight * (item.quantity || 1)
+    productWeight += itemWeight * (item.quantity || 1)
   })
 
-  return Math.max(totalWeight, 0.1) // Minimum 0.1 kg
+  // Select appropriate box size based on item count
+  const itemsCount = items.reduce((sum, item) => sum + (item.quantity || 1), 0)
+  let boxSize
+  if (itemsCount <= BOX_SIZES.small.maxItems) {
+    boxSize = BOX_SIZES.small
+  } else if (itemsCount <= BOX_SIZES.medium.maxItems) {
+    boxSize = BOX_SIZES.medium
+  } else {
+    boxSize = BOX_SIZES.large
+  }
+
+  // Total weight = Product weight + Packaging weight
+  const totalWeight = productWeight + boxSize.packagingWeight
+
+  return Math.max(totalWeight, 0.1) // Minimum 0.1 kg (Canada Post requirement)
 }
 
 /**
  * Calculate package dimensions from order items
+ * Returns dimensions of the appropriate box size
  */
 function calculatePackageDimensions(items) {
   const itemsCount = items.reduce((sum, item) => sum + (item.quantity || 1), 0)
 
-  if (itemsCount <= 3) {
-    return { length: 20, width: 15, height: 5 }
-  } else if (itemsCount <= 8) {
-    return { length: 25, width: 20, height: 8 }
+  // Select appropriate box based on item count
+  let boxSize
+  if (itemsCount <= BOX_SIZES.small.maxItems) {
+    boxSize = BOX_SIZES.small
+  } else if (itemsCount <= BOX_SIZES.medium.maxItems) {
+    boxSize = BOX_SIZES.medium
   } else {
-    return { length: 30, width: 25, height: 10 }
+    boxSize = BOX_SIZES.large
+  }
+
+  return {
+    length: boxSize.length,
+    width: boxSize.width,
+    height: boxSize.height
   }
 }
 

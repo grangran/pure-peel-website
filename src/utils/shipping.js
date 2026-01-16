@@ -1,53 +1,116 @@
 // Shipping utility functions
 // This will be used to calculate package weight and dimensions from cart items
 
-export const calculatePackageWeight = (cartItems) => {
-  // Estimate weight per item (in kg)
-  // Adjust these values based on your actual product weights
-  const weightPerItem = {
-    'mini': 0.05,   // 50g for mini bag
-    'small': 0.1,   // 100g for small bag
-    'medium': 0.2,  // 200g for medium bag
-    'large': 0.35,  // 350g for large bag
-    'clearbox': 0.2 // 200g for clear box
-  }
+// ============================================================================
+// PRODUCT WEIGHTS (Update these with your actual product weights)
+// ============================================================================
+// Weights should include: Product + Inner packaging (if any)
+// Packaging weight (box, padding, label, tape) will be added separately
+const PRODUCT_WEIGHTS = {
+  'mini': 0.05,   // kg - Mini Bag (update with actual weight)
+  'small': 0.1,   // kg - Small Bag (update with actual weight)
+  'medium': 0.2,  // kg - Medium Bag (update with actual weight)
+  'large': 0.35,  // kg - Large Bag (update with actual weight)
+  'clearbox': 0.2 // kg - Clear Box (update with actual weight)
+}
 
-  let totalWeight = 0
+// ============================================================================
+// BOX SIZES (Update these with your actual box dimensions in cm)
+// ============================================================================
+// Measure your actual shipping boxes: Length × Width × Height (in cm)
+// Canada Post requires: length + (2 × width) + (2 × height) ≤ 300cm
+const BOX_SIZES = {
+  small: {
+    // Small box - e.g., for 1-3 items
+    length: 20,   // cm - UPDATE with your actual box size
+    width: 15,    // cm - UPDATE with your actual box size
+    height: 5,    // cm - UPDATE with your actual box size
+    packagingWeight: 0.1, // kg - Weight of box, padding, label, tape (UPDATE)
+    maxItems: 3   // Maximum items this box can fit
+  },
+  medium: {
+    // Medium box - e.g., for 4-8 items
+    length: 25,   // cm - UPDATE with your actual box size
+    width: 20,    // cm - UPDATE with your actual box size
+    height: 8,    // cm - UPDATE with your actual box size
+    packagingWeight: 0.15, // kg - Weight of box, padding, label, tape (UPDATE)
+    maxItems: 8   // Maximum items this box can fit
+  },
+  large: {
+    // Large box - e.g., for 9+ items
+    length: 30,   // cm - UPDATE with your actual box size
+    width: 25,    // cm - UPDATE with your actual box size
+    height: 10,   // cm - UPDATE with your actual box size
+    packagingWeight: 0.2, // kg - Weight of box, padding, label, tape (UPDATE)
+    maxItems: 999 // No practical limit
+  }
+}
+
+/**
+ * Calculate total package weight including products and packaging
+ * @param {Array} cartItems - Array of cart items with variant and quantity
+ * @returns {number} Total weight in kg
+ */
+export const calculatePackageWeight = (cartItems) => {
+  // Calculate product weight
+  let productWeight = 0
   cartItems.forEach(item => {
     const quantity = item.quantity || 1
-    // Extract size from variant name (e.g., "Mini Bag (10 pcs)" -> "mini")
-    const variantLower = item.variant?.toLowerCase() || ''
-    let itemWeight = 0.1 // Default weight
+    const variantLower = (item.variant || '').toLowerCase()
     
-    if (variantLower.includes('mini')) itemWeight = weightPerItem.mini
-    else if (variantLower.includes('small')) itemWeight = weightPerItem.small
-    else if (variantLower.includes('medium')) itemWeight = weightPerItem.medium
-    else if (variantLower.includes('large')) itemWeight = weightPerItem.large
-    else if (variantLower.includes('clear')) itemWeight = weightPerItem.clearbox
+    // Determine product weight based on variant name
+    let itemWeight = 0.1 // Default weight (fallback)
     
-    totalWeight += itemWeight * quantity
+    if (variantLower.includes('mini')) itemWeight = PRODUCT_WEIGHTS.mini
+    else if (variantLower.includes('small')) itemWeight = PRODUCT_WEIGHTS.small
+    else if (variantLower.includes('medium')) itemWeight = PRODUCT_WEIGHTS.medium
+    else if (variantLower.includes('large')) itemWeight = PRODUCT_WEIGHTS.large
+    else if (variantLower.includes('clear')) itemWeight = PRODUCT_WEIGHTS.clearbox
+    
+    productWeight += itemWeight * quantity
   })
 
-  // Minimum weight of 0.1kg
+  // Select appropriate box size based on item count
+  const itemsCount = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0)
+  let boxSize
+  
+  if (itemsCount <= BOX_SIZES.small.maxItems) {
+    boxSize = BOX_SIZES.small
+  } else if (itemsCount <= BOX_SIZES.medium.maxItems) {
+    boxSize = BOX_SIZES.medium
+  } else {
+    boxSize = BOX_SIZES.large
+  }
+
+  // Total weight = Product weight + Packaging weight
+  const totalWeight = productWeight + boxSize.packagingWeight
+
+  // Minimum weight of 0.1kg (Canada Post requirement)
   return Math.max(totalWeight, 0.1)
 }
 
+/**
+ * Get package dimensions based on items (selects appropriate box size)
+ * @param {Array} cartItems - Array of cart items
+ * @returns {Object} Dimensions in cm { length, width, height }
+ */
 export const getPackageDimensions = (cartItems) => {
-  // Estimate package dimensions based on items
-  // These are approximate dimensions in cm
   const itemsCount = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0)
   
-  // Small package for 1-3 items
-  if (itemsCount <= 3) {
-    return { length: 20, width: 15, height: 5 }
+  // Select appropriate box based on item count
+  let boxSize
+  if (itemsCount <= BOX_SIZES.small.maxItems) {
+    boxSize = BOX_SIZES.small
+  } else if (itemsCount <= BOX_SIZES.medium.maxItems) {
+    boxSize = BOX_SIZES.medium
+  } else {
+    boxSize = BOX_SIZES.large
   }
-  // Medium package for 4-8 items
-  else if (itemsCount <= 8) {
-    return { length: 25, width: 20, height: 8 }
-  }
-  // Large package for 9+ items
-  else {
-    return { length: 30, width: 25, height: 10 }
+
+  return {
+    length: boxSize.length,
+    width: boxSize.width,
+    height: boxSize.height
   }
 }
 
