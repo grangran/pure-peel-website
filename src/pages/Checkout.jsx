@@ -110,7 +110,7 @@ function PaymentForm({ clientSecret, onSuccess }) {
       <button
         type="submit"
         disabled={!stripe || isProcessing}
-        className="w-full py-3 px-4 text-sm font-medium rounded-md border-0 cursor-pointer transition-all duration-200 bg-amber-600 text-white hover:bg-amber-700 active:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-amber-600 flex items-center justify-center gap-2 min-h-[44px] shadow-sm hover:shadow-md"
+        className="w-full py-3.5 px-4 text-sm font-semibold rounded-lg border-0 cursor-pointer transition-all duration-200 bg-amber-600 text-white hover:bg-amber-700 active:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-amber-600 flex items-center justify-center gap-2 min-h-[48px] shadow-md hover:shadow-lg transform hover:scale-[1.01] active:scale-[0.99]"
       >
         {isProcessing ? (
           <LoadingSpinner size="sm" color="white" text={language === 'fr' ? 'Traitement...' : 'Processing...'} />
@@ -1055,8 +1055,26 @@ export default function Checkout() {
                 {/* Show shipping form OR payment form, not both */}
                 {!showPaymentForm ? (
                   <>
+                    {/* Progress Indicator */}
                     <div className="mb-8">
-                      <h1 className="text-2xl font-semibold text-gray-900 mb-1.5 tracking-tight">
+                      <div className="flex items-center justify-center gap-2 mb-6">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center text-sm font-semibold shadow-sm">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
+                          <span className="text-sm font-medium text-gray-900 hidden sm:inline">Shipping</span>
+                        </div>
+                        <div className="w-12 h-0.5 bg-gray-300"></div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm font-semibold">
+                            2
+                          </div>
+                          <span className="text-sm font-medium text-gray-500 hidden sm:inline">Payment</span>
+                        </div>
+                      </div>
+                      <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2 tracking-tight">
                         {getTranslation(language, 'checkout.shippingInformation')}
                       </h1>
                       <p className="text-sm text-[#6b7280] leading-relaxed">
@@ -1065,8 +1083,15 @@ export default function Checkout() {
                     </div>
                 <form onSubmit={handlePaymentSubmit} className="space-y-6">
                   {/* Contact Information */}
-                  <div className="bg-white rounded-md border border-[#e5e7eb] p-6">
-                    <h2 className="text-sm font-semibold text-gray-900 mb-5 pb-3 border-b border-[#e5e7eb]">Contact</h2>
+                  <div className="bg-white rounded-lg border border-[#e5e7eb] p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <div className="flex items-center gap-2 mb-5 pb-3 border-b border-[#e5e7eb]">
+                      <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+                        <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <h2 className="text-sm font-semibold text-gray-900">Contact</h2>
+                    </div>
                     <div className="space-y-5">
                   <div>
                       <label className="block text-xs font-medium text-[#374151] mb-1.5 uppercase tracking-wide">
@@ -1079,9 +1104,9 @@ export default function Checkout() {
                           autoComplete="email"
                           value={formData.email}
                           onChange={handleInputChange}
-                          className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
-                            errors.email ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
-                          } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500`}
+                          className={`w-full px-4 py-3 text-sm rounded-lg border transition-all placeholder:text-[#9ca3af] shadow-sm ${
+                            errors.email ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-amber-300 hover:shadow-md'
+                          } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 focus:shadow-md`}
                           required
                           data-1p-ignore
                         />
@@ -1098,8 +1123,15 @@ export default function Checkout() {
                   </div>
 
                   {/* Name */}
-                  <div className="bg-white rounded-md border border-[#e5e7eb] p-6">
-                    <h2 className="text-sm font-semibold text-gray-900 mb-5 pb-3 border-b border-[#e5e7eb]">Name</h2>
+                  <div className="bg-white rounded-lg border border-[#e5e7eb] p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <div className="flex items-center gap-2 mb-5 pb-3 border-b border-[#e5e7eb]">
+                      <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+                        <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                      </div>
+                      <h2 className="text-sm font-semibold text-gray-900">Name</h2>
+                    </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                       <input
@@ -1110,9 +1142,9 @@ export default function Checkout() {
                         value={formData.firstName}
                         onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.firstName')}
-                        className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
-                          errors.firstName ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
-                        } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
+                        className={`w-full px-4 py-3 text-sm rounded-lg border transition-all placeholder:text-[#9ca3af] shadow-sm ${
+                          errors.firstName ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-amber-300 hover:shadow-md'
+                        } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 focus:shadow-md`}
                         required
                         data-1p-ignore
                       />
@@ -1134,9 +1166,9 @@ export default function Checkout() {
                         value={formData.lastName}
                         onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.lastName')}
-                        className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
-                          errors.lastName ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
-                        } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
+                        className={`w-full px-4 py-3 text-sm rounded-lg border transition-all placeholder:text-[#9ca3af] shadow-sm ${
+                          errors.lastName ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-amber-300 hover:shadow-md'
+                        } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 focus:shadow-md`}
                         required
                         data-1p-ignore
                       />
@@ -1153,8 +1185,16 @@ export default function Checkout() {
                   </div>
 
                   {/* Shipping Address */}
-                  <div className="bg-white rounded-md border border-[#e5e7eb] p-6">
-                    <h2 className="text-sm font-semibold text-gray-900 mb-5 pb-3 border-b border-[#e5e7eb]">Ship to</h2>
+                  <div className="bg-white rounded-lg border border-[#e5e7eb] p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <div className="flex items-center gap-2 mb-5 pb-3 border-b border-[#e5e7eb]">
+                      <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+                        <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                      </div>
+                      <h2 className="text-sm font-semibold text-gray-900">Ship to</h2>
+                    </div>
                     <div className="space-y-5">
                   <div>
                     <input
@@ -1165,7 +1205,7 @@ export default function Checkout() {
                       value={formData.address}
                       onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.streetAddress')}
-                      className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
+                      className={`w-full px-4 py-3 text-sm rounded-lg border transition-all placeholder:text-[#9ca3af] shadow-sm ${
                         errors.address ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
                       } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
                       required
@@ -1190,9 +1230,9 @@ export default function Checkout() {
                           autoComplete="shipping country"
                           value={formData.country}
                           onChange={handleInputChange}
-                          className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all ${
-                            errors.country ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
-                          } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500`}
+                          className={`w-full px-4 py-3 text-sm rounded-lg border transition-all shadow-sm ${
+                            errors.country ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-amber-300 hover:shadow-md'
+                          } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 focus:shadow-md`}
                           required
                           data-1p-ignore
                         >
@@ -1219,9 +1259,9 @@ export default function Checkout() {
                         value={formData.city}
                         onChange={handleInputChange}
                             placeholder={getTranslation(language, 'checkout.city')}
-                        className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
-                          errors.city ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
-                        } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
+                        className={`w-full px-4 py-3 text-sm rounded-lg border transition-all placeholder:text-[#9ca3af] shadow-sm ${
+                          errors.city ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-amber-300 hover:shadow-md'
+                        } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 focus:shadow-md`}
                         required
                         data-1p-ignore
                       />
@@ -1241,9 +1281,9 @@ export default function Checkout() {
                         autoComplete="shipping address-level1"
                         value={formData.province}
                         onChange={handleInputChange}
-                        className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all ${
-                          errors.province ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
-                        } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
+                        className={`w-full px-4 py-3 text-sm rounded-lg border transition-all shadow-sm ${
+                          errors.province ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-amber-300 hover:shadow-md'
+                        } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 focus:shadow-md`}
                         required
                         data-1p-ignore
                       >
@@ -1278,9 +1318,9 @@ export default function Checkout() {
                               ? getTranslation(language, 'checkout.zipCode')
                               : getTranslation(language, 'checkout.postalCode')
                             }
-                        className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
+                        className={`w-full px-4 py-3 text-sm rounded-lg border transition-all placeholder:text-[#9ca3af] shadow-sm ${
                           errors.postalCode ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
-                        } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
+                        } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500`}
                         required
                         data-1p-ignore
                       />
@@ -1308,7 +1348,7 @@ export default function Checkout() {
                             ? getTranslation(language, 'checkout.phonePlaceholderUS')
                             : getTranslation(language, 'checkout.phonePlaceholder')
                           }
-                          className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
+                          className={`w-full px-4 py-3 text-sm rounded-lg border transition-all placeholder:text-[#9ca3af] shadow-sm ${
                             errors.phone ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500`}
                           required
@@ -1336,17 +1376,24 @@ export default function Checkout() {
                       value={formData.notes}
                       onChange={handleInputChange}
                       rows="4"
-                      className="w-full px-3 py-2.5 text-sm rounded-md border border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540] transition-all resize-none placeholder:text-[#9ca3af]"
+                      className="w-full px-4 py-3 text-sm rounded-lg border border-[#d1d5db] bg-white text-[#111827] hover:border-amber-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 focus:shadow-md transition-all resize-none placeholder:text-[#9ca3af] shadow-sm min-h-[100px]"
                       placeholder={getTranslation(language, 'checkout.orderNotesPlaceholder')}
                     />
                   </div>
 
                   {/* Shipping Options - Only show after user enters shipping details */}
                   {hasEnteredShippingDetails && formData.postalCode && formData.province && formData.city && formData.country && (
-                    <div className="bg-white rounded-md border border-[#e5e7eb] p-6">
-                      <h2 className="text-sm font-semibold text-gray-900 mb-5 pb-3 border-b border-[#e5e7eb]">
-                        {getTranslation(language, 'checkout.shippingMethod')}
-                      </h2>
+                    <div className="bg-white rounded-lg border border-[#e5e7eb] p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+                      <div className="flex items-center gap-2 mb-5 pb-3 border-b border-[#e5e7eb]">
+                        <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+                          <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                          </svg>
+                        </div>
+                        <h2 className="text-sm font-semibold text-gray-900">
+                          {getTranslation(language, 'checkout.shippingMethod')}
+                        </h2>
+                      </div>
                       
                       {loadingShipping && (
                         <div className="mb-4">
@@ -1372,10 +1419,10 @@ export default function Checkout() {
                           {shippingOptions.map((option) => (
                             <label
                               key={option.id}
-                              className={`flex items-center gap-3 p-3.5 border rounded-md cursor-pointer transition-all ${
+                              className={`flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-all shadow-sm ${
                                 selectedShipping?.id === option.id
-                                  ? 'border-amber-500 bg-amber-50'
-                                  : 'border-[#e5e7eb] bg-white hover:border-amber-200 hover:bg-amber-50/30'
+                                  ? 'border-amber-500 bg-amber-50 shadow-md'
+                                  : 'border-[#e5e7eb] bg-white hover:border-amber-200 hover:bg-amber-50/30 hover:shadow-md'
                               }`}
                             >
                               <input
@@ -1459,7 +1506,7 @@ export default function Checkout() {
                     <button
                       type="submit"
                       disabled={isSubmitting || !hasEnteredShippingDetails || !selectedShipping}
-                      className="w-full py-3 px-4 text-sm font-medium rounded-md border-0 cursor-pointer transition-all duration-200 bg-amber-600 text-white hover:bg-amber-700 active:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-amber-600 flex items-center justify-center gap-2 min-h-[44px] shadow-sm hover:shadow-md"
+                      className="w-full py-3.5 px-4 text-sm font-semibold rounded-lg border-0 cursor-pointer transition-all duration-200 bg-amber-600 text-white hover:bg-amber-700 active:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-amber-600 flex items-center justify-center gap-2 min-h-[48px] shadow-md hover:shadow-lg transform hover:scale-[1.01] active:scale-[0.99]"
                     >
                       {isSubmitting ? (
                         <LoadingSpinner size="sm" color="white" text={getTranslation(language, 'checkout.processing')} />
@@ -1482,9 +1529,27 @@ export default function Checkout() {
                 ) : (
                   /* Stripe Payment Element - Single column, no left panel */
                   clientSecret && (
-                    <div id="payment-form" className="bg-white rounded-md border border-[#e5e7eb] p-6">
+                    <div id="payment-form" className="bg-white rounded-lg border border-[#e5e7eb] p-6 shadow-sm">
+                      {/* Progress Indicator */}
                       <div className="mb-6">
-                        <h1 className="text-2xl font-semibold text-gray-900 mb-1.5 tracking-tight">
+                        <div className="flex items-center justify-center gap-2 mb-6">
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center text-sm font-semibold shadow-sm">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
+                            <span className="text-sm font-medium text-gray-500 hidden sm:inline">Shipping</span>
+                          </div>
+                          <div className="w-12 h-0.5 bg-amber-600"></div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center text-sm font-semibold shadow-sm">
+                              2
+                            </div>
+                            <span className="text-sm font-medium text-gray-900 hidden sm:inline">Payment</span>
+                          </div>
+                        </div>
+                        <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2 tracking-tight">
                           {getTranslation(language, 'checkout.paymentDetails') || 'Payment Details'}
                         </h1>
                         <p className="text-sm text-[#6b7280] leading-relaxed">
