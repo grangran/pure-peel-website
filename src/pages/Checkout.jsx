@@ -1577,10 +1577,24 @@ export default function Checkout() {
                         {/* Order Summary Sidebar */}
                         <div className="lg:col-span-1 order-2 lg:order-1">
                           <div className="bg-white rounded-lg border border-[#e5e7eb] p-6 shadow-sm sticky top-6">
-                            <h3 className="text-sm font-semibold text-gray-900 mb-4 pb-3 border-b border-[#e5e7eb]">
-                              {language === 'fr' ? 'Résumé de la commande' : 'Order Summary'}
-                            </h3>
+                        <button
+                          type="button"
+                              onClick={() => setOrderSummaryOpen(!orderSummaryOpen)}
+                              className="w-full flex items-center justify-between text-sm font-semibold text-gray-900 mb-4 pb-3 border-b border-[#e5e7eb] hover:text-amber-600 transition-colors"
+                            >
+                              <span>{language === 'fr' ? 'Résumé de la commande' : 'Order Summary'}</span>
+                              <svg 
+                                className={`w-5 h-5 transition-transform duration-200 ${orderSummaryOpen ? 'rotate-180' : ''}`}
+                                fill="none" 
+                                stroke="currentColor" 
+                                viewBox="0 0 24 24"
+                              >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                              </svg>
+                        </button>
                             
+                            {orderSummaryOpen && (
+                              <>
                             {/* Product Items */}
                             <div className="mb-4 pb-4 border-b border-[#e5e7eb] max-h-[300px] overflow-y-auto">
                               <div className="space-y-3">
@@ -1657,6 +1671,8 @@ export default function Checkout() {
                                 </span>
                     </div>
                             </div>
+                              </>
+                            )}
                             
                             {/* Security Badge */}
                             <div className="mt-6 pt-4 border-t border-[#e5e7eb]">
