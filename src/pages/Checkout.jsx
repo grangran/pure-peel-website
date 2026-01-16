@@ -914,17 +914,17 @@ export default function Checkout() {
   }
 
   return (
-    <section ref={sectionRef} className="py-8 md:py-12 px-4 md:px-6 bg-white min-h-[calc(100vh-72px)]">
+    <section ref={sectionRef} className="py-8 md:py-12 px-4 md:px-6 bg-gray-50 min-h-[calc(100vh-72px)]">
       <div className="max-w-7xl mx-auto">
         {/* Stripe-style Checkout Layout */}
         {currentStep === 1 && (
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-0 lg:gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-6 lg:gap-8">
             {/* Order Summary - Left Side */}
             <div className="order-1 lg:order-1" key={`order-summary-${currency}`}>
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 lg:sticky lg:top-8 mb-6 lg:mb-0">
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 lg:sticky lg:top-8 mb-6 lg:mb-0">
                 {/* Header */}
-                <div className="mb-6 pb-6 border-b border-gray-200">
-                  <div className="flex items-center gap-2 mb-3">
+                <div className="mb-8 pb-6 border-b-2 border-gray-200">
+                  <div className="flex items-center gap-3 mb-4">
                     <button
                       onClick={() => {
                         if (showEmbeddedCheckout) {
@@ -935,32 +935,32 @@ export default function Checkout() {
                           window.dispatchEvent(new Event("hashchange"))
                         }
                       }}
-                      className="text-gray-500 hover:text-gray-900 transition-colors p-1 -ml-1 rounded-md hover:bg-gray-100"
+                      className="text-gray-500 hover:text-gray-900 transition-all p-1.5 -ml-1.5 rounded-lg hover:bg-gray-100 active:scale-95"
                       aria-label="Back"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                       </svg>
                     </button>
-                    <h2 className="text-lg font-semibold text-gray-900">Pure Peel Co.</h2>
+                    <h2 className="text-xl font-bold text-gray-900">Pure Peel Co.</h2>
                   </div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-sm text-gray-600 font-medium">{language === 'fr' ? 'Total' : 'Total'}</span>
-                    <span className="text-3xl font-bold text-gray-900">{formatPriceWithCurrency(totalCAD)}</span>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs text-gray-500 uppercase tracking-wide font-medium">Pay Pure Peel Co.</span>
+                    <span className="text-4xl font-extrabold text-gray-900">{formatPriceWithCurrency(totalCAD)}</span>
                   </div>
                 </div>
 
                 {/* Product Items */}
-                <div className="space-y-4 mb-6">
+                <div className="space-y-5 mb-8">
                   {cartItems.map((item) => (
-                    <div key={`${item.id}-${item.variant}`} className="flex gap-4 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
-                      <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-50 shrink-0 border border-gray-200">
+                    <div key={`${item.id}-${item.variant}`} className="flex gap-4 pb-5 border-b border-gray-100 last:border-0 last:pb-0">
+                      <div className="w-24 h-24 rounded-xl overflow-hidden bg-gray-50 shrink-0 border-2 border-gray-200 shadow-sm">
                         <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                       </div>
-                      <div className="flex-1 min-w-0 flex flex-col justify-center">
-                        <p className="text-sm font-semibold text-gray-900 truncate">{item.name}</p>
-                        <p className="text-xs text-gray-600 mt-0.5">{item.variant}</p>
-                        <p className="text-sm text-gray-700 mt-2 font-medium">
+                      <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
+                        <p className="text-base font-semibold text-gray-900 truncate leading-tight">{item.name}</p>
+                        <p className="text-xs text-gray-500 font-medium">{item.variant}</p>
+                        <p className="text-sm text-gray-600 mt-2 font-semibold">
                           {getTranslation(language, 'checkout.qty')} {item.quantity} × {formatPriceWithCurrency(item.price)}
                         </p>
                       </div>
@@ -991,12 +991,12 @@ export default function Checkout() {
                               }
                             }}
                             placeholder={getTranslation(language, 'checkout.promoCode.placeholder')}
-                            className="flex-1 px-4 py-3 text-sm rounded-lg border-2 border-gray-200 bg-white hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
+                            className="flex-1 px-4 py-3 text-sm font-medium rounded-xl border-2 border-gray-200 bg-white hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all"
                           />
                           <button
                             type="button"
                             onClick={handleApplyPromoCode}
-                            className="px-6 py-3 text-sm font-semibold rounded-lg bg-amber-500 text-white hover:bg-amber-600 active:bg-amber-700 transition-all whitespace-nowrap shadow-sm hover:shadow"
+                            className="px-6 py-3 text-sm font-bold rounded-xl bg-amber-500 text-white hover:bg-amber-600 active:bg-amber-700 transition-all whitespace-nowrap shadow-md hover:shadow-lg active:scale-95"
                           >
                             {getTranslation(language, 'checkout.promoCode.apply')}
                           </button>
@@ -1035,37 +1035,37 @@ export default function Checkout() {
                 )}
                 
                 {/* Cost Breakdown */}
-                <div className="space-y-3 pt-6 border-t-2 border-gray-200">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">{getTranslation(language, 'checkout.subtotal')}</span>
-                    <span className="text-sm font-semibold text-gray-900">{formatPriceWithCurrency(subtotalCAD)}</span>
+                <div className="space-y-4 pt-6 border-t-2 border-gray-200">
+                  <div className="flex justify-between items-center py-1">
+                    <span className="text-sm font-medium text-gray-600">{getTranslation(language, 'checkout.subtotal')}</span>
+                    <span className="text-sm font-bold text-gray-900">{formatPriceWithCurrency(subtotalCAD)}</span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">{getTranslation(language, 'checkout.shipping')}</span>
-                    <span className="text-sm font-semibold text-gray-900">
+                  <div className="flex justify-between items-center py-1">
+                    <span className="text-sm font-medium text-gray-600">{getTranslation(language, 'checkout.shipping')}</span>
+                    <span className="text-sm font-bold text-gray-900">
                       {!hasEnteredShippingDetails || !selectedShipping 
                         ? (language === 'fr' ? 'À calculer' : 'To be calculated')
                         : (shippingCostCAD === 0 ? (
-                          <span className="text-green-600">{getTranslation(language, 'checkout.free')}</span>
+                          <span className="text-green-600 font-semibold">{getTranslation(language, 'checkout.free')}</span>
                         ) : formatPriceWithCurrency(shippingCostCAD))
                       }
                     </span>
                   </div>
                   {hasEnteredShippingDetails && selectedShipping && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">{getTranslation(language, 'checkout.taxHST')}</span>
-                      <span className="text-sm font-semibold text-gray-900">{formatPriceWithCurrency(tax)}</span>
+                    <div className="flex justify-between items-center py-1">
+                      <span className="text-sm font-medium text-gray-600">{getTranslation(language, 'checkout.taxHST')}</span>
+                      <span className="text-sm font-bold text-gray-900">{formatPriceWithCurrency(tax)}</span>
                     </div>
                   )}
                   {appliedPromoCode && hasEnteredShippingDetails && selectedShipping && (
-                    <div className="flex justify-between items-center text-green-600">
-                      <span className="text-sm font-medium">{getTranslation(language, 'checkout.promoCode.discount')}</span>
-                      <span className="text-sm font-bold">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
+                    <div className="flex justify-between items-center py-1 text-green-600">
+                      <span className="text-sm font-semibold">{getTranslation(language, 'checkout.promoCode.discount')}</span>
+                      <span className="text-sm font-extrabold">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between items-center pt-4 border-t border-gray-200 mt-4">
-                    <span className="text-base font-semibold text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
-                    <span className="text-xl font-bold text-gray-900">
+                  <div className="flex justify-between items-center pt-5 border-t-2 border-gray-300 mt-5">
+                    <span className="text-lg font-bold text-gray-900">Total due</span>
+                    <span className="text-2xl font-extrabold text-gray-900">
                       {hasEnteredShippingDetails && selectedShipping 
                         ? formatPriceWithCurrency(totalCAD)
                         : (language === 'fr' ? 'À calculer' : 'To be calculated')
@@ -1106,21 +1106,21 @@ export default function Checkout() {
                 {/* Show shipping form OR embedded checkout, not both */}
                 {!showEmbeddedCheckout ? (
                   <>
-                    <div className="mb-8">
-                      <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+                    <div className="mb-10">
+                      <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
                         {getTranslation(language, 'checkout.shippingInformation')}
                       </h1>
-                      <p className="text-base text-gray-600">
+                      <p className="text-lg text-gray-600 font-medium">
                         {getTranslation(language, 'checkout.completeOrder')}
                       </p>
                     </div>
-                    <form onSubmit={handlePaymentSubmit} className="space-y-8">
+                    <form onSubmit={handlePaymentSubmit} className="space-y-6">
                   {/* Contact Information */}
-                  <div className="bg-white rounded-xl border border-gray-200 p-6">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-5 pb-2 border-b border-gray-100">Contact</h2>
+                  <div className="bg-white rounded-2xl border-2 border-gray-200 p-8 shadow-md">
+                    <h2 className="text-xl font-bold text-gray-900 mb-6 pb-3 border-b-2 border-gray-100">Contact</h2>
                     <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
                           {getTranslation(language, 'checkout.email')}
                       </label>
                         <input
@@ -1130,8 +1130,8 @@ export default function Checkout() {
                           autoComplete="email"
                           value={formData.email}
                           onChange={handleInputChange}
-                          className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
-                            errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
+                          className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all font-medium ${
+                            errors.email ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
                           required
                         />
@@ -1143,8 +1143,8 @@ export default function Checkout() {
                   </div>
 
                   {/* Name */}
-                  <div className="bg-white rounded-xl border border-gray-200 p-6">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-5 pb-2 border-b border-gray-100">Name</h2>
+                  <div className="bg-white rounded-2xl border-2 border-gray-200 p-8 shadow-md">
+                    <h2 className="text-xl font-bold text-gray-900 mb-6 pb-3 border-b-2 border-gray-100">Name</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                       <input
@@ -1155,8 +1155,8 @@ export default function Checkout() {
                         value={formData.firstName}
                         onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.firstName')}
-                          className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
-                            errors.firstName ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
+                          className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all font-medium ${
+                            errors.firstName ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
                         required
                       />
@@ -1173,8 +1173,8 @@ export default function Checkout() {
                         value={formData.lastName}
                         onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.lastName')}
-                          className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
-                            errors.lastName ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
+                          className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all font-medium ${
+                            errors.lastName ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
                         required
                       />
@@ -1186,8 +1186,8 @@ export default function Checkout() {
                   </div>
 
                   {/* Shipping Address */}
-                  <div className="bg-white rounded-xl border border-gray-200 p-6">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-5 pb-2 border-b border-gray-100">Ship to</h2>
+                  <div className="bg-white rounded-2xl border-2 border-gray-200 p-8 shadow-md">
+                    <h2 className="text-xl font-bold text-gray-900 mb-6 pb-3 border-b-2 border-gray-100">Ship to</h2>
                     <div className="space-y-4">
                   <div>
                     <input
@@ -1198,8 +1198,8 @@ export default function Checkout() {
                       value={formData.address}
                       onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.streetAddress')}
-                          className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
-                            errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
+                          className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all font-medium ${
+                            errors.address ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
                       required
                     />
@@ -1215,8 +1215,8 @@ export default function Checkout() {
                           autoComplete="country"
                           value={formData.country}
                           onChange={handleInputChange}
-                          className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
-                            errors.country ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
+                          className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all font-medium ${
+                            errors.country ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
                           required
                         >
@@ -1238,8 +1238,8 @@ export default function Checkout() {
                         value={formData.city}
                         onChange={handleInputChange}
                             placeholder={getTranslation(language, 'checkout.city')}
-                            className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
-                              errors.city ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
+                            className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all font-medium ${
+                              errors.city ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
                             } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
                         required
                       />
@@ -1254,8 +1254,8 @@ export default function Checkout() {
                         autoComplete="address-level1"
                         value={formData.province}
                         onChange={handleInputChange}
-                            className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
-                              errors.province ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
+                            className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all font-medium ${
+                              errors.province ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
                             } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
                         required
                       >
@@ -1285,8 +1285,8 @@ export default function Checkout() {
                               ? getTranslation(language, 'checkout.zipCode')
                               : getTranslation(language, 'checkout.postalCode')
                             }
-                            className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
-                              errors.postalCode ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
+                            className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all font-medium ${
+                              errors.postalCode ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
                             } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
                         required
                       />
@@ -1309,8 +1309,8 @@ export default function Checkout() {
                             ? getTranslation(language, 'checkout.phonePlaceholderUS')
                             : getTranslation(language, 'checkout.phonePlaceholder')
                           }
-                          className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
-                            errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
+                          className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all font-medium ${
+                            errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
                           required
                         />
@@ -1322,24 +1322,24 @@ export default function Checkout() {
                   </div>
 
                   {/* Order Notes */}
-                  <div className="bg-white rounded-xl border border-gray-200 p-6">
-                    <label className="block text-sm font-semibold text-gray-900 mb-3">
+                  <div className="bg-white rounded-2xl border-2 border-gray-200 p-8 shadow-md">
+                    <label className="block text-base font-bold text-gray-900 mb-4">
                       {getTranslation(language, 'checkout.orderNotes')}
                     </label>
                     <textarea
                       name="notes"
                       value={formData.notes}
                       onChange={handleInputChange}
-                      rows="3"
-                      className="w-full px-4 py-3 text-sm rounded-lg border-2 border-gray-200 bg-white hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all resize-none"
+                      rows="4"
+                      className="w-full px-4 py-3.5 text-base rounded-xl border-2 border-gray-200 bg-white hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all resize-none font-medium"
                       placeholder={getTranslation(language, 'checkout.orderNotesPlaceholder')}
                     />
                   </div>
 
                   {/* Shipping Options - Only show after user enters shipping details */}
                   {hasEnteredShippingDetails && formData.postalCode && formData.province && formData.city && formData.country && (
-                    <div className="bg-white rounded-xl border border-gray-200 p-6">
-                      <h2 className="text-lg font-semibold text-gray-900 mb-5 pb-2 border-b border-gray-100">
+                    <div className="bg-white rounded-2xl border-2 border-gray-200 p-8 shadow-md">
+                      <h2 className="text-xl font-bold text-gray-900 mb-6 pb-3 border-b-2 border-gray-100">
                         {getTranslation(language, 'checkout.shippingMethod')}
                       </h2>
                       
@@ -1367,10 +1367,10 @@ export default function Checkout() {
                           {shippingOptions.map((option) => (
                             <label
                               key={option.id}
-                              className={`flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all touch-manipulation min-h-[64px] shadow-sm ${
+                              className={`flex items-center gap-4 p-5 border-2 rounded-2xl cursor-pointer transition-all touch-manipulation min-h-[72px] shadow-md ${
                                 selectedShipping?.id === option.id
-                                  ? 'border-amber-500 bg-amber-50/50 shadow-md ring-2 ring-amber-500/20'
-                                  : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-md active:bg-gray-50'
+                                  ? 'border-amber-500 bg-gradient-to-r from-amber-50 to-amber-100/50 shadow-lg ring-2 ring-amber-500/30'
+                                  : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-lg hover:bg-gray-50 active:bg-gray-100'
                               }`}
                             >
                               <input
