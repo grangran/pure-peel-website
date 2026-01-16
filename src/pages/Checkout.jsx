@@ -1713,39 +1713,50 @@ export default function Checkout() {
                 
                         {/* Payment Form */}
                         <div className="md:col-span-7 order-1 md:order-2">
-                          <div id="payment-form" className="bg-white rounded-lg border border-[#e5e7eb] p-6 md:p-8 shadow-sm">
-                            {/* Accepted Payment Methods */}
-                            <div className="mb-8 pb-6 border-b border-[#e5e7eb]">
-                              <p className="text-sm font-semibold text-gray-900 mb-4">
-                                {language === 'fr' ? 'Méthodes de paiement acceptées' : 'Accepted Payment Methods'}
+                          <div id="payment-form" className="bg-white rounded-lg border border-gray-200 shadow-sm">
+                            {/* Header */}
+                            <div className="px-6 py-6 border-b border-gray-200">
+                              <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+                                {language === 'fr' ? 'Détails de paiement' : 'Payment Details'}
+                              </h2>
+                              <p className="text-sm text-gray-600">
+                                {language === 'fr' ? 'Complétez votre paiement en toute sécurité' : 'Complete your payment securely'}
                               </p>
-                              <div className="flex items-center gap-3 flex-wrap">
-                                <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 shadow-sm">
-                                  <svg className="w-7 h-5" viewBox="0 0 40 24" fill="none">
-                                    <rect width="40" height="24" rx="2" fill="#1434CB"/>
-                                    <path d="M16.5 12h7m-7-3h7m-7 6h4" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-                                  </svg>
-                                  <span className="text-xs font-semibold text-gray-700">Visa</span>
-                  </div>
-                                <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 shadow-sm">
-                                  <svg className="w-7 h-5" viewBox="0 0 40 24" fill="none">
-                                    <rect width="40" height="24" rx="2" fill="#EB001B"/>
-                                    <rect x="20" width="20" height="24" rx="2" fill="#F79E1B"/>
-                                  </svg>
-                                  <span className="text-xs font-semibold text-gray-700">Mastercard</span>
-                  </div>
-                                <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 shadow-sm">
-                                  <svg className="w-7 h-5" viewBox="0 0 40 24" fill="#006FCF">
-                                    <rect width="40" height="24" rx="2" fill="#006FCF"/>
-                                    <path d="M20 8l-2 8h4l-2-8z" fill="white"/>
-                                  </svg>
-                                  <span className="text-xs font-semibold text-gray-700">Amex</span>
-                    </div>
-                                <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 shadow-sm">
-                                  <span className="text-xs font-semibold text-gray-700">Link</span>
-                    </div>
-                  </div>
-                </div>
+                            </div>
+                            
+                            <div className="p-6 md:p-8 space-y-8">
+                              {/* Accepted Payment Methods */}
+                              <div>
+                                <p className="text-sm font-semibold text-gray-900 mb-4">
+                                  {language === 'fr' ? 'Méthodes de paiement acceptées' : 'Accepted Payment Methods'}
+                                </p>
+                                <div className="flex items-center gap-3 flex-wrap">
+                                  <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 rounded-lg border border-gray-200 hover:border-amber-300 transition-colors">
+                                    <svg className="w-8 h-5" viewBox="0 0 40 24" fill="none">
+                                      <rect width="40" height="24" rx="2" fill="#1434CB"/>
+                                      <path d="M16.5 12h7m-7-3h7m-7 6h4" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+                                    </svg>
+                                    <span className="text-sm font-semibold text-gray-700">Visa</span>
+                                  </div>
+                                  <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 rounded-lg border border-gray-200 hover:border-amber-300 transition-colors">
+                                    <svg className="w-8 h-5" viewBox="0 0 40 24" fill="none">
+                                      <rect width="40" height="24" rx="2" fill="#EB001B"/>
+                                      <rect x="20" width="20" height="24" rx="2" fill="#F79E1B"/>
+                                    </svg>
+                                    <span className="text-sm font-semibold text-gray-700">Mastercard</span>
+                                  </div>
+                                  <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 rounded-lg border border-gray-200 hover:border-amber-300 transition-colors">
+                                    <svg className="w-8 h-5" viewBox="0 0 40 24" fill="#006FCF">
+                                      <rect width="40" height="24" rx="2" fill="#006FCF"/>
+                                      <path d="M20 8l-2 8h4l-2-8z" fill="white"/>
+                                    </svg>
+                                    <span className="text-sm font-semibold text-gray-700">Amex</span>
+                                  </div>
+                                  <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 rounded-lg border border-gray-200 hover:border-amber-300 transition-colors">
+                                    <span className="text-sm font-semibold text-gray-700">Link</span>
+                                  </div>
+                                </div>
+                              </div>
 
                             <Elements 
                               stripe={stripePromise} 
