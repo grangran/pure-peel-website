@@ -752,35 +752,25 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     // Calculate order total to check if discount covers everything (including shipping)
     const orderTotalCents = subtotal + shippingCostCents + tax
     
-    // Check if this is a 100% discount code (common test codes)
+    // Check if this is a free shipping code
     const promoCodeUpper = promoCode ? promoCode.toUpperCase().trim() : ''
-    const isKnown100PercentCode = promoCodeUpper === 'FREETEST' || promoCodeUpper === 'TEST100'
     const isFreeShippingCode = promoCodeUpper === 'FREESHIP' // 100% off shipping only
-    // Allow small rounding tolerance (within 1 cent) for discount covering total
-    const discountCoversTotal = orderTotalCents > 0 && discountAmountCents >= (orderTotalCents - 1)
-    const is100PercentDiscount = promoCodeUpper && (isKnown100PercentCode || discountCoversTotal)
-    
     console.log('🎟️ Promo code check:', {
       promoCode: promoCodeUpper || 'none',
       discountAmountCents,
       orderTotalCents,
-      isKnown100PercentCode,
-      isFreeShippingCode,
-      discountCoversTotal,
-      is100PercentDiscount
+      isFreeShippingCode
     })
     
-    // If discount is 100% or covers the entire order (including shipping), make shipping free
-    // Also handle FREESHIP code which gives 100% off shipping only
+    // Handle FREESHIP code which gives 100% off shipping only
     let finalShippingCostCents = shippingCostCents
-    if (is100PercentDiscount || isFreeShippingCode) {
+    if (isFreeShippingCode) {
       finalShippingCostCents = 0
       console.log('🎁 Free shipping applied - shipping set to $0', {
         promoCode: promoCodeUpper,
         originalShipping: shippingCostCents,
         orderTotal: orderTotalCents,
-        discountAmount: discountAmountCents,
-        isFreeShippingCode
+        discountAmount: discountAmountCents
       })
     } else {
       console.log('💰 Regular discount or no discount - shipping remains:', {
@@ -979,12 +969,9 @@ app.post('/api/create-payment-intent', checkoutLimiter, async (req, res) => {
     const discountAmount = parseFloat(req.body.discount) || 0
     const discountAmountCents = Math.max(0, Math.round(discountAmount * 100))
     const promoCodeUpper = promoCode ? promoCode.toUpperCase().trim() : ''
-    const isKnown100PercentCode = promoCodeUpper === 'FREETEST' || promoCodeUpper === 'TEST100'
     const isFreeShippingCode = promoCodeUpper === 'FREESHIP' // 100% off shipping only
     const orderTotalCents = subtotal + shippingCostCents + tax
-    const discountCoversTotal = orderTotalCents > 0 && discountAmountCents >= (orderTotalCents - 1)
-    const is100PercentDiscount = promoCodeUpper && (isKnown100PercentCode || discountCoversTotal)
-    const finalShippingCostCents = (is100PercentDiscount || isFreeShippingCode) ? 0 : shippingCostCents
+    const finalShippingCostCents = isFreeShippingCode ? 0 : shippingCostCents
     const totalAmount = Math.max(0, subtotal + finalShippingCostCents + tax - discountAmountCents)
 
     // Create Payment Intent following Stripe's best practices

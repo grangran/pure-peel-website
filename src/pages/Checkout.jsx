@@ -615,8 +615,6 @@ export default function Checkout() {
     
     // Define valid promo codes
     const validCodes = {
-      'FREETEST': { discount: 100, type: 'percent' }, // 100% off for testing
-      'TEST100': { discount: 100, type: 'percent' }, // Alternative test code
       'FREESHIP': { discount: 100, type: 'shipping' }, // 100% off shipping only
     }
     
