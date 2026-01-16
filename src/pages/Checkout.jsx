@@ -1504,6 +1504,75 @@ export default function Checkout() {
                     </div>
                   )}
 
+                  {/* Promo Code Section */}
+                  <div className="bg-white rounded-lg border border-[#e5e7eb] p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+                        <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <h2 className="text-sm font-semibold text-gray-900">
+                        {language === 'fr' ? 'Code promo' : 'Promo Code'}
+                      </h2>
+                    </div>
+                    
+                    {appliedPromoCode ? (
+                      <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <div>
+                            <p className="text-sm font-medium text-green-900">
+                              {language === 'fr' ? 'Code appliqué' : 'Code Applied'}: {appliedPromoCode}
+                            </p>
+                            <p className="text-xs text-green-700">
+                              {language === 'fr' ? 'Économie' : 'Savings'}: {formatPriceWithCurrency(promoCodeDiscount)}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleRemovePromoCode}
+                          className="text-sm text-green-700 hover:text-green-900 font-medium underline"
+                        >
+                          {language === 'fr' ? 'Retirer' : 'Remove'}
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={promoCode}
+                            onChange={(e) => {
+                              setPromoCode(e.target.value)
+                              setPromoCodeError('')
+                            }}
+                            placeholder={language === 'fr' ? 'Entrez le code promo' : 'Enter promo code'}
+                            className="flex-1 px-4 py-2.5 text-sm rounded-lg border border-[#d1d5db] bg-white text-[#111827] hover:border-amber-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 focus:shadow-md transition-all placeholder:text-[#9ca3af] shadow-sm"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleApplyPromoCode}
+                            className="px-4 py-2.5 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 transition-colors shadow-sm hover:shadow-md whitespace-nowrap"
+                          >
+                            {language === 'fr' ? 'Appliquer' : 'Apply'}
+                          </button>
+                        </div>
+                        {promoCodeError && (
+                          <div className="flex items-start gap-2 text-sm text-[#dc2626] bg-[#fef2f2] border border-[#fecaca] rounded-lg p-3">
+                            <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p>{promoCodeError}</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
                   {/* Payment Button */}
                   <div className="mt-6">
                     {stripeError && (
