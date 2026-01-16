@@ -1081,10 +1081,10 @@ export default function Checkout() {
                     <h2 className="text-base font-semibold text-gray-900 mb-4">Shipping information</h2>
                     <div className="space-y-4">
                       {/* Email */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
                           {getTranslation(language, 'checkout.email')}
-                      </label>
+                        </label>
                         <input
                           type="email"
                           name="email"
@@ -1100,73 +1100,73 @@ export default function Checkout() {
                         {errors.email && (
                           <p className="text-red-500 text-xs mt-1">{errors.email}</p>
                         )}
-                  </div>
+                      </div>
 
                   {/* Name */}
                   <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">Name</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Name</label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                      <input
-                        type="text"
-                        name="firstName"
-                        id="checkout-firstName"
-                        autoComplete="given-name"
-                        value={formData.firstName}
-                        onChange={handleInputChange}
+                        <input
+                          type="text"
+                          name="firstName"
+                          id="checkout-firstName"
+                          autoComplete="given-name"
+                          value={formData.firstName}
+                          onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.firstName')}
                           className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
                             errors.firstName ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
-                        required
-                      />
-                      {errors.firstName && (
-                        <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
-                      )}
-                    </div>
-                    <div>
-                      <input
-                        type="text"
-                        name="lastName"
-                        id="checkout-lastName"
-                        autoComplete="family-name"
-                        value={formData.lastName}
-                        onChange={handleInputChange}
+                          required
+                        />
+                        {errors.firstName && (
+                          <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
+                        )}
+                      </div>
+                      <div>
+                        <input
+                          type="text"
+                          name="lastName"
+                          id="checkout-lastName"
+                          autoComplete="family-name"
+                          value={formData.lastName}
+                          onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.lastName')}
                           className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
                             errors.lastName ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
-                        required
-                      />
-                      {errors.lastName && (
-                        <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
-                      )}
+                          required
+                        />
+                        {errors.lastName && (
+                          <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
+                        )}
+                      </div>
                     </div>
-                    </div>
-                    </div>
+                  </div>
 
                   {/* Shipping Address */}
-                    <div className="mt-6">
-                      <label className="block text-sm font-medium text-gray-700 mb-1.5">Ship to</label>
+                  <div className="mt-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Ship to</label>
                     <div className="space-y-4">
-                  <div>
-                    <input
-                      type="text"
-                      name="address"
-                      id="checkout-address"
-                      autoComplete="street-address"
-                      value={formData.address}
-                      onChange={handleInputChange}
+                      <div>
+                        <input
+                          type="text"
+                          name="address"
+                          id="checkout-address"
+                          autoComplete="street-address"
+                          value={formData.address}
+                          onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.streetAddress')}
                           className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
                             errors.address ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
-                      required
-                    />
-                    {errors.address && (
-                      <p className="text-red-500 text-xs mt-1">{errors.address}</p>
-                    )}
-                  </div>
+                          required
+                        />
+                        {errors.address && (
+                          <p className="text-red-500 text-xs mt-1">{errors.address}</p>
+                        )}
+                      </div>
 
                       <div>
                         <select
@@ -1190,35 +1190,35 @@ export default function Checkout() {
 
                       <div className="grid grid-cols-3 gap-3">
                         <div className="col-span-1">
-                      <input
-                        type="text"
-                        name="city"
-                        id="checkout-city"
-                        autoComplete="address-level2"
-                        value={formData.city}
-                        onChange={handleInputChange}
+                          <input
+                            type="text"
+                            name="city"
+                            id="checkout-city"
+                            autoComplete="address-level2"
+                            value={formData.city}
+                            onChange={handleInputChange}
                             placeholder={getTranslation(language, 'checkout.city')}
                             className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
                               errors.city ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                             } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
-                        required
-                      />
-                      {errors.city && (
-                        <p className="text-red-500 text-xs mt-1">{errors.city}</p>
-                      )}
-                    </div>
+                            required
+                          />
+                          {errors.city && (
+                            <p className="text-red-500 text-xs mt-1">{errors.city}</p>
+                          )}
+                        </div>
                         <div className="col-span-1">
-                      <select
-                        name="province"
-                        id="checkout-province"
-                        autoComplete="address-level1"
-                        value={formData.province}
-                        onChange={handleInputChange}
+                          <select
+                            name="province"
+                            id="checkout-province"
+                            autoComplete="address-level1"
+                            value={formData.province}
+                            onChange={handleInputChange}
                             className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
                               errors.province ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                             } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
-                        required
-                      >
+                            required
+                          >
                             <option value="">
                               {formData.country === "United States" 
                                 ? getTranslation(language, 'checkout.selectState')
@@ -1227,20 +1227,20 @@ export default function Checkout() {
                             </option>
                             {(formData.country === "United States" ? usStates : canadianProvinces).map(region => (
                               <option key={region} value={region}>{region}</option>
-                        ))}
-                      </select>
-                      {errors.province && (
-                        <p className="text-red-500 text-xs mt-1">{errors.province}</p>
-                      )}
-                    </div>
+                            ))}
+                          </select>
+                          {errors.province && (
+                            <p className="text-red-500 text-xs mt-1">{errors.province}</p>
+                          )}
+                        </div>
                         <div className="col-span-1">
-                      <input
-                        type="text"
-                        name="postalCode"
-                        id="checkout-postalCode"
-                        autoComplete={formData.country === "United States" ? "postal-code" : "postal-code"}
-                        value={formData.postalCode}
-                        onChange={handleInputChange}
+                          <input
+                            type="text"
+                            name="postalCode"
+                            id="checkout-postalCode"
+                            autoComplete={formData.country === "United States" ? "postal-code" : "postal-code"}
+                            value={formData.postalCode}
+                            onChange={handleInputChange}
                             placeholder={formData.country === "United States" 
                               ? getTranslation(language, 'checkout.zipCode')
                               : getTranslation(language, 'checkout.postalCode')
@@ -1248,13 +1248,13 @@ export default function Checkout() {
                             className={`w-full px-3.5 py-2.5 text-sm rounded-md border transition-all ${
                               errors.postalCode ? 'border-red-500 bg-red-50' : 'border-gray-300 bg-white hover:border-gray-400'
                             } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
-                        required
-                      />
-                      {errors.postalCode && (
-                        <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>
-                      )}
-                    </div>
-                  </div>
+                            required
+                          />
+                          {errors.postalCode && (
+                            <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>
+                          )}
+                        </div>
+                      </div>
 
                       <div>
                         <input
@@ -1279,8 +1279,8 @@ export default function Checkout() {
                         )}
                       </div>
                     </div>
-                    </div>
                   </div>
+                    </div>
                   </div>
 
                   {/* Order Notes - Optional */}
