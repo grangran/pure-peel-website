@@ -1640,7 +1640,9 @@ export default function Checkout() {
                     </p>
                   </div>
                 </form>
-                  </>
+                  </div>
+                </div>
+                </>
                 ) : (
                   /* Stripe Payment Element - Single column, no left panel */
                   clientSecret && (
