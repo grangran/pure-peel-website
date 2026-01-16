@@ -782,6 +782,9 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       return res.status(400).json({ error: 'Invalid amount calculation. Please check your cart items and shipping.' })
     }
 
+    // Calculate shipping cost in selected currency (finalShippingCostCents is in CAD)
+    const shippingCostInCurrency = useUSD ? Math.round(finalShippingCostCents * exchangeRate) : finalShippingCostCents
+
     // Create Stripe Checkout Session
     // Note: 'card' automatically enables Apple Pay and Google Pay when available
     const sessionConfig = {
