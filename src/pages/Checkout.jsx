@@ -842,13 +842,11 @@ export default function Checkout() {
   // Tax is 0% - Products are zero-rated as unsweetened dried fruits
   const tax = 0
   // Calculate total in CAD first, then convert
+  // promoCodeDiscount is already in CAD, so subtract it from CAD total before converting
   const totalCAD = hasEnteredShippingDetails && selectedShipping 
     ? Math.max(0, subtotalCAD + shippingCostCAD + tax - promoCodeDiscount)
     : subtotalCAD
   const total = currency === 'USD' ? convertPrice(totalCAD) : totalCAD
-  // Also calculate converted values for display
-  const subtotal = currency === 'USD' ? convertPrice(subtotalCAD) : subtotalCAD
-  const shippingCost = currency === 'USD' ? convertPrice(shippingCostCAD) : shippingCostCAD
 
   if (cartItems.length === 0 && currentStep !== 2) {
     return (
