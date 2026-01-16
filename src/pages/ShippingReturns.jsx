@@ -63,7 +63,7 @@ export default function ShippingReturns() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-2xl font-semibold text-gray-900 mb-2">{getTranslation(language, 'shipping.title')}</h1>
-          <p className="text-sm text-[#425466] max-w-2xl mx-auto">{getTranslation(language, 'shipping.subtitle')}</p>
+          <p className="text-sm text-[#6b7280] max-w-2xl mx-auto">{getTranslation(language, 'shipping.subtitle')}</p>
         </div>
 
             {/* Shipping Information */}
