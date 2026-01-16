@@ -786,8 +786,21 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     // Calculate shipping cost in selected currency (finalShippingCostCents is in CAD)
     const shippingCostInCurrency = useUSD ? Math.round(finalShippingCostCents * exchangeRate) : finalShippingCostCents
 
+    // Log currency info for debugging
+    console.log('💰 Stripe session currency:', {
+      requestedCurrency,
+      stripeCurrency,
+      useUSD,
+      exchangeRate,
+      shippingCostCAD: finalShippingCostCents,
+      shippingCostInCurrency,
+      lineItemsCount: lineItems.length,
+      firstLineItemCurrency: lineItems[0]?.price_data?.currency
+    })
+
     // Create Stripe Checkout Session
     // Note: 'card' automatically enables Apple Pay and Google Pay when available
+    // IMPORTANT: All line_items and shipping_options must use the SAME currency to prevent Stripe from showing a currency selector
     const sessionConfig = {
       payment_method_types: ['card'],
       line_items: lineItems,
