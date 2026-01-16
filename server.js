@@ -823,9 +823,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       // Add shipping cost (finalShippingCostCents is in CAD cents, convert to selected currency if needed)
       // Always provide a shipping option (even if $0) when shipping_address_collection is enabled
       // Note: For free orders, Stripe may not collect shipping address, so labels will need to be created manually
-      shipping_options: (() => {
-        const shippingCostInCurrency = useUSD ? Math.round(finalShippingCostCents * exchangeRate) : finalShippingCostCents
-        return [{
+      shipping_options: [{
         shipping_rate_data: {
           type: 'fixed_amount',
           fixed_amount: {
