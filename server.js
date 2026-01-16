@@ -804,11 +804,12 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
 
     // Create Stripe Checkout Session
     // Note: 'card' automatically enables Apple Pay and Google Pay when available
+    // payment_method_types: ['card'] enables card payments and automatically includes Apple Pay and Google Pay
     // IMPORTANT: All line_items and shipping_options must use the SAME currency to prevent Stripe from showing a currency selector
     // Disable Adaptive Pricing to prevent Stripe from showing currency selector
     // For Embedded Checkout, use ui_mode: 'embedded' and return_url (NOT success_url or cancel_url)
     const sessionConfig = {
-      payment_method_types: ['card'],
+      payment_method_types: ['card'], // Automatically enables Apple Pay, Google Pay, and Link when available
       line_items: lineItems,
       mode: 'payment',
       ui_mode: 'embedded', // Set embedded mode from the start

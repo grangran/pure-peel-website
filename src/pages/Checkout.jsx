@@ -948,7 +948,6 @@ export default function Checkout() {
                     <h2 className="text-lg sm:text-xl font-bold text-gray-900">Pure Peel Co.</h2>
                   </div>
                   <div className="flex flex-col gap-1">
-                    <span className="text-xs text-gray-500 uppercase tracking-wide font-medium">Pay Pure Peel Co.</span>
                     <span className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900">{formatPriceWithCurrency(totalCAD)}</span>
                   </div>
                 </div>
