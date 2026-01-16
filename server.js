@@ -610,6 +610,14 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       })
     }
 
+    // Get currency from request (default to CAD if not provided)
+    const requestedCurrency = (req.body.currency || 'CAD').toLowerCase()
+    const stripeCurrency = (requestedCurrency === 'usd') ? 'usd' : 'cad'
+    const useUSD = stripeCurrency === 'usd'
+    
+    // Get exchange rate for USD conversion if needed
+    const exchangeRate = useUSD ? 0.73 : 1.0 // Default rate, should match frontend
+
     const { items, shippingInfo, total } = req.body
 
     // Input validation
@@ -647,16 +655,19 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     }
 
     // Create line items for Stripe
+    // Note: item.price is in CAD, convert to selected currency if needed
     const lineItems = items.map(item => {
-      const itemPrice = parseFloat(item.price) || 0
+      const itemPriceCAD = parseFloat(item.price) || 0
       const itemQuantity = parseInt(item.quantity) || 0
       
       // Validate item data
-      if (itemPrice <= 0 || itemQuantity <= 0 || isNaN(itemPrice) || isNaN(itemQuantity)) {
+      if (itemPriceCAD <= 0 || itemQuantity <= 0 || isNaN(itemPriceCAD) || isNaN(itemQuantity)) {
         throw new Error(`Invalid item data: price=${item.price}, quantity=${item.quantity}`)
       }
       
-      const unitAmount = Math.max(1, Math.round(itemPrice * 100)) // Convert to cents, ensure at least 1 cent
+      // Convert price to selected currency (if USD, convert from CAD)
+      const itemPriceInCurrency = useUSD ? itemPriceCAD * exchangeRate : itemPriceCAD
+      const unitAmount = Math.max(1, Math.round(itemPriceInCurrency * 100)) // Convert to cents, ensure at least 1 cent
       
       // Create a short description for Stripe checkout (max 50 characters)
       const shortDescription = item.description 
@@ -665,7 +676,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       
       return {
         price_data: {
-          currency: 'cad',
+          currency: stripeCurrency,
           product_data: {
             name: `${item.name} - ${item.variant}`,
             description: shortDescription, // Short, concise description for Stripe checkout
@@ -806,15 +817,16 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
         shipping_address_postal: shippingInfo.postalCode || '',
         shipping_address_country: shippingInfo.country || 'Canada',
       },
-      // Add shipping cost (finalShippingCostCents is already in cents, no need to multiply again)
+      // Add shipping cost (finalShippingCostCents is in CAD cents, convert to selected currency if needed)
       // Always provide a shipping option (even if $0) when shipping_address_collection is enabled
       // Note: For free orders, Stripe may not collect shipping address, so labels will need to be created manually
+      const shippingCostInCurrency = useUSD ? Math.round(finalShippingCostCents * exchangeRate) : finalShippingCostCents
       shipping_options: [{
         shipping_rate_data: {
           type: 'fixed_amount',
           fixed_amount: {
-            amount: finalShippingCostCents, // Can be 0 for free shipping
-            currency: 'cad',
+            amount: shippingCostInCurrency, // Can be 0 for free shipping
+            currency: stripeCurrency,
           },
           display_name: finalShippingCostCents > 0 
             ? (shippingInfo.selectedShipping?.name || 'Standard Shipping')

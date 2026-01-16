@@ -705,6 +705,7 @@ export default function Checkout() {
             total: getCartTotal(),
             promoCode: appliedPromoCode || null,
             discount: appliedPromoCode ? promoCodeDiscount : 0,
+            currency: currency, // Pass selected currency to backend
           }),
         })
       } catch (fetchError) {
