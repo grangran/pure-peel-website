@@ -1579,18 +1579,15 @@ export default function Checkout() {
                       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                         {/* Order Summary Sidebar */}
                         <div className="lg:col-span-4 order-2 lg:order-1">
-                          <div className="bg-white rounded-lg border border-gray-200 shadow-md sticky top-6">
-                            {/* Header */}
+                          <div className="bg-white rounded-lg border border-[#e5e7eb] p-6 shadow-sm sticky top-6">
                             <button
                               type="button"
                               onClick={() => setOrderSummaryOpen(!orderSummaryOpen)}
-                              className="w-full px-6 py-4 flex items-center justify-between border-b border-gray-200 hover:bg-gray-50 transition-colors"
+                              className="w-full flex items-center justify-between text-sm font-semibold text-gray-900 mb-4 pb-3 border-b border-[#e5e7eb] hover:text-amber-600 transition-colors"
                             >
-                              <h2 className="text-lg font-semibold text-gray-900">
-                                {language === 'fr' ? 'Résumé' : 'Summary'}
-                              </h2>
+                              <span>{language === 'fr' ? 'Résumé de la commande' : 'Order Summary'}</span>
                               <svg 
-                                className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${orderSummaryOpen ? 'rotate-180' : ''}`}
+                                className={`w-5 h-5 transition-transform duration-200 ${orderSummaryOpen ? 'rotate-180' : ''}`}
                                 fill="none" 
                                 stroke="currentColor" 
                                 viewBox="0 0 24 24"
@@ -1600,150 +1597,100 @@ export default function Checkout() {
                             </button>
                             
                             {orderSummaryOpen && (
-                              <div className="p-6 space-y-6">
+                              <>
                                 {/* Product Items */}
-                                <div className="space-y-4">
-                                  {cartItems.map((item) => {
-                                    const productId = item.id?.split('-').slice(0, -1).join('-') || item.id?.replace(/-mini|-small|-medium|-large|-clearbox/, '') || ''
-                                    const translatedName = getTranslation(language, `products.${productId}.name`)
-                                    const displayName = translatedName !== `products.${productId}.name` ? translatedName : item.name
-                                    
-                                    // Translate variant
-                                    const variantMap = {
-                                      'mini': language === 'fr' ? 'Mini' : 'Mini',
-                                      'small': language === 'fr' ? 'Petit' : 'Small',
-                                      'medium': language === 'fr' ? 'Moyen' : 'Medium',
-                                      'large': language === 'fr' ? 'Grand' : 'Large',
-                                      'clearbox': language === 'fr' ? 'Boîte transparente' : 'Clear Box'
-                                    }
-                                    const variantLabel = variantMap[item.variant?.toLowerCase()] || item.variant
-                                    
-                                    return (
-                                      <div key={`${item.id}-${item.variant}`} className="flex gap-4">
-                                        {/* Product Image */}
-                                        <div className="w-16 h-16 rounded-md overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
-                                          <img 
-                                            src={item.image} 
-                                            alt={displayName} 
-                                            className="w-full h-full object-cover" 
-                                          />
-                                        </div>
-                                        
-                                        {/* Product Info */}
-                                        <div className="flex-1 min-w-0">
-                                          <h4 className="text-sm font-medium text-gray-900 mb-1 leading-snug">
-                                            {displayName}
-                                          </h4>
-                                          <p className="text-xs text-gray-500 mb-2">{variantLabel}</p>
-                                          <div className="flex items-center justify-between">
-                                            <span className="text-xs text-gray-500">
-                                              {language === 'fr' ? 'Qté' : 'Qty'}: {item.quantity}
-                                            </span>
-                                            <span className="text-sm font-semibold text-gray-900">
-                                              {formatPriceWithCurrency(item.price * item.quantity)}
-                                            </span>
+                                <div className="mb-4 pb-4 border-b border-[#e5e7eb] max-h-[300px] overflow-y-auto">
+                                  <div className="space-y-3">
+                                    {cartItems.map((item) => {
+                                      const productId = item.id?.split('-').slice(0, -1).join('-') || item.id?.replace(/-mini|-small|-medium|-large|-clearbox/, '') || ''
+                                      const translatedName = getTranslation(language, `products.${productId}.name`)
+                                      const displayName = translatedName !== `products.${productId}.name` ? translatedName : item.name
+                                      
+                                      // Translate variant
+                                      const variantMap = {
+                                        'mini': language === 'fr' ? 'Mini' : 'Mini',
+                                        'small': language === 'fr' ? 'Petit' : 'Small',
+                                        'medium': language === 'fr' ? 'Moyen' : 'Medium',
+                                        'large': language === 'fr' ? 'Grand' : 'Large',
+                                        'clearbox': language === 'fr' ? 'Boîte transparente' : 'Clear Box'
+                                      }
+                                      const variantLabel = variantMap[item.variant?.toLowerCase()] || item.variant
+                                      
+                                      return (
+                                        <div key={`${item.id}-${item.variant}`} className="flex gap-3">
+                                          {/* Product Image */}
+                                          <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
+                                            <img 
+                                              src={item.image} 
+                                              alt={displayName} 
+                                              className="w-full h-full object-cover" 
+                                            />
+                                          </div>
+                                          
+                                          {/* Product Info */}
+                                          <div className="flex-1 min-w-0">
+                                            <h4 className="text-sm font-medium text-gray-900 truncate mb-0.5">
+                                              {displayName}
+                                            </h4>
+                                            <p className="text-xs text-[#6b7280] mb-1">{variantLabel}</p>
+                                            <div className="flex items-center justify-between">
+                                              <span className="text-xs text-[#6b7280]">
+                                                {language === 'fr' ? 'Qté' : 'Qty'}: {item.quantity}
+                                              </span>
+                                              <span className="text-sm font-semibold text-gray-900">
+                                                {formatPriceWithCurrency(item.price * item.quantity)}
+                                              </span>
+                                            </div>
                                           </div>
                                         </div>
-                                      </div>
-                                    )
-                                  })}
-                                </div>
-                                
-                                {/* Promo Code Section */}
-                                <div className="pt-4 border-t border-gray-200">
-                                  <h3 className="text-sm font-medium text-gray-900 mb-3">
-                                    {language === 'fr' ? 'Code promo' : 'Promo Code'}
-                                  </h3>
-                                  
-                                  {appliedPromoCode ? (
-                                    <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-md">
-                                      <div className="flex items-center gap-2">
-                                        <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        <div>
-                                          <p className="text-sm font-medium text-green-900">
-                                            {appliedPromoCode}
-                                          </p>
-                                          <p className="text-xs text-green-700">
-                                            {language === 'fr' ? 'Économie' : 'Savings'}: {formatPriceWithCurrency(promoCodeDiscount)}
-                                          </p>
-                                        </div>
-                                      </div>
-                                      <button
-                                        type="button"
-                                        onClick={handleRemovePromoCode}
-                                        className="text-xs text-green-700 hover:text-green-900 underline"
-                                      >
-                                        {language === 'fr' ? 'Retirer' : 'Remove'}
-                                      </button>
-                                    </div>
-                                  ) : (
-                                    <div className="space-y-2">
-                                      <div className="flex gap-2">
-                                        <input
-                                          type="text"
-                                          value={promoCode}
-                                          onChange={(e) => {
-                                            setPromoCode(e.target.value)
-                                            setPromoCodeError('')
-                                          }}
-                                          placeholder={language === 'fr' ? 'Entrez le code' : 'Enter code'}
-                                          className="flex-1 px-3 py-2 text-sm rounded-md border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all placeholder:text-gray-400"
-                                        />
-                                        <button
-                                          type="button"
-                                          onClick={handleApplyPromoCode}
-                                          className="px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded-md hover:bg-amber-700 transition-colors whitespace-nowrap"
-                                        >
-                                          {language === 'fr' ? 'Appliquer' : 'Apply'}
-                                        </button>
-                                      </div>
-                                      {promoCodeError && (
-                                        <p className="text-xs text-red-600">{promoCodeError}</p>
-                                      )}
-                                    </div>
-                                  )}
+                                      )
+                                    })}
+                                  </div>
                                 </div>
                                 
                                 {/* Price Breakdown */}
-                                <div className="pt-4 border-t border-gray-200 space-y-3">
+                                <div className="space-y-3 mb-4">
                                   <div className="flex justify-between text-sm">
-                                    <span className="text-gray-600">{language === 'fr' ? 'Sous-total' : 'Subtotal'}</span>
+                                    <span className="text-[#6b7280]">{language === 'fr' ? 'Sous-total' : 'Subtotal'}</span>
                                     <span className="font-medium text-gray-900">{formatPriceWithCurrency(getCartTotal())}</span>
                                   </div>
                                   {selectedShipping && (
                                     <div className="flex justify-between text-sm">
-                                      <span className="text-gray-600">{language === 'fr' ? 'Expédition' : 'Shipping'}</span>
+                                      <span className="text-[#6b7280]">{language === 'fr' ? 'Expédition' : 'Shipping'}</span>
                                       <span className="font-medium text-gray-900">{formatPriceWithCurrency(calculateShipping())}</span>
                                     </div>
                                   )}
                                   {appliedPromoCode && promoCodeDiscount > 0 && (
                                     <div className="flex justify-between text-sm">
-                                      <span className="text-gray-600">
-                                        {language === 'fr' ? 'Réduction' : 'Discount'}
+                                      <span className="text-[#6b7280]">
+                                        {language === 'fr' ? 'Code promo' : 'Promo Code'} ({appliedPromoCode})
                                       </span>
                                       <span className="font-medium text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
                                     </div>
                                   )}
-                                  <div className="pt-3 border-t border-gray-300 flex justify-between">
-                                    <span className="font-semibold text-base text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
-                                    <span className="font-bold text-xl text-gray-900">
+                                  <div className="pt-3 border-t border-[#e5e7eb] flex justify-between">
+                                    <span className="font-semibold text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
+                                    <span className="font-bold text-lg text-gray-900">
                                       {formatPriceWithCurrency(Math.max(0, getCartTotal() + (selectedShipping ? calculateShipping() : 0) - promoCodeDiscount))}
                                     </span>
                                   </div>
                                 </div>
                                 
                                 {/* Security Badge */}
-                                <div className="pt-4 border-t border-gray-200">
-                                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                                <div className="mt-6 pt-4 border-t border-[#e5e7eb]">
+                                  <div className="flex items-center gap-2 text-xs text-[#6b7280] mb-3">
                                     <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                     </svg>
-                                    <span>{language === 'fr' ? 'Paiement sécurisé' : 'Secure Payment'}</span>
+                                    <span className="font-medium">{language === 'fr' ? 'Paiement sécurisé' : 'Secure Payment'}</span>
                                   </div>
+                                  <p className="text-xs text-[#6b7280] leading-relaxed">
+                                    {language === 'fr' 
+                                      ? 'Vos informations de paiement sont cryptées et sécurisées.'
+                                      : 'Your payment information is encrypted and secure.'}
+                                  </p>
                                 </div>
-                              </div>
+                              </>
                             )}
                           </div>
                         </div>
