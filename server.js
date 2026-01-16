@@ -830,8 +830,6 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
             : 'All amounts are in CAD'
         }
       },
-      success_url: `${req.headers.origin || 'http://localhost:5173'}/checkout?success=true&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.origin || 'http://localhost:5173'}/checkout?canceled=true`,
       customer_email: shippingInfo.email,
       // Always collect shipping address, even for free orders
       // This is required for Canada Post label creation
@@ -909,8 +907,10 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     }
 
     // For Embedded Checkout, add ui_mode and return_url
+    // Note: success_url and cancel_url are NOT supported with ui_mode: 'embedded'
+    // Only return_url is used for embedded checkout
     sessionConfig.ui_mode = 'embedded'
-    sessionConfig.return_url = `${req.headers.origin || 'http://localhost:5173'}/checkout?session_id={CHECKOUT_SESSION_ID}`
+    sessionConfig.return_url = `${req.headers.origin || 'http://localhost:5173'}/checkout?success=true&session_id={CHECKOUT_SESSION_ID}`
 
     const session = await stripe.checkout.sessions.create(sessionConfig)
 
