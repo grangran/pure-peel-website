@@ -1098,7 +1098,105 @@ export default function Checkout() {
                     {getTranslation(language, 'checkout.completeOrder')}
                   </p>
                 </div>
-                <form onSubmit={handlePaymentSubmit} className="space-y-6">
+                
+                {/* Order Summary on Step 1 - Mobile first, desktop sidebar */}
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 mb-8 max-w-7xl mx-auto">
+                  {/* Order Summary - Top on mobile, sidebar on desktop */}
+                  <div className="md:col-span-5 order-1">
+                    <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                      {/* Header */}
+                      <div className="px-6 py-5 border-b border-gray-200">
+                        <h2 className="text-xl font-semibold text-gray-900">
+                          {language === 'fr' ? 'Résumé de la commande' : 'Order Summary'}
+                        </h2>
+                      </div>
+                      
+                      <div className="p-6 space-y-6">
+                        {/* Product Items */}
+                        <div className="space-y-4">
+                          {cartItems.map((item) => {
+                            const productId = item.id?.split('-').slice(0, -1).join('-') || item.id?.replace(/-mini|-small|-medium|-large|-clearbox/, '') || ''
+                            const translatedName = getTranslation(language, `products.${productId}.name`)
+                            const displayName = translatedName !== `products.${productId}.name` ? translatedName : item.name
+                            
+                            // Translate variant
+                            const variantMap = {
+                              'mini': language === 'fr' ? 'Mini' : 'Mini',
+                              'small': language === 'fr' ? 'Petit' : 'Small',
+                              'medium': language === 'fr' ? 'Moyen' : 'Medium',
+                              'large': language === 'fr' ? 'Grand' : 'Large',
+                              'clearbox': language === 'fr' ? 'Boîte transparente' : 'Clear Box'
+                            }
+                            const variantLabel = variantMap[item.variant?.toLowerCase()] || item.variant
+                            
+                            return (
+                              <div key={`${item.id}-${item.variant}`} className="flex gap-4 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
+                                {/* Product Image */}
+                                <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
+                                  <img 
+                                    src={item.image} 
+                                    alt={displayName} 
+                                    className="w-full h-full object-cover" 
+                                  />
+                                </div>
+                                
+                                {/* Product Info */}
+                                <div className="flex-1 min-w-0 flex flex-col justify-between">
+                                  <div>
+                                    <h4 className="text-sm font-medium text-gray-900 mb-1 leading-tight">
+                                      {displayName}
+                                    </h4>
+                                    <p className="text-xs text-gray-500 mb-1">{variantLabel}</p>
+                                  </div>
+                                  <div className="flex items-center justify-between mt-1">
+                                    <span className="text-xs text-gray-600">
+                                      {language === 'fr' ? 'Quantité' : 'Quantity'}: <span className="font-semibold text-gray-900">{item.quantity}</span>
+                                    </span>
+                                    <span className="text-sm font-semibold text-gray-900">
+                                      {formatPriceWithCurrency(item.price * item.quantity)}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                        
+                        {/* Price Breakdown */}
+                        <div className="pt-4 border-t-2 border-gray-200 space-y-3">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-700">{language === 'fr' ? 'Sous-total' : 'Subtotal'}</span>
+                            <span className="text-sm font-medium text-gray-900">{formatPriceWithCurrency(getCartTotal())}</span>
+                          </div>
+                          {selectedShipping && (
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-700">{language === 'fr' ? 'Expédition' : 'Shipping'}</span>
+                              <span className="text-sm font-medium text-gray-900">{formatPriceWithCurrency(calculateShipping())}</span>
+                            </div>
+                          )}
+                          {appliedPromoCode && promoCodeDiscount > 0 && (
+                            <div className="flex justify-between items-center py-2 px-3 bg-green-50 rounded-lg border border-green-200">
+                              <div>
+                                <span className="text-sm text-gray-700">{language === 'fr' ? 'Réduction' : 'Discount'}</span>
+                                <span className="text-xs text-green-700 ml-2">({appliedPromoCode})</span>
+                              </div>
+                              <span className="text-sm font-medium text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
+                            </div>
+                          )}
+                          <div className="pt-3 border-t-2 border-gray-300 flex justify-between items-center">
+                            <span className="text-base font-semibold text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
+                            <span className="text-xl font-bold text-gray-900">
+                              {formatPriceWithCurrency(Math.max(0, getCartTotal() + (selectedShipping ? calculateShipping() : 0) - promoCodeDiscount))}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Shipping Form - Bottom on mobile, main content on desktop */}
+                  <div className="md:col-span-7 order-2">
+                    <form onSubmit={handlePaymentSubmit} className="space-y-6">
                   {/* Contact Information */}
                   <div className="bg-white rounded-lg border border-[#e5e7eb] p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div className="flex items-center gap-2 mb-5 pb-3 border-b border-[#e5e7eb]">
@@ -1578,7 +1676,7 @@ export default function Checkout() {
                 
                       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 max-w-7xl mx-auto px-4">
                         {/* Order Summary Sidebar */}
-                        <div className="md:col-span-5 order-2 md:order-1">
+                        <div className="md:col-span-5 order-1 md:order-1">
                           <div className="bg-white rounded-lg border border-gray-200 shadow-sm sticky top-6 overflow-hidden">
                             {/* Header - Always Visible */}
                             <div className="px-6 py-5 border-b border-gray-200">
@@ -1712,7 +1810,7 @@ export default function Checkout() {
                         </div>
                 
                         {/* Payment Form */}
-                        <div className="md:col-span-7 order-1 md:order-2">
+                        <div className="md:col-span-7 order-2 md:order-2">
                           <div id="payment-form" className="bg-white rounded-lg border border-gray-200 shadow-sm">
                             {/* Header */}
                             <div className="px-6 py-6 border-b border-gray-200">
