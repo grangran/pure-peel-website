@@ -930,6 +930,12 @@ app.post('/api/create-payment-intent', checkoutLimiter, async (req, res) => {
       })
     }
 
+    // Get currency from request (default to CAD if not provided)
+    const requestedCurrency = (req.body.currency || 'CAD').toLowerCase()
+    const stripeCurrency = (requestedCurrency === 'usd') ? 'usd' : 'cad'
+    const useUSD = stripeCurrency === 'usd'
+    const exchangeRate = useUSD ? (parseFloat(req.body.exchangeRate) || 0.73) : 1.0
+
     const { items, shippingInfo, total } = req.body
 
     // Input validation
@@ -973,12 +979,15 @@ app.post('/api/create-payment-intent', checkoutLimiter, async (req, res) => {
     const isFreeShippingCode = promoCodeUpper === 'FREESHIP' // 100% off shipping only
     const orderTotalCents = subtotal + shippingCostCents + tax
     const finalShippingCostCents = isFreeShippingCode ? 0 : shippingCostCents
-    const totalAmount = Math.max(0, subtotal + finalShippingCostCents + tax - discountAmountCents)
+    const totalAmountCAD = Math.max(0, subtotal + finalShippingCostCents + tax - discountAmountCents)
+    
+    // Convert to selected currency if needed
+    const totalAmount = useUSD ? Math.round(totalAmountCAD * exchangeRate) : totalAmountCAD
 
     // Create Payment Intent following Stripe's best practices
     const paymentIntent = await stripe.paymentIntents.create({
       amount: totalAmount,
-      currency: 'cad',
+      currency: stripeCurrency,
       automatic_payment_methods: {
         enabled: true,
         allow_redirects: 'never', // Keep payment on page, no redirects
