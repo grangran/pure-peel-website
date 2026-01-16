@@ -917,17 +917,17 @@ export default function Checkout() {
   }
 
   return (
-    <section ref={sectionRef} className="py-8 md:py-12 px-4 md:px-6 bg-gray-50 min-h-[calc(100vh-72px)]">
+    <section ref={sectionRef} className="py-4 md:py-8 lg:py-12 px-3 sm:px-4 md:px-6 bg-gray-50 min-h-[calc(100vh-72px)]">
       <div className="max-w-7xl mx-auto">
         {/* Stripe-style Checkout Layout */}
         {currentStep === 1 && (
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-4 sm:gap-6 lg:gap-8">
             {/* Order Summary - Left Side */}
             <div className="order-1 lg:order-1" key={`order-summary-${currency}`}>
-              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 lg:sticky lg:top-8 mb-6 lg:mb-0">
+              <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-gray-200 p-4 sm:p-6 lg:p-8 lg:sticky lg:top-8 mb-4 sm:mb-6 lg:mb-0">
                 {/* Header */}
-                <div className="mb-8 pb-6 border-b-2 border-gray-200">
-                  <div className="flex items-center gap-3 mb-4">
+                <div className="mb-4 sm:mb-6 lg:mb-8 pb-4 sm:pb-5 lg:pb-6 border-b-2 border-gray-200">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                     <button
                       onClick={() => {
                         if (showEmbeddedCheckout) {
@@ -938,32 +938,32 @@ export default function Checkout() {
                           window.dispatchEvent(new Event("hashchange"))
                         }
                       }}
-                      className="text-gray-500 hover:text-gray-900 transition-all p-1.5 -ml-1.5 rounded-lg hover:bg-gray-100 active:scale-95"
+                      className="text-gray-500 hover:text-gray-900 transition-all p-1.5 -ml-1.5 rounded-lg hover:bg-gray-100 active:scale-95 touch-manipulation"
                       aria-label="Back"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                       </svg>
                     </button>
-                    <h2 className="text-xl font-bold text-gray-900">Pure Peel Co.</h2>
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-900">Pure Peel Co.</h2>
                   </div>
                   <div className="flex flex-col gap-1">
                     <span className="text-xs text-gray-500 uppercase tracking-wide font-medium">Pay Pure Peel Co.</span>
-                    <span className="text-4xl font-extrabold text-gray-900">{formatPriceWithCurrency(totalCAD)}</span>
+                    <span className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900">{formatPriceWithCurrency(totalCAD)}</span>
                   </div>
                 </div>
 
                 {/* Product Items */}
-                <div className="space-y-5 mb-8">
+                <div className="space-y-3 sm:space-y-4 lg:space-y-5 mb-4 sm:mb-6 lg:mb-8">
                   {cartItems.map((item) => (
-                    <div key={`${item.id}-${item.variant}`} className="flex gap-4 pb-5 border-b border-gray-100 last:border-0 last:pb-0">
-                      <div className="w-24 h-24 rounded-xl overflow-hidden bg-gray-50 shrink-0 border-2 border-gray-200 shadow-sm">
+                    <div key={`${item.id}-${item.variant}`} className="flex gap-3 sm:gap-4 pb-3 sm:pb-4 lg:pb-5 border-b border-gray-100 last:border-0 last:pb-0">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-lg sm:rounded-xl overflow-hidden bg-gray-50 shrink-0 border-2 border-gray-200 shadow-sm">
                         <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                       </div>
-                      <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
-                        <p className="text-base font-semibold text-gray-900 truncate leading-tight">{item.name}</p>
+                      <div className="flex-1 min-w-0 flex flex-col justify-center gap-0.5 sm:gap-1">
+                        <p className="text-sm sm:text-base font-semibold text-gray-900 truncate leading-tight">{item.name}</p>
                         <p className="text-xs text-gray-500 font-medium">{item.variant}</p>
-                        <p className="text-sm text-gray-600 mt-2 font-semibold">
+                        <p className="text-xs sm:text-sm text-gray-600 mt-1 sm:mt-2 font-semibold">
                           {getTranslation(language, 'checkout.qty')} {item.quantity} × {formatPriceWithCurrency(item.price)}
                         </p>
                       </div>
@@ -973,13 +973,13 @@ export default function Checkout() {
                 
                 {/* Promo Code Section */}
                 {!showEmbeddedCheckout && (
-                  <div className="pt-6 pb-6 border-t border-gray-200 mb-6">
+                  <div className="pt-4 sm:pt-5 lg:pt-6 pb-4 sm:pb-5 lg:pb-6 border-t border-gray-200 mb-4 sm:mb-5 lg:mb-6">
                     {!appliedPromoCode ? (
-                      <div className="space-y-3">
-                        <label className="block text-sm font-semibold text-gray-900 mb-2">
+                      <div className="space-y-2 sm:space-y-3">
+                        <label className="block text-xs sm:text-sm font-semibold text-gray-900 mb-2">
                           {getTranslation(language, 'checkout.promoCode.label')}
                         </label>
-                        <div className="flex gap-2">
+                        <div className="flex flex-col sm:flex-row gap-2">
                           <input
                             type="text"
                             value={promoCode}
@@ -994,12 +994,12 @@ export default function Checkout() {
                               }
                             }}
                             placeholder={getTranslation(language, 'checkout.promoCode.placeholder')}
-                            className="flex-1 px-4 py-3 text-sm font-medium rounded-xl border-2 border-gray-200 bg-white hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all"
+                            className="flex-1 px-3 sm:px-4 py-2.5 sm:py-3 text-sm font-medium rounded-lg sm:rounded-xl border-2 border-gray-200 bg-white hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all"
                           />
                           <button
                             type="button"
                             onClick={handleApplyPromoCode}
-                            className="px-6 py-3 text-sm font-bold rounded-xl bg-amber-500 text-white hover:bg-amber-600 active:bg-amber-700 transition-all whitespace-nowrap shadow-md hover:shadow-lg active:scale-95"
+                            className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 text-sm font-bold rounded-lg sm:rounded-xl bg-amber-500 text-white hover:bg-amber-600 active:bg-amber-700 transition-all whitespace-nowrap shadow-md hover:shadow-lg active:scale-95 touch-manipulation"
                           >
                             {getTranslation(language, 'checkout.promoCode.apply')}
                           </button>
@@ -1038,14 +1038,14 @@ export default function Checkout() {
                 )}
                 
                 {/* Cost Breakdown */}
-                <div className="space-y-4 pt-6 border-t-2 border-gray-200">
-                  <div className="flex justify-between items-center py-1">
-                    <span className="text-sm font-medium text-gray-600">{getTranslation(language, 'checkout.subtotal')}</span>
-                    <span className="text-sm font-bold text-gray-900">{formatPriceWithCurrency(subtotalCAD)}</span>
+                <div className="space-y-2 sm:space-y-3 lg:space-y-4 pt-4 sm:pt-5 lg:pt-6 border-t-2 border-gray-200">
+                  <div className="flex justify-between items-center py-0.5 sm:py-1">
+                    <span className="text-xs sm:text-sm font-medium text-gray-600">{getTranslation(language, 'checkout.subtotal')}</span>
+                    <span className="text-xs sm:text-sm font-bold text-gray-900">{formatPriceWithCurrency(subtotalCAD)}</span>
                   </div>
-                  <div className="flex justify-between items-center py-1">
-                    <span className="text-sm font-medium text-gray-600">{getTranslation(language, 'checkout.shipping')}</span>
-                    <span className="text-sm font-bold text-gray-900">
+                  <div className="flex justify-between items-center py-0.5 sm:py-1">
+                    <span className="text-xs sm:text-sm font-medium text-gray-600">{getTranslation(language, 'checkout.shipping')}</span>
+                    <span className="text-xs sm:text-sm font-bold text-gray-900">
                       {!hasEnteredShippingDetails || !selectedShipping 
                         ? (language === 'fr' ? 'À calculer' : 'To be calculated')
                         : (shippingCostCAD === 0 ? (
@@ -1055,20 +1055,20 @@ export default function Checkout() {
                     </span>
                   </div>
                   {hasEnteredShippingDetails && selectedShipping && (
-                    <div className="flex justify-between items-center py-1">
-                      <span className="text-sm font-medium text-gray-600">{getTranslation(language, 'checkout.taxHST')}</span>
-                      <span className="text-sm font-bold text-gray-900">{formatPriceWithCurrency(tax)}</span>
+                    <div className="flex justify-between items-center py-0.5 sm:py-1">
+                      <span className="text-xs sm:text-sm font-medium text-gray-600">{getTranslation(language, 'checkout.taxHST')}</span>
+                      <span className="text-xs sm:text-sm font-bold text-gray-900">{formatPriceWithCurrency(tax)}</span>
                     </div>
                   )}
                   {appliedPromoCode && hasEnteredShippingDetails && selectedShipping && (
-                    <div className="flex justify-between items-center py-1 text-green-600">
-                      <span className="text-sm font-semibold">{getTranslation(language, 'checkout.promoCode.discount')}</span>
-                      <span className="text-sm font-extrabold">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
+                    <div className="flex justify-between items-center py-0.5 sm:py-1 text-green-600">
+                      <span className="text-xs sm:text-sm font-semibold">{getTranslation(language, 'checkout.promoCode.discount')}</span>
+                      <span className="text-xs sm:text-sm font-extrabold">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between items-center pt-5 border-t-2 border-gray-300 mt-5">
-                    <span className="text-lg font-bold text-gray-900">Total due</span>
-                    <span className="text-2xl font-extrabold text-gray-900">
+                  <div className="flex justify-between items-center pt-3 sm:pt-4 lg:pt-5 border-t-2 border-gray-300 mt-3 sm:mt-4 lg:mt-5">
+                    <span className="text-base sm:text-lg font-bold text-gray-900">Total due</span>
+                    <span className="text-lg sm:text-xl lg:text-2xl font-extrabold text-gray-900">
                       {hasEnteredShippingDetails && selectedShipping 
                         ? formatPriceWithCurrency(totalCAD)
                         : (language === 'fr' ? 'À calculer' : 'To be calculated')
@@ -1095,7 +1095,7 @@ export default function Checkout() {
                       window.dispatchEvent(new Event("hashchange"))
                     }
                   }}
-                  className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 mb-6 transition-colors min-h-[44px] touch-manipulation active:opacity-70"
+                  className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 hover:text-gray-900 mb-4 sm:mb-5 lg:mb-6 transition-colors min-h-[44px] touch-manipulation active:opacity-70"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
@@ -1109,18 +1109,18 @@ export default function Checkout() {
                 {/* Show shipping form OR embedded checkout, not both */}
                 {!showEmbeddedCheckout ? (
                   <>
-                    <div className="mb-10">
-                      <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
+                    <div className="mb-6 sm:mb-8 lg:mb-10">
+                      <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-2 sm:mb-3 lg:mb-4 tracking-tight">
                         {getTranslation(language, 'checkout.shippingInformation')}
                       </h1>
-                      <p className="text-lg text-gray-600 font-medium">
+                      <p className="text-sm sm:text-base lg:text-lg text-gray-600 font-medium">
                         {getTranslation(language, 'checkout.completeOrder')}
                       </p>
                     </div>
-                    <form onSubmit={handlePaymentSubmit} className="space-y-6">
+                    <form onSubmit={handlePaymentSubmit} className="space-y-4 sm:space-y-5 lg:space-y-6">
                   {/* Contact Information */}
-                  <div className="bg-white rounded-2xl border-2 border-gray-200 p-8 shadow-md">
-                    <h2 className="text-xl font-bold text-gray-900 mb-6 pb-3 border-b-2 border-gray-100">Contact</h2>
+                  <div className="bg-white rounded-xl sm:rounded-2xl border-2 border-gray-200 p-4 sm:p-6 lg:p-8 shadow-md">
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-5 lg:mb-6 pb-2 sm:pb-2.5 lg:pb-3 border-b-2 border-gray-100">Contact</h2>
                     <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-semibold text-gray-900 mb-2">
@@ -1133,7 +1133,7 @@ export default function Checkout() {
                           autoComplete="email"
                           value={formData.email}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all font-medium ${
+                          className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 lg:py-3.5 text-sm sm:text-base rounded-lg sm:rounded-xl border-2 transition-all font-medium ${
                             errors.email ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
                           required
@@ -1146,8 +1146,8 @@ export default function Checkout() {
                   </div>
 
                   {/* Name */}
-                  <div className="bg-white rounded-2xl border-2 border-gray-200 p-8 shadow-md">
-                    <h2 className="text-xl font-bold text-gray-900 mb-6 pb-3 border-b-2 border-gray-100">Name</h2>
+                  <div className="bg-white rounded-xl sm:rounded-2xl border-2 border-gray-200 p-4 sm:p-6 lg:p-8 shadow-md">
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-5 lg:mb-6 pb-2 sm:pb-2.5 lg:pb-3 border-b-2 border-gray-100">Name</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                       <input
@@ -1158,7 +1158,7 @@ export default function Checkout() {
                         value={formData.firstName}
                         onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.firstName')}
-                          className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all font-medium ${
+                          className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 lg:py-3.5 text-sm sm:text-base rounded-lg sm:rounded-xl border-2 transition-all font-medium ${
                             errors.firstName ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
                           } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
                         required
@@ -1189,8 +1189,8 @@ export default function Checkout() {
                   </div>
 
                   {/* Shipping Address */}
-                  <div className="bg-white rounded-2xl border-2 border-gray-200 p-8 shadow-md">
-                    <h2 className="text-xl font-bold text-gray-900 mb-6 pb-3 border-b-2 border-gray-100">Ship to</h2>
+                  <div className="bg-white rounded-xl sm:rounded-2xl border-2 border-gray-200 p-4 sm:p-6 lg:p-8 shadow-md">
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-5 lg:mb-6 pb-2 sm:pb-2.5 lg:pb-3 border-b-2 border-gray-100">Ship to</h2>
                     <div className="space-y-4">
                   <div>
                     <input
@@ -1325,8 +1325,8 @@ export default function Checkout() {
                   </div>
 
                   {/* Order Notes */}
-                  <div className="bg-white rounded-2xl border-2 border-gray-200 p-8 shadow-md">
-                    <label className="block text-base font-bold text-gray-900 mb-4">
+                  <div className="bg-white rounded-xl sm:rounded-2xl border-2 border-gray-200 p-4 sm:p-6 lg:p-8 shadow-md">
+                    <label className="block text-sm sm:text-base font-bold text-gray-900 mb-3 sm:mb-4">
                       {getTranslation(language, 'checkout.orderNotes')}
                     </label>
                     <textarea
@@ -1334,15 +1334,15 @@ export default function Checkout() {
                       value={formData.notes}
                       onChange={handleInputChange}
                       rows="4"
-                      className="w-full px-4 py-3.5 text-base rounded-xl border-2 border-gray-200 bg-white hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all resize-none font-medium"
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 lg:py-3.5 text-sm sm:text-base rounded-lg sm:rounded-xl border-2 border-gray-200 bg-white hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all resize-none font-medium"
                       placeholder={getTranslation(language, 'checkout.orderNotesPlaceholder')}
                     />
                   </div>
 
                   {/* Shipping Options - Only show after user enters shipping details */}
                   {hasEnteredShippingDetails && formData.postalCode && formData.province && formData.city && formData.country && (
-                    <div className="bg-white rounded-2xl border-2 border-gray-200 p-8 shadow-md">
-                      <h2 className="text-xl font-bold text-gray-900 mb-6 pb-3 border-b-2 border-gray-100">
+                    <div className="bg-white rounded-xl sm:rounded-2xl border-2 border-gray-200 p-4 sm:p-6 lg:p-8 shadow-md">
+                      <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-5 lg:mb-6 pb-2 sm:pb-2.5 lg:pb-3 border-b-2 border-gray-100">
                         {getTranslation(language, 'checkout.shippingMethod')}
                       </h2>
                       
@@ -1370,7 +1370,7 @@ export default function Checkout() {
                           {shippingOptions.map((option) => (
                             <label
                               key={option.id}
-                              className={`flex items-center gap-4 p-5 border-2 rounded-2xl cursor-pointer transition-all touch-manipulation min-h-[72px] shadow-md ${
+                              className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 lg:p-5 border-2 rounded-xl sm:rounded-2xl cursor-pointer transition-all touch-manipulation min-h-[64px] sm:min-h-[72px] shadow-md ${
                                 selectedShipping?.id === option.id
                                   ? 'border-amber-500 bg-gradient-to-r from-amber-50 to-amber-100/50 shadow-lg ring-2 ring-amber-500/30'
                                   : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-lg hover:bg-gray-50 active:bg-gray-100'
@@ -1457,7 +1457,7 @@ export default function Checkout() {
                     <button
                       type="submit"
                       disabled={isSubmitting || !hasEnteredShippingDetails || !selectedShipping}
-                      className="w-full py-4 px-6 text-lg font-bold rounded-xl border-0 cursor-pointer transition-all duration-200 bg-gradient-to-r from-amber-500 to-amber-600 text-white hover:from-amber-600 hover:to-amber-700 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-amber-500 disabled:hover:to-amber-600 flex items-center justify-center gap-2 min-h-[56px] touch-manipulation shadow-lg hover:shadow-xl"
+                      className="w-full py-3 sm:py-3.5 lg:py-4 px-4 sm:px-5 lg:px-6 text-base sm:text-lg font-bold rounded-xl border-0 cursor-pointer transition-all duration-200 bg-gradient-to-r from-amber-500 to-amber-600 text-white hover:from-amber-600 hover:to-amber-700 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-amber-500 disabled:hover:to-amber-600 flex items-center justify-center gap-2 min-h-[48px] sm:min-h-[52px] lg:min-h-[56px] touch-manipulation shadow-lg hover:shadow-xl"
                     >
                       {isSubmitting ? (
                         <LoadingSpinner size="sm" color="white" text={getTranslation(language, 'checkout.processing')} />
@@ -1480,12 +1480,12 @@ export default function Checkout() {
                 ) : (
                   /* Embedded Stripe Checkout - Show when payment is ready */
                   clientSecret && (
-                    <div id="embedded-checkout" className="bg-white rounded-2xl border-2 border-gray-200 p-8 shadow-md">
-                      <div className="mb-8">
-                        <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
+                    <div id="embedded-checkout" className="bg-white rounded-xl sm:rounded-2xl border-2 border-gray-200 p-4 sm:p-6 lg:p-8 shadow-md">
+                      <div className="mb-4 sm:mb-6 lg:mb-8">
+                        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-2 sm:mb-3 lg:mb-4 tracking-tight">
                           {getTranslation(language, 'checkout.paymentDetails') || 'Payment Details'}
                         </h1>
-                        <p className="text-lg text-gray-600 font-medium">
+                        <p className="text-sm sm:text-base lg:text-lg text-gray-600 font-medium">
                           {language === 'fr' 
                             ? 'Complétez votre paiement en toute sécurité'
                             : 'Complete your payment securely'}
