@@ -313,3 +313,89 @@
   }
 }
 
+/* Stripe Payment Element Styling */
+.payment-element-wrapper {
+  @apply space-y-4;
+}
+
+.payment-element-wrapper > div {
+  @apply space-y-4;
+}
+
+/* Improve Stripe Elements appearance */
+.payment-element-wrapper .TabList {
+  @apply mb-4;
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.75rem;
+}
+
+.payment-element-wrapper .Tab {
+  @apply px-4 py-2.5 text-sm font-medium rounded-lg transition-all;
+  border: 1px solid #e5e7eb;
+  background: white;
+  color: #6b7280;
+}
+
+.payment-element-wrapper .Tab:hover {
+  @apply border-amber-300 bg-amber-50;
+  color: #111827;
+}
+
+.payment-element-wrapper .Tab--selected {
+  @apply border-amber-500 bg-amber-600 text-white;
+  box-shadow: 0 2px 4px rgba(217, 119, 6, 0.2);
+}
+
+.payment-element-wrapper .Input {
+  @apply w-full px-4 py-3 text-sm rounded-lg border border-gray-300 transition-all;
+  background: white;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.payment-element-wrapper .Input:focus {
+  @apply border-amber-500;
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+  outline: none;
+}
+
+.payment-element-wrapper .Input--invalid {
+  @apply border-red-500 bg-red-50;
+}
+
+.payment-element-wrapper .Label {
+  @apply text-xs font-semibold uppercase tracking-wide text-gray-700 mb-2 block;
+  letter-spacing: 0.05em;
+}
+
+.payment-element-wrapper .Error {
+  @apply text-sm text-red-600 mt-2;
+  font-weight: 500;
+}
+
+/* Wallet buttons styling */
+.payment-element-wrapper [data-testid="wallets"] {
+  @apply mb-4 space-y-3;
+}
+
+.payment-element-wrapper [data-testid="wallet-button"] {
+  @apply rounded-lg border border-gray-300 bg-white px-4 py-3 transition-all;
+  min-height: 48px;
+}
+
+.payment-element-wrapper [data-testid="wallet-button"]:hover {
+  @apply border-amber-300 bg-amber-50;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Link payment method styling */
+.payment-element-wrapper [data-testid="link-authentication-element"] {
+  @apply mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200;
+}
+
+/* Improve spacing and layout */
+.payment-element-wrapper > * + * {
+  margin-top: 1rem;
+}
+

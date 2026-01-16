@@ -56,44 +56,46 @@ function PaymentForm({ clientSecret, onSuccess }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <PaymentElement 
-        options={{
-          // Layout: tabs for better organization
-          layout: 'tabs',
-          
-          // Enable wallets (Apple Pay, Google Pay, Link)
-          wallets: {
-            applePay: 'auto',
-            googlePay: 'auto',
-            link: 'auto',
-          },
-          
-          // Configure billing details collection
-          // We already collect shipping address, so minimize billing collection
-          fields: {
-            billingDetails: {
-              name: 'never', // Already collected in shipping form
-              email: 'never', // Already collected in contact section
-              phone: 'never', // Already collected in shipping form
-              address: {
-                country: 'never', // Already collected in shipping form
-                line1: 'never', // Already collected in shipping form
-                line2: 'never', // Already collected in shipping form
-                city: 'never', // Already collected in shipping form
-                state: 'never', // Already collected in shipping form
-                postalCode: 'never', // Already collected in shipping form
+      <div className="payment-element-wrapper">
+        <PaymentElement 
+          options={{
+            // Layout: tabs for better organization
+            layout: 'tabs',
+            
+            // Enable wallets (Apple Pay, Google Pay, Link)
+            wallets: {
+              applePay: 'auto',
+              googlePay: 'auto',
+              link: 'auto',
+            },
+            
+            // Configure billing details collection
+            // We already collect shipping address, so minimize billing collection
+            fields: {
+              billingDetails: {
+                name: 'never', // Already collected in shipping form
+                email: 'never', // Already collected in contact section
+                phone: 'never', // Already collected in shipping form
+                address: {
+                  country: 'never', // Already collected in shipping form
+                  line1: 'never', // Already collected in shipping form
+                  line2: 'never', // Already collected in shipping form
+                  city: 'never', // Already collected in shipping form
+                  state: 'never', // Already collected in shipping form
+                  postalCode: 'never', // Already collected in shipping form
+                },
               },
             },
-          },
-          
-          // Enable saved payment methods for returning customers
-          // Stripe automatically handles consent collection for compliance
-          paymentMethodTypes: ['card', 'link'],
-          
-          // CVC recollection: require CVC for saved cards (security best practice)
-          // This is handled automatically by Stripe based on risk assessment
-        }}
-      />
+            
+            // Enable saved payment methods for returning customers
+            // Stripe automatically handles consent collection for compliance
+            paymentMethodTypes: ['card', 'link'],
+            
+            // CVC recollection: require CVC for saved cards (security best practice)
+            // This is handled automatically by Stripe based on risk assessment
+          }}
+        />
+      </div>
       {error && (
         <div className="bg-[#fef2f2] border border-[#fecaca] rounded-lg p-4 mb-4 shadow-sm">
           <div className="flex items-start gap-3">
@@ -1769,37 +1771,37 @@ export default function Checkout() {
                         <div className="lg:col-span-2 order-1 lg:order-2">
                           <div id="payment-form" className="bg-white rounded-lg border border-[#e5e7eb] p-6 md:p-8 shadow-sm">
                             {/* Accepted Payment Methods */}
-                            <div className="mb-6 pb-4 border-b border-[#e5e7eb]">
-                              <p className="text-xs text-[#6b7280] mb-3">
+                            <div className="mb-8 pb-6 border-b border-[#e5e7eb]">
+                              <p className="text-sm font-semibold text-gray-900 mb-4">
                                 {language === 'fr' ? 'Méthodes de paiement acceptées' : 'Accepted Payment Methods'}
                               </p>
                               <div className="flex items-center gap-3 flex-wrap">
-                                <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-gray-50 rounded border border-gray-200">
-                                  <svg className="w-6 h-4" viewBox="0 0 40 24" fill="none">
+                                <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 shadow-sm">
+                                  <svg className="w-7 h-5" viewBox="0 0 40 24" fill="none">
                                     <rect width="40" height="24" rx="2" fill="#1434CB"/>
                                     <path d="M16.5 12h7m-7-3h7m-7 6h4" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
                                   </svg>
-                                  <span className="text-xs font-medium text-gray-700">Visa</span>
-                        </div>
-                                <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-gray-50 rounded border border-gray-200">
-                                  <svg className="w-6 h-4" viewBox="0 0 40 24" fill="none">
+                                  <span className="text-xs font-semibold text-gray-700">Visa</span>
+                                </div>
+                                <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 shadow-sm">
+                                  <svg className="w-7 h-5" viewBox="0 0 40 24" fill="none">
                                     <rect width="40" height="24" rx="2" fill="#EB001B"/>
                                     <rect x="20" width="20" height="24" rx="2" fill="#F79E1B"/>
                                   </svg>
-                                  <span className="text-xs font-medium text-gray-700">Mastercard</span>
-                      </div>
-                                <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-gray-50 rounded border border-gray-200">
-                                  <svg className="w-6 h-4" viewBox="0 0 40 24" fill="#006FCF">
+                                  <span className="text-xs font-semibold text-gray-700">Mastercard</span>
+                                </div>
+                                <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 shadow-sm">
+                                  <svg className="w-7 h-5" viewBox="0 0 40 24" fill="#006FCF">
                                     <rect width="40" height="24" rx="2" fill="#006FCF"/>
                                     <path d="M20 8l-2 8h4l-2-8z" fill="white"/>
                                   </svg>
-                                  <span className="text-xs font-medium text-gray-700">Amex</span>
-                    </div>
-                                <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-gray-50 rounded border border-gray-200">
+                                  <span className="text-xs font-semibold text-gray-700">Amex</span>
+                                </div>
+                                <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg border border-gray-200 shadow-sm">
                                   <span className="text-xs font-semibold text-gray-700">Link</span>
-                </div>
-                  </div>
-                  </div>
+                                </div>
+                              </div>
+                            </div>
 
                             <Elements 
                               stripe={stripePromise} 
