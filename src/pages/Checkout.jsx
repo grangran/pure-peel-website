@@ -902,7 +902,7 @@ export default function Checkout() {
                 <div className="flex-1 flex items-center justify-center my-8">
                   {cartItems.length === 1 ? (
                     <div className="relative w-full max-w-xs">
-                      <div className="aspect-square bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-white/20">
+                      <div className="aspect-square bg-white/10 backdrop-blur-sm rounded-2xl p-6 shadow-2xl">
                         <div className="aspect-square bg-white rounded-xl overflow-hidden">
                           <img 
                             src={cartItems[0].image} 
@@ -917,7 +917,7 @@ export default function Checkout() {
                       {cartItems.slice(0, 4).map((item, index) => (
                         <div 
                           key={`${item.id}-${item.variant}`}
-                          className={`bg-white/10 backdrop-blur-sm rounded-xl p-3 shadow-xl border border-white/20 ${
+                          className={`bg-white/10 backdrop-blur-sm rounded-xl p-3 shadow-xl ${
                             index === 1 ? 'mt-8' : index === 2 ? '-mt-4' : index === 3 ? 'mt-4' : ''
                           }`}
                         >
@@ -996,10 +996,10 @@ export default function Checkout() {
                     <h2 className="text-base font-semibold text-gray-900 mb-4">Shipping information</h2>
                     <div className="space-y-4">
                       {/* Email */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1.5">
                           {getTranslation(language, 'checkout.email')}
-                        </label>
+                      </label>
                         <input
                           type="email"
                           name="email"
@@ -1015,12 +1015,12 @@ export default function Checkout() {
                         {errors.email && (
                           <p className="text-red-500 text-xs mt-1">{errors.email}</p>
                         )}
-                      </div>
+                  </div>
 
-                      {/* Name */}
-                      <div>
+                  {/* Name */}
+                  <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1.5">Name</label>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                       <input
                         type="text"
@@ -1057,14 +1057,14 @@ export default function Checkout() {
                         <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
                       )}
                     </div>
-                        </div>
-                      </div>
                     </div>
+                  </div>
+                  </div>
 
-                    {/* Shipping Address */}
+                  {/* Shipping Address */}
                     <div className="mt-6">
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">Ship to</label>
-                      <div className="space-y-4">
+                    <div className="space-y-4">
                   <div>
                     <input
                       type="text"
@@ -1198,18 +1198,18 @@ export default function Checkout() {
                   </div>
 
                       {/* Order Notes - Optional */}
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
                           {getTranslation(language, 'checkout.orderNotes')}
-                        </label>
-                        <textarea
-                          name="notes"
-                          value={formData.notes}
-                          onChange={handleInputChange}
-                          rows="3"
-                          className="w-full px-3.5 py-2.5 text-sm rounded-md border border-gray-300 bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all resize-none"
-                          placeholder={getTranslation(language, 'checkout.orderNotesPlaceholder')}
-                        />
+                    </label>
+                    <textarea
+                      name="notes"
+                      value={formData.notes}
+                      onChange={handleInputChange}
+                      rows="3"
+                      className="w-full px-3.5 py-2.5 text-sm rounded-md border border-gray-300 bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all resize-none"
+                      placeholder={getTranslation(language, 'checkout.orderNotesPlaceholder')}
+                    />
                       </div>
                     </div>
                   </div>
@@ -1402,7 +1402,7 @@ export default function Checkout() {
                         <a href="/terms" className="hover:underline text-gray-500">Terms</a>
                         <span className="mx-1">·</span>
                         <a href="/privacy" className="hover:underline text-gray-500">Privacy</a>
-                      </p>
+                    </p>
                   </div>
                   )}
                 </form>
