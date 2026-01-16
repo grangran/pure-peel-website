@@ -925,26 +925,39 @@ export default function Checkout() {
                 {/* Back button */}
                 <button
                   onClick={() => {
-                    window.history.pushState({ page: "/" }, "", "/")
-                    window.dispatchEvent(new Event("hashchange"))
+                    if (showEmbeddedCheckout) {
+                      // Go back to shipping form
+                      setShowEmbeddedCheckout(false)
+                      setClientSecret(null)
+                    } else {
+                      // Go back to home
+                      window.history.pushState({ page: "/" }, "", "/")
+                      window.dispatchEvent(new Event("hashchange"))
+                    }
                   }}
                   className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 mb-6 transition-colors min-h-[44px] touch-manipulation active:opacity-70"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                   </svg>
-                  {getTranslation(language, 'checkout.continueShopping')}
+                  {showEmbeddedCheckout 
+                    ? (language === 'fr' ? 'Retour aux informations d\'expédition' : 'Back to shipping information')
+                    : getTranslation(language, 'checkout.continueShopping')
+                  }
                 </button>
 
-                <div className="mb-8">
-                  <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2">
-                    {getTranslation(language, 'checkout.shippingInformation')}
-                  </h1>
-                  <p className="text-sm text-gray-600">
-                    {getTranslation(language, 'checkout.completeOrder')}
-                  </p>
-                </div>
-                <form onSubmit={handlePaymentSubmit} className="space-y-6">
+                {/* Show shipping form OR embedded checkout, not both */}
+                {!showEmbeddedCheckout ? (
+                  <>
+                    <div className="mb-8">
+                      <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2">
+                        {getTranslation(language, 'checkout.shippingInformation')}
+                      </h1>
+                      <p className="text-sm text-gray-600">
+                        {getTranslation(language, 'checkout.completeOrder')}
+                      </p>
+                    </div>
+                    <form onSubmit={handlePaymentSubmit} className="space-y-6">
                   {/* Contact Information */}
                   <div>
                     <h2 className="text-base font-semibold text-gray-900 mb-4">Contact</h2>
@@ -1297,28 +1310,37 @@ export default function Checkout() {
                       {getTranslation(language, 'checkout.termsAgreement')}
                     </p>
                   </div>
-                </form>
-
-                {/* Embedded Stripe Checkout */}
-                {showEmbeddedCheckout && clientSecret && (
-                  <div id="embedded-checkout" className="mt-8 pt-8 border-t border-gray-200">
-                    <h2 className="text-base font-semibold text-gray-900 mb-4">
-                      {getTranslation(language, 'checkout.paymentDetails') || 'Payment Details'}
-                    </h2>
-                    <EmbeddedCheckoutProvider
-                      stripe={stripePromise}
-                      options={{
-                        clientSecret,
-                        onComplete: async (event) => {
-                          // Embedded Checkout will redirect to return_url with session_id
-                          // The useEffect above will handle the completion
-                          console.log('✅ Embedded Checkout completed:', event)
-                        }
-                      }}
-                    >
-                      <EmbeddedCheckout />
-                    </EmbeddedCheckoutProvider>
-                  </div>
+                    </form>
+                  </>
+                ) : (
+                  /* Embedded Stripe Checkout - Show when payment is ready */
+                  clientSecret && (
+                    <div id="embedded-checkout">
+                      <div className="mb-8">
+                        <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2">
+                          {getTranslation(language, 'checkout.paymentDetails') || 'Payment Details'}
+                        </h1>
+                        <p className="text-sm text-gray-600">
+                          {language === 'fr' 
+                            ? 'Complétez votre paiement en toute sécurité'
+                            : 'Complete your payment securely'}
+                        </p>
+                      </div>
+                      <EmbeddedCheckoutProvider
+                        stripe={stripePromise}
+                        options={{
+                          clientSecret,
+                          onComplete: async (event) => {
+                            // Embedded Checkout will redirect to return_url with session_id
+                            // The useEffect above will handle the completion
+                            console.log('✅ Embedded Checkout completed:', event)
+                          }
+                        }}
+                      >
+                        <EmbeddedCheckout />
+                      </EmbeddedCheckoutProvider>
+                    </div>
+                  )
                 )}
               </div>
             </div>
