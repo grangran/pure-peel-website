@@ -55,21 +55,109 @@ export default function ShippingReturns() {
     <section 
       key={`shipping-returns-${currency}`}
       ref={sectionRef} 
-      className={`py-8 md:py-12 px-4 md:px-6 bg-white min-h-screen transition-all duration-500 ${
+      className={`py-0 md:py-0 px-0 bg-white min-h-screen transition-all duration-500 ${
         isSectionVisible ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0 md:opacity-0 md:translate-y-8'
       }`}
     >
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8 md:mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 mb-4 md:mb-6 shadow-lg">
-            <svg className="w-8 h-8 md:w-10 md:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-            </svg>
+      <div className="max-w-7xl mx-auto">
+        {/* Two-Column Layout - Stripe-style */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-0">
+          {/* Left Panel - Order Summary Style */}
+          <div className="order-1 lg:order-1 hidden lg:block">
+            <div className="bg-gray-50 lg:min-h-screen p-6 lg:sticky lg:top-0 h-fit flex flex-col border-r border-gray-200">
+              {/* Brand Header */}
+              <div className="mb-8">
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Pure Peel Co.</h2>
+                <p className="text-amber-600 text-base font-medium">Shipping & Returns</p>
+              </div>
+
+              {/* Visual Elements */}
+              <div className="flex-1 flex items-center justify-center mb-8">
+                <div className="relative w-full max-w-xs">
+                  {/* Product Images Grid */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-200">
+                      <div className="aspect-square bg-white rounded-lg overflow-hidden">
+                        <img src="/images/orange-product.jpg" alt="Orange" className="w-full h-full object-cover" />
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-200 mt-8">
+                      <div className="aspect-square bg-white rounded-lg overflow-hidden">
+                        <img src="/images/lime-product.jpg" alt="Lime" className="w-full h-full object-cover" />
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-200 -mt-4">
+                      <div className="aspect-square bg-white rounded-lg overflow-hidden">
+                        <img src="/images/lemon-product.jpg" alt="Lemon" className="w-full h-full object-cover" />
+                      </div>
+                    </div>
+                    <div className="bg-white rounded-xl p-3 shadow-sm border border-gray-200 mt-4">
+                      <div className="aspect-square bg-white rounded-lg overflow-hidden">
+                        <img src="/images/pink-orange-product.jpg" alt="Pink Orange" className="w-full h-full object-cover" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Key Features */}
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-gray-900 font-semibold mb-1">Fast Shipping</h3>
+                    <p className="text-gray-600 text-sm">Orders processed within 24 hours</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-gray-900 font-semibold mb-1">Quality Guarantee</h3>
+                    <p className="text-gray-600 text-sm">100% satisfaction or replacement</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 002 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-gray-900 font-semibold mb-1">Worldwide Delivery</h3>
+                    <p className="text-gray-600 text-sm">Canada & United States shipping</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'shipping.title')}</h1>
-          <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">{getTranslation(language, 'shipping.subtitle')}</p>
-        </div>
+
+          {/* Right Panel - Content */}
+          <div className="order-2 lg:order-2">
+            <div className="py-8 md:py-12 px-4 md:px-6">
+              {/* Header (shown on mobile, hidden on desktop) */}
+              <div className="text-center mb-8 md:mb-12 lg:hidden">
+                <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 mb-4 md:mb-6 shadow-lg">
+                  <svg className="w-8 h-8 md:w-10 md:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                  </svg>
+                </div>
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'shipping.title')}</h1>
+                <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">{getTranslation(language, 'shipping.subtitle')}</p>
+              </div>
+
+              {/* Desktop Header */}
+              <div className="hidden lg:block mb-8">
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">{getTranslation(language, 'shipping.title')}</h1>
+                <p className="text-lg text-gray-600">{getTranslation(language, 'shipping.subtitle')}</p>
+              </div>
 
             {/* Shipping Information */}
             <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-6 sm:p-8 md:p-10 mb-8 md:mb-10">
