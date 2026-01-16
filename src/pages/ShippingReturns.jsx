@@ -24,15 +24,22 @@ export default function ShippingReturns() {
       // Priority: localStorage > context
       if (storedCurrency && (storedCurrency === 'CAD' || storedCurrency === 'USD')) {
         if (storedCurrency !== currency) {
+          console.log('🔄 Shipping page: Syncing currency from localStorage:', storedCurrency)
           setLocalCurrency(storedCurrency)
           setCurrency(storedCurrency) // Also update context
         }
       } else if (contextCurrency && contextCurrency !== currency) {
         // Fallback to context if localStorage is empty
+        console.log('🔄 Shipping page: Syncing currency from context:', contextCurrency)
         setLocalCurrency(contextCurrency)
       }
     }
   }, [contextCurrency, currency, setCurrency])
+  
+  // Debug: Log current currency on render
+  useEffect(() => {
+    console.log('💰 Shipping page current currency:', currency)
+  }, [currency])
 
   // Update local currency when context changes (to stay in sync)
   useEffect(() => {
