@@ -341,7 +341,7 @@ export default function ShippingReturns() {
               </div>
             </div>
             <p className="text-xs md:text-sm text-gray-600 italic mt-4">
-              Prices shown are in {currency}. Delivery times are estimates and may vary based on destination and customs processing. Packages are shipped via Canada Post and delivered by USPS within the United States.
+              Prices shown are in <strong className="font-semibold text-gray-900">{currency}</strong>. Delivery times are estimates and may vary based on destination and customs processing. Packages are shipped via Canada Post and delivered by USPS within the United States.
             </p>
           </div>
 
@@ -424,7 +424,7 @@ export default function ShippingReturns() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-green-600 mt-1">•</span>
-                  <span>All prices shown are in {currency} - use the currency selector in the navigation to switch between CAD and USD</span>
+                  <span>All prices shown are in <strong className="font-semibold text-gray-900">{currency}</strong> - use the currency selector in the navigation to switch between CAD and USD</span>
                 </li>
               </ul>
             </div>
