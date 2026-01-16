@@ -103,11 +103,20 @@ export function CartProvider({ children }) {
         // New item - add to cart
         finalQuantity = quantityToAdd
         trackAddToCart(productToTrack)
-        const newItem = { ...product, quantity: quantityToAdd }
-        console.log('Adding new item to cart:', newItem)
-        console.log('Cart items before:', prevItems)
+        const newItem = { 
+          id: product.id,
+          name: product.name,
+          variant: product.variant,
+          price: product.price,
+          image: product.image,
+          description: product.description,
+          productId: product.productId,
+          quantity: quantityToAdd 
+        }
+        console.log('🛒 Adding new item to cart:', { id: newItem.id, variant: newItem.variant, name: newItem.name })
+        console.log('🛒 Current cart items:', prevItems.map(item => ({ id: item.id, variant: item.variant, name: item.name })))
         const updatedCart = [...prevItems, newItem]
-        console.log('Cart items after:', updatedCart)
+        console.log('🛒 Updated cart items:', updatedCart.map(item => ({ id: item.id, variant: item.variant, name: item.name })))
         return updatedCart
       }
     })
