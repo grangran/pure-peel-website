@@ -1476,7 +1476,7 @@ export default function Checkout() {
                       {isSubmitting ? (
                         <LoadingSpinner size="sm" color="white" text={getTranslation(language, 'checkout.processing')} />
                       ) : (
-                          <>Pay {formatPrice(total)} {currency}</>
+                          <>Pay {formatPrice(totalCAD)} {currency}</>
                       )}
                     </button>
 
