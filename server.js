@@ -1075,25 +1075,55 @@ app.post('/api/create-payment-intent', checkoutLimiter, async (req, res) => {
         shipping_method: shippingInfo.selectedShipping?.name || 'Standard Shipping',
         shipping_cost: (finalShippingCostCents / 100).toFixed(2),
         // Create minimal items array (only essential fields) to stay under 500 char limit
-        // Use compact format with shortened keys and truncated text
+        // Use ultra-compact array format: [id, name, variant, qty, price]
         items: (() => {
-          const minimalItems = items.map(item => ({
-            i: (item.id || '').substring(0, 30), // id, max 30 chars
-            n: (item.name || '').substring(0, 25), // name, max 25 chars
-            v: (item.variant || '').substring(0, 20), // variant, max 20 chars
-            q: item.quantity || 0, // quantity
-            p: parseFloat(item.price || 0).toFixed(2) // price as string
-          }))
-          let itemsStr = JSON.stringify(minimalItems)
-          // If still too long, use array format (more compact)
+          // Use array format directly (most compact)
+          const compactItems = items.map(item => [
+            (item.id || '').substring(0, 20), // id, max 20 chars
+            (item.name || '').substring(0, 15), // name, max 15 chars  
+            (item.variant || '').substring(0, 15), // variant, max 15 chars
+            item.quantity || 0, // quantity
+            parseFloat(item.price || 0).toFixed(2) // price
+          ])
+          let itemsStr = JSON.stringify(compactItems)
+          
+          // If still too long, truncate item names/variants further
           if (itemsStr.length > 500) {
-            itemsStr = JSON.stringify(minimalItems.map(item => [item.i, item.n, item.v, item.q, item.p]))
+            const moreCompact = items.map(item => [
+              (item.id || '').substring(0, 15),
+              (item.name || '').substring(0, 10),
+              (item.variant || '').substring(0, 10),
+              item.quantity || 0,
+              parseFloat(item.price || 0).toFixed(2)
+            ])
+            itemsStr = JSON.stringify(moreCompact)
           }
-          // Final safety check - truncate if still too long
+          
+          // Final safety check - if still too long, use even shorter format
+          if (itemsStr.length > 500) {
+            const ultraCompact = items.map(item => [
+              (item.id || '').substring(0, 12),
+              (item.name || '').substring(0, 8),
+              (item.variant || '').substring(0, 8),
+              item.quantity || 0,
+              parseFloat(item.price || 0).toFixed(2)
+            ])
+            itemsStr = JSON.stringify(ultraCompact)
+          }
+          
+          // Absolute last resort - truncate the entire string
           if (itemsStr.length > 500) {
             console.warn(`⚠️ Items metadata is ${itemsStr.length} chars, truncating to 500`)
-            itemsStr = itemsStr.substring(0, 497) + '...'
+            // Try to keep at least first item complete
+            const firstItemEnd = itemsStr.indexOf(']', itemsStr.indexOf('[') + 1)
+            if (firstItemEnd > 0 && firstItemEnd < 450) {
+              itemsStr = itemsStr.substring(0, 497) + '...]'
+            } else {
+              itemsStr = itemsStr.substring(0, 497) + '...'
+            }
           }
+          
+          console.log(`📦 Items metadata length: ${itemsStr.length} chars`)
           return itemsStr
         })(),
       },
