@@ -56,6 +56,7 @@ export default function Checkout() {
   const [appliedPromoCode, setAppliedPromoCode] = useState(null)
   const [promoCodeError, setPromoCodeError] = useState('')
   const [promoCodeDiscount, setPromoCodeDiscount] = useState(0) // Discount amount in CAD
+  const [promoCodeType, setPromoCodeType] = useState(null) // 'percent' or 'free_shipping'
   
   // Check for Stripe redirect
   useEffect(() => {
