@@ -1282,10 +1282,10 @@ export default function Checkout() {
                     </div>
                   </div>
 
-                      {/* Order Notes - Optional */}
+                  {/* Order Notes - Optional */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                          {getTranslation(language, 'checkout.orderNotes')}
+                      {getTranslation(language, 'checkout.orderNotes')}
                     </label>
                     <textarea
                       name="notes"
@@ -1295,8 +1295,6 @@ export default function Checkout() {
                       className="w-full px-3.5 py-2.5 text-sm rounded-md border border-gray-300 bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all resize-none"
                       placeholder={getTranslation(language, 'checkout.orderNotesPlaceholder')}
                     />
-                      </div>
-                    </div>
                   </div>
 
                   {/* Shipping Options - Only show after user enters shipping details */}
