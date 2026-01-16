@@ -1046,7 +1046,14 @@ app.post('/api/create-payment-intent', checkoutLimiter, async (req, res) => {
         promo_code: promoCode || '',
         shipping_method: shippingInfo.selectedShipping?.name || 'Standard Shipping',
         shipping_cost: (finalShippingCostCents / 100).toFixed(2),
-        items: JSON.stringify(items),
+        // Create minimal items array (only essential fields) to stay under 500 char limit
+        items: JSON.stringify(items.map(item => ({
+          id: item.id || '',
+          name: item.name || '',
+          variant: item.variant || '',
+          quantity: item.quantity || 0,
+          price: item.price || 0
+        }))),
       },
       shipping: {
         name: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
