@@ -58,14 +58,14 @@ function PaymentForm({ clientSecret, onSuccess }) {
     <form onSubmit={handleSubmit} className="space-y-6">
       <PaymentElement />
       {error && (
-        <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4">
-          <p className="text-sm text-red-800 font-medium">{error}</p>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="text-sm text-red-700">{error}</p>
         </div>
       )}
       <button
         type="submit"
         disabled={!stripe || isProcessing}
-        className="w-full py-3 sm:py-3.5 lg:py-4 px-4 sm:px-5 lg:px-6 text-base sm:text-lg font-bold rounded-xl border-0 cursor-pointer transition-all duration-200 bg-gradient-to-r from-amber-500 to-amber-600 text-white hover:from-amber-600 hover:to-amber-700 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-amber-500 disabled:hover:to-amber-600 flex items-center justify-center gap-2 min-h-[48px] sm:min-h-[52px] lg:min-h-[56px] touch-manipulation shadow-lg hover:shadow-xl"
+        className="w-full py-3.5 px-4 text-base font-medium rounded-lg border-0 cursor-pointer transition-all duration-150 bg-[#0a2540] text-white hover:bg-[#0d2f52] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#0a2540] flex items-center justify-center gap-2 min-h-[48px] shadow-sm hover:shadow"
       >
         {isProcessing ? (
           <LoadingSpinner size="sm" color="white" text={language === 'fr' ? 'Traitement...' : 'Processing...'} />
@@ -954,16 +954,16 @@ export default function Checkout() {
 
   if (cartItems.length === 0 && currentStep !== 2) {
     return (
-      <section className="py-20 px-5 bg-gray-50 min-h-[calc(100vh-72px)]">
+      <section className="py-20 px-5 bg-[#f6f9fc] min-h-[calc(100vh-72px)]">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">{getTranslation(language, 'checkout.emptyCart')}</h1>
-          <p className="text-gray-600 mb-8">{getTranslation(language, 'checkout.emptyCartDescription')}</p>
+          <h1 className="text-2xl font-semibold text-[#0a2540] mb-3">{getTranslation(language, 'checkout.emptyCart')}</h1>
+          <p className="text-[#425466] mb-8">{getTranslation(language, 'checkout.emptyCartDescription')}</p>
           <button
               onClick={() => {
                 window.history.pushState({ page: "/" }, "", "/")
                 window.dispatchEvent(new Event("hashchange"))
               }}
-            className="px-8 py-3 bg-amber-500 text-black font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+            className="px-6 py-2.5 bg-[#0a2540] text-white font-medium rounded-lg hover:bg-[#0d2f52] transition-colors"
           >
             {getTranslation(language, 'checkout.continueShopping')}
           </button>
@@ -978,11 +978,11 @@ export default function Checkout() {
   }
 
   return (
-    <section ref={sectionRef} className="py-4 md:py-8 lg:py-12 px-3 sm:px-4 md:px-6 bg-gray-50 min-h-[calc(100vh-72px)]">
+    <section ref={sectionRef} className="py-8 md:py-12 px-4 sm:px-6 md:px-8 bg-[#f6f9fc] min-h-[calc(100vh-72px)]">
       <div className="max-w-7xl mx-auto">
         {/* Payment Details - Single Column Layout */}
         {currentStep === 1 && (
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-2xl mx-auto">
                 {/* Back button */}
                 <button
                   onClick={() => {
@@ -996,7 +996,7 @@ export default function Checkout() {
                       window.dispatchEvent(new Event("hashchange"))
                     }
                   }}
-                  className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 hover:text-gray-900 mb-4 sm:mb-5 lg:mb-6 transition-colors min-h-[44px] touch-manipulation active:opacity-70"
+                  className="flex items-center gap-2 text-sm text-[#425466] hover:text-[#0a2540] mb-6 transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
@@ -1010,21 +1010,21 @@ export default function Checkout() {
                 {/* Show shipping form OR payment form, not both */}
                 {!showPaymentForm ? (
                   <>
-                    <div className="mb-6 sm:mb-8 lg:mb-10">
-                      <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-2 sm:mb-3 lg:mb-4 tracking-tight">
+                    <div className="mb-8">
+                      <h1 className="text-2xl font-semibold text-[#0a2540] mb-2">
                         {getTranslation(language, 'checkout.shippingInformation')}
                       </h1>
-                      <p className="text-sm sm:text-base lg:text-lg text-gray-600 font-medium">
+                      <p className="text-sm text-[#425466]">
                         {getTranslation(language, 'checkout.completeOrder')}
                       </p>
                     </div>
-                    <form onSubmit={handlePaymentSubmit} className="space-y-4 sm:space-y-5 lg:space-y-6">
+                    <form onSubmit={handlePaymentSubmit} className="space-y-6">
                   {/* Contact Information */}
-                  <div className="bg-white rounded-xl sm:rounded-2xl border-2 border-gray-200 p-4 sm:p-6 lg:p-8 shadow-md">
-                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-5 lg:mb-6 pb-2 sm:pb-2.5 lg:pb-3 border-b-2 border-gray-100">Contact</h2>
+                  <div className="bg-white rounded-lg border border-[#e3e8ef] p-6 shadow-sm">
+                    <h2 className="text-sm font-semibold text-[#0a2540] mb-4 pb-3 border-b border-[#e3e8ef]">Contact</h2>
                     <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                      <label className="block text-sm font-medium text-[#0a2540] mb-1.5">
                           {getTranslation(language, 'checkout.email')}
                       </label>
                         <input
@@ -1034,21 +1034,21 @@ export default function Checkout() {
                           autoComplete="email"
                           value={formData.email}
                           onChange={handleInputChange}
-                          className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 lg:py-3.5 text-sm sm:text-base rounded-lg sm:rounded-xl border-2 transition-all font-medium ${
-                            errors.email ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
-                          } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
+                          className={`w-full px-3.5 py-2.5 text-sm rounded-lg border transition-all ${
+                            errors.email ? 'border-red-300 bg-red-50' : 'border-[#cbd5e0] bg-white hover:border-[#a0aec0]'
+                          } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/10 focus:border-[#0a2540]`}
                           required
                         />
                         {errors.email && (
-                          <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                          <p className="text-red-600 text-xs mt-1">{errors.email}</p>
                         )}
                       </div>
                     </div>
                   </div>
 
                   {/* Name */}
-                  <div className="bg-white rounded-xl sm:rounded-2xl border-2 border-gray-200 p-4 sm:p-6 lg:p-8 shadow-md">
-                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-5 lg:mb-6 pb-2 sm:pb-2.5 lg:pb-3 border-b-2 border-gray-100">Name</h2>
+                  <div className="bg-white rounded-lg border border-[#e3e8ef] p-6 shadow-sm">
+                    <h2 className="text-sm font-semibold text-[#0a2540] mb-4 pb-3 border-b border-[#e3e8ef]">Name</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                       <input
@@ -1059,13 +1059,13 @@ export default function Checkout() {
                         value={formData.firstName}
                         onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.firstName')}
-                          className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 lg:py-3.5 text-sm sm:text-base rounded-lg sm:rounded-xl border-2 transition-all font-medium ${
-                            errors.firstName ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
-                          } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
+                          className={`w-full px-3.5 py-2.5 text-sm rounded-lg border transition-all ${
+                            errors.firstName ? 'border-red-300 bg-red-50' : 'border-[#cbd5e0] bg-white hover:border-[#a0aec0]'
+                          } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/10 focus:border-[#0a2540]`}
                         required
                       />
                       {errors.firstName && (
-                        <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
+                        <p className="text-red-600 text-xs mt-1">{errors.firstName}</p>
                       )}
                     </div>
                     <div>
@@ -1077,21 +1077,21 @@ export default function Checkout() {
                         value={formData.lastName}
                         onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.lastName')}
-                          className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all font-medium ${
-                            errors.lastName ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
-                          } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
+                          className={`w-full px-3.5 py-2.5 text-sm rounded-lg border transition-all ${
+                            errors.lastName ? 'border-red-300 bg-red-50' : 'border-[#cbd5e0] bg-white hover:border-[#a0aec0]'
+                          } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/10 focus:border-[#0a2540]`}
                         required
                       />
                       {errors.lastName && (
-                        <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
+                        <p className="text-red-600 text-xs mt-1">{errors.lastName}</p>
                       )}
                     </div>
                   </div>
                   </div>
 
                   {/* Shipping Address */}
-                  <div className="bg-white rounded-xl sm:rounded-2xl border-2 border-gray-200 p-4 sm:p-6 lg:p-8 shadow-md">
-                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-5 lg:mb-6 pb-2 sm:pb-2.5 lg:pb-3 border-b-2 border-gray-100">Ship to</h2>
+                  <div className="bg-white rounded-lg border border-[#e3e8ef] p-6 shadow-sm">
+                    <h2 className="text-sm font-semibold text-[#0a2540] mb-4 pb-3 border-b border-[#e3e8ef]">Ship to</h2>
                     <div className="space-y-4">
                   <div>
                     <input
@@ -1102,13 +1102,13 @@ export default function Checkout() {
                       value={formData.address}
                       onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.streetAddress')}
-                          className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all font-medium ${
-                            errors.address ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
-                          } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
+                          className={`w-full px-3.5 py-2.5 text-sm rounded-lg border transition-all ${
+                            errors.address ? 'border-red-300 bg-red-50' : 'border-[#cbd5e0] bg-white hover:border-[#a0aec0]'
+                          } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/10 focus:border-[#0a2540]`}
                       required
                     />
                     {errors.address && (
-                      <p className="text-red-500 text-xs mt-1">{errors.address}</p>
+                      <p className="text-red-600 text-xs mt-1">{errors.address}</p>
                     )}
                   </div>
 
@@ -1119,16 +1119,16 @@ export default function Checkout() {
                           autoComplete="country"
                           value={formData.country}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all font-medium ${
-                            errors.country ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
-                          } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
+                          className={`w-full px-3.5 py-2.5 text-sm rounded-lg border transition-all ${
+                            errors.country ? 'border-red-300 bg-red-50' : 'border-[#cbd5e0] bg-white hover:border-[#a0aec0]'
+                          } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/10 focus:border-[#0a2540]`}
                           required
                         >
                           <option value="Canada">Canada</option>
                           <option value="United States">United States</option>
                         </select>
                         {errors.country && (
-                          <p className="text-red-500 text-xs mt-1">{errors.country}</p>
+                          <p className="text-red-600 text-xs mt-1">{errors.country}</p>
                         )}
                       </div>
 
@@ -1142,13 +1142,13 @@ export default function Checkout() {
                         value={formData.city}
                         onChange={handleInputChange}
                             placeholder={getTranslation(language, 'checkout.city')}
-                            className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all font-medium ${
-                              errors.city ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
-                            } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
+                            className={`w-full px-3.5 py-2.5 text-sm rounded-lg border transition-all ${
+                              errors.city ? 'border-red-300 bg-red-50' : 'border-[#cbd5e0] bg-white hover:border-[#a0aec0]'
+                            } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/10 focus:border-[#0a2540]`}
                         required
                       />
                       {errors.city && (
-                        <p className="text-red-500 text-xs mt-1">{errors.city}</p>
+                        <p className="text-red-600 text-xs mt-1">{errors.city}</p>
                       )}
                     </div>
                         <div className="col-span-1">
@@ -1158,9 +1158,9 @@ export default function Checkout() {
                         autoComplete="address-level1"
                         value={formData.province}
                         onChange={handleInputChange}
-                            className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all font-medium ${
-                              errors.province ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
-                            } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
+                            className={`w-full px-3.5 py-2.5 text-sm rounded-lg border transition-all ${
+                              errors.province ? 'border-red-300 bg-red-50' : 'border-[#cbd5e0] bg-white hover:border-[#a0aec0]'
+                            } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/10 focus:border-[#0a2540]`}
                         required
                       >
                             <option value="">
@@ -1174,7 +1174,7 @@ export default function Checkout() {
                         ))}
                       </select>
                       {errors.province && (
-                        <p className="text-red-500 text-xs mt-1">{errors.province}</p>
+                        <p className="text-red-600 text-xs mt-1">{errors.province}</p>
                       )}
                     </div>
                         <div className="col-span-1">
@@ -1189,13 +1189,13 @@ export default function Checkout() {
                               ? getTranslation(language, 'checkout.zipCode')
                               : getTranslation(language, 'checkout.postalCode')
                             }
-                            className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all font-medium ${
-                              errors.postalCode ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
-                            } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
+                            className={`w-full px-3.5 py-2.5 text-sm rounded-lg border transition-all ${
+                              errors.postalCode ? 'border-red-300 bg-red-50' : 'border-[#cbd5e0] bg-white hover:border-[#a0aec0]'
+                            } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/10 focus:border-[#0a2540]`}
                         required
                       />
                       {errors.postalCode && (
-                        <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>
+                        <p className="text-red-600 text-xs mt-1">{errors.postalCode}</p>
                       )}
                     </div>
                   </div>
@@ -1213,21 +1213,21 @@ export default function Checkout() {
                             ? getTranslation(language, 'checkout.phonePlaceholderUS')
                             : getTranslation(language, 'checkout.phonePlaceholder')
                           }
-                          className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all font-medium ${
-                            errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
-                          } focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500`}
+                          className={`w-full px-3.5 py-2.5 text-sm rounded-lg border transition-all ${
+                            errors.phone ? 'border-red-300 bg-red-50' : 'border-[#cbd5e0] bg-white hover:border-[#a0aec0]'
+                          } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/10 focus:border-[#0a2540]`}
                           required
                         />
                         {errors.phone && (
-                          <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+                          <p className="text-red-600 text-xs mt-1">{errors.phone}</p>
                         )}
                       </div>
                     </div>
                   </div>
 
                   {/* Order Notes */}
-                  <div className="bg-white rounded-xl sm:rounded-2xl border-2 border-gray-200 p-4 sm:p-6 lg:p-8 shadow-md">
-                    <label className="block text-sm sm:text-base font-bold text-gray-900 mb-3 sm:mb-4">
+                  <div className="bg-white rounded-lg border border-[#e3e8ef] p-6 shadow-sm">
+                    <label className="block text-sm font-medium text-[#0a2540] mb-2">
                       {getTranslation(language, 'checkout.orderNotes')}
                     </label>
                     <textarea
@@ -1235,15 +1235,15 @@ export default function Checkout() {
                       value={formData.notes}
                       onChange={handleInputChange}
                       rows="4"
-                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 lg:py-3.5 text-sm sm:text-base rounded-lg sm:rounded-xl border-2 border-gray-200 bg-white hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all resize-none font-medium"
+                      className="w-full px-3.5 py-2.5 text-sm rounded-lg border border-[#cbd5e0] bg-white hover:border-[#a0aec0] focus:outline-none focus:ring-2 focus:ring-[#0a2540]/10 focus:border-[#0a2540] transition-all resize-none"
                       placeholder={getTranslation(language, 'checkout.orderNotesPlaceholder')}
                     />
                   </div>
 
                   {/* Shipping Options - Only show after user enters shipping details */}
                   {hasEnteredShippingDetails && formData.postalCode && formData.province && formData.city && formData.country && (
-                    <div className="bg-white rounded-xl sm:rounded-2xl border-2 border-gray-200 p-4 sm:p-6 lg:p-8 shadow-md">
-                      <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-5 lg:mb-6 pb-2 sm:pb-2.5 lg:pb-3 border-b-2 border-gray-100">
+                    <div className="bg-white rounded-lg border border-[#e3e8ef] p-6 shadow-sm">
+                      <h2 className="text-sm font-semibold text-[#0a2540] mb-4 pb-3 border-b border-[#e3e8ef]">
                         {getTranslation(language, 'checkout.shippingMethod')}
                       </h2>
                       
@@ -1254,12 +1254,12 @@ export default function Checkout() {
                       )}
 
                       {shippingError && (
-                        <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-4">
-                          <p className="text-sm text-red-800">{shippingError}</p>
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+                          <p className="text-sm text-red-700">{shippingError}</p>
                           <button
                             type="button"
                             onClick={() => fetchShippingRates()}
-                            className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+                            className="mt-2 text-sm text-red-600 hover:text-red-700 underline"
                           >
                             {language === 'fr' ? 'Réessayer' : 'Try again'}
                           </button>
@@ -1267,14 +1267,14 @@ export default function Checkout() {
                       )}
 
                       {!loadingShipping && shippingOptions.length > 0 && (
-                        <div className="space-y-2.5">
+                        <div className="space-y-2">
                           {shippingOptions.map((option) => (
                             <label
                               key={option.id}
-                              className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 lg:p-5 border-2 rounded-xl sm:rounded-2xl cursor-pointer transition-all touch-manipulation min-h-[64px] sm:min-h-[72px] shadow-md ${
+                              className={`flex items-center gap-3 p-3.5 border rounded-lg cursor-pointer transition-all ${
                                 selectedShipping?.id === option.id
-                                  ? 'border-amber-500 bg-gradient-to-r from-amber-50 to-amber-100/50 shadow-lg ring-2 ring-amber-500/30'
-                                  : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-lg hover:bg-gray-50 active:bg-gray-100'
+                                  ? 'border-[#0a2540] bg-[#0a2540]/5'
+                                  : 'border-[#e3e8ef] bg-white hover:border-[#cbd5e0] hover:bg-[#f6f9fc]'
                               }`}
                             >
                               <input
@@ -1283,16 +1283,16 @@ export default function Checkout() {
                                 value={option.id}
                                 checked={selectedShipping?.id === option.id}
                                 onChange={() => setSelectedShipping(option)}
-                                className="w-4 h-4 text-amber-500 focus:ring-amber-500"
+                                className="w-4 h-4 text-[#0a2540] focus:ring-[#0a2540]"
                               />
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between">
-                                  <span className="font-medium text-sm text-gray-900">{option.name}</span>
-                                  <span className="font-semibold text-sm text-gray-900">
+                                  <span className="font-medium text-sm text-[#0a2540]">{option.name}</span>
+                                  <span className="font-semibold text-sm text-[#0a2540]">
                                     {formatPriceWithCurrency(option.price)}
                                   </span>
                                 </div>
-                                <p className="text-xs text-gray-500 mt-0.5">
+                                <p className="text-xs text-[#425466] mt-0.5">
                                   {(() => {
                                     // Map shipping option names to translation keys
                                     const timeMap = {
@@ -1343,14 +1343,14 @@ export default function Checkout() {
                   )}
 
                   {/* Payment Button */}
-                  <div className="mt-8">
+                  <div className="mt-6">
                     {stripeError && (
-                      <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4 mb-6 shadow-sm">
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
                         <div className="flex items-start gap-3">
                           <svg className="w-5 h-5 text-red-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
-                          <p className="text-sm text-red-800 font-medium">{stripeError}</p>
+                          <p className="text-sm text-red-700">{stripeError}</p>
                         </div>
                       </div>
                     )}
@@ -1358,7 +1358,7 @@ export default function Checkout() {
                     <button
                       type="submit"
                       disabled={isSubmitting || !hasEnteredShippingDetails || !selectedShipping}
-                      className="w-full py-3 sm:py-3.5 lg:py-4 px-4 sm:px-5 lg:px-6 text-base sm:text-lg font-bold rounded-xl border-0 cursor-pointer transition-all duration-200 bg-gradient-to-r from-amber-500 to-amber-600 text-white hover:from-amber-600 hover:to-amber-700 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-amber-500 disabled:hover:to-amber-600 flex items-center justify-center gap-2 min-h-[48px] sm:min-h-[52px] lg:min-h-[56px] touch-manipulation shadow-lg hover:shadow-xl"
+                      className="w-full py-3.5 px-4 text-base font-medium rounded-lg border-0 cursor-pointer transition-all duration-150 bg-[#0a2540] text-white hover:bg-[#0d2f52] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#0a2540] flex items-center justify-center gap-2 min-h-[48px] shadow-sm hover:shadow"
                     >
                       {isSubmitting ? (
                         <LoadingSpinner size="sm" color="white" text={getTranslation(language, 'checkout.processing')} />
@@ -1372,7 +1372,7 @@ export default function Checkout() {
                       )}
                     </button>
 
-                    <p className="text-xs text-gray-500 text-center mt-3">
+                    <p className="text-xs text-[#425466] text-center mt-3">
                       {getTranslation(language, 'checkout.termsAgreement')}
                     </p>
                   </div>
@@ -1381,12 +1381,12 @@ export default function Checkout() {
                 ) : (
                   /* Stripe Payment Element - Single column, no left panel */
                   clientSecret && (
-                    <div id="payment-form" className="bg-white rounded-xl sm:rounded-2xl border-2 border-gray-200 p-4 sm:p-6 lg:p-8 shadow-md">
-                      <div className="mb-4 sm:mb-6 lg:mb-8">
-                        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-2 sm:mb-3 lg:mb-4 tracking-tight">
+                    <div id="payment-form" className="bg-white rounded-lg border border-[#e3e8ef] p-6 shadow-sm">
+                      <div className="mb-6">
+                        <h1 className="text-2xl font-semibold text-[#0a2540] mb-2">
                           {getTranslation(language, 'checkout.paymentDetails') || 'Payment Details'}
                         </h1>
-                        <p className="text-sm sm:text-base lg:text-lg text-gray-600 font-medium">
+                        <p className="text-sm text-[#425466]">
                           {language === 'fr' 
                             ? 'Complétez votre paiement en toute sécurité'
                             : 'Complete your payment securely'}
@@ -1418,21 +1418,21 @@ export default function Checkout() {
         {/* Step 2: Confirmation */}
         {currentStep === 2 && (
           <div className="max-w-2xl mx-auto text-center">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-12">
-              <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
-                <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-white rounded-lg shadow-sm border border-[#e3e8ef] p-12">
+              <div className="w-16 h-16 rounded-full bg-[#0a2540]/10 flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-[#0a2540]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">{getTranslation(language, 'checkout.orderConfirmed')}</h1>
-              <p className="text-gray-600 mb-6">
+              <h1 className="text-2xl font-semibold text-[#0a2540] mb-3">{getTranslation(language, 'checkout.orderConfirmed')}</h1>
+              <p className="text-[#425466] mb-6">
                 {getTranslation(language, 'checkout.thankYou')}{customerInfo.name ? `, ${customerInfo.name.split(' ')[0]}` : ''}!
               </p>
-              <div className="bg-gray-50 rounded-lg p-6 mb-8">
-                <p className="text-sm text-gray-600 mb-2">{getTranslation(language, 'checkout.orderNumber')}</p>
-                <p className="text-2xl font-bold text-gray-900">{orderNumber}</p>
+              <div className="bg-[#f6f9fc] rounded-lg p-6 mb-8">
+                <p className="text-sm text-[#425466] mb-2">{getTranslation(language, 'checkout.orderNumber')}</p>
+                <p className="text-xl font-semibold text-[#0a2540]">{orderNumber}</p>
               </div>
-              <p className="text-gray-600 mb-8">
+              <p className="text-[#425466] mb-8">
                 {customerInfo.email ? (
                   <>{getTranslation(language, 'checkout.confirmationEmail')} <strong>{customerInfo.email}</strong> {getTranslation(language, 'checkout.confirmationEmailSuffix')}</>
                 ) : (
@@ -1444,7 +1444,7 @@ export default function Checkout() {
                 window.history.pushState({ page: "/" }, "", "/")
                 window.dispatchEvent(new Event("hashchange"))
               }}
-                className="px-8 py-3 bg-amber-500 text-black font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+                className="px-6 py-2.5 bg-[#0a2540] text-white font-medium rounded-lg hover:bg-[#0d2f52] transition-colors"
               >
                 {getTranslation(language, 'checkout.continueShopping')}
               </button>
