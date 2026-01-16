@@ -862,37 +862,181 @@ export default function Checkout() {
   }
 
   return (
-    <section ref={sectionRef} className="py-8 md:py-12 px-4 md:px-6 bg-white min-h-[calc(100vh-72px)]">
+    <section ref={sectionRef} className="py-8 md:py-12 px-4 md:px-6 bg-gray-50 min-h-[calc(100vh-72px)]">
       <div className="max-w-7xl mx-auto">
         {/* Stripe-style Checkout Layout */}
         {currentStep === 1 && (
-          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-0 lg:gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-8 lg:gap-16">
+            {/* Product Showcase - Left Side (Stripe-style) */}
+            <div className="order-1 lg:order-1">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 lg:sticky lg:top-8">
+                {/* Brand Header */}
+                <div className="mb-8 pb-6 border-b border-gray-200">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Pure Peel Co.</h2>
+                  <p className="text-3xl font-bold text-gray-900">
+                    {hasEnteredShippingDetails && selectedShipping 
+                      ? `Pay ${formatPrice(total)}` 
+                      : (language === 'fr' ? 'Paiement' : 'Payment')
+                    }
+                    {hasEnteredShippingDetails && selectedShipping && (
+                      <span className="text-lg font-normal text-gray-500 ml-1">{currency}</span>
+                    )}
+                  </p>
+                </div>
+
+                {/* Product Images Showcase */}
+                <div className="space-y-6 mb-8">
+                  {cartItems.map((item, index) => (
+                    <div key={`${item.id}-${item.variant}`} className="flex gap-4">
+                      {/* Product Image Container */}
+                      <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-gradient-to-br from-amber-50 to-amber-100/50 border-2 border-amber-200/50 shrink-0 shadow-sm">
+                        <img 
+                          src={item.image} 
+                          alt={item.name} 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      
+                      {/* Product Details */}
+                      <div className="flex-1 min-w-0 flex flex-col justify-center">
+                        <p className="text-base font-semibold text-gray-900 truncate mb-1">
+                          {item.name}
+                        </p>
+                        <p className="text-sm text-gray-600 mb-2">{item.variant}</p>
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm text-gray-500">
+                            {getTranslation(language, 'checkout.qty')} {item.quantity}
+                          </p>
+                          <p className="text-base font-semibold text-gray-900">
+                            {formatPrice(item.price * item.quantity)} <span className="text-xs font-normal text-gray-500">{currency}</span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Promo Code Section */}
+                {cartItems.length > 0 && (
+                  <div className="mb-8 pt-6 border-t border-gray-200">
+                    {!appliedPromoCode ? (
+                      <div className="space-y-2">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          {getTranslation(language, 'checkout.promoCode.label')}
+                        </label>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={promoCode}
+                            onChange={(e) => {
+                              setPromoCode(e.target.value.toUpperCase())
+                              setPromoCodeError('')
+                            }}
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault()
+                                handleApplyPromoCode()
+                              }
+                            }}
+                            placeholder={getTranslation(language, 'checkout.promoCode.placeholder')}
+                            className="flex-1 px-4 py-2.5 text-sm rounded-lg border border-gray-300 bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleApplyPromoCode}
+                            className="px-5 py-2.5 text-sm font-semibold rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors whitespace-nowrap min-h-[44px] touch-manipulation active:scale-95"
+                          >
+                            {getTranslation(language, 'checkout.promoCode.apply')}
+                          </button>
+                        </div>
+                        {promoCodeError && (
+                          <p className="text-red-500 text-xs mt-1">{promoCodeError}</p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                          </svg>
+                          <div>
+                            <p className="text-sm font-semibold text-green-800">
+                              {getTranslation(language, 'checkout.promoCode.applied')}: {appliedPromoCode}
+                            </p>
+                            <p className="text-xs text-green-600">
+                              {getTranslation(language, 'checkout.promoCode.discount')}: {formatPrice(promoCodeDiscount)} <span className="text-gray-400">{currency}</span>
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleRemovePromoCode}
+                          className="text-green-600 hover:text-green-800 text-sm font-medium"
+                        >
+                          {getTranslation(language, 'checkout.promoCode.remove')}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {/* Order Summary */}
+                <div className="space-y-3 pt-6 border-t border-gray-200">
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.subtotal')}</span>
+                    <span className="text-gray-900 font-semibold">{formatPrice(subtotal)}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.shipping')}</span>
+                    <span className="text-gray-900 font-semibold">
+                      {!hasEnteredShippingDetails || !selectedShipping 
+                        ? (language === 'fr' ? 'À calculer' : 'To be calculated')
+                        : (shippingCostCAD === 0 ? getTranslation(language, 'checkout.free') : formatPrice(shippingCostCAD))
+                      }
+                    </span>
+                  </div>
+                  {hasEnteredShippingDetails && selectedShipping && (
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.taxHST')}</span>
+                      <span className="text-gray-900 font-semibold">{formatPrice(tax)}</span>
+                    </div>
+                  )}
+                  {appliedPromoCode && hasEnteredShippingDetails && selectedShipping && (
+                    <div className="flex justify-between items-center text-sm text-green-600">
+                      <span className="font-medium">{getTranslation(language, 'checkout.promoCode.discount')}</span>
+                      <span className="font-semibold">-{formatPrice(promoCodeDiscount)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between items-center text-lg font-bold pt-4 border-t-2 border-gray-300 mt-4">
+                    <span className="text-gray-900">Total</span>
+                    <span className="text-gray-900">
+                      {hasEnteredShippingDetails && selectedShipping 
+                        ? formatPrice(total)
+                        : (language === 'fr' ? 'À calculer' : 'To be calculated')
+                      }
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Checkout Form (Shipping + Payment) - Right Side */}
-            <div className="order-2 lg:order-1">
-              <div className="max-w-2xl mx-auto lg:mx-0">
+            <div className="order-2 lg:order-2">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
                 {/* Back button */}
                 <button
                   onClick={() => {
                     window.history.pushState({ page: "/" }, "", "/")
                     window.dispatchEvent(new Event("hashchange"))
                   }}
-                  className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 mb-6 transition-colors min-h-[44px] touch-manipulation active:opacity-70"
+                  className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 mb-8 transition-colors min-h-[44px] touch-manipulation active:opacity-70"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                   </svg>
                   {getTranslation(language, 'checkout.continueShopping')}
                 </button>
-
-                <div className="mb-8">
-                  <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2">
-                    {getTranslation(language, 'checkout.shippingInformation')}
-                  </h1>
-                  <p className="text-sm text-gray-600">
-                    {getTranslation(language, 'checkout.completeOrder')}
-                  </p>
-                </div>
-                <form onSubmit={handlePaymentSubmit} className="space-y-6">
+                <form onSubmit={handlePaymentSubmit} className="space-y-8">
                   {/* Contact Information */}
                   <div>
                     <h2 className="text-base font-semibold text-gray-900 mb-4">Contact</h2>
@@ -1227,7 +1371,7 @@ export default function Checkout() {
                     <button
                       type="submit"
                       disabled={isSubmitting || !hasEnteredShippingDetails || !selectedShipping}
-                      className="w-full py-3.5 px-6 text-base font-semibold rounded-md border-0 cursor-pointer transition-all duration-200 bg-amber-500 text-white hover:bg-amber-600 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-h-[48px] touch-manipulation"
+                      className="w-full py-4 px-6 text-base font-semibold rounded-lg border-0 cursor-pointer transition-all duration-200 bg-amber-500 text-white hover:bg-amber-600 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-h-[52px] touch-manipulation shadow-md hover:shadow-lg"
                     >
                       {isSubmitting ? (
                         <LoadingSpinner size="sm" color="white" text={getTranslation(language, 'checkout.processing')} />
@@ -1241,138 +1385,15 @@ export default function Checkout() {
                       )}
                     </button>
 
-                    <p className="text-xs text-gray-500 text-center mt-3">
+                    <p className="text-xs text-gray-500 text-center mt-4">
                       {getTranslation(language, 'checkout.termsAgreement')}
+                    </p>
+                    <p className="text-xs text-gray-400 text-center mt-2 flex items-center justify-center gap-1">
+                      <span>Powered by</span>
+                      <span className="font-semibold text-amber-600">Pure Peel Co.</span>
                     </p>
                   </div>
                 </form>
-              </div>
-            </div>
-
-            {/* Order Summary - Left Side (Stripe-style) */}
-            <div className="order-1 lg:order-2">
-              <div className="bg-gray-50 rounded-lg p-6 lg:sticky lg:top-8">
-                <div className="mb-6">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-1">Pure Peel Co.</h2>
-                  <p className="text-2xl font-semibold text-gray-900">Pay {formatPrice(total)} <span className="text-base font-normal text-gray-500">{currency}</span></p>
-                </div>
-                <div className="space-y-4 mb-6">
-                  {cartItems.map((item) => (
-                    <div key={`${item.id}-${item.variant}`} className="flex gap-3 pb-4 border-b border-gray-200 last:border-0 last:pb-0">
-                      <div className="w-16 h-16 rounded overflow-hidden bg-white shrink-0">
-                        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                      </div>
-                      <div className="flex-1 min-w-0 flex flex-col justify-center">
-                        <p className="text-sm font-medium text-gray-900 truncate">{item.name}</p>
-                        <p className="text-xs text-gray-500 mt-0.5">{item.variant}</p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {getTranslation(language, 'checkout.qty')} {item.quantity} × {formatPrice(item.price)} <span className="text-gray-400">{currency}</span>
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                
-                {/* Promo Code Section */}
-                <div className="pt-5 border-t border-gray-200 mb-5">
-                  {!appliedPromoCode ? (
-                    <div className="space-y-2">
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        {getTranslation(language, 'checkout.promoCode.label')}
-                      </label>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          value={promoCode}
-                          onChange={(e) => {
-                            setPromoCode(e.target.value.toUpperCase())
-                            setPromoCodeError('')
-                          }}
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter') {
-                              e.preventDefault()
-                              handleApplyPromoCode()
-                            }
-                          }}
-                          placeholder={getTranslation(language, 'checkout.promoCode.placeholder')}
-                          className="flex-1 px-4 py-2.5 text-sm rounded-lg border border-gray-300 bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
-                        />
-                        <button
-                          type="button"
-                          onClick={handleApplyPromoCode}
-                          className="px-5 py-2.5 text-sm font-semibold rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors whitespace-nowrap min-h-[44px] touch-manipulation active:scale-95"
-                        >
-                          {getTranslation(language, 'checkout.promoCode.apply')}
-                        </button>
-                  </div>
-                      {promoCodeError && (
-                        <p className="text-red-500 text-xs mt-1">{promoCodeError}</p>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                        <div>
-                          <p className="text-sm font-semibold text-green-800">
-                            {getTranslation(language, 'checkout.promoCode.applied')}: {appliedPromoCode}
-                          </p>
-                          <p className="text-xs text-green-600">
-                            {getTranslation(language, 'checkout.promoCode.discount')}: {formatPrice(promoCodeDiscount)} <span className="text-gray-400">{currency}</span>
-                          </p>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleRemovePromoCode}
-                        className="text-green-600 hover:text-green-800 text-sm font-medium"
-                      >
-                        {getTranslation(language, 'checkout.promoCode.remove')}
-                      </button>
-                    </div>
-                  )}
-                </div>
-                
-                <div className="space-y-3 pt-5 border-t border-gray-200">
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.subtotal')}</span>
-                    <span className="text-gray-900 font-semibold">{formatPrice(subtotal)}</span>
-                  </div>
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.shipping')}</span>
-                    <span className="text-gray-900 font-semibold">
-                      {!hasEnteredShippingDetails || !selectedShipping 
-                        ? (language === 'fr' ? 'À calculer' : 'To be calculated')
-                        : (shippingCostCAD === 0 ? getTranslation(language, 'checkout.free') : formatPrice(shippingCostCAD))
-                      }
-                    </span>
-                  </div>
-                  {/* Tax line - Products are zero-rated under Schedule VI Part III */}
-                  {hasEnteredShippingDetails && selectedShipping && (
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.taxHST')}</span>
-                      <span className="text-gray-900 font-semibold">{formatPrice(tax)}</span>
-                    </div>
-                  )}
-                  {/* Discount line */}
-                  {appliedPromoCode && hasEnteredShippingDetails && selectedShipping && (
-                    <div className="flex justify-between items-center text-sm text-green-600">
-                      <span className="font-medium">{getTranslation(language, 'checkout.promoCode.discount')}</span>
-                      <span className="font-semibold">-{formatPrice(promoCodeDiscount)}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between items-center text-lg font-semibold pt-4 border-t border-gray-200 mt-4">
-                    <span className="text-gray-900">Total due</span>
-                    <span className="text-gray-900">
-                      {hasEnteredShippingDetails && selectedShipping 
-                        ? formatPrice(total)
-                        : (language === 'fr' ? 'À calculer' : 'To be calculated')
-                      }
-                    </span>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

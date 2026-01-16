@@ -11,26 +11,31 @@ export default function ShippingReturns() {
   return (
     <section 
       ref={sectionRef} 
-      className={`py-8 md:py-12 px-4 sm:px-5 bg-gray-50 min-h-screen transition-all duration-800 ${
+      className={`py-8 md:py-12 px-4 sm:px-5 bg-gradient-to-b from-gray-50 to-white min-h-screen transition-all duration-800 ${
         isSectionVisible ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0 md:opacity-0 md:translate-y-8'
       }`}
     >
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-6 md:mb-8">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'shipping.title')}</h1>
-          <p className="text-sm md:text-base text-gray-600">{getTranslation(language, 'shipping.subtitle')}</p>
+        <div className="text-center mb-8 md:mb-12">
+          <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 mb-4 md:mb-6 shadow-lg">
+            <svg className="w-8 h-8 md:w-10 md:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+          </div>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'shipping.title')}</h1>
+          <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">{getTranslation(language, 'shipping.subtitle')}</p>
         </div>
 
         {/* Shipping Information */}
-        <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 md:p-8 mb-6 md:mb-8">
-          <div className="flex items-center gap-3 mb-6 md:mb-8">
-            <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center">
-              <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-6 sm:p-8 md:p-10 mb-8 md:mb-10">
+          <div className="flex items-center gap-4 mb-8 md:mb-10">
+            <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg">
+              <svg className="w-6 h-6 md:w-7 md:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
               </svg>
             </div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900">{getTranslation(language, 'shipping.shippingInfo.title')}</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">{getTranslation(language, 'shipping.shippingInfo.title')}</h2>
           </div>
           
           {/* Shipping to Canada */}
