@@ -688,6 +688,13 @@ export default function Checkout() {
         // Generate order ID BEFORE creating checkout session to ensure consistency
         const orderId = `PP-${Date.now().toString().slice(-8)}`
         
+        // Log currency before sending to backend
+        console.log('💱 Frontend sending to backend:', {
+          currency,
+          exchangeRate,
+          cartTotal: getCartTotal()
+        })
+        
         response = await fetch(`${API_URL}/api/create-checkout-session`, {
           method: 'POST',
           headers: {

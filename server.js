@@ -618,6 +618,16 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     // Get exchange rate from frontend (or use default if not provided)
     // This ensures the conversion matches what the user sees on the frontend
     const exchangeRate = useUSD ? (parseFloat(req.body.exchangeRate) || 0.73) : 1.0
+    
+    // Log currency info for debugging
+    console.log('💱 Backend received currency:', {
+      requestedCurrency: req.body.currency,
+      normalizedCurrency: requestedCurrency,
+      stripeCurrency,
+      useUSD,
+      exchangeRate,
+      rawBodyCurrency: req.body.currency
+    })
 
     const { items, shippingInfo, total } = req.body
 
