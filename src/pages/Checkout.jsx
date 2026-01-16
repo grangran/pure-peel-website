@@ -1196,7 +1196,7 @@ export default function Checkout() {
                   
                   {/* Shipping Form - Bottom on mobile, main content on desktop */}
                   <div className="md:col-span-7 order-2">
-                    <form onSubmit={handlePaymentSubmit} className="space-y-6">
+                <form onSubmit={handlePaymentSubmit} className="space-y-6">
                   {/* Contact Information */}
                   <div className="bg-white rounded-lg border border-[#e5e7eb] p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
                     <div className="flex items-center gap-2 mb-5 pb-3 border-b border-[#e5e7eb]">
@@ -1640,8 +1640,8 @@ export default function Checkout() {
                     </p>
                   </div>
                 </form>
-                  </div>
-                </div>
+              </div>
+            </div>
                 </>
                 ) : (
                   /* Stripe Payment Element - Single column, no left panel */
@@ -1655,9 +1655,9 @@ export default function Checkout() {
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                               </svg>
-              </div>
+                </div>
                             <span className="text-sm font-medium text-gray-500 hidden sm:inline">Shipping</span>
-            </div>
+                      </div>
                           <div className="w-12 h-0.5 bg-amber-600"></div>
                           <div className="flex items-center gap-2">
                             <div className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center text-sm font-semibold shadow-sm">
@@ -1685,7 +1685,7 @@ export default function Checkout() {
                               <h2 className="text-xl font-semibold text-gray-900">
                                 {language === 'fr' ? 'Résumé de la commande' : 'Order Summary'}
                               </h2>
-                            </div>
+                    </div>
                             
                             <div className="p-6 space-y-6">
                               {/* Product Items */}
@@ -1714,8 +1714,8 @@ export default function Checkout() {
                                           alt={displayName} 
                                           className="w-full h-full object-cover" 
                                         />
-                                      </div>
-                                      
+                </div>
+                
                                       {/* Product Info */}
                                       <div className="flex-1 min-w-0 flex flex-col justify-between">
                                         <div>
@@ -1743,30 +1743,30 @@ export default function Checkout() {
                                 <div className="pt-4 border-t border-gray-200">
                                   <label className="block text-sm font-medium text-gray-700 mb-3">
                                     {language === 'fr' ? 'Code promo' : 'Promo Code'}
-                                  </label>
-                                  <div className="flex gap-2">
-                                    <input
-                                      type="text"
-                                      value={promoCode}
-                                      onChange={(e) => {
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={promoCode}
+                          onChange={(e) => {
                                         setPromoCode(e.target.value)
-                                        setPromoCodeError('')
-                                      }}
+                            setPromoCodeError('')
+                          }}
                                       placeholder={language === 'fr' ? 'Entrez le code' : 'Enter code'}
                                       className="flex-1 px-4 py-2.5 text-sm rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all placeholder:text-gray-400"
-                                    />
-                                    <button
-                                      type="button"
-                                      onClick={handleApplyPromoCode}
+                        />
+                        <button
+                          type="button"
+                          onClick={handleApplyPromoCode}
                                       className="px-5 py-2.5 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 transition-colors whitespace-nowrap"
-                                    >
+                        >
                                       {language === 'fr' ? 'Appliquer' : 'Apply'}
-                                    </button>
-                                  </div>
-                                  {promoCodeError && (
+                        </button>
+                  </div>
+                      {promoCodeError && (
                                     <p className="mt-2 text-sm text-red-600">{promoCodeError}</p>
-                                  )}
-                                </div>
+                      )}
+                    </div>
                               )}
                               
                               {/* Price Breakdown - Simplified with better hierarchy */}
@@ -1801,9 +1801,9 @@ export default function Checkout() {
                               {/* Security Badge - Simplified */}
                               <div className="pt-4 border-t border-gray-200">
                                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                  </svg>
+                        </svg>
                                   <span className="font-medium">{language === 'fr' ? 'Paiement sécurisé' : 'Secure Payment'}</span>
                                 </div>
                               </div>
@@ -1826,7 +1826,7 @@ export default function Checkout() {
                             
                             <div className="p-6 md:p-8 space-y-8">
                               {/* Accepted Payment Methods */}
-                              <div>
+                        <div>
                                 <p className="text-sm font-semibold text-gray-900 mb-4">
                                   {language === 'fr' ? 'Méthodes de paiement acceptées' : 'Accepted Payment Methods'}
                                 </p>
@@ -1837,26 +1837,26 @@ export default function Checkout() {
                                       <path d="M16.5 12h7m-7-3h7m-7 6h4" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
                                     </svg>
                                     <span className="text-sm font-semibold text-gray-700">Visa</span>
-                                  </div>
+                        </div>
                                   <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 rounded-lg border border-gray-200 hover:border-amber-300 transition-colors">
                                     <svg className="w-8 h-5" viewBox="0 0 40 24" fill="none">
                                       <rect width="40" height="24" rx="2" fill="#EB001B"/>
                                       <rect x="20" width="20" height="24" rx="2" fill="#F79E1B"/>
                                     </svg>
                                     <span className="text-sm font-semibold text-gray-700">Mastercard</span>
-                                  </div>
+                      </div>
                                   <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 rounded-lg border border-gray-200 hover:border-amber-300 transition-colors">
                                     <svg className="w-8 h-5" viewBox="0 0 40 24" fill="#006FCF">
                                       <rect width="40" height="24" rx="2" fill="#006FCF"/>
                                       <path d="M20 8l-2 8h4l-2-8z" fill="white"/>
                                     </svg>
                                     <span className="text-sm font-semibold text-gray-700">Amex</span>
-                                  </div>
+                    </div>
                                   <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 rounded-lg border border-gray-200 hover:border-amber-300 transition-colors">
                                     <span className="text-sm font-semibold text-gray-700">Link</span>
-                                  </div>
-                                </div>
-                              </div>
+                </div>
+                  </div>
+                  </div>
 
                             <Elements 
                               stripe={stripePromise} 
@@ -1971,9 +1971,10 @@ export default function Checkout() {
                                   </div>
                                 </div>
                               </div>
-                </div>
-              </div>
-            </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   )
                 )}
