@@ -990,17 +990,16 @@ export default function Checkout() {
                   checkout.purepeelco.com
                 </div>
 
-                <form onSubmit={handlePaymentSubmit} className="space-y-8">
+                <form onSubmit={handlePaymentSubmit} className="space-y-6">
                   {/* Shipping Information Section */}
                   <div>
                     <h2 className="text-base font-semibold text-gray-900 mb-4">Shipping information</h2>
-                    {/* Contact Information */}
-                    <div className="mb-6">
                     <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                      {/* Email */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
                           {getTranslation(language, 'checkout.email')}
-                      </label>
+                        </label>
                         <input
                           type="email"
                           name="email"
@@ -1017,13 +1016,11 @@ export default function Checkout() {
                           <p className="text-red-500 text-xs mt-1">{errors.email}</p>
                         )}
                       </div>
-                    </div>
-                  </div>
 
-                  {/* Name */}
-                    <div className="mb-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-1.5">Name</label>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* Name */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">Name</label>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                       <input
                         type="text"
@@ -1060,11 +1057,14 @@ export default function Checkout() {
                         <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
                       )}
                     </div>
-                  </div>
-                  </div>
+                        </div>
+                      </div>
+                    </div>
 
-                  {/* Shipping Address */}
-                    <div className="space-y-4">
+                    {/* Shipping Address */}
+                    <div className="mt-6">
+                      <label className="block text-sm font-medium text-gray-700 mb-1.5">Ship to</label>
+                      <div className="space-y-4">
                   <div>
                     <input
                       type="text"
@@ -1197,19 +1197,21 @@ export default function Checkout() {
                     </div>
                   </div>
 
-                  {/* Order Notes */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                      {getTranslation(language, 'checkout.orderNotes')}
-                    </label>
-                    <textarea
-                      name="notes"
-                      value={formData.notes}
-                      onChange={handleInputChange}
-                      rows="3"
-                      className="w-full px-3.5 py-2.5 text-sm rounded-md border border-gray-300 bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all resize-none"
-                      placeholder={getTranslation(language, 'checkout.orderNotesPlaceholder')}
-                    />
+                      {/* Order Notes - Optional */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                          {getTranslation(language, 'checkout.orderNotes')}
+                        </label>
+                        <textarea
+                          name="notes"
+                          value={formData.notes}
+                          onChange={handleInputChange}
+                          rows="3"
+                          className="w-full px-3.5 py-2.5 text-sm rounded-md border border-gray-300 bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all resize-none"
+                          placeholder={getTranslation(language, 'checkout.orderNotesPlaceholder')}
+                        />
+                      </div>
+                    </div>
                   </div>
 
                   {/* Shipping Options - Only show after user enters shipping details */}
@@ -1393,14 +1395,14 @@ export default function Checkout() {
                       )}
                     </button>
 
-                      <p className="text-xs text-gray-400 text-center mt-4 flex items-center justify-center gap-1">
+                      <p className="text-xs text-gray-400 text-center mt-6 flex items-center justify-center gap-1.5">
                         <span>Powered by</span>
-                        <span className="font-semibold">stripe</span>
-                        <span className="mx-2">·</span>
-                        <a href="/terms" className="hover:underline">Terms</a>
+                        <span className="font-semibold text-gray-500">stripe</span>
+                        <span className="mx-1.5">·</span>
+                        <a href="/terms" className="hover:underline text-gray-500">Terms</a>
                         <span className="mx-1">·</span>
-                        <a href="/privacy" className="hover:underline">Privacy</a>
-                    </p>
+                        <a href="/privacy" className="hover:underline text-gray-500">Privacy</a>
+                      </p>
                   </div>
                   )}
                 </form>
