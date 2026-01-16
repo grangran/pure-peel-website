@@ -1143,8 +1143,7 @@ export default function Checkout() {
                       )}
                     </div>
                     </div>
-                  </div>
-                  </div>
+                    </div>
 
                   {/* Shipping Address */}
                     <div className="mt-6">
@@ -1280,6 +1279,8 @@ export default function Checkout() {
                         )}
                       </div>
                     </div>
+                    </div>
+                  </div>
                   </div>
 
                   {/* Order Notes - Optional */}
@@ -1401,7 +1402,7 @@ export default function Checkout() {
 
                   {/* Payment Method Section */}
                   {hasEnteredShippingDetails && selectedShipping && (
-                  <div className="mt-8 pt-8 border-t border-gray-200">
+                    <div className="mt-8 pt-8 border-t border-gray-200">
                       <h2 className="text-base font-semibold text-gray-900 mb-4">Payment method</h2>
                       
                       <div className="space-y-3 mb-6">
@@ -1478,21 +1479,19 @@ export default function Checkout() {
                       )}
                     </button>
 
-                      <p className="text-xs text-gray-400 text-center mt-6 flex items-center justify-center gap-1.5">
-                        <span>Powered by</span>
-                        <span className="font-semibold text-gray-500">stripe</span>
-                        <span className="mx-1.5">·</span>
-                        <a href="/terms" className="hover:underline text-gray-500">Terms</a>
-                        <span className="mx-1">·</span>
-                        <a href="/privacy" className="hover:underline text-gray-500">Privacy</a>
+                    <p className="text-xs text-gray-400 text-center mt-6 flex items-center justify-center gap-1.5">
+                      <span>Powered by</span>
+                      <span className="font-semibold text-gray-500">stripe</span>
+                      <span className="mx-1.5">·</span>
+                      <a href="/terms" className="hover:underline text-gray-500">Terms</a>
+                      <span className="mx-1">·</span>
+                      <a href="/privacy" className="hover:underline text-gray-500">Privacy</a>
                     </p>
-                  </div>
+                    </div>
                   )}
                 </form>
               </div>
             </div>
-                </div>
-        )}
           </div>
         )}
 
