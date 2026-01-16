@@ -822,6 +822,14 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       // Set locale based on currency to ensure proper currency display
       // en-US for USD, en-CA for CAD
       locale: stripeCurrency === 'usd' ? 'en' : 'en', // Stripe will format based on currency code
+      // Add custom text to clarify currency (especially for USD since Stripe doesn't show "USD" text)
+      custom_text: {
+        submit: {
+          message: stripeCurrency === 'usd' 
+            ? 'All amounts are in USD' 
+            : 'All amounts are in CAD'
+        }
+      },
       success_url: `${req.headers.origin || 'http://localhost:5173'}/checkout?success=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.origin || 'http://localhost:5173'}/checkout?canceled=true`,
       customer_email: shippingInfo.email,
