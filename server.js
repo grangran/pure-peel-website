@@ -812,10 +812,13 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     // Note: 'card' automatically enables Apple Pay and Google Pay when available
     // IMPORTANT: All line_items and shipping_options must use the SAME currency to prevent Stripe from showing a currency selector
     // Disable Adaptive Pricing to prevent Stripe from showing currency selector
+    // For Embedded Checkout, use ui_mode: 'embedded' and return_url (NOT success_url or cancel_url)
     const sessionConfig = {
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
+      ui_mode: 'embedded', // Set embedded mode from the start
+      return_url: `${req.headers.origin || 'http://localhost:5173'}/checkout?success=true&session_id={CHECKOUT_SESSION_ID}`, // Only return_url is supported with embedded mode
       adaptive_pricing: {
         enabled: false, // Disable Adaptive Pricing to prevent currency selector
       },
@@ -906,11 +909,8 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       }
     }
 
-    // For Embedded Checkout, add ui_mode and return_url
+    // ui_mode and return_url are already set in sessionConfig above
     // Note: success_url and cancel_url are NOT supported with ui_mode: 'embedded'
-    // Only return_url is used for embedded checkout
-    sessionConfig.ui_mode = 'embedded'
-    sessionConfig.return_url = `${req.headers.origin || 'http://localhost:5173'}/checkout?success=true&session_id={CHECKOUT_SESSION_ID}`
 
     const session = await stripe.checkout.sessions.create(sessionConfig)
 
