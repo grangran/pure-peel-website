@@ -80,11 +80,18 @@ export function CartProvider({ children }) {
     let shouldShowToast = !isDuplicate
     
     setCartItems((prevItems) => {
+      // Ensure product has required fields
+      if (!product.id || !product.variant) {
+        console.error('Invalid product data:', product)
+        return prevItems
+      }
+      
       const existingItem = prevItems.find(
         (item) => item.id === product.id && item.variant === product.variant
       )
 
       if (existingItem) {
+        // Item already exists - increase quantity
         finalQuantity = existingItem.quantity + quantityToAdd
         trackAddToCart(productToTrack)
         return prevItems.map((item) =>
@@ -93,9 +100,15 @@ export function CartProvider({ children }) {
             : item
         )
       } else {
+        // New item - add to cart
         finalQuantity = quantityToAdd
         trackAddToCart(productToTrack)
-        return [...prevItems, { ...product, quantity: quantityToAdd }]
+        const newItem = { ...product, quantity: quantityToAdd }
+        console.log('Adding new item to cart:', newItem)
+        console.log('Cart items before:', prevItems)
+        const updatedCart = [...prevItems, newItem]
+        console.log('Cart items after:', updatedCart)
+        return updatedCart
       }
     })
     
