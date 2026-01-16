@@ -801,10 +801,14 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     // Create Stripe Checkout Session
     // Note: 'card' automatically enables Apple Pay and Google Pay when available
     // IMPORTANT: All line_items and shipping_options must use the SAME currency to prevent Stripe from showing a currency selector
+    // Disable Adaptive Pricing to prevent Stripe from showing currency selector
     const sessionConfig = {
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
+      adaptive_pricing: {
+        enabled: false, // Disable Adaptive Pricing to prevent currency selector
+      },
       success_url: `${req.headers.origin || 'http://localhost:5173'}/checkout?success=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.origin || 'http://localhost:5173'}/checkout?canceled=true`,
       customer_email: shippingInfo.email,
