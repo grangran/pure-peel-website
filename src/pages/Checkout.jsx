@@ -836,16 +836,19 @@ export default function Checkout() {
   }
 
   const shippingCostCAD = calculateShipping() // Shipping is always in CAD from backend
-  const subtotal = getCartTotal()
+  const subtotalCAD = getCartTotal() // Already in CAD
   // Zero-rated goods under Schedule VI Part III of the Excise Tax Act
   // Dehydrated citrus products (unsweetened, no preservatives) qualify as zero-rated basic groceries
   // Tax is 0% - Products are zero-rated as unsweetened dried fruits
   const tax = 0
-  // Calculate total - formatPrice will handle currency conversion, so use CAD prices for calculation
+  // Calculate total in CAD first, then convert
   const totalCAD = hasEnteredShippingDetails && selectedShipping 
-    ? Math.max(0, subtotal + shippingCostCAD + tax - promoCodeDiscount)
-    : subtotal
+    ? Math.max(0, subtotalCAD + shippingCostCAD + tax - promoCodeDiscount)
+    : subtotalCAD
   const total = currency === 'USD' ? convertPrice(totalCAD) : totalCAD
+  // Also calculate converted values for display
+  const subtotal = currency === 'USD' ? convertPrice(subtotalCAD) : subtotalCAD
+  const shippingCost = currency === 'USD' ? convertPrice(shippingCostCAD) : shippingCostCAD
 
   if (cartItems.length === 0 && currentStep !== 2) {
     return (
@@ -1026,7 +1029,9 @@ export default function Checkout() {
                   <div className="space-y-2 pt-4 border-t border-gray-700">
                     <div className="flex justify-between text-sm text-gray-400">
                       <span>{getTranslation(language, 'checkout.subtotal')}</span>
-                      <span className="text-white">{formatPrice(subtotal)}</span>
+                      <span className="text-white">
+                        {formatPrice(subtotalCAD)} {currency}
+                      </span>
                     </div>
                     <div className="flex justify-between text-sm text-gray-400">
                       <span>{getTranslation(language, 'checkout.shipping')}</span>
@@ -1035,7 +1040,7 @@ export default function Checkout() {
                           ? (language === 'fr' ? 'À calculer' : 'To be calculated')
                           : (promoCodeType === 'free_shipping' || shippingCostCAD === 0 
                               ? getTranslation(language, 'checkout.free') 
-                              : formatPrice(shippingCostCAD))
+                              : `${formatPrice(shippingCostCAD)} ${currency}`)
                         }
                       </span>
                     </div>
@@ -1047,14 +1052,14 @@ export default function Checkout() {
                             : getTranslation(language, 'checkout.promoCode.discount')
                           }
                         </span>
-                        <span>-{formatPrice(promoCodeDiscount)}</span>
+                        <span>-{formatPrice(promoCodeDiscount)} {currency}</span>
                       </div>
                     )}
                     <div className="flex justify-between text-base font-semibold text-white pt-2 border-t border-gray-700">
                       <span>Total</span>
                       <span>
                         {hasEnteredShippingDetails && selectedShipping 
-                          ? formatPrice(total)
+                          ? `${formatPrice(total)} ${currency}`
                           : (language === 'fr' ? 'À calculer' : 'To be calculated')
                         }
                       </span>
