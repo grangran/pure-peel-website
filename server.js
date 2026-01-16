@@ -908,9 +908,18 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       }
     }
 
+    // For Embedded Checkout, add ui_mode and return_url
+    sessionConfig.ui_mode = 'embedded'
+    sessionConfig.return_url = `${req.headers.origin || 'http://localhost:5173'}/checkout?session_id={CHECKOUT_SESSION_ID}`
+
     const session = await stripe.checkout.sessions.create(sessionConfig)
 
-    res.json({ sessionId: session.id, url: session.url })
+    // For Embedded Checkout, return clientSecret instead of url
+    res.json({ 
+      sessionId: session.id, 
+      clientSecret: session.client_secret,
+      url: session.url // Keep for backward compatibility, but won't be used in embedded mode
+    })
   } catch (error) {
     console.error('Error creating checkout session:', error)
     res.status(500).json({ error: error.message })

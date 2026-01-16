@@ -8,6 +8,9 @@ import { trackCheckoutStarted, trackPurchase } from "../utils/analytics"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Skeleton from "../components/Skeleton"
 import PageLoader from "../components/PageLoader"
+import { loadStripe } from '@stripe/stripe-js'
+import { EmbeddedCheckoutProvider, EmbeddedCheckout } from '@stripe/react-stripe-js/checkout'
+import stripePromise from '../config/stripe'
 
 const canadianProvinces = [
   "Alberta", "British Columbia", "Manitoba", "New Brunswick", 
@@ -56,6 +59,8 @@ export default function Checkout() {
   const [appliedPromoCode, setAppliedPromoCode] = useState(null)
   const [promoCodeError, setPromoCodeError] = useState('')
   const [promoCodeDiscount, setPromoCodeDiscount] = useState(0) // Discount amount in CAD
+  const [clientSecret, setClientSecret] = useState(null) // For Embedded Checkout
+  const [showEmbeddedCheckout, setShowEmbeddedCheckout] = useState(false) // Toggle Embedded Checkout display
   
   // Check for Stripe redirect
   useEffect(() => {
@@ -68,10 +73,19 @@ export default function Checkout() {
       // Payment was successful - clear saved form data
       localStorage.removeItem('checkoutFormData')
       localStorage.removeItem('checkoutShippingOption')
+      // Hide embedded checkout if it was shown
+      setShowEmbeddedCheckout(false)
+      setClientSecret(null)
       handlePaymentSuccess(sessionId)
+      // Clean up URL
+      if (window.location.search) {
+        window.history.replaceState({}, '', '/checkout')
+      }
     } else if (canceled === 'true') {
       // Payment was canceled - restore form data and return to checkout
       setCurrentStep(1)
+      setShowEmbeddedCheckout(false)
+      setClientSecret(null)
       setStripeError('Payment was canceled. Your information has been saved. You can try again when ready.')
       // Clean up URL by removing query parameters
       if (window.location.search) {
@@ -727,15 +741,27 @@ export default function Checkout() {
 
       const data = await response.json()
 
-      // Redirect to Stripe Checkout using the session URL (classic format)
-      if (data.url) {
-        console.log('✅ Redirecting to Stripe Checkout:', data.url)
+      // Use Embedded Checkout instead of redirect
+      if (data.clientSecret) {
+        console.log('✅ Embedded Checkout clientSecret received:', data.clientSecret)
+        setClientSecret(data.clientSecret)
+        setShowEmbeddedCheckout(true)
+        setIsSubmitting(false) // Reset submitting state since we're showing embedded checkout
+        // Scroll to embedded checkout
+        setTimeout(() => {
+          const checkoutElement = document.getElementById('embedded-checkout')
+          if (checkoutElement) {
+            checkoutElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }
+        }, 100)
+      } else if (data.url) {
+        // Fallback to redirect if clientSecret not available (backward compatibility)
+        console.log('⚠️ No clientSecret, falling back to redirect:', data.url)
         setIsRedirecting(true)
-        // Redirect immediately to Stripe's classic checkout page
-          window.location.href = data.url
+        window.location.href = data.url
       } else {
-        console.error('❌ No checkout URL in response:', data)
-        throw new Error('Checkout session URL not provided by server')
+        console.error('❌ No clientSecret or URL in response:', data)
+        throw new Error('Checkout session clientSecret not provided by server')
       }
     } catch (error) {
       console.error('Payment error:', error)
@@ -843,6 +869,25 @@ export default function Checkout() {
   const totalCAD = hasEnteredShippingDetails && selectedShipping 
     ? Math.max(0, subtotalCAD + shippingCostCAD + tax - promoCodeDiscount)
     : subtotalCAD
+
+  // Helper function to format price with explicit currency code (USD/CAD)
+  const formatPriceWithCurrency = (priceCAD) => {
+    const formatted = formatPrice(priceCAD)
+    // formatPrice returns formatted string like "$12.50" or "CA$12.50"
+    // We want to ensure it always shows "USD" or "CAD" explicitly
+    if (currency === 'USD') {
+      // Remove any existing currency symbols and add "USD"
+      // Handle formats like "$12.50" or "CA$12.50"
+      const amount = formatted.replace(/[^\d.,]/g, '') // Extract numbers
+      const numericValue = parseFloat(amount.replace(/,/g, ''))
+      return `$${numericValue.toFixed(2)} USD`
+    } else {
+      // For CAD, ensure it shows "CAD" explicitly
+      const amount = formatted.replace(/[^\d.,]/g, '') // Extract numbers
+      const numericValue = parseFloat(amount.replace(/,/g, ''))
+      return `$${numericValue.toFixed(2)} CAD`
+    }
+  }
 
   if (cartItems.length === 0 && currentStep !== 2) {
     return (
@@ -1171,7 +1216,7 @@ export default function Checkout() {
                                 <div className="flex items-center justify-between">
                                   <span className="font-medium text-sm text-gray-900">{option.name}</span>
                                   <span className="font-semibold text-sm text-gray-900">
-                                    {formatPrice(option.price)} <span className="text-xs font-normal text-gray-500">{currency}</span>
+                                    {formatPriceWithCurrency(option.price)}
                                   </span>
                                 </div>
                                 <p className="text-xs text-gray-500 mt-0.5">
@@ -1242,7 +1287,7 @@ export default function Checkout() {
                       ) : (
                         <>
                           {hasEnteredShippingDetails && selectedShipping 
-                            ? `Pay ${formatPrice(totalCAD)} ${currency}`
+                            ? `Pay ${formatPriceWithCurrency(totalCAD)}`
                             : (language === 'fr' ? 'Entrez les détails d\'expédition' : 'Enter shipping details')
                           }
                         </>
@@ -1254,6 +1299,28 @@ export default function Checkout() {
                     </p>
                   </div>
                 </form>
+
+                {/* Embedded Stripe Checkout */}
+                {showEmbeddedCheckout && clientSecret && (
+                  <div id="embedded-checkout" className="mt-8 pt-8 border-t border-gray-200">
+                    <h2 className="text-base font-semibold text-gray-900 mb-4">
+                      {getTranslation(language, 'checkout.paymentDetails') || 'Payment Details'}
+                    </h2>
+                    <EmbeddedCheckoutProvider
+                      stripe={stripePromise}
+                      options={{
+                        clientSecret,
+                        onComplete: async (event) => {
+                          // Embedded Checkout will redirect to return_url with session_id
+                          // The useEffect above will handle the completion
+                          console.log('✅ Embedded Checkout completed:', event)
+                        }
+                      }}
+                    >
+                      <EmbeddedCheckout />
+                    </EmbeddedCheckoutProvider>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -1262,7 +1329,7 @@ export default function Checkout() {
               <div className="bg-gray-50 rounded-lg p-6 lg:sticky lg:top-8">
                 <div className="mb-6">
                   <h2 className="text-lg font-semibold text-gray-900 mb-1">Pure Peel Co.</h2>
-                  <p className="text-2xl font-semibold text-gray-900">Pay {formatPrice(totalCAD)} <span className="text-base font-normal text-gray-500">{currency}</span></p>
+                  <p className="text-2xl font-semibold text-gray-900">Pay {formatPriceWithCurrency(totalCAD)}</p>
                 </div>
                 <div className="space-y-4 mb-6">
                   {cartItems.map((item) => (
@@ -1274,7 +1341,7 @@ export default function Checkout() {
                         <p className="text-sm font-medium text-gray-900 truncate">{item.name}</p>
                         <p className="text-xs text-gray-500 mt-0.5">{item.variant}</p>
                         <p className="text-xs text-gray-500 mt-1">
-                          {getTranslation(language, 'checkout.qty')} {item.quantity} × {formatPrice(item.price)} <span className="text-gray-400">{currency}</span>
+                          {getTranslation(language, 'checkout.qty')} {item.quantity} × {formatPriceWithCurrency(item.price)}
                         </p>
                       </div>
                     </div>
@@ -1328,7 +1395,7 @@ export default function Checkout() {
                             {getTranslation(language, 'checkout.promoCode.applied')}: {appliedPromoCode}
                           </p>
                           <p className="text-xs text-green-600">
-                            {getTranslation(language, 'checkout.promoCode.discount')}: {formatPrice(promoCodeDiscount)} <span className="text-gray-400">{currency}</span>
+                            {getTranslation(language, 'checkout.promoCode.discount')}: {formatPriceWithCurrency(promoCodeDiscount)}
                           </p>
                         </div>
                       </div>
@@ -1346,14 +1413,14 @@ export default function Checkout() {
                 <div className="space-y-3 pt-5 border-t border-gray-200">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.subtotal')}</span>
-                    <span className="text-gray-900 font-semibold">{formatPrice(subtotalCAD)}</span>
+                    <span className="text-gray-900 font-semibold">{formatPriceWithCurrency(subtotalCAD)}</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.shipping')}</span>
                     <span className="text-gray-900 font-semibold">
                       {!hasEnteredShippingDetails || !selectedShipping 
                         ? (language === 'fr' ? 'À calculer' : 'To be calculated')
-                        : (shippingCostCAD === 0 ? getTranslation(language, 'checkout.free') : formatPrice(shippingCostCAD))
+                        : (shippingCostCAD === 0 ? getTranslation(language, 'checkout.free') : formatPriceWithCurrency(shippingCostCAD))
                       }
                     </span>
                   </div>
@@ -1361,21 +1428,21 @@ export default function Checkout() {
                   {hasEnteredShippingDetails && selectedShipping && (
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.taxHST')}</span>
-                      <span className="text-gray-900 font-semibold">{formatPrice(tax)}</span>
+                      <span className="text-gray-900 font-semibold">{formatPriceWithCurrency(tax)}</span>
                     </div>
                   )}
                   {/* Discount line */}
                   {appliedPromoCode && hasEnteredShippingDetails && selectedShipping && (
                     <div className="flex justify-between items-center text-sm text-green-600">
                       <span className="font-medium">{getTranslation(language, 'checkout.promoCode.discount')}</span>
-                      <span className="font-semibold">-{formatPrice(promoCodeDiscount)}</span>
+                      <span className="font-semibold">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
                     </div>
                   )}
                   <div className="flex justify-between items-center text-lg font-semibold pt-4 border-t border-gray-200 mt-4">
                     <span className="text-gray-900">Total due</span>
                     <span className="text-gray-900">
                       {hasEnteredShippingDetails && selectedShipping 
-                        ? formatPrice(totalCAD)
+                        ? formatPriceWithCurrency(totalCAD)
                         : (language === 'fr' ? 'À calculer' : 'To be calculated')
                       }
                     </span>
