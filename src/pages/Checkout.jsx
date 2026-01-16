@@ -95,14 +95,28 @@ function PaymentForm({ clientSecret, onSuccess }) {
         }}
       />
       {error && (
-        <div className="bg-[#fef2f2] border border-[#fecaca] rounded-md p-3.5">
-          <div className="flex items-start gap-2">
-            <svg className="w-4 h-4 text-[#dc2626] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <div>
-              <p className="text-sm font-medium text-[#dc2626] mb-1">Payment error</p>
-              <p className="text-sm text-[#991b1b]">{error}</p>
+        <div className="bg-[#fef2f2] border border-[#fecaca] rounded-lg p-4 mb-4 shadow-sm">
+          <div className="flex items-start gap-3">
+            <div className="w-5 h-5 rounded-full bg-[#dc2626] flex items-center justify-center shrink-0 mt-0.5">
+              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-[#dc2626] mb-1.5">
+                {language === 'fr' ? 'Erreur de paiement' : 'Payment Error'}
+              </p>
+              <p className="text-sm text-[#991b1b] leading-relaxed mb-2">{error}</p>
+              <div className="text-xs text-[#991b1b] bg-[#fee2e2] rounded p-2 mt-2">
+                <p className="font-medium mb-1">
+                  {language === 'fr' ? 'Conseils pour résoudre le problème :' : 'Tips to resolve:'}
+                </p>
+                <ul className="list-disc list-inside space-y-0.5">
+                  <li>{language === 'fr' ? 'Vérifiez que tous les champs sont correctement remplis' : 'Verify all fields are correctly filled'}</li>
+                  <li>{language === 'fr' ? 'Assurez-vous que votre carte n\'est pas expirée' : 'Ensure your card is not expired'}</li>
+                  <li>{language === 'fr' ? 'Vérifiez que vous avez suffisamment de fonds' : 'Check you have sufficient funds'}</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -1000,7 +1014,7 @@ export default function Checkout() {
   if (cartItems.length === 0 && currentStep !== 2) {
     return (
       <section className="py-20 px-5 bg-[#f6f9fc] min-h-[calc(100vh-72px)]">
-          <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-2xl font-semibold text-gray-900 mb-3">{getTranslation(language, 'checkout.emptyCart')}</h1>
           <p className="text-[#425466] mb-8">{getTranslation(language, 'checkout.emptyCartDescription')}</p>
           <button
@@ -1056,7 +1070,7 @@ export default function Checkout() {
                 {!showPaymentForm ? (
                   <>
                     {/* Progress Indicator */}
-                    <div className="mb-8">
+                <div className="mb-8">
                       <div className="flex items-center justify-center gap-2 mb-6">
                         <div className="flex items-center gap-2">
                           <div className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center text-sm font-semibold shadow-sm">
@@ -1075,12 +1089,12 @@ export default function Checkout() {
                         </div>
                       </div>
                       <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2 tracking-tight">
-                        {getTranslation(language, 'checkout.shippingInformation')}
-                      </h1>
+                    {getTranslation(language, 'checkout.shippingInformation')}
+                  </h1>
                       <p className="text-sm text-[#6b7280] leading-relaxed">
-                        {getTranslation(language, 'checkout.completeOrder')}
-                      </p>
-                    </div>
+                    {getTranslation(language, 'checkout.completeOrder')}
+                  </p>
+                </div>
                 <form onSubmit={handlePaymentSubmit} className="space-y-6">
                   {/* Contact Information */}
                   <div className="bg-white rounded-lg border border-[#e5e7eb] p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
@@ -1391,8 +1405,8 @@ export default function Checkout() {
                           </svg>
                         </div>
                         <h2 className="text-sm font-semibold text-gray-900">
-                          {getTranslation(language, 'checkout.shippingMethod')}
-                        </h2>
+                        {getTranslation(language, 'checkout.shippingMethod')}
+                      </h2>
                       </div>
                       
                       {loadingShipping && (
@@ -1529,126 +1543,240 @@ export default function Checkout() {
                 ) : (
                   /* Stripe Payment Element - Single column, no left panel */
                   clientSecret && (
-                    <div id="payment-form" className="bg-white rounded-lg border border-[#e5e7eb] p-6 shadow-sm">
+                    <div className="max-w-4xl mx-auto">
                       {/* Progress Indicator */}
-                      <div className="mb-6">
+                      <div className="mb-8">
                         <div className="flex items-center justify-center gap-2 mb-6">
                           <div className="flex items-center gap-2">
                             <div className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center text-sm font-semibold shadow-sm">
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                               </svg>
-                            </div>
+              </div>
                             <span className="text-sm font-medium text-gray-500 hidden sm:inline">Shipping</span>
-                          </div>
+            </div>
                           <div className="w-12 h-0.5 bg-amber-600"></div>
                           <div className="flex items-center gap-2">
                             <div className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center text-sm font-semibold shadow-sm">
                               2
-                            </div>
+                </div>
                             <span className="text-sm font-medium text-gray-900 hidden sm:inline">Payment</span>
-                          </div>
+                      </div>
                         </div>
-                        <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2 tracking-tight">
+                        <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2 tracking-tight text-center">
                           {getTranslation(language, 'checkout.paymentDetails') || 'Payment Details'}
                         </h1>
-                        <p className="text-sm text-[#6b7280] leading-relaxed">
+                        <p className="text-sm text-[#6b7280] leading-relaxed text-center">
                           {language === 'fr' 
                             ? 'Complétez votre paiement en toute sécurité'
                             : 'Complete your payment securely'}
                         </p>
                       </div>
-                      <Elements 
-                        stripe={stripePromise} 
-                        options={{
-                          clientSecret,
-                          appearance: {
-                            theme: 'stripe',
-                            variables: {
-                              // Primary colors matching your brand (amber/orange)
-                              colorPrimary: '#d97706', // amber-600
-                              colorBackground: '#ffffff',
-                              colorText: '#111827',
-                              colorTextSecondary: '#6b7280',
-                              colorDanger: '#dc2626',
-                              colorSuccess: '#10b981',
-                              
-                              // Typography
-                              fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                              fontSizeBase: '14px',
-                              fontWeightNormal: '400',
-                              fontWeightMedium: '500',
-                              fontWeightBold: '600',
-                              
-                              // Spacing and layout
-                              spacingUnit: '4px',
-                              borderRadius: '6px',
-                              spacingBorder: '1px',
-                              
-                              // Form elements
-                              colorTextPlaceholder: '#9ca3af',
-                              colorIcon: '#6b7280',
-                              colorIconHover: '#111827',
-                              
-                              // Focus states with brand color
-                              colorFocus: '#d97706', // amber-600
-                              spacingFocus: '2px',
-                            },
-                            rules: {
-                              '.Input': {
-                                border: '1px solid #d1d5db',
-                                borderRadius: '6px',
-                                padding: '10px 12px',
-                                fontSize: '14px',
-                                transition: 'all 0.2s ease',
-                              },
-                              '.Input:focus': {
-                                border: '1px solid #d97706', // amber-600
-                                boxShadow: '0 0 0 2px rgba(217, 119, 6, 0.1)', // amber-600 with opacity
-                              },
-                              '.Input--invalid': {
-                                border: '1px solid #dc2626',
-                                backgroundColor: '#fef2f2',
-                              },
-                              '.Label': {
-                                fontSize: '12px',
-                                fontWeight: '500',
-                                color: '#374151',
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.05em',
-                                marginBottom: '6px',
-                              },
-                              '.Tab': {
-                                borderRadius: '6px',
-                                padding: '10px 16px',
-                                border: '1px solid #e5e7eb',
-                              },
-                              '.Tab--selected': {
-                                border: '1px solid #d97706', // amber-600
-                                backgroundColor: '#d97706', // amber-600
-                                color: '#ffffff',
-                              },
-                              '.Error': {
-                                color: '#dc2626',
-                                fontSize: '13px',
-                                marginTop: '6px',
-                              },
-                            },
-                          },
-                          // Enable customer creation for payment method reuse
-                          // This allows returning customers to see saved payment methods
-                          locale: language === 'fr' ? 'fr' : 'en',
-                        }}
-                      >
-                        <PaymentForm 
-                          clientSecret={clientSecret}
-                          onSuccess={() => {
-                            // Payment successful - handled by useEffect above
-                            console.log('✅ Payment completed')
-                          }}
-                        />
-                      </Elements>
+
+                      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        {/* Order Summary Sidebar */}
+                        <div className="lg:col-span-1 order-2 lg:order-1">
+                          <div className="bg-white rounded-lg border border-[#e5e7eb] p-6 shadow-sm sticky top-6">
+                            <h3 className="text-sm font-semibold text-gray-900 mb-4 pb-3 border-b border-[#e5e7eb]">
+                              {language === 'fr' ? 'Résumé de la commande' : 'Order Summary'}
+                            </h3>
+                            <div className="space-y-3 mb-4">
+                              <div className="flex justify-between text-sm">
+                                <span className="text-[#6b7280]">{language === 'fr' ? 'Sous-total' : 'Subtotal'}</span>
+                                <span className="font-medium text-gray-900">{formatPriceWithCurrency(getCartTotal())}</span>
+                    </div>
+                              {selectedShipping && (
+                                <div className="flex justify-between text-sm">
+                                  <span className="text-[#6b7280]">{language === 'fr' ? 'Expédition' : 'Shipping'}</span>
+                                  <span className="font-medium text-gray-900">{formatPriceWithCurrency(calculateShipping())}</span>
+                </div>
+                              )}
+                              {appliedPromoCode && promoCodeDiscount > 0 && (
+                                <div className="flex justify-between text-sm">
+                                  <span className="text-[#6b7280]">
+                                    {language === 'fr' ? 'Code promo' : 'Promo Code'} ({appliedPromoCode})
+                                  </span>
+                                  <span className="font-medium text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
                   </div>
+                      )}
+                              <div className="pt-3 border-t border-[#e5e7eb] flex justify-between">
+                                <span className="font-semibold text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
+                                <span className="font-bold text-lg text-gray-900">
+                                  {formatPriceWithCurrency(Math.max(0, getCartTotal() + (selectedShipping ? calculateShipping() : 0) - promoCodeDiscount))}
+                                </span>
+                    </div>
+                            </div>
+                            
+                            {/* Security Badge */}
+                            <div className="mt-6 pt-4 border-t border-[#e5e7eb]">
+                              <div className="flex items-center gap-2 text-xs text-[#6b7280] mb-3">
+                                <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                                <span className="font-medium">{language === 'fr' ? 'Paiement sécurisé' : 'Secure Payment'}</span>
+                              </div>
+                              <p className="text-xs text-[#6b7280] leading-relaxed">
+                                {language === 'fr' 
+                                  ? 'Vos informations de paiement sont cryptées et sécurisées.'
+                                  : 'Your payment information is encrypted and secure.'}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Payment Form */}
+                        <div className="lg:col-span-2 order-1 lg:order-2">
+                          <div id="payment-form" className="bg-white rounded-lg border border-[#e5e7eb] p-6 md:p-8 shadow-sm">
+                            {/* Accepted Payment Methods */}
+                            <div className="mb-6 pb-4 border-b border-[#e5e7eb]">
+                              <p className="text-xs text-[#6b7280] mb-3">
+                                {language === 'fr' ? 'Méthodes de paiement acceptées' : 'Accepted Payment Methods'}
+                              </p>
+                              <div className="flex items-center gap-3 flex-wrap">
+                                <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-gray-50 rounded border border-gray-200">
+                                  <svg className="w-6 h-4" viewBox="0 0 40 24" fill="none">
+                                    <rect width="40" height="24" rx="2" fill="#1434CB"/>
+                                    <path d="M16.5 12h7m-7-3h7m-7 6h4" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+                                  </svg>
+                                  <span className="text-xs font-medium text-gray-700">Visa</span>
+                        </div>
+                                <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-gray-50 rounded border border-gray-200">
+                                  <svg className="w-6 h-4" viewBox="0 0 40 24" fill="none">
+                                    <rect width="40" height="24" rx="2" fill="#EB001B"/>
+                                    <rect x="20" width="20" height="24" rx="2" fill="#F79E1B"/>
+                                  </svg>
+                                  <span className="text-xs font-medium text-gray-700">Mastercard</span>
+                      </div>
+                                <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-gray-50 rounded border border-gray-200">
+                                  <svg className="w-6 h-4" viewBox="0 0 40 24" fill="#006FCF">
+                                    <rect width="40" height="24" rx="2" fill="#006FCF"/>
+                                    <path d="M20 8l-2 8h4l-2-8z" fill="white"/>
+                                  </svg>
+                                  <span className="text-xs font-medium text-gray-700">Amex</span>
+                    </div>
+                                <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-gray-50 rounded border border-gray-200">
+                                  <span className="text-xs font-semibold text-gray-700">Link</span>
+                </div>
+                  </div>
+                  </div>
+
+                            <Elements 
+                              stripe={stripePromise} 
+                              options={{
+                                clientSecret,
+                                appearance: {
+                                  theme: 'stripe',
+                                  variables: {
+                                    // Primary colors matching your brand (amber/orange)
+                                    colorPrimary: '#d97706', // amber-600
+                                    colorBackground: '#ffffff',
+                                    colorText: '#111827',
+                                    colorTextSecondary: '#6b7280',
+                                    colorDanger: '#dc2626',
+                                    colorSuccess: '#10b981',
+                                    
+                                    // Typography
+                                    fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                                    fontSizeBase: '14px',
+                                    fontWeightNormal: '400',
+                                    fontWeightMedium: '500',
+                                    fontWeightBold: '600',
+                                    
+                                    // Spacing and layout
+                                    spacingUnit: '4px',
+                                    borderRadius: '8px',
+                                    spacingBorder: '1px',
+                                    
+                                    // Form elements
+                                    colorTextPlaceholder: '#9ca3af',
+                                    colorIcon: '#6b7280',
+                                    colorIconHover: '#111827',
+                                    
+                                    // Focus states with brand color
+                                    colorFocus: '#d97706', // amber-600
+                                    spacingFocus: '2px',
+                                  },
+                                  rules: {
+                                    '.Input': {
+                                      border: '1px solid #d1d5db',
+                                      borderRadius: '8px',
+                                      padding: '12px 14px',
+                                      fontSize: '15px',
+                                      transition: 'all 0.2s ease',
+                                      boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                                    },
+                                    '.Input:focus': {
+                                      border: '1px solid #d97706', // amber-600
+                                      boxShadow: '0 0 0 3px rgba(217, 119, 6, 0.1)', // amber-600 with opacity
+                                    },
+                                    '.Input--invalid': {
+                                      border: '1px solid #dc2626',
+                                      backgroundColor: '#fef2f2',
+                                    },
+                                    '.Label': {
+                                      fontSize: '13px',
+                                      fontWeight: '500',
+                                      color: '#374151',
+                                      textTransform: 'uppercase',
+                                      letterSpacing: '0.05em',
+                                      marginBottom: '8px',
+                                    },
+                                    '.Tab': {
+                                      borderRadius: '8px',
+                                      padding: '12px 18px',
+                                      border: '1px solid #e5e7eb',
+                                      transition: 'all 0.2s ease',
+                                    },
+                                    '.Tab--selected': {
+                                      border: '1px solid #d97706', // amber-600
+                                      backgroundColor: '#d97706', // amber-600
+                                      color: '#ffffff',
+                                      boxShadow: '0 2px 4px rgba(217, 119, 6, 0.2)',
+                                    },
+                                    '.Error': {
+                                      color: '#dc2626',
+                                      fontSize: '13px',
+                                      marginTop: '8px',
+                                      fontWeight: '500',
+                                    },
+                                  },
+                                },
+                                // Enable customer creation for payment method reuse
+                                // This allows returning customers to see saved payment methods
+                                locale: language === 'fr' ? 'fr' : 'en',
+                              }}
+                            >
+                              <PaymentForm 
+                                clientSecret={clientSecret}
+                                onSuccess={() => {
+                                  // Payment successful - handled by useEffect above
+                                  console.log('✅ Payment completed')
+                                }}
+                              />
+                            </Elements>
+
+                            {/* Security Notice */}
+                            <div className="mt-6 pt-4 border-t border-[#e5e7eb]">
+                              <div className="flex items-start gap-3">
+                                <svg className="w-5 h-5 text-green-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                                <div>
+                                  <p className="text-xs font-medium text-gray-900 mb-1">
+                                    {language === 'fr' ? 'Paiement sécurisé par Stripe' : 'Secured by Stripe'}
+                                  </p>
+                                  <p className="text-xs text-[#6b7280] leading-relaxed">
+                                    {language === 'fr' 
+                                      ? 'Vos informations de paiement sont cryptées et traitées de manière sécurisée. Nous ne stockons jamais vos données de carte.'
+                                      : 'Your payment information is encrypted and processed securely. We never store your card details.'}
+                                  </p>
+                    </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+                    </div>
                   )
                 )}
           </div>
