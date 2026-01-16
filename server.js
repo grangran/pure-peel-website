@@ -359,7 +359,35 @@ app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, 
         
         if (!existingOrder && isSucceededOrFree) {
           // Extract order information from Payment Intent
-          const items = JSON.parse(paymentIntent.metadata?.items || '[]')
+          // Parse items - handle both object format and compact array format
+          let items = []
+          try {
+            const itemsData = JSON.parse(paymentIntent.metadata?.items || '[]')
+            // If array of arrays (compact format), convert to objects
+            if (Array.isArray(itemsData) && itemsData.length > 0 && Array.isArray(itemsData[0])) {
+              items = itemsData.map(item => ({
+                id: item[0] || '',
+                name: item[1] || '',
+                variant: item[2] || '',
+                quantity: item[3] || 0,
+                price: parseFloat(item[4] || 0)
+              }))
+            } else if (Array.isArray(itemsData) && itemsData.length > 0 && typeof itemsData[0] === 'object') {
+              // Object format with shortened keys - expand them
+              items = itemsData.map(item => ({
+                id: item.i || item.id || '',
+                name: item.n || item.name || '',
+                variant: item.v || item.variant || '',
+                quantity: item.q || item.quantity || 0,
+                price: parseFloat(item.p || item.price || 0)
+              }))
+            } else {
+              items = itemsData
+            }
+          } catch (error) {
+            console.error('Error parsing items from metadata:', error)
+            items = []
+          }
           const orderData = {
             stripePaymentIntentId: paymentIntent.id,
             language: paymentIntent.metadata?.language || 'en',
