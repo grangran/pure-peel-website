@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import { useScrollReveal } from "../hooks/useScrollReveal"
 import { useLanguage } from "../context/LanguageContext"
 import { useCurrency } from "../context/CurrencyContext"
@@ -6,7 +7,19 @@ import { getTranslation } from "../utils/translations"
 export default function ShippingReturns() {
   const [sectionRef, isSectionVisible] = useScrollReveal({ threshold: 0.1 })
   const { language } = useLanguage()
-  const { formatPrice, currency } = useCurrency()
+  const { formatPrice, currency, setCurrency } = useCurrency()
+
+  // Ensure currency is synced from localStorage when component mounts
+  // This handles cases where currency was changed on another page
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedCurrency = localStorage.getItem('currency')
+      if (storedCurrency && storedCurrency !== currency) {
+        setCurrency(storedCurrency)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Only run on mount - we intentionally check localStorage regardless of currency state
 
   return (
     <section 
