@@ -679,7 +679,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
         price_data: {
           currency: stripeCurrency,
           product_data: {
-            name: `${item.name} - ${item.variant}`,
+            name: `${item.name} - ${item.variant} (${stripeCurrency.toUpperCase()})`, // Add currency code to product name
             description: shortDescription, // Short, concise description for Stripe checkout
             images: item.image ? [new URL(item.image, req.headers.origin || 'http://localhost:5173').href] : [],
           },
@@ -849,7 +849,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
             currency: stripeCurrency,
           },
           display_name: finalShippingCostCents > 0 
-            ? (shippingInfo.selectedShipping?.name || 'Standard Shipping')
+            ? `${shippingInfo.selectedShipping?.name || 'Standard Shipping'} (${stripeCurrency.toUpperCase()})` // Add currency code to shipping name
             : 'Free Shipping',
         },
       }],
