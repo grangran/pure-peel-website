@@ -617,6 +617,7 @@ export default function Checkout() {
     const validCodes = {
       'FREETEST': { discount: 100, type: 'percent' }, // 100% off for testing
       'TEST100': { discount: 100, type: 'percent' }, // Alternative test code
+      'FREESHIP': { discount: 100, type: 'shipping' }, // 100% off shipping only
     }
     
     if (validCodes[codeUpper]) {
@@ -628,9 +629,13 @@ export default function Checkout() {
       const orderTotalCAD = subtotalCAD + shippingCAD + tax
       
       if (promo.type === 'percent') {
-        // Calculate discount in CAD
+        // Calculate discount in CAD (applies to entire order)
         const discountAmountCAD = (orderTotalCAD * promo.discount) / 100
         return { valid: true, discount: discountAmountCAD, code: codeUpper }
+      } else if (promo.type === 'shipping') {
+        // Calculate discount in CAD (applies only to shipping)
+        const discountAmountCAD = (shippingCAD * promo.discount) / 100
+        return { valid: true, discount: discountAmountCAD, code: codeUpper, shippingOnly: true }
       }
     }
     

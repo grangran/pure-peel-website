@@ -755,6 +755,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     // Check if this is a 100% discount code (common test codes)
     const promoCodeUpper = promoCode ? promoCode.toUpperCase().trim() : ''
     const isKnown100PercentCode = promoCodeUpper === 'FREETEST' || promoCodeUpper === 'TEST100'
+    const isFreeShippingCode = promoCodeUpper === 'FREESHIP' // 100% off shipping only
     // Allow small rounding tolerance (within 1 cent) for discount covering total
     const discountCoversTotal = orderTotalCents > 0 && discountAmountCents >= (orderTotalCents - 1)
     const is100PercentDiscount = promoCodeUpper && (isKnown100PercentCode || discountCoversTotal)
@@ -764,19 +765,22 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       discountAmountCents,
       orderTotalCents,
       isKnown100PercentCode,
+      isFreeShippingCode,
       discountCoversTotal,
       is100PercentDiscount
     })
     
     // If discount is 100% or covers the entire order (including shipping), make shipping free
+    // Also handle FREESHIP code which gives 100% off shipping only
     let finalShippingCostCents = shippingCostCents
-    if (is100PercentDiscount) {
+    if (is100PercentDiscount || isFreeShippingCode) {
       finalShippingCostCents = 0
-      console.log('🎁 100% discount detected - shipping set to $0', {
+      console.log('🎁 Free shipping applied - shipping set to $0', {
         promoCode: promoCodeUpper,
         originalShipping: shippingCostCents,
         orderTotal: orderTotalCents,
-        discountAmount: discountAmountCents
+        discountAmount: discountAmountCents,
+        isFreeShippingCode
       })
     } else {
       console.log('💰 Regular discount or no discount - shipping remains:', {
