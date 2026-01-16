@@ -1249,7 +1249,7 @@ export default function Checkout() {
             </div>
 
             {/* Order Summary - Left Side (Stripe-style) */}
-            <div className="order-1 lg:order-2">
+            <div className="order-1 lg:order-2" key={`order-summary-${currency}`}>
               <div className="bg-gray-50 rounded-lg p-6 lg:sticky lg:top-8">
                 <div className="mb-6">
                   <h2 className="text-lg font-semibold text-gray-900 mb-1">Pure Peel Co.</h2>
