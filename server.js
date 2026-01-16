@@ -980,10 +980,11 @@ app.post('/api/create-payment-intent', checkoutLimiter, async (req, res) => {
     const discountAmountCents = Math.max(0, Math.round(discountAmount * 100))
     const promoCodeUpper = promoCode ? promoCode.toUpperCase().trim() : ''
     const isKnown100PercentCode = promoCodeUpper === 'FREETEST' || promoCodeUpper === 'TEST100'
+    const isFreeShippingCode = promoCodeUpper === 'FREESHIP' // 100% off shipping only
     const orderTotalCents = subtotal + shippingCostCents + tax
     const discountCoversTotal = orderTotalCents > 0 && discountAmountCents >= (orderTotalCents - 1)
     const is100PercentDiscount = promoCodeUpper && (isKnown100PercentCode || discountCoversTotal)
-    const finalShippingCostCents = is100PercentDiscount ? 0 : shippingCostCents
+    const finalShippingCostCents = (is100PercentDiscount || isFreeShippingCode) ? 0 : shippingCostCents
     const totalAmount = Math.max(0, subtotal + finalShippingCostCents + tax - discountAmountCents)
 
     // Create Payment Intent following Stripe's best practices
