@@ -668,13 +668,13 @@ export default function Checkout() {
     }
     
     // Track checkout started
-    const subtotal = getCartTotal()
+    const subtotalCAD = getCartTotal() // Already in CAD
     const shippingCAD = calculateShipping() // Shipping is in CAD
     // Zero-rated goods under Schedule VI Part III of the Excise Tax Act
     // Dehydrated citrus products (unsweetened, no preservatives) qualify as zero-rated basic groceries
     const tax = 0 // 0% HST/GST - Products are zero-rated as unsweetened dried fruits
-    const totalCAD = subtotal + shippingCAD + tax
-    const total = currency === 'USD' ? convertPrice(totalCAD) : totalCAD
+    const totalCAD = Math.max(0, subtotalCAD + shippingCAD + tax - promoCodeDiscount)
+    const total = currency === 'USD' ? convertPrice(totalCAD) : totalCAD // For analytics tracking only
     trackCheckoutStarted(cartItems, total)
     
     setIsSubmitting(true)
@@ -825,16 +825,15 @@ export default function Checkout() {
   }
 
   const shippingCostCAD = calculateShipping() // Shipping is always in CAD from backend
-  const subtotal = getCartTotal()
+  const subtotalCAD = getCartTotal() // Already in CAD
   // Zero-rated goods under Schedule VI Part III of the Excise Tax Act
   // Dehydrated citrus products (unsweetened, no preservatives) qualify as zero-rated basic groceries
   // Tax is 0% - Products are zero-rated as unsweetened dried fruits
   const tax = 0
-  // Calculate total - formatPrice will handle currency conversion, so use CAD prices for calculation
+  // Calculate total in CAD - formatPrice will handle currency conversion automatically
   const totalCAD = hasEnteredShippingDetails && selectedShipping 
-    ? Math.max(0, subtotal + shippingCostCAD + tax - promoCodeDiscount)
-    : subtotal
-  const total = currency === 'USD' ? convertPrice(totalCAD) : totalCAD
+    ? Math.max(0, subtotalCAD + shippingCostCAD + tax - promoCodeDiscount)
+    : subtotalCAD
 
   if (cartItems.length === 0 && currentStep !== 2) {
     return (
@@ -1234,7 +1233,7 @@ export default function Checkout() {
                       ) : (
                         <>
                           {hasEnteredShippingDetails && selectedShipping 
-                            ? `Pay ${formatPrice(total)} ${currency}`
+                            ? `Pay ${formatPrice(totalCAD)} ${currency}`
                             : (language === 'fr' ? 'Entrez les détails d\'expédition' : 'Enter shipping details')
                           }
                         </>
@@ -1254,7 +1253,7 @@ export default function Checkout() {
               <div className="bg-gray-50 rounded-lg p-6 lg:sticky lg:top-8">
                 <div className="mb-6">
                   <h2 className="text-lg font-semibold text-gray-900 mb-1">Pure Peel Co.</h2>
-                  <p className="text-2xl font-semibold text-gray-900">Pay {formatPrice(total)} <span className="text-base font-normal text-gray-500">{currency}</span></p>
+                  <p className="text-2xl font-semibold text-gray-900">Pay {formatPrice(totalCAD)} <span className="text-base font-normal text-gray-500">{currency}</span></p>
                 </div>
                 <div className="space-y-4 mb-6">
                   {cartItems.map((item) => (
@@ -1338,7 +1337,7 @@ export default function Checkout() {
                 <div className="space-y-3 pt-5 border-t border-gray-200">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.subtotal')}</span>
-                    <span className="text-gray-900 font-semibold">{formatPrice(subtotal)}</span>
+                    <span className="text-gray-900 font-semibold">{formatPrice(subtotalCAD)}</span>
                   </div>
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-gray-600 font-medium">{getTranslation(language, 'checkout.shipping')}</span>
@@ -1367,7 +1366,7 @@ export default function Checkout() {
                     <span className="text-gray-900">Total due</span>
                     <span className="text-gray-900">
                       {hasEnteredShippingDetails && selectedShipping 
-                        ? formatPrice(total)
+                        ? formatPrice(totalCAD)
                         : (language === 'fr' ? 'À calculer' : 'To be calculated')
                       }
                     </span>
