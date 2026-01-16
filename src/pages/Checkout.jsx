@@ -110,7 +110,7 @@ function PaymentForm({ clientSecret, onSuccess }) {
       <button
         type="submit"
         disabled={!stripe || isProcessing}
-        className="w-full py-3 px-4 text-sm font-medium rounded-md border-0 cursor-pointer transition-all duration-200 bg-[#0a2540] text-white hover:bg-[#0d2f52] active:bg-[#0a2540] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#0a2540] flex items-center justify-center gap-2 min-h-[44px] shadow-sm hover:shadow-md"
+        className="w-full py-3 px-4 text-sm font-medium rounded-md border-0 cursor-pointer transition-all duration-200 bg-amber-600 text-white hover:bg-amber-700 active:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-amber-600 flex items-center justify-center gap-2 min-h-[44px] shadow-sm hover:shadow-md"
       >
         {isProcessing ? (
           <LoadingSpinner size="sm" color="white" text={language === 'fr' ? 'Traitement...' : 'Processing...'} />
@@ -1000,15 +1000,15 @@ export default function Checkout() {
   if (cartItems.length === 0 && currentStep !== 2) {
     return (
       <section className="py-20 px-5 bg-[#f6f9fc] min-h-[calc(100vh-72px)]">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-2xl font-semibold text-[#0a2540] mb-3">{getTranslation(language, 'checkout.emptyCart')}</h1>
+          <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-2xl font-semibold text-gray-900 mb-3">{getTranslation(language, 'checkout.emptyCart')}</h1>
           <p className="text-[#425466] mb-8">{getTranslation(language, 'checkout.emptyCartDescription')}</p>
           <button
               onClick={() => {
                 window.history.pushState({ page: "/" }, "", "/")
                 window.dispatchEvent(new Event("hashchange"))
               }}
-            className="px-6 py-2.5 bg-[#0a2540] text-white font-medium rounded-lg hover:bg-[#0d2f52] transition-colors"
+            className="px-6 py-2.5 bg-amber-600 text-white font-medium rounded-lg hover:bg-amber-700 transition-colors"
           >
             {getTranslation(language, 'checkout.continueShopping')}
           </button>
@@ -1037,8 +1037,8 @@ export default function Checkout() {
                       setClientSecret(null)
                     } else {
                       // Go back to home
-                      window.history.pushState({ page: "/" }, "", "/")
-                      window.dispatchEvent(new Event("hashchange"))
+                    window.history.pushState({ page: "/" }, "", "/")
+                    window.dispatchEvent(new Event("hashchange"))
                     }
                   }}
                   className="flex items-center gap-2 text-sm text-[#425466] hover:text-[#0a2540] mb-6 transition-colors"
@@ -1056,19 +1056,19 @@ export default function Checkout() {
                 {!showPaymentForm ? (
                   <>
                     <div className="mb-8">
-                      <h1 className="text-2xl font-semibold text-[#0a2540] mb-1.5 tracking-tight">
+                      <h1 className="text-2xl font-semibold text-gray-900 mb-1.5 tracking-tight">
                         {getTranslation(language, 'checkout.shippingInformation')}
                       </h1>
                       <p className="text-sm text-[#6b7280] leading-relaxed">
                         {getTranslation(language, 'checkout.completeOrder')}
                       </p>
                     </div>
-                    <form onSubmit={handlePaymentSubmit} className="space-y-6">
+                <form onSubmit={handlePaymentSubmit} className="space-y-6">
                   {/* Contact Information */}
                   <div className="bg-white rounded-md border border-[#e5e7eb] p-6">
-                    <h2 className="text-sm font-semibold text-[#0a2540] mb-5 pb-3 border-b border-[#e5e7eb]">Contact</h2>
+                    <h2 className="text-sm font-semibold text-gray-900 mb-5 pb-3 border-b border-[#e5e7eb]">Contact</h2>
                     <div className="space-y-5">
-                    <div>
+                  <div>
                       <label className="block text-xs font-medium text-[#374151] mb-1.5 uppercase tracking-wide">
                           {getTranslation(language, 'checkout.email')}
                       </label>
@@ -1081,7 +1081,7 @@ export default function Checkout() {
                           onChange={handleInputChange}
                           className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
                             errors.email ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
-                          } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
+                          } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500`}
                           required
                           data-1p-ignore
                         />
@@ -1099,7 +1099,7 @@ export default function Checkout() {
 
                   {/* Name */}
                   <div className="bg-white rounded-md border border-[#e5e7eb] p-6">
-                    <h2 className="text-sm font-semibold text-[#0a2540] mb-5 pb-3 border-b border-[#e5e7eb]">Name</h2>
+                    <h2 className="text-sm font-semibold text-gray-900 mb-5 pb-3 border-b border-[#e5e7eb]">Name</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                       <input
@@ -1109,7 +1109,7 @@ export default function Checkout() {
                         autoComplete="given-name"
                         value={formData.firstName}
                         onChange={handleInputChange}
-                        placeholder={getTranslation(language, 'checkout.firstName')}
+                          placeholder={getTranslation(language, 'checkout.firstName')}
                         className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
                           errors.firstName ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
                         } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
@@ -1133,7 +1133,7 @@ export default function Checkout() {
                         autoComplete="family-name"
                         value={formData.lastName}
                         onChange={handleInputChange}
-                        placeholder={getTranslation(language, 'checkout.lastName')}
+                          placeholder={getTranslation(language, 'checkout.lastName')}
                         className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
                           errors.lastName ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
                         } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
@@ -1154,7 +1154,7 @@ export default function Checkout() {
 
                   {/* Shipping Address */}
                   <div className="bg-white rounded-md border border-[#e5e7eb] p-6">
-                    <h2 className="text-sm font-semibold text-[#0a2540] mb-5 pb-3 border-b border-[#e5e7eb]">Ship to</h2>
+                    <h2 className="text-sm font-semibold text-gray-900 mb-5 pb-3 border-b border-[#e5e7eb]">Ship to</h2>
                     <div className="space-y-5">
                   <div>
                     <input
@@ -1164,7 +1164,7 @@ export default function Checkout() {
                       autoComplete="street-address"
                       value={formData.address}
                       onChange={handleInputChange}
-                      placeholder={getTranslation(language, 'checkout.streetAddress')}
+                          placeholder={getTranslation(language, 'checkout.streetAddress')}
                       className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
                         errors.address ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
                       } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
@@ -1192,7 +1192,7 @@ export default function Checkout() {
                           onChange={handleInputChange}
                           className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all ${
                             errors.country ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
-                          } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
+                          } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500`}
                           required
                           data-1p-ignore
                         >
@@ -1218,7 +1218,7 @@ export default function Checkout() {
                         autoComplete="shipping address-level2"
                         value={formData.city}
                         onChange={handleInputChange}
-                        placeholder={getTranslation(language, 'checkout.city')}
+                            placeholder={getTranslation(language, 'checkout.city')}
                         className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
                           errors.city ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
                         } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
@@ -1274,10 +1274,10 @@ export default function Checkout() {
                         autoComplete={formData.country === "United States" ? "shipping postal-code" : "shipping postal-code"}
                         value={formData.postalCode}
                         onChange={handleInputChange}
-                        placeholder={formData.country === "United States" 
-                          ? getTranslation(language, 'checkout.zipCode')
-                          : getTranslation(language, 'checkout.postalCode')
-                        }
+                            placeholder={formData.country === "United States" 
+                              ? getTranslation(language, 'checkout.zipCode')
+                              : getTranslation(language, 'checkout.postalCode')
+                            }
                         className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
                           errors.postalCode ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
                         } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
@@ -1310,7 +1310,7 @@ export default function Checkout() {
                           }
                           className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
                             errors.phone ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
-                          } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
+                          } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500`}
                           required
                           data-1p-ignore
                         />
@@ -1344,7 +1344,7 @@ export default function Checkout() {
                   {/* Shipping Options - Only show after user enters shipping details */}
                   {hasEnteredShippingDetails && formData.postalCode && formData.province && formData.city && formData.country && (
                     <div className="bg-white rounded-md border border-[#e5e7eb] p-6">
-                      <h2 className="text-sm font-semibold text-[#0a2540] mb-5 pb-3 border-b border-[#e5e7eb]">
+                      <h2 className="text-sm font-semibold text-gray-900 mb-5 pb-3 border-b border-[#e5e7eb]">
                         {getTranslation(language, 'checkout.shippingMethod')}
                       </h2>
                       
@@ -1374,8 +1374,8 @@ export default function Checkout() {
                               key={option.id}
                               className={`flex items-center gap-3 p-3.5 border rounded-md cursor-pointer transition-all ${
                                 selectedShipping?.id === option.id
-                                  ? 'border-[#0a2540] bg-[#0a2540]/5'
-                                  : 'border-[#e5e7eb] bg-white hover:border-[#d1d5db] hover:bg-[#f9fafb]'
+                                  ? 'border-amber-500 bg-amber-50'
+                                  : 'border-[#e5e7eb] bg-white hover:border-amber-200 hover:bg-amber-50/30'
                               }`}
                             >
                               <input
@@ -1384,7 +1384,7 @@ export default function Checkout() {
                                 value={option.id}
                                 checked={selectedShipping?.id === option.id}
                                 onChange={() => setSelectedShipping(option)}
-                                className="w-4 h-4 text-[#0a2540] focus:ring-[#0a2540]"
+                                className="w-4 h-4 text-amber-600 focus:ring-amber-500"
                               />
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between">
@@ -1416,8 +1416,8 @@ export default function Checkout() {
                       )}
 
                       {!loadingShipping && shippingOptions.length === 0 && !shippingError && (
-                        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
-                          <p className="text-sm text-yellow-800 mb-2">
+                        <div className="bg-amber-50 border border-amber-200 rounded-md p-3">
+                          <p className="text-sm text-amber-800 mb-2">
                             {language === 'fr' 
                               ? 'Aucune option d\'expédition disponible. Cliquez pour calculer les tarifs.'
                               : 'No shipping options available. Click to calculate rates.'}
@@ -1434,7 +1434,7 @@ export default function Checkout() {
                               })
                               fetchShippingRates()
                             }}
-                            className="text-sm text-yellow-600 hover:text-yellow-800 underline font-medium"
+                            className="text-sm text-amber-700 hover:text-amber-800 underline font-medium"
                           >
                             {language === 'fr' ? 'Calculer les tarifs d\'expédition' : 'Calculate shipping rates'}
                           </button>
@@ -1459,7 +1459,7 @@ export default function Checkout() {
                     <button
                       type="submit"
                       disabled={isSubmitting || !hasEnteredShippingDetails || !selectedShipping}
-                      className="w-full py-3 px-4 text-sm font-medium rounded-md border-0 cursor-pointer transition-all duration-200 bg-[#0a2540] text-white hover:bg-[#0d2f52] active:bg-[#0a2540] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#0a2540] flex items-center justify-center gap-2 min-h-[44px] shadow-sm hover:shadow-md"
+                      className="w-full py-3 px-4 text-sm font-medium rounded-md border-0 cursor-pointer transition-all duration-200 bg-amber-600 text-white hover:bg-amber-700 active:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-amber-600 flex items-center justify-center gap-2 min-h-[44px] shadow-sm hover:shadow-md"
                     >
                       {isSubmitting ? (
                         <LoadingSpinner size="sm" color="white" text={getTranslation(language, 'checkout.processing')} />
@@ -1477,14 +1477,14 @@ export default function Checkout() {
                       {getTranslation(language, 'checkout.termsAgreement')}
                     </p>
                   </div>
-                    </form>
+                </form>
                   </>
                 ) : (
                   /* Stripe Payment Element - Single column, no left panel */
                   clientSecret && (
                     <div id="payment-form" className="bg-white rounded-md border border-[#e5e7eb] p-6">
                       <div className="mb-6">
-                        <h1 className="text-2xl font-semibold text-[#0a2540] mb-1.5 tracking-tight">
+                        <h1 className="text-2xl font-semibold text-gray-900 mb-1.5 tracking-tight">
                           {getTranslation(language, 'checkout.paymentDetails') || 'Payment Details'}
                         </h1>
                         <p className="text-sm text-[#6b7280] leading-relaxed">
@@ -1500,8 +1500,8 @@ export default function Checkout() {
                           appearance: {
                             theme: 'stripe',
                             variables: {
-                              // Primary colors matching your brand
-                              colorPrimary: '#0a2540',
+                              // Primary colors matching your brand (amber/orange)
+                              colorPrimary: '#d97706', // amber-600
                               colorBackground: '#ffffff',
                               colorText: '#111827',
                               colorTextSecondary: '#6b7280',
@@ -1525,8 +1525,8 @@ export default function Checkout() {
                               colorIcon: '#6b7280',
                               colorIconHover: '#111827',
                               
-                              // Focus states
-                              colorFocus: '#0a2540',
+                              // Focus states with brand color
+                              colorFocus: '#d97706', // amber-600
                               spacingFocus: '2px',
                             },
                             rules: {
@@ -1538,8 +1538,8 @@ export default function Checkout() {
                                 transition: 'all 0.2s ease',
                               },
                               '.Input:focus': {
-                                border: '1px solid #0a2540',
-                                boxShadow: '0 0 0 2px rgba(10, 37, 64, 0.1)',
+                                border: '1px solid #d97706', // amber-600
+                                boxShadow: '0 0 0 2px rgba(217, 119, 6, 0.1)', // amber-600 with opacity
                               },
                               '.Input--invalid': {
                                 border: '1px solid #dc2626',
@@ -1559,8 +1559,8 @@ export default function Checkout() {
                                 border: '1px solid #e5e7eb',
                               },
                               '.Tab--selected': {
-                                border: '1px solid #0a2540',
-                                backgroundColor: '#0a2540',
+                                border: '1px solid #d97706', // amber-600
+                                backgroundColor: '#d97706', // amber-600
                                 color: '#ffffff',
                               },
                               '.Error': {
@@ -1583,7 +1583,7 @@ export default function Checkout() {
                           }}
                         />
                       </Elements>
-                    </div>
+                  </div>
                   )
                 )}
           </div>
@@ -1618,7 +1618,7 @@ export default function Checkout() {
                 window.history.pushState({ page: "/" }, "", "/")
                 window.dispatchEvent(new Event("hashchange"))
               }}
-                className="px-6 py-2.5 bg-[#0a2540] text-white font-medium rounded-lg hover:bg-[#0d2f52] transition-colors"
+                className="px-6 py-2.5 bg-amber-600 text-white font-medium rounded-lg hover:bg-amber-700 transition-colors"
               >
                 {getTranslation(language, 'checkout.continueShopping')}
               </button>

@@ -62,70 +62,70 @@ export default function ShippingReturns() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-semibold text-[#0a2540] mb-2">{getTranslation(language, 'shipping.title')}</h1>
+          <h1 className="text-2xl font-semibold text-gray-900 mb-2">{getTranslation(language, 'shipping.title')}</h1>
           <p className="text-sm text-[#425466] max-w-2xl mx-auto">{getTranslation(language, 'shipping.subtitle')}</p>
         </div>
 
             {/* Shipping Information */}
             <div className="bg-white rounded-lg shadow-sm border border-[#e3e8ef] p-6 mb-6">
           <div className="mb-6 pb-4 border-b border-[#e3e8ef]">
-            <h2 className="text-lg font-semibold text-[#0a2540]">{getTranslation(language, 'shipping.shippingInfo.title')}</h2>
+            <h2 className="text-lg font-semibold text-gray-900">{getTranslation(language, 'shipping.shippingInfo.title')}</h2>
           </div>
           
           {/* Shipping to Canada */}
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-2xl">🇨🇦</span>
-              <h3 className="text-base font-semibold text-[#0a2540]">Canada-Wide Shipping</h3>
+              <h3 className="text-base font-semibold text-gray-900">Canada-Wide Shipping</h3>
             </div>
             <p className="text-sm text-[#425466] mb-4">
               We ship from Canada to all provinces and territories across the country.
             </p>
             <div className="space-y-2">
-              <div className="group border border-[#e3e8ef] rounded-lg p-4 hover:border-[#cbd5e0] hover:bg-[#f6f9fc] transition-all duration-200">
+              <div className="group border border-[#e3e8ef] rounded-lg p-4 hover:border-amber-200 hover:bg-amber-50/30 transition-all duration-200">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-amber-100 transition-colors">
-                        <svg className="w-4 h-4 text-[#425466] group-hover:text-[#0a2540]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-[#425466] group-hover:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                         </svg>
                       </div>
-                      <h4 className="font-semibold text-base md:text-lg text-[#0a2540]">{getTranslation(language, 'shipping.shippingInfo.methods.regular.name')}</h4>
+                      <h4 className="font-semibold text-base md:text-lg text-gray-900">{getTranslation(language, 'shipping.shippingInfo.methods.regular.name')}</h4>
                     </div>
                     <p className="text-xs md:text-sm text-[#425466] mb-2 ml-10">{getTranslation(language, 'shipping.shippingInfo.methods.regular.description')}</p>
                   </div>
                   <div className="text-right sm:text-left sm:ml-4 ml-10 sm:ml-0">
                     <div className="flex items-center gap-1.5 justify-end sm:justify-start mb-1">
-                      <svg className="w-4 h-4 text-[#0a2540]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="text-sm md:text-base font-semibold text-[#0a2540]">{getTranslation(language, 'shipping.shippingInfo.methods.regular.time')}</span>
+                      <span className="text-sm md:text-base font-semibold text-gray-900">{getTranslation(language, 'shipping.shippingInfo.methods.regular.time')}</span>
                     </div>
                     <span className="text-xs text-[#425466]">{getTranslation(language, 'shipping.shippingInfo.methods.priceNote')}</span>
                   </div>
                 </div>
               </div>
               
-              <div className="group border border-[#e3e8ef] rounded-lg p-4 hover:border-[#cbd5e0] hover:bg-[#f6f9fc] transition-all duration-200">
+              <div className="group border border-[#e3e8ef] rounded-lg p-4 hover:border-amber-200 hover:bg-amber-50/30 transition-all duration-200">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center group-hover:bg-amber-200 transition-colors">
-                        <svg className="w-4 h-4 text-[#0a2540]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
                       </div>
-                      <h4 className="font-semibold text-base md:text-lg text-[#0a2540]">{getTranslation(language, 'shipping.shippingInfo.methods.expedited.name')}</h4>
+                      <h4 className="font-semibold text-base md:text-lg text-gray-900">{getTranslation(language, 'shipping.shippingInfo.methods.expedited.name')}</h4>
                     </div>
                     <p className="text-xs md:text-sm text-[#425466] mb-2 ml-10">{getTranslation(language, 'shipping.shippingInfo.methods.expedited.description')}</p>
                   </div>
                   <div className="text-right sm:text-left sm:ml-4 ml-10 sm:ml-0">
                     <div className="flex items-center gap-1.5 justify-end sm:justify-start mb-1">
-                      <svg className="w-4 h-4 text-[#0a2540]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="text-sm md:text-base font-semibold text-[#0a2540]">{getTranslation(language, 'shipping.shippingInfo.methods.expedited.time')}</span>
+                      <span className="text-sm md:text-base font-semibold text-gray-900">{getTranslation(language, 'shipping.shippingInfo.methods.expedited.time')}</span>
                     </div>
                     <span className="text-xs text-[#425466]">{getTranslation(language, 'shipping.shippingInfo.methods.priceNote')}</span>
                   </div>
@@ -134,7 +134,7 @@ export default function ShippingReturns() {
               
               <div className="group border border-[#0a2540] bg-[#0a2540]/5 rounded-lg p-4 hover:border-[#0a2540] hover:bg-[#0a2540]/10 transition-all duration-200 relative">
                 <div className="absolute top-2 right-2">
-                  <span className="px-2 py-1 text-[10px] font-semibold text-[#0a2540] bg-white rounded uppercase tracking-wide">Fastest</span>
+                  <span className="px-2 py-1 text-[10px] font-semibold text-gray-900 bg-white rounded uppercase tracking-wide">Fastest</span>
                 </div>
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                   <div className="flex-1">
@@ -144,16 +144,16 @@ export default function ShippingReturns() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
                       </div>
-                      <h4 className="font-semibold text-base md:text-lg text-[#0a2540]">{getTranslation(language, 'shipping.shippingInfo.methods.xpresspost.name')}</h4>
+                      <h4 className="font-semibold text-base md:text-lg text-gray-900">{getTranslation(language, 'shipping.shippingInfo.methods.xpresspost.name')}</h4>
                     </div>
                     <p className="text-xs md:text-sm text-[#425466] mb-2 ml-10">{getTranslation(language, 'shipping.shippingInfo.methods.xpresspost.description')}</p>
                   </div>
                   <div className="text-right sm:text-left sm:ml-4 ml-10 sm:ml-0">
                     <div className="flex items-center gap-1.5 justify-end sm:justify-start mb-1">
-                      <svg className="w-4 h-4 text-[#0a2540]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="text-sm md:text-base font-semibold text-[#0a2540]">{getTranslation(language, 'shipping.shippingInfo.methods.xpresspost.time')}</span>
+                      <span className="text-sm md:text-base font-semibold text-gray-900">{getTranslation(language, 'shipping.shippingInfo.methods.xpresspost.time')}</span>
                     </div>
                     <span className="text-xs text-[#425466]">{getTranslation(language, 'shipping.shippingInfo.methods.priceNote')}</span>
                   </div>
@@ -166,56 +166,56 @@ export default function ShippingReturns() {
           <div className="mb-5 md:mb-6 pt-8 border-t-2 border-gray-200">
             <div className="flex items-center gap-3 mb-4">
               <span className="text-3xl">🇺🇸</span>
-              <h3 className="text-lg md:text-xl font-semibold text-[#0a2540]">United States-Wide Shipping</h3>
+              <h3 className="text-lg md:text-xl font-semibold text-gray-900">United States-Wide Shipping</h3>
             </div>
             <p className="text-sm md:text-base text-[#425466] mb-6">
               We ship from Canada to all 50 states across America. Select 'United States' as your country during checkout to see available shipping options.
             </p>
             <div className="space-y-3 md:space-y-4">
-              <div className="group border border-[#e3e8ef] rounded-lg p-4 hover:border-[#cbd5e0] hover:bg-[#f6f9fc] transition-all duration-200">
+              <div className="group border border-[#e3e8ef] rounded-lg p-4 hover:border-amber-200 hover:bg-amber-50/30 transition-all duration-200">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-amber-100 transition-colors">
-                        <svg className="w-4 h-4 text-[#425466] group-hover:text-[#0a2540]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-[#425466] group-hover:text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                         </svg>
                       </div>
-                      <h4 className="font-semibold text-base md:text-lg text-[#0a2540]">Tracked Packet - USA</h4>
+                      <h4 className="font-semibold text-base md:text-lg text-gray-900">Tracked Packet - USA</h4>
                     </div>
                     <p className="text-xs md:text-sm text-[#425466] mb-2 ml-10">Standard delivery to US with tracking (4-7 business days)</p>
                   </div>
                   <div className="text-right sm:text-left sm:ml-4 ml-10 sm:ml-0">
                     <div className="flex items-center gap-1.5 justify-end sm:justify-start mb-1">
-                      <svg className="w-4 h-4 text-[#0a2540]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="text-sm md:text-base font-semibold text-[#0a2540]">4-7 business days</span>
+                      <span className="text-sm md:text-base font-semibold text-gray-900">4-7 business days</span>
                     </div>
                     <span className="text-xs text-[#425466]">{getTranslation(language, 'shipping.shippingInfo.methods.priceNote')}</span>
                   </div>
                 </div>
               </div>
               
-              <div className="group border border-[#e3e8ef] rounded-lg p-4 hover:border-[#cbd5e0] hover:bg-[#f6f9fc] transition-all duration-200">
+              <div className="group border border-[#e3e8ef] rounded-lg p-4 hover:border-amber-200 hover:bg-amber-50/30 transition-all duration-200">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center group-hover:bg-amber-200 transition-colors">
-                        <svg className="w-4 h-4 text-[#0a2540]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
                       </div>
-                      <h4 className="font-semibold text-base md:text-lg text-[#0a2540]">Xpresspost - USA</h4>
+                      <h4 className="font-semibold text-base md:text-lg text-gray-900">Xpresspost - USA</h4>
                     </div>
                     <p className="text-xs md:text-sm text-[#425466] mb-2 ml-10">Faster delivery to US with tracking and insurance (2-3 business days)</p>
                   </div>
                   <div className="text-right sm:text-left sm:ml-4 ml-10 sm:ml-0">
                     <div className="flex items-center gap-1.5 justify-end sm:justify-start mb-1">
-                      <svg className="w-4 h-4 text-[#0a2540]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="text-sm md:text-base font-semibold text-[#0a2540]">2-3 business days</span>
+                      <span className="text-sm md:text-base font-semibold text-gray-900">2-3 business days</span>
                     </div>
                     <span className="text-xs text-[#425466]">{getTranslation(language, 'shipping.shippingInfo.methods.priceNote')}</span>
                   </div>
@@ -224,7 +224,7 @@ export default function ShippingReturns() {
               
               <div className="group border border-[#0a2540] bg-[#0a2540]/5 rounded-lg p-4 hover:border-[#0a2540] hover:bg-[#0a2540]/10 transition-all duration-200 relative">
                 <div className="absolute top-2 right-2">
-                  <span className="px-2 py-1 text-[10px] font-semibold text-[#0a2540] bg-white rounded uppercase tracking-wide">Fastest</span>
+                  <span className="px-2 py-1 text-[10px] font-semibold text-gray-900 bg-white rounded uppercase tracking-wide">Fastest</span>
                 </div>
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                   <div className="flex-1">
@@ -234,16 +234,16 @@ export default function ShippingReturns() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
                       </div>
-                      <h4 className="font-semibold text-base md:text-lg text-[#0a2540]">Priority Worldwide - USA</h4>
+                      <h4 className="font-semibold text-base md:text-lg text-gray-900">Priority Worldwide - USA</h4>
                     </div>
                     <p className="text-xs md:text-sm text-[#425466] mb-2 ml-10">Express delivery to US with signature (1-2 business days)</p>
                   </div>
                   <div className="text-right sm:text-left sm:ml-4 ml-10 sm:ml-0">
                     <div className="flex items-center gap-1.5 justify-end sm:justify-start mb-1">
-                      <svg className="w-4 h-4 text-[#0a2540]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="text-sm md:text-base font-semibold text-[#0a2540]">1-2 business days</span>
+                      <span className="text-sm md:text-base font-semibold text-gray-900">1-2 business days</span>
                     </div>
                     <span className="text-xs text-[#425466]">{getTranslation(language, 'shipping.shippingInfo.methods.priceNote')}</span>
                   </div>
@@ -251,7 +251,7 @@ export default function ShippingReturns() {
               </div>
             </div>
             <p className="text-xs md:text-sm text-[#425466] italic mt-4">
-              Prices shown are in <strong className="font-semibold text-[#0a2540]">{currency}</strong>. Delivery times are estimates and may vary based on destination and customs processing. Packages are shipped via Canada Post and delivered by USPS within the United States.
+              Prices shown are in <strong className="font-semibold text-gray-900">{currency}</strong>. Delivery times are estimates and may vary based on destination and customs processing. Packages are shipped via Canada Post and delivered by USPS within the United States.
             </p>
           </div>
 
@@ -263,7 +263,7 @@ export default function ShippingReturns() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-lg md:text-xl font-semibold text-[#0a2540]">{getTranslation(language, 'shipping.shippingTimes.title')}</h3>
+              <h3 className="text-lg md:text-xl font-semibold text-gray-900">{getTranslation(language, 'shipping.shippingTimes.title')}</h3>
             </div>
             <p className="text-sm md:text-base text-[#425466] mb-4">
               {getTranslation(language, 'shipping.shippingTimes.text1')}
@@ -273,7 +273,7 @@ export default function ShippingReturns() {
                 <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <p className="text-sm md:text-base text-[#0a2540] font-semibold">{getTranslation(language, 'shipping.shippingTimes.processingSchedule')}</p>
+                <p className="text-sm md:text-base text-gray-900 font-semibold">{getTranslation(language, 'shipping.shippingTimes.processingSchedule')}</p>
               </div>
               <ul className="space-y-2 text-xs md:text-sm text-[#425466] ml-7">
                 <li className="flex items-start gap-2">
@@ -306,14 +306,14 @@ export default function ShippingReturns() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-lg md:text-xl font-semibold text-[#0a2540]">{getTranslation(language, 'shipping.shippingCosts.title')}</h3>
+              <h3 className="text-lg md:text-xl font-semibold text-gray-900">{getTranslation(language, 'shipping.shippingCosts.title')}</h3>
             </div>
             <div className="bg-gradient-to-br from-green-50 to-green-100/50 border border-green-200 rounded-lg p-4 md:p-5 mb-4 shadow-sm">
               <div className="flex items-center gap-2 mb-3">
                 <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <p className="text-sm md:text-base text-[#0a2540] font-semibold">How Shipping Costs Work:</p>
+                <p className="text-sm md:text-base text-gray-900 font-semibold">How Shipping Costs Work:</p>
               </div>
               <ul className="space-y-2 text-xs md:text-sm text-[#425466] ml-7">
                 <li className="flex items-start gap-2">
@@ -334,7 +334,7 @@ export default function ShippingReturns() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-green-600 mt-1">•</span>
-                  <span>All prices shown are in <strong className="font-semibold text-[#0a2540]">{currency}</strong> - use the currency selector in the navigation to switch between CAD and USD</span>
+                  <span>All prices shown are in <strong className="font-semibold text-gray-900">{currency}</strong> - use the currency selector in the navigation to switch between CAD and USD</span>
                 </li>
               </ul>
             </div>
@@ -351,7 +351,7 @@ export default function ShippingReturns() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-lg md:text-xl font-semibold text-[#0a2540]">{getTranslation(language, 'shipping.orderTracking.title')}</h3>
+              <h3 className="text-lg md:text-xl font-semibold text-gray-900">{getTranslation(language, 'shipping.orderTracking.title')}</h3>
             </div>
             <p className="text-sm md:text-base text-[#425466] mb-4">
               {getTranslation(language, 'shipping.orderTracking.text1')}
@@ -368,13 +368,13 @@ export default function ShippingReturns() {
                   <svg className="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span>{getTranslation(language, 'shipping.orderTracking.item2')} <a href="https://www.canadapost.ca/trackweb" target="_blank" rel="noopener noreferrer" className="text-[#0a2540] hover:text-[#0a2540] font-medium">canadapost.ca/trackweb</a></span>
+                  <span>{getTranslation(language, 'shipping.orderTracking.item2')} <a href="https://www.canadapost.ca/trackweb" target="_blank" rel="noopener noreferrer" className="text-gray-900 hover:text-gray-900 font-medium">canadapost.ca/trackweb</a></span>
                 </li>
                 <li className="flex items-start gap-3">
                   <svg className="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span>{getTranslation(language, 'shipping.orderTracking.item3')} <a href="/order-tracking" className="text-[#0a2540] hover:text-[#0a2540] font-medium">{getTranslation(language, 'shipping.orderTracking.trackYourOrder')}</a></span>
+                  <span>{getTranslation(language, 'shipping.orderTracking.item3')} <a href="/order-tracking" className="text-gray-900 hover:text-gray-900 font-medium">{getTranslation(language, 'shipping.orderTracking.trackYourOrder')}</a></span>
                 </li>
               </ul>
             </div>
@@ -391,7 +391,7 @@ export default function ShippingReturns() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
               </div>
-              <h3 className="text-lg md:text-xl font-semibold text-[#0a2540]">{getTranslation(language, 'shipping.damagedOrLost.title')}</h3>
+              <h3 className="text-lg md:text-xl font-semibold text-gray-900">{getTranslation(language, 'shipping.damagedOrLost.title')}</h3>
             </div>
             <p className="text-sm md:text-base text-[#425466] mb-4">
               {getTranslation(language, 'shipping.damagedOrLost.text1')}
@@ -432,10 +432,10 @@ export default function ShippingReturns() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 002 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-lg md:text-xl font-semibold text-[#0a2540]">{getTranslation(language, 'shipping.internationalShipping.title')}</h3>
+              <h3 className="text-lg md:text-xl font-semibold text-gray-900">{getTranslation(language, 'shipping.internationalShipping.title')}</h3>
             </div>
             <p className="text-sm md:text-base text-[#425466] mb-3">
-              {getTranslation(language, 'shipping.internationalShipping.text1')} <a href="/contact?inquiryType=shipping" className="text-[#0a2540] hover:text-[#0a2540] font-medium">shipping@purepeelco.com</a>.
+              {getTranslation(language, 'shipping.internationalShipping.text1')} <a href="/contact?inquiryType=shipping" className="text-gray-900 hover:text-gray-900 font-medium">shipping@purepeelco.com</a>.
             </p>
             <p className="text-sm md:text-base text-[#425466]">
               {getTranslation(language, 'shipping.internationalShipping.text2')}
@@ -451,24 +451,24 @@ export default function ShippingReturns() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h2 className="text-xl md:text-2xl font-bold text-[#0a2540]">{getTranslation(language, 'shipping.returns.title')}</h2>
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900">{getTranslation(language, 'shipping.returns.title')}</h2>
           </div>
           
           {/* No Returns Policy */}
           <div className="mb-5 md:mb-6">
             <div className="flex items-center gap-3 mb-4">
-              <svg className="w-6 h-6 text-[#0a2540]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
-              <h3 className="text-lg md:text-xl font-semibold text-[#0a2540]">{getTranslation(language, 'shipping.returns.policy.title')}</h3>
+              <h3 className="text-lg md:text-xl font-semibold text-gray-900">{getTranslation(language, 'shipping.returns.policy.title')}</h3>
             </div>
             <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 border border-amber-200 rounded-lg p-4 md:p-5 mb-4 shadow-sm">
               <div className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-[#0a2540] mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-gray-900 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <div>
-                  <p className="text-sm md:text-base text-[#0a2540] font-semibold mb-2">{getTranslation(language, 'shipping.returns.policy.noReturns')}</p>
+                  <p className="text-sm md:text-base text-gray-900 font-semibold mb-2">{getTranslation(language, 'shipping.returns.policy.noReturns')}</p>
                   <p className="text-xs md:text-sm text-[#425466]">
                     {getTranslation(language, 'shipping.returns.policy.noReturnsText')}
                   </p>
@@ -486,7 +486,7 @@ export default function ShippingReturns() {
               <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
               </svg>
-              <h3 className="text-lg md:text-xl font-semibold text-[#0a2540]">{getTranslation(language, 'shipping.returns.howWeResolve.title')}</h3>
+              <h3 className="text-lg md:text-xl font-semibold text-gray-900">{getTranslation(language, 'shipping.returns.howWeResolve.title')}</h3>
             </div>
             <p className="text-sm md:text-base text-[#425466] mb-4">
               {getTranslation(language, 'shipping.returns.howWeResolve.text1')}
@@ -495,7 +495,7 @@ export default function ShippingReturns() {
               <ol className="space-y-3 text-xs md:text-sm text-[#425466]">
                 <li className="flex items-start gap-3">
                   <span className="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-500 text-white text-xs font-bold flex items-center justify-center mt-0.5">1</span>
-                  <span><strong>{getTranslation(language, 'shipping.returns.howWeResolve.step1')}</strong> <a href="/contact?inquiryType=support" className="text-[#0a2540] hover:text-[#0a2540] font-medium">support@purepeelco.com</a> {getTranslation(language, 'shipping.returns.howWeResolve.step1Text')}</span>
+                  <span><strong>{getTranslation(language, 'shipping.returns.howWeResolve.step1')}</strong> <a href="/contact?inquiryType=support" className="text-gray-900 hover:text-gray-900 font-medium">support@purepeelco.com</a> {getTranslation(language, 'shipping.returns.howWeResolve.step1Text')}</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-500 text-white text-xs font-bold flex items-center justify-center mt-0.5">2</span>
@@ -519,7 +519,7 @@ export default function ShippingReturns() {
               <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <h3 className="text-lg md:text-xl font-semibold text-[#0a2540]">{getTranslation(language, 'shipping.returns.issuesWeResolve.title')}</h3>
+              <h3 className="text-lg md:text-xl font-semibold text-gray-900">{getTranslation(language, 'shipping.returns.issuesWeResolve.title')}</h3>
             </div>
             <p className="text-sm md:text-base text-[#425466] mb-4">{getTranslation(language, 'shipping.returns.issuesWeResolve.text1')}</p>
             <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-200 rounded-lg p-4 md:p-5 shadow-sm">
@@ -560,7 +560,7 @@ export default function ShippingReturns() {
 
           {/* Replacement Process */}
           <div className="mb-5 md:mb-6">
-            <h3 className="text-lg md:text-xl font-semibold text-[#0a2540] mb-3 md:mb-4">{getTranslation(language, 'shipping.returns.replacementProcess.title')}</h3>
+            <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'shipping.returns.replacementProcess.title')}</h3>
             <p className="text-sm md:text-base text-[#425466] mb-3">
               {getTranslation(language, 'shipping.returns.replacementProcess.text1')}
             </p>
@@ -577,9 +577,9 @@ export default function ShippingReturns() {
 
           {/* Satisfaction Guarantee */}
           <div className="mb-5 md:mb-6">
-            <h3 className="text-lg md:text-xl font-semibold text-[#0a2540] mb-3 md:mb-4">{getTranslation(language, 'shipping.returns.commitment.title')}</h3>
+            <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'shipping.returns.commitment.title')}</h3>
             <div className="bg-green-50 border border-green-200 rounded-lg p-3 md:p-4">
-              <p className="text-sm md:text-base text-[#0a2540] font-semibold mb-2">{getTranslation(language, 'shipping.returns.commitment.guarantee')}</p>
+              <p className="text-sm md:text-base text-gray-900 font-semibold mb-2">{getTranslation(language, 'shipping.returns.commitment.guarantee')}</p>
               <p className="text-xs md:text-sm text-[#425466]">
                 {getTranslation(language, 'shipping.returns.commitment.text')}
               </p>
@@ -588,13 +588,13 @@ export default function ShippingReturns() {
 
           {/* Contact for Issues */}
           <div>
-            <h3 className="text-lg md:text-xl font-semibold text-[#0a2540] mb-3 md:mb-4">{getTranslation(language, 'shipping.returns.needHelp.title')}</h3>
+            <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'shipping.returns.needHelp.title')}</h3>
             <p className="text-sm md:text-base text-[#425466] mb-3">
               {getTranslation(language, 'shipping.returns.needHelp.text1')}
             </p>
             <div className="bg-gray-50 rounded-lg p-3 md:p-4">
               <p className="text-sm md:text-base text-[#425466] mb-2">
-                <strong>{getTranslation(language, 'shipping.returns.needHelp.email')}</strong> <a href="/contact?inquiryType=support" className="text-[#0a2540] hover:text-[#0a2540]">support@purepeelco.com</a>
+                <strong>{getTranslation(language, 'shipping.returns.needHelp.email')}</strong> <a href="/contact?inquiryType=support" className="text-gray-900 hover:text-gray-900">support@purepeelco.com</a>
               </p>
               <p className="text-xs md:text-sm text-[#425466]">
                 {getTranslation(language, 'shipping.returns.needHelp.text2')}
@@ -605,11 +605,11 @@ export default function ShippingReturns() {
 
         {/* Additional Information */}
         <div className="bg-white rounded-lg shadow-sm border border-[#e3e8ef] p-6 mt-6 md:mt-8">
-          <h2 className="text-xl md:text-2xl font-bold text-[#0a2540] mb-4 md:mb-6">{getTranslation(language, 'shipping.additionalInfo.title')}</h2>
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">{getTranslation(language, 'shipping.additionalInfo.title')}</h2>
           
           {/* Business Hours */}
           <div className="mb-5 md:mb-6">
-            <h3 className="text-lg md:text-xl font-semibold text-[#0a2540] mb-3 md:mb-4">{getTranslation(language, 'shipping.additionalInfo.businessHours.title')}</h3>
+            <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'shipping.additionalInfo.businessHours.title')}</h3>
             <p className="text-sm md:text-base text-[#425466] mb-3">
               {getTranslation(language, 'shipping.additionalInfo.businessHours.text1')}
             </p>
@@ -621,7 +621,7 @@ export default function ShippingReturns() {
 
           {/* Packaging */}
           <div className="mb-5 md:mb-6">
-            <h3 className="text-lg md:text-xl font-semibold text-[#0a2540] mb-3 md:mb-4">{getTranslation(language, 'shipping.additionalInfo.packaging.title')}</h3>
+            <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'shipping.additionalInfo.packaging.title')}</h3>
             <p className="text-sm md:text-base text-[#425466] mb-3">
               {getTranslation(language, 'shipping.additionalInfo.packaging.text1')}
             </p>
@@ -634,7 +634,7 @@ export default function ShippingReturns() {
 
           {/* Special Orders */}
           <div>
-            <h3 className="text-lg md:text-xl font-semibold text-[#0a2540] mb-3 md:mb-4">{getTranslation(language, 'shipping.additionalInfo.specialOrders.title')}</h3>
+            <h3 className="text-lg md:text-xl font-semibold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'shipping.additionalInfo.specialOrders.title')}</h3>
             <p className="text-sm md:text-base text-[#425466] mb-3">
               {getTranslation(language, 'shipping.additionalInfo.specialOrders.text1')}
             </p>
@@ -644,29 +644,29 @@ export default function ShippingReturns() {
               <li>{getTranslation(language, 'shipping.additionalInfo.specialOrders.item3')}</li>
             </ul>
             <p className="text-sm md:text-base text-[#425466] mt-4">
-              {getTranslation(language, 'shipping.additionalInfo.specialOrders.text2')} <a href="/contact?inquiryType=bulk" className="text-[#0a2540] hover:text-[#0a2540]">orders@purepeelco.com</a> {getTranslation(language, 'shipping.additionalInfo.specialOrders.text3')}
+              {getTranslation(language, 'shipping.additionalInfo.specialOrders.text2')} <a href="/contact?inquiryType=bulk" className="text-gray-900 hover:text-gray-900">orders@purepeelco.com</a> {getTranslation(language, 'shipping.additionalInfo.specialOrders.text3')}
             </p>
           </div>
         </div>
 
         {/* Contact Information */}
         <div className="bg-white rounded-lg shadow-sm border border-[#e3e8ef] p-6 mt-6 md:mt-8">
-          <h2 className="text-xl md:text-2xl font-bold text-[#0a2540] mb-3 md:mb-4">{getTranslation(language, 'shipping.contact.title')}</h2>
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'shipping.contact.title')}</h2>
           <p className="text-sm md:text-base text-[#425466] mb-3 md:mb-4">
             {getTranslation(language, 'shipping.contact.text1')}
           </p>
           <div className="bg-gray-50 rounded-lg p-3 md:p-4 space-y-2">
             <p className="text-sm md:text-base text-[#425466]">
-              <strong>{getTranslation(language, 'shipping.contact.shippingInquiries')}</strong> <a href="/contact?inquiryType=shipping" className="text-[#0a2540] hover:text-[#0a2540]">shipping@purepeelco.com</a>
+              <strong>{getTranslation(language, 'shipping.contact.shippingInquiries')}</strong> <a href="/contact?inquiryType=shipping" className="text-gray-900 hover:text-gray-900">shipping@purepeelco.com</a>
             </p>
             <p className="text-sm md:text-base text-[#425466]">
-              <strong>{getTranslation(language, 'shipping.contact.productIssues')}</strong> <a href="/contact?inquiryType=support" className="text-[#0a2540] hover:text-[#0a2540]">support@purepeelco.com</a>
+              <strong>{getTranslation(language, 'shipping.contact.productIssues')}</strong> <a href="/contact?inquiryType=support" className="text-gray-900 hover:text-gray-900">support@purepeelco.com</a>
             </p>
             <p className="text-sm md:text-base text-[#425466]">
-              <strong>{getTranslation(language, 'shipping.contact.generalInquiries')}</strong> <a href="/contact?inquiryType=general" className="text-[#0a2540] hover:text-[#0a2540]">info@purepeelco.com</a>
+              <strong>{getTranslation(language, 'shipping.contact.generalInquiries')}</strong> <a href="/contact?inquiryType=general" className="text-gray-900 hover:text-gray-900">info@purepeelco.com</a>
             </p>
             <p className="text-sm md:text-base text-[#425466]">
-              <strong>{getTranslation(language, 'shipping.contact.bulkOrders')}</strong> <a href="/contact?inquiryType=bulk" className="text-[#0a2540] hover:text-[#0a2540]">orders@purepeelco.com</a>
+              <strong>{getTranslation(language, 'shipping.contact.bulkOrders')}</strong> <a href="/contact?inquiryType=bulk" className="text-gray-900 hover:text-gray-900">orders@purepeelco.com</a>
             </p>
             <p className="text-xs md:text-sm text-[#425466] mt-3">
               <strong>{getTranslation(language, 'shipping.contact.responseTime')}</strong>
