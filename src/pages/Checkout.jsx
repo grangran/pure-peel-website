@@ -862,7 +862,7 @@ export default function Checkout() {
   }
 
   return (
-    <section ref={sectionRef} className="py-0 md:py-0 px-0 bg-white min-h-[calc(100vh-72px)]">
+    <section ref={sectionRef} className="py-0 md:py-0 px-0 bg-gray-900 min-h-[calc(100vh-72px)]">
       <div className="max-w-7xl mx-auto">
         {/* Stripe-style Checkout Layout */}
         {currentStep === 1 && (
@@ -1020,10 +1020,10 @@ export default function Checkout() {
                     </div>
                   </div>
 
-                    {/* Name */}
+                  {/* Name */}
                     <div className="mb-4">
                       <label className="block text-sm font-medium text-gray-700 mb-1.5">Name</label>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                       <input
                         type="text"
@@ -1063,7 +1063,7 @@ export default function Checkout() {
                   </div>
                   </div>
 
-                    {/* Shipping Address */}
+                  {/* Shipping Address */}
                     <div className="space-y-4">
                   <div>
                     <input
@@ -1316,7 +1316,7 @@ export default function Checkout() {
 
                   {/* Payment Method Section */}
                   {hasEnteredShippingDetails && selectedShipping && (
-                    <div className="mt-8 pt-8 border-t border-gray-200">
+                  <div className="mt-8 pt-8 border-t border-gray-200">
                       <h2 className="text-base font-semibold text-gray-900 mb-4">Payment method</h2>
                       
                       <div className="space-y-3 mb-6">
@@ -1375,23 +1375,23 @@ export default function Checkout() {
                         </label>
                       </div>
 
-                      {stripeError && (
-                        <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-4">
-                          <p className="text-sm text-red-800">{stripeError}</p>
-                        </div>
-                      )}
+                    {stripeError && (
+                      <div className="bg-red-50 border border-red-200 rounded-md p-3 mb-4">
+                        <p className="text-sm text-red-800">{stripeError}</p>
+                      </div>
+                    )}
 
-                      <button
-                        type="submit"
-                        disabled={isSubmitting || !hasEnteredShippingDetails || !selectedShipping}
+                    <button
+                      type="submit"
+                      disabled={isSubmitting || !hasEnteredShippingDetails || !selectedShipping}
                         className="w-full py-4 px-6 text-base font-semibold rounded-lg border-0 cursor-pointer transition-all duration-200 bg-gray-900 text-white hover:bg-gray-800 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-h-[52px] touch-manipulation shadow-md hover:shadow-lg"
-                      >
-                        {isSubmitting ? (
-                          <LoadingSpinner size="sm" color="white" text={getTranslation(language, 'checkout.processing')} />
-                        ) : (
+                    >
+                      {isSubmitting ? (
+                        <LoadingSpinner size="sm" color="white" text={getTranslation(language, 'checkout.processing')} />
+                      ) : (
                           <>Pay {formatPrice(total)} {currency}</>
-                        )}
-                      </button>
+                      )}
+                    </button>
 
                       <p className="text-xs text-gray-400 text-center mt-4 flex items-center justify-center gap-1">
                         <span>Powered by</span>
@@ -1400,13 +1400,13 @@ export default function Checkout() {
                         <a href="/terms" className="hover:underline">Terms</a>
                         <span className="mx-1">·</span>
                         <a href="/privacy" className="hover:underline">Privacy</a>
-                      </p>
-                    </div>
+                    </p>
+                  </div>
                   )}
                 </form>
               </div>
             </div>
-          </div>
+                </div>
         )}
           </div>
         )}
