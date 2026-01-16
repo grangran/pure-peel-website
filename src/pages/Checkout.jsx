@@ -8,8 +8,74 @@ import { trackCheckoutStarted, trackPurchase } from "../utils/analytics"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Skeleton from "../components/Skeleton"
 import PageLoader from "../components/PageLoader"
-import { EmbeddedCheckoutProvider, EmbeddedCheckout } from '@stripe/react-stripe-js'
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import stripePromise from '../config/stripe'
+
+// Payment Form Component using Stripe Payment Element (single column, no left panel)
+function PaymentForm({ clientSecret, onSuccess }) {
+  const stripe = useStripe()
+  const elements = useElements()
+  const [isProcessing, setIsProcessing] = useState(false)
+  const [error, setError] = useState(null)
+  const { language } = useLanguage()
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    
+    if (!stripe || !elements) {
+      return
+    }
+
+    setIsProcessing(true)
+    setError(null)
+
+    const { error: submitError } = await elements.submit()
+    if (submitError) {
+      setError(submitError.message)
+      setIsProcessing(false)
+      return
+    }
+
+    const { error: confirmError } = await stripe.confirmPayment({
+      elements,
+      clientSecret,
+      confirmParams: {
+        return_url: `${window.location.origin}/checkout?success=true`,
+      },
+      redirect: 'if_required',
+    })
+
+    if (confirmError) {
+      setError(confirmError.message)
+      setIsProcessing(false)
+    } else {
+      // Payment succeeded
+      onSuccess()
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <PaymentElement />
+      {error && (
+        <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4">
+          <p className="text-sm text-red-800 font-medium">{error}</p>
+        </div>
+      )}
+      <button
+        type="submit"
+        disabled={!stripe || isProcessing}
+        className="w-full py-3 sm:py-3.5 lg:py-4 px-4 sm:px-5 lg:px-6 text-base sm:text-lg font-bold rounded-xl border-0 cursor-pointer transition-all duration-200 bg-gradient-to-r from-amber-500 to-amber-600 text-white hover:from-amber-600 hover:to-amber-700 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-amber-500 disabled:hover:to-amber-600 flex items-center justify-center gap-2 min-h-[48px] sm:min-h-[52px] lg:min-h-[56px] touch-manipulation shadow-lg hover:shadow-xl"
+      >
+        {isProcessing ? (
+          <LoadingSpinner size="sm" color="white" text={language === 'fr' ? 'Traitement...' : 'Processing...'} />
+        ) : (
+          language === 'fr' ? 'Payer maintenant' : 'Pay now'
+        )}
+      </button>
+    </form>
+  )
+}
 
 const canadianProvinces = [
   "Alberta", "British Columbia", "Manitoba", "New Brunswick", 
@@ -58,8 +124,8 @@ export default function Checkout() {
   const [appliedPromoCode, setAppliedPromoCode] = useState(null)
   const [promoCodeError, setPromoCodeError] = useState('')
   const [promoCodeDiscount, setPromoCodeDiscount] = useState(0) // Discount amount in CAD
-  const [clientSecret, setClientSecret] = useState(null) // For Embedded Checkout
-  const [showEmbeddedCheckout, setShowEmbeddedCheckout] = useState(false) // Toggle Embedded Checkout display
+  const [clientSecret, setClientSecret] = useState(null) // For Payment Element
+  const [showPaymentForm, setShowPaymentForm] = useState(false) // Toggle Payment Element display
   
   // Check for Stripe redirect
   useEffect(() => {
@@ -72,8 +138,8 @@ export default function Checkout() {
       // Payment was successful - clear saved form data
       localStorage.removeItem('checkoutFormData')
       localStorage.removeItem('checkoutShippingOption')
-      // Hide embedded checkout if it was shown
-      setShowEmbeddedCheckout(false)
+      // Hide payment form if it was shown
+      setShowPaymentForm(false)
       setClientSecret(null)
       handlePaymentSuccess(sessionId)
       // Clean up URL
@@ -83,7 +149,7 @@ export default function Checkout() {
     } else if (canceled === 'true') {
       // Payment was canceled - restore form data and return to checkout
       setCurrentStep(1)
-      setShowEmbeddedCheckout(false)
+      setShowPaymentForm(false)
       setClientSecret(null)
       setStripeError('Payment was canceled. Your information has been saved. You can try again when ready.')
       // Clean up URL by removing query parameters
@@ -711,7 +777,7 @@ export default function Checkout() {
           cartTotal: getCartTotal()
         })
         
-        response = await fetch(`${API_URL}/api/create-checkout-session`, {
+        response = await fetch(`${API_URL}/api/create-payment-intent`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -743,24 +809,21 @@ export default function Checkout() {
 
       const data = await response.json()
 
-      // Use Embedded Checkout instead of redirect
+      // Use Payment Element (single column, no left panel)
       if (data.clientSecret) {
-        console.log('✅ Embedded Checkout clientSecret received:', data.clientSecret)
+        console.log('✅ Payment Intent clientSecret received:', data.clientSecret)
         setClientSecret(data.clientSecret)
-        setShowEmbeddedCheckout(true)
-        setIsSubmitting(false) // Reset submitting state since we're showing embedded checkout
-        // Scroll to embedded checkout
+        setShowPaymentForm(true)
+        setIsSubmitting(false) // Reset submitting state since we're showing payment form
+        // Scroll to payment form
         setTimeout(() => {
-          const checkoutElement = document.getElementById('embedded-checkout')
-          if (checkoutElement) {
-            checkoutElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          const paymentElement = document.getElementById('payment-form')
+          if (paymentElement) {
+            paymentElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
           }
         }, 100)
-      } else if (data.url) {
-        // Fallback to redirect if clientSecret not available (backward compatibility)
-        console.log('⚠️ No clientSecret, falling back to redirect:', data.url)
-        setIsRedirecting(true)
-        window.location.href = data.url
+      } else {
+        throw new Error('No clientSecret received from server')
       } else {
         console.error('❌ No clientSecret or URL in response:', data)
         throw new Error('Checkout session clientSecret not provided by server')
@@ -925,9 +988,9 @@ export default function Checkout() {
                 {/* Back button */}
                 <button
                   onClick={() => {
-                    if (showEmbeddedCheckout) {
+                    if (showPaymentForm) {
                       // Go back to shipping form
-                      setShowEmbeddedCheckout(false)
+                      setShowPaymentForm(false)
                       setClientSecret(null)
                     } else {
                       // Go back to home
@@ -940,14 +1003,14 @@ export default function Checkout() {
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                   </svg>
-                  {showEmbeddedCheckout 
+                  {showPaymentForm 
                     ? (language === 'fr' ? 'Retour aux informations d\'expédition' : 'Back to shipping information')
                     : getTranslation(language, 'checkout.continueShopping')
                   }
                 </button>
 
-                {/* Show shipping form OR embedded checkout, not both */}
-                {!showEmbeddedCheckout ? (
+                {/* Show shipping form OR payment form, not both */}
+                {!showPaymentForm ? (
                   <>
                     <div className="mb-6 sm:mb-8 lg:mb-10">
                       <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-2 sm:mb-3 lg:mb-4 tracking-tight">
@@ -1318,9 +1381,9 @@ export default function Checkout() {
                     </form>
                   </>
                 ) : (
-                  /* Embedded Stripe Checkout - Show when payment is ready */
+                  /* Stripe Payment Element - Single column, no left panel */
                   clientSecret && (
-                    <div id="embedded-checkout" className="bg-white rounded-xl sm:rounded-2xl border-2 border-gray-200 p-4 sm:p-6 lg:p-8 shadow-md">
+                    <div id="payment-form" className="bg-white rounded-xl sm:rounded-2xl border-2 border-gray-200 p-4 sm:p-6 lg:p-8 shadow-md">
                       <div className="mb-4 sm:mb-6 lg:mb-8">
                         <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-2 sm:mb-3 lg:mb-4 tracking-tight">
                           {getTranslation(language, 'checkout.paymentDetails') || 'Payment Details'}
@@ -1331,19 +1394,23 @@ export default function Checkout() {
                             : 'Complete your payment securely'}
                         </p>
                       </div>
-                      <EmbeddedCheckoutProvider
-                        stripe={stripePromise}
+                      <Elements 
+                        stripe={stripePromise} 
                         options={{
                           clientSecret,
-                          onComplete: async (event) => {
-                            // Embedded Checkout will redirect to return_url with session_id
-                            // The useEffect above will handle the completion
-                            console.log('✅ Embedded Checkout completed:', event)
-                          }
+                          appearance: {
+                            theme: 'stripe',
+                          },
                         }}
                       >
-                        <EmbeddedCheckout />
-                      </EmbeddedCheckoutProvider>
+                        <PaymentForm 
+                          clientSecret={clientSecret}
+                          onSuccess={() => {
+                            // Payment successful - handled by useEffect above
+                            console.log('✅ Payment completed')
+                          }}
+                        />
+                      </Elements>
                     </div>
                   )
                 )}
