@@ -11,16 +11,16 @@ export default function ShippingReturns() {
   return (
     <section 
       ref={sectionRef} 
-      className={`py-8 md:py-12 px-4 sm:px-5 bg-gray-50 min-h-screen transition-all duration-800 ${
+      className={`py-0 md:py-0 px-0 bg-gray-900 min-h-screen transition-all duration-800 ${
         isSectionVisible ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0 md:opacity-0 md:translate-y-8'
       }`}
     >
       <div className="max-w-7xl mx-auto">
         {/* Stripe-style Two-Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-0 lg:gap-12">
-          {/* Left Panel - Colored Background (Stripe-style) */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-0">
+          {/* Left Panel - Dark Background (Stripe-style) */}
           <div className="order-1 lg:order-1 hidden lg:block">
-            <div className="bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 rounded-2xl shadow-xl p-8 lg:sticky lg:top-8 h-fit min-h-[600px] flex flex-col">
+            <div className="bg-gray-900 lg:min-h-screen p-8 lg:sticky lg:top-0 h-fit flex flex-col">
               {/* Brand Header */}
               <div className="mb-8">
                 <h2 className="text-3xl font-bold text-white mb-2">Pure Peel Co.</h2>
