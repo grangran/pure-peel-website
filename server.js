@@ -615,8 +615,9 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     const stripeCurrency = (requestedCurrency === 'usd') ? 'usd' : 'cad'
     const useUSD = stripeCurrency === 'usd'
     
-    // Get exchange rate for USD conversion if needed
-    const exchangeRate = useUSD ? 0.73 : 1.0 // Default rate, should match frontend
+    // Get exchange rate from frontend (or use default if not provided)
+    // This ensures the conversion matches what the user sees on the frontend
+    const exchangeRate = useUSD ? (parseFloat(req.body.exchangeRate) || 0.73) : 1.0
 
     const { items, shippingInfo, total } = req.body
 

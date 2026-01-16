@@ -32,7 +32,7 @@ const usStates = [
 export default function Checkout() {
   const { cartItems, getCartTotal, clearCart, setIsCartOpen } = useCart()
   const { language } = useLanguage()
-  const { currency, convertPrice, formatPrice } = useCurrency()
+  const { currency, convertPrice, formatPrice, exchangeRate } = useCurrency()
   const [currentStep, setCurrentStep] = useState(1) // 1: Checkout (combined), 2: Confirmation
   
   // Track step changes (only for confirmation)
@@ -706,6 +706,7 @@ export default function Checkout() {
             promoCode: appliedPromoCode || null,
             discount: appliedPromoCode ? promoCodeDiscount : 0,
             currency: currency, // Pass selected currency to backend
+            exchangeRate: exchangeRate, // Pass exchange rate to backend for accurate conversion
           }),
         })
       } catch (fetchError) {
