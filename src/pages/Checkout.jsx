@@ -56,10 +56,36 @@ function PaymentForm({ clientSecret, onSuccess }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <PaymentElement />
+      <PaymentElement 
+        options={{
+          // Enable Link for 1-click payments (automatically enabled via automatic_payment_methods)
+          layout: 'tabs',
+          // Enable real-time validation and card brand identification
+          fields: {
+            billingDetails: {
+              address: {
+                country: 'never', // Already collected in shipping form
+              },
+            },
+          },
+          // Enable payment method reuse for returning customers
+          wallets: {
+            applePay: 'auto',
+            googlePay: 'auto',
+          },
+        }}
+      />
       {error && (
         <div className="bg-[#fef2f2] border border-[#fecaca] rounded-md p-3.5">
-          <p className="text-sm text-[#dc2626]">{error}</p>
+          <div className="flex items-start gap-2">
+            <svg className="w-4 h-4 text-[#dc2626] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <p className="text-sm font-medium text-[#dc2626] mb-1">Payment error</p>
+              <p className="text-sm text-[#991b1b]">{error}</p>
+            </div>
+          </div>
         </div>
       )}
       <button
@@ -1038,9 +1064,15 @@ export default function Checkout() {
                             errors.email ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
                           } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
                           required
+                          data-1p-ignore
                         />
                         {errors.email && (
-                          <p className="text-[#dc2626] text-xs mt-1.5">{errors.email}</p>
+                          <div className="mt-1.5 flex items-start gap-1.5">
+                            <svg className="w-3.5 h-3.5 text-[#dc2626] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p className="text-[#dc2626] text-xs leading-relaxed">{errors.email}</p>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -1058,14 +1090,20 @@ export default function Checkout() {
                         autoComplete="given-name"
                         value={formData.firstName}
                         onChange={handleInputChange}
-                          placeholder={getTranslation(language, 'checkout.firstName')}
-                          className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
-                            errors.firstName ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
-                          } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
+                        placeholder={getTranslation(language, 'checkout.firstName')}
+                        className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
+                          errors.firstName ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
+                        } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
                         required
+                        data-1p-ignore
                       />
                       {errors.firstName && (
-                        <p className="text-[#dc2626] text-xs mt-1.5">{errors.firstName}</p>
+                        <div className="mt-1.5 flex items-start gap-1.5">
+                          <svg className="w-3.5 h-3.5 text-[#dc2626] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <p className="text-[#dc2626] text-xs leading-relaxed">{errors.firstName}</p>
+                        </div>
                       )}
                     </div>
                     <div>
@@ -1076,14 +1114,20 @@ export default function Checkout() {
                         autoComplete="family-name"
                         value={formData.lastName}
                         onChange={handleInputChange}
-                          placeholder={getTranslation(language, 'checkout.lastName')}
-                          className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
-                            errors.lastName ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
-                          } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
+                        placeholder={getTranslation(language, 'checkout.lastName')}
+                        className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
+                          errors.lastName ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
+                        } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
                         required
+                        data-1p-ignore
                       />
                       {errors.lastName && (
-                        <p className="text-[#dc2626] text-xs mt-1.5">{errors.lastName}</p>
+                        <div className="mt-1.5 flex items-start gap-1.5">
+                          <svg className="w-3.5 h-3.5 text-[#dc2626] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <p className="text-[#dc2626] text-xs leading-relaxed">{errors.lastName}</p>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -1101,14 +1145,22 @@ export default function Checkout() {
                       autoComplete="street-address"
                       value={formData.address}
                       onChange={handleInputChange}
-                          placeholder={getTranslation(language, 'checkout.streetAddress')}
-                          className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
-                            errors.address ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
-                          } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
+                      placeholder={getTranslation(language, 'checkout.streetAddress')}
+                      className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
+                        errors.address ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
+                      } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
                       required
+                      // Enable address autocomplete
+                      autoComplete="shipping street-address"
+                      data-1p-ignore
                     />
                     {errors.address && (
-                      <p className="text-[#dc2626] text-xs mt-1.5">{errors.address}</p>
+                      <div className="mt-1.5 flex items-start gap-1.5">
+                        <svg className="w-3.5 h-3.5 text-[#dc2626] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p className="text-[#dc2626] text-xs leading-relaxed">{errors.address}</p>
+                      </div>
                     )}
                   </div>
 
@@ -1116,19 +1168,25 @@ export default function Checkout() {
                         <select
                           name="country"
                           id="checkout-country"
-                          autoComplete="country"
+                          autoComplete="shipping country"
                           value={formData.country}
                           onChange={handleInputChange}
                           className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all ${
                             errors.country ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
                           } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
                           required
+                          data-1p-ignore
                         >
                           <option value="Canada">Canada</option>
                           <option value="United States">United States</option>
                         </select>
                         {errors.country && (
-                          <p className="text-[#dc2626] text-xs mt-1.5">{errors.country}</p>
+                          <div className="mt-1.5 flex items-start gap-1.5">
+                            <svg className="w-3.5 h-3.5 text-[#dc2626] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p className="text-[#dc2626] text-xs leading-relaxed">{errors.country}</p>
+                          </div>
                         )}
                       </div>
 
@@ -1138,30 +1196,37 @@ export default function Checkout() {
                         type="text"
                         name="city"
                         id="checkout-city"
-                        autoComplete="address-level2"
+                        autoComplete="shipping address-level2"
                         value={formData.city}
                         onChange={handleInputChange}
-                            placeholder={getTranslation(language, 'checkout.city')}
-                            className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
-                              errors.city ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
-                            } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
+                        placeholder={getTranslation(language, 'checkout.city')}
+                        className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
+                          errors.city ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
+                        } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
                         required
+                        data-1p-ignore
                       />
                       {errors.city && (
-                        <p className="text-[#dc2626] text-xs mt-1.5">{errors.city}</p>
+                        <div className="mt-1.5 flex items-start gap-1.5">
+                          <svg className="w-3.5 h-3.5 text-[#dc2626] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <p className="text-[#dc2626] text-xs leading-relaxed">{errors.city}</p>
+                        </div>
                       )}
                     </div>
                         <div className="col-span-1">
                       <select
                         name="province"
                         id="checkout-province"
-                        autoComplete="address-level1"
+                        autoComplete="shipping address-level1"
                         value={formData.province}
                         onChange={handleInputChange}
-                            className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all ${
-                              errors.province ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
-                            } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
+                        className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all ${
+                          errors.province ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
+                        } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
                         required
+                        data-1p-ignore
                       >
                             <option value="">
                               {formData.country === "United States" 
@@ -1174,7 +1239,12 @@ export default function Checkout() {
                         ))}
                       </select>
                       {errors.province && (
-                        <p className="text-[#dc2626] text-xs mt-1.5">{errors.province}</p>
+                        <div className="mt-1.5 flex items-start gap-1.5">
+                          <svg className="w-3.5 h-3.5 text-[#dc2626] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <p className="text-[#dc2626] text-xs leading-relaxed">{errors.province}</p>
+                        </div>
                       )}
                     </div>
                         <div className="col-span-1">
@@ -1182,20 +1252,26 @@ export default function Checkout() {
                         type="text"
                         name="postalCode"
                         id="checkout-postalCode"
-                        autoComplete={formData.country === "United States" ? "postal-code" : "postal-code"}
+                        autoComplete={formData.country === "United States" ? "shipping postal-code" : "shipping postal-code"}
                         value={formData.postalCode}
                         onChange={handleInputChange}
-                            placeholder={formData.country === "United States" 
-                              ? getTranslation(language, 'checkout.zipCode')
-                              : getTranslation(language, 'checkout.postalCode')
-                            }
-                            className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
-                              errors.postalCode ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
-                            } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
+                        placeholder={formData.country === "United States" 
+                          ? getTranslation(language, 'checkout.zipCode')
+                          : getTranslation(language, 'checkout.postalCode')
+                        }
+                        className={`w-full px-3 py-2.5 text-sm rounded-md border transition-all placeholder:text-[#9ca3af] ${
+                          errors.postalCode ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
+                        } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
                         required
+                        data-1p-ignore
                       />
                       {errors.postalCode && (
-                        <p className="text-[#dc2626] text-xs mt-1.5">{errors.postalCode}</p>
+                        <div className="mt-1.5 flex items-start gap-1.5">
+                          <svg className="w-3.5 h-3.5 text-[#dc2626] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <p className="text-[#dc2626] text-xs leading-relaxed">{errors.postalCode}</p>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -1206,7 +1282,7 @@ export default function Checkout() {
                           inputMode="tel"
                           name="phone"
                           id="checkout-phone"
-                          autoComplete="tel"
+                          autoComplete="shipping tel"
                           value={formData.phone}
                           onChange={handleInputChange}
                           placeholder={formData.country === "United States" 
@@ -1217,9 +1293,15 @@ export default function Checkout() {
                             errors.phone ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
                           } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
                           required
+                          data-1p-ignore
                         />
                         {errors.phone && (
-                          <p className="text-[#dc2626] text-xs mt-1.5">{errors.phone}</p>
+                          <div className="mt-1.5 flex items-start gap-1.5">
+                            <svg className="w-3.5 h-3.5 text-[#dc2626] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p className="text-[#dc2626] text-xs leading-relaxed">{errors.phone}</p>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -1398,6 +1480,15 @@ export default function Checkout() {
                           clientSecret,
                           appearance: {
                             theme: 'stripe',
+                            variables: {
+                              colorPrimary: '#0a2540',
+                              colorBackground: '#ffffff',
+                              colorText: '#111827',
+                              colorDanger: '#dc2626',
+                              fontFamily: 'system-ui, -apple-system, sans-serif',
+                              spacingUnit: '4px',
+                              borderRadius: '6px',
+                            },
                           },
                         }}
                       >
