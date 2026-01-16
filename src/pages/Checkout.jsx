@@ -1576,9 +1576,9 @@ export default function Checkout() {
                         </p>
                 </div>
                 
-                      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                         {/* Order Summary Sidebar */}
-                        <div className="lg:col-span-1 order-2 lg:order-1">
+                        <div className="lg:col-span-4 order-2 lg:order-1">
                           <div className="bg-white rounded-xl border border-[#e5e7eb] shadow-lg sticky top-6 overflow-hidden">
                             {/* Header */}
                             <div className="bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-5 border-b border-[#e5e7eb]">
@@ -1638,10 +1638,10 @@ export default function Checkout() {
                                           {/* Product Info */}
                                           <div className="flex-1 min-w-0 flex flex-col justify-between">
                                             <div>
-                                              <h4 className="text-sm font-bold text-gray-900 mb-1 leading-tight line-clamp-2">
+                                              <h4 className="text-sm font-bold text-gray-900 mb-1 leading-tight break-words">
                                                 {displayName}
                                               </h4>
-                                              <p className="text-xs text-[#6b7280] font-medium mb-2">{variantLabel}</p>
+                                              <p className="text-xs text-[#6b7280] font-medium mb-2 break-words">{variantLabel}</p>
                                             </div>
                                             <div className="flex items-end justify-between pt-2 border-t border-gray-200">
                                               <span className="text-xs text-[#6b7280] font-semibold">
@@ -1779,7 +1779,7 @@ export default function Checkout() {
                         </div>
 
                         {/* Payment Form */}
-                        <div className="lg:col-span-2 order-1 lg:order-2">
+                        <div className="lg:col-span-8 order-1 lg:order-2">
                           <div id="payment-form" className="bg-white rounded-lg border border-[#e5e7eb] p-6 md:p-8 shadow-sm">
                             {/* Accepted Payment Methods */}
                             <div className="mb-8 pb-6 border-b border-[#e5e7eb]">
