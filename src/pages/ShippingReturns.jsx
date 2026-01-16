@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useScrollReveal } from "../hooks/useScrollReveal"
 import { useLanguage } from "../context/LanguageContext"
 import { useCurrency } from "../context/CurrencyContext"
@@ -7,21 +7,42 @@ import { getTranslation } from "../utils/translations"
 export default function ShippingReturns() {
   const [sectionRef, isSectionVisible] = useScrollReveal({ threshold: 0.1 })
   const { language } = useLanguage()
-  const { formatPrice, currency, setCurrency } = useCurrency()
+  const { formatPrice, currency: contextCurrency, setCurrency } = useCurrency()
+  const [currency, setLocalCurrency] = useState(() => {
+    // Read from localStorage immediately on mount
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('currency')
+      return (stored === 'CAD' || stored === 'USD') ? stored : 'CAD'
+    }
+    return 'CAD'
+  })
 
-  // Ensure currency is synced from localStorage when component mounts or currency changes
-  // This handles cases where currency was changed on another page
+  // Sync currency from context and localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedCurrency = localStorage.getItem('currency')
-      // Always sync from localStorage to ensure consistency
+      // Priority: localStorage > context
       if (storedCurrency && (storedCurrency === 'CAD' || storedCurrency === 'USD')) {
         if (storedCurrency !== currency) {
-          setCurrency(storedCurrency)
+          setLocalCurrency(storedCurrency)
+          setCurrency(storedCurrency) // Also update context
         }
+      } else if (contextCurrency && contextCurrency !== currency) {
+        // Fallback to context if localStorage is empty
+        setLocalCurrency(contextCurrency)
       }
     }
-  }, [currency, setCurrency]) // Run whenever currency might have changed
+  }, [contextCurrency, currency, setCurrency])
+
+  // Update local currency when context changes (to stay in sync)
+  useEffect(() => {
+    if (contextCurrency && contextCurrency !== currency) {
+      const stored = localStorage.getItem('currency')
+      if (!stored || stored === contextCurrency) {
+        setLocalCurrency(contextCurrency)
+      }
+    }
+  }, [contextCurrency, currency])
 
   return (
     <section 
