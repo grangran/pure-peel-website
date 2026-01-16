@@ -1579,7 +1579,7 @@ export default function Checkout() {
                       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 max-w-7xl mx-auto px-4">
                         {/* Order Summary Sidebar */}
                         <div className="md:col-span-5 lg:col-span-4 xl:col-span-5 order-2 md:order-1">
-                          <div className="bg-white rounded-lg border border-gray-200 shadow-sm sticky top-6">
+                          <div className="bg-white rounded-lg border border-gray-200 shadow-sm sticky top-6 overflow-hidden">
                             {/* Header */}
                             <div className="px-5 py-4 md:px-6 md:py-5 border-b border-gray-200">
                               <h2 className="text-lg md:text-xl font-semibold text-gray-900">
