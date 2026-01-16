@@ -901,7 +901,7 @@ export default function Checkout() {
                   <h2 className="text-2xl font-semibold text-white mb-2">Pure Peel Co.</h2>
                   <p className="text-3xl font-bold text-white">
                     {hasEnteredShippingDetails && selectedShipping 
-                      ? formatPrice(total) 
+                      ? formatPrice(totalCAD) 
                       : (language === 'fr' ? 'Paiement' : 'Payment')
                     }
                     {hasEnteredShippingDetails && selectedShipping && (
