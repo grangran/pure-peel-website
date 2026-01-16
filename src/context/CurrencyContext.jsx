@@ -127,14 +127,36 @@ export function CurrencyProvider({ children }) {
       }
     }
 
+    // Check localStorage on route changes (navigation within same tab)
+    const handleRouteChange = () => {
+      const stored = localStorage.getItem('currency')
+      if (stored && stored !== currency) {
+        setCurrency(stored)
+      }
+    }
+
     // Check immediately to sync on mount/navigation
     handleFocus()
 
+    // Listen to hashchange and popstate for navigation within the app
     window.addEventListener('focus', handleFocus)
+    window.addEventListener('hashchange', handleRouteChange)
+    window.addEventListener('popstate', handleRouteChange)
+
+    // Also check periodically to catch any missed updates (fallback)
+    const interval = setInterval(() => {
+      const stored = localStorage.getItem('currency')
+      if (stored && stored !== currency) {
+        setCurrency(stored)
+      }
+    }, 500) // Check every 500ms as a fallback
 
     return () => {
       window.removeEventListener('storage', handleStorageChange)
       window.removeEventListener('focus', handleFocus)
+      window.removeEventListener('hashchange', handleRouteChange)
+      window.removeEventListener('popstate', handleRouteChange)
+      clearInterval(interval)
     }
   }, [currency])
 

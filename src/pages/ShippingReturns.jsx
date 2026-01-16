@@ -9,17 +9,19 @@ export default function ShippingReturns() {
   const { language } = useLanguage()
   const { formatPrice, currency, setCurrency } = useCurrency()
 
-  // Ensure currency is synced from localStorage when component mounts
+  // Ensure currency is synced from localStorage when component mounts or currency changes
   // This handles cases where currency was changed on another page
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const storedCurrency = localStorage.getItem('currency')
-      if (storedCurrency && storedCurrency !== currency) {
-        setCurrency(storedCurrency)
+      // Always sync from localStorage to ensure consistency
+      if (storedCurrency && (storedCurrency === 'CAD' || storedCurrency === 'USD')) {
+        if (storedCurrency !== currency) {
+          setCurrency(storedCurrency)
+        }
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // Only run on mount - we intentionally check localStorage regardless of currency state
+  }, [currency, setCurrency]) // Run whenever currency might have changed
 
   return (
     <section 
