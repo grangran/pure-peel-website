@@ -66,6 +66,12 @@ export function CartProvider({ children }) {
   }, [isCartOpen, cartItems])
 
   const addToCart = (product) => {
+    // Validate product data
+    if (!product || !product.id || !product.variant) {
+      console.error('❌ Invalid product data - missing required fields:', product)
+      return
+    }
+    
     const quantityToAdd = product.quantity || 1
     const productToTrack = { ...product, quantity: quantityToAdd }
     
@@ -80,11 +86,12 @@ export function CartProvider({ children }) {
     let shouldShowToast = !isDuplicate
     
     setCartItems((prevItems) => {
-      // Ensure product has required fields
-      if (!product.id || !product.variant) {
-        console.error('Invalid product data:', product)
-        return prevItems
-      }
+      console.log('🛒 addToCart called:', { 
+        productId: product.id, 
+        variant: product.variant, 
+        name: product.name,
+        currentCartSize: prevItems.length 
+      })
       
       const existingItem = prevItems.find(
         (item) => item.id === product.id && item.variant === product.variant
@@ -92,6 +99,7 @@ export function CartProvider({ children }) {
 
       if (existingItem) {
         // Item already exists - increase quantity
+        console.log('🛒 Item exists, updating quantity:', existingItem.quantity, '->', existingItem.quantity + quantityToAdd)
         finalQuantity = existingItem.quantity + quantityToAdd
         trackAddToCart(productToTrack)
         return prevItems.map((item) =>
@@ -101,6 +109,7 @@ export function CartProvider({ children }) {
         )
       } else {
         // New item - add to cart
+        console.log('🛒 New item, adding to cart. Current items:', prevItems.length)
         finalQuantity = quantityToAdd
         trackAddToCart(productToTrack)
         const newItem = { 
@@ -113,10 +122,9 @@ export function CartProvider({ children }) {
           productId: product.productId,
           quantity: quantityToAdd 
         }
-        console.log('🛒 Adding new item to cart:', { id: newItem.id, variant: newItem.variant, name: newItem.name })
-        console.log('🛒 Current cart items:', prevItems.map(item => ({ id: item.id, variant: item.variant, name: item.name })))
         const updatedCart = [...prevItems, newItem]
-        console.log('🛒 Updated cart items:', updatedCart.map(item => ({ id: item.id, variant: item.variant, name: item.name })))
+        console.log('🛒 Cart updated. New total items:', updatedCart.length)
+        console.log('🛒 All items:', updatedCart.map(item => `${item.name} (${item.variant})`))
         return updatedCart
       }
     })
