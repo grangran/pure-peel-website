@@ -823,10 +823,8 @@ export default function Checkout() {
           }
         }, 100)
       } else {
-        throw new Error('No clientSecret received from server')
-      } else {
-        console.error('❌ No clientSecret or URL in response:', data)
-        throw new Error('Checkout session clientSecret not provided by server')
+        console.error('❌ No clientSecret in response:', data)
+        throw new Error('Payment Intent clientSecret not provided by server')
       }
     } catch (error) {
       console.error('Payment error:', error)
