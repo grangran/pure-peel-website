@@ -3,7 +3,7 @@ import { useCart } from "../context/CartContext"
 import { useScrollReveal } from "../hooks/useScrollReveal"
 import { useLanguage } from "../context/LanguageContext"
 import { useCurrency } from "../context/CurrencyContext"
-import { getTranslation } from "../utils/translations"
+import { getTranslation, translateVariantLabel } from "../utils/translations"
 import { trackCheckoutStarted, trackPurchase } from "../utils/analytics"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Skeleton from "../components/Skeleton"
@@ -1571,8 +1571,8 @@ export default function Checkout() {
                             ? 'Complétez votre paiement en toute sécurité'
                             : 'Complete your payment securely'}
                         </p>
-                      </div>
-
+                </div>
+                
                       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         {/* Order Summary Sidebar */}
                         <div className="lg:col-span-1 order-2 lg:order-1">
@@ -1580,6 +1580,57 @@ export default function Checkout() {
                             <h3 className="text-sm font-semibold text-gray-900 mb-4 pb-3 border-b border-[#e5e7eb]">
                               {language === 'fr' ? 'Résumé de la commande' : 'Order Summary'}
                             </h3>
+                            
+                            {/* Product Items */}
+                            <div className="mb-4 pb-4 border-b border-[#e5e7eb] max-h-[300px] overflow-y-auto">
+                              <div className="space-y-3">
+                                {cartItems.map((item) => {
+                                  const productId = item.id?.split('-').slice(0, -1).join('-') || item.id?.replace(/-mini|-small|-medium|-large|-clearbox/, '') || ''
+                                  const translatedName = getTranslation(language, `products.${productId}.name`)
+                                  const displayName = translatedName !== `products.${productId}.name` ? translatedName : item.name
+                                  
+                                  // Translate variant
+                                  const variantMap = {
+                                    'mini': language === 'fr' ? 'Mini' : 'Mini',
+                                    'small': language === 'fr' ? 'Petit' : 'Small',
+                                    'medium': language === 'fr' ? 'Moyen' : 'Medium',
+                                    'large': language === 'fr' ? 'Grand' : 'Large',
+                                    'clearbox': language === 'fr' ? 'Boîte transparente' : 'Clear Box'
+                                  }
+                                  const variantLabel = variantMap[item.variant?.toLowerCase()] || item.variant
+                                  
+                                  return (
+                                    <div key={`${item.id}-${item.variant}`} className="flex gap-3">
+                                      {/* Product Image */}
+                                      <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
+                                        <img 
+                                          src={item.image} 
+                                          alt={displayName} 
+                                          className="w-full h-full object-cover" 
+                                        />
+                  </div>
+                                      
+                                      {/* Product Info */}
+                                      <div className="flex-1 min-w-0">
+                                        <h4 className="text-sm font-medium text-gray-900 truncate mb-0.5">
+                                          {displayName}
+                                        </h4>
+                                        <p className="text-xs text-[#6b7280] mb-1">{variantLabel}</p>
+                                        <div className="flex items-center justify-between">
+                                          <span className="text-xs text-[#6b7280]">
+                                            {language === 'fr' ? 'Qté' : 'Qty'}: {item.quantity}
+                                          </span>
+                                          <span className="text-sm font-semibold text-gray-900">
+                                            {formatPriceWithCurrency(item.price * item.quantity)}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )
+                                })}
+                              </div>
+                            </div>
+                            
                             <div className="space-y-3 mb-4">
                               <div className="flex justify-between text-sm">
                                 <span className="text-[#6b7280]">{language === 'fr' ? 'Sous-total' : 'Subtotal'}</span>
@@ -1597,7 +1648,7 @@ export default function Checkout() {
                                     {language === 'fr' ? 'Code promo' : 'Promo Code'} ({appliedPromoCode})
                                   </span>
                                   <span className="font-medium text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
-                  </div>
+                    </div>
                       )}
                               <div className="pt-3 border-t border-[#e5e7eb] flex justify-between">
                                 <span className="font-semibold text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
