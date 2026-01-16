@@ -1578,16 +1578,16 @@ export default function Checkout() {
                 
                       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 max-w-7xl mx-auto px-4">
                         {/* Order Summary Sidebar */}
-                        <div className="md:col-span-5 lg:col-span-4 xl:col-span-5 order-2 md:order-1">
+                        <div className="md:col-span-5 order-2 md:order-1">
                           <div className="bg-white rounded-lg border border-gray-200 shadow-sm sticky top-6 overflow-hidden">
-                            {/* Header */}
-                            <div className="px-5 py-4 md:px-6 md:py-5 border-b border-gray-200">
-                              <h2 className="text-lg md:text-xl font-semibold text-gray-900">
+                            {/* Header - Always Visible */}
+                            <div className="px-6 py-5 border-b border-gray-200">
+                              <h2 className="text-xl font-semibold text-gray-900">
                                 {language === 'fr' ? 'Résumé de la commande' : 'Order Summary'}
                               </h2>
-                    </div>
+                            </div>
                             
-                            <div className="p-5 md:p-6 space-y-5 md:space-y-6">
+                            <div className="p-6 space-y-6">
                               {/* Product Items */}
                               <div className="space-y-4">
                                 {cartItems.map((item) => {
@@ -1606,9 +1606,9 @@ export default function Checkout() {
                                   const variantLabel = variantMap[item.variant?.toLowerCase()] || item.variant
                                   
                                   return (
-                                    <div key={`${item.id}-${item.variant}`} className="flex gap-3 md:gap-4 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
-                                      {/* Product Image */}
-                                      <div className="w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
+                                    <div key={`${item.id}-${item.variant}`} className="flex gap-4 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
+                                      {/* Product Image - Larger */}
+                                      <div className="w-24 h-24 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
                                         <img 
                                           src={item.image} 
                                           alt={displayName} 
@@ -1619,16 +1619,16 @@ export default function Checkout() {
                                       {/* Product Info */}
                                       <div className="flex-1 min-w-0 flex flex-col justify-between">
                                         <div>
-                                          <h4 className="text-sm md:text-base font-medium text-gray-900 mb-1 leading-tight">
+                                          <h4 className="text-base font-medium text-gray-900 mb-1 leading-tight">
                                             {displayName}
                                           </h4>
-                                          <p className="text-xs md:text-sm text-gray-500 mb-2">{variantLabel}</p>
+                                          <p className="text-sm text-gray-500 mb-2">{variantLabel}</p>
                                         </div>
                                         <div className="flex items-center justify-between mt-2">
-                                          <span className="text-xs md:text-sm text-gray-600">
+                                          <span className="text-sm text-gray-600">
                                             {language === 'fr' ? 'Quantité' : 'Quantity'}: <span className="font-semibold text-gray-900">{item.quantity}</span>
                                           </span>
-                                          <span className="text-sm md:text-base font-semibold text-gray-900">
+                                          <span className="text-base font-semibold text-gray-900">
                                             {formatPriceWithCurrency(item.price * item.quantity)}
                                           </span>
                                         </div>
@@ -1636,83 +1636,83 @@ export default function Checkout() {
                                     </div>
                                   )
                                 })}
-                </div>
-                
-                {/* Promo Code Section */}
+                              </div>
+                              
+                              {/* Promo Code Section - Only shown when needed */}
                               {!appliedPromoCode && (
                                 <div className="pt-4 border-t border-gray-200">
                                   <label className="block text-sm font-medium text-gray-700 mb-3">
                                     {language === 'fr' ? 'Code promo' : 'Promo Code'}
-                      </label>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          value={promoCode}
-                          onChange={(e) => {
+                                  </label>
+                                  <div className="flex gap-2">
+                                    <input
+                                      type="text"
+                                      value={promoCode}
+                                      onChange={(e) => {
                                         setPromoCode(e.target.value)
-                            setPromoCodeError('')
-                          }}
+                                        setPromoCodeError('')
+                                      }}
                                       placeholder={language === 'fr' ? 'Entrez le code' : 'Enter code'}
                                       className="flex-1 px-4 py-2.5 text-sm rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all placeholder:text-gray-400"
-                        />
-                        <button
-                          type="button"
-                          onClick={handleApplyPromoCode}
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={handleApplyPromoCode}
                                       className="px-5 py-2.5 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 transition-colors whitespace-nowrap"
-                        >
+                                    >
                                       {language === 'fr' ? 'Appliquer' : 'Apply'}
-                        </button>
-                  </div>
-                      {promoCodeError && (
+                                    </button>
+                                  </div>
+                                  {promoCodeError && (
                                     <p className="mt-2 text-sm text-red-600">{promoCodeError}</p>
-                      )}
-                    </div>
+                                  )}
+                                </div>
                               )}
                               
-                              {/* Price Breakdown */}
-                              <div className="pt-4 border-t-2 border-gray-200 space-y-3 md:space-y-4">
+                              {/* Price Breakdown - Simplified with better hierarchy */}
+                              <div className="pt-4 border-t-2 border-gray-200 space-y-4">
                                 <div className="flex justify-between items-center">
-                                  <span className="text-sm md:text-base text-gray-700">{language === 'fr' ? 'Sous-total' : 'Subtotal'}</span>
-                                  <span className="text-sm md:text-base font-medium text-gray-900">{formatPriceWithCurrency(getCartTotal())}</span>
+                                  <span className="text-base text-gray-700">{language === 'fr' ? 'Sous-total' : 'Subtotal'}</span>
+                                  <span className="text-base font-medium text-gray-900">{formatPriceWithCurrency(getCartTotal())}</span>
                                 </div>
                                 {selectedShipping && (
                                   <div className="flex justify-between items-center">
-                                    <span className="text-sm md:text-base text-gray-700">{language === 'fr' ? 'Expédition' : 'Shipping'}</span>
-                                    <span className="text-sm md:text-base font-medium text-gray-900">{formatPriceWithCurrency(calculateShipping())}</span>
+                                    <span className="text-base text-gray-700">{language === 'fr' ? 'Expédition' : 'Shipping'}</span>
+                                    <span className="text-base font-medium text-gray-900">{formatPriceWithCurrency(calculateShipping())}</span>
                                   </div>
                                 )}
                                 {appliedPromoCode && promoCodeDiscount > 0 && (
                                   <div className="flex justify-between items-center py-2 px-3 bg-green-50 rounded-lg border border-green-200">
                                     <div>
-                                      <span className="text-sm md:text-base text-gray-700">{language === 'fr' ? 'Réduction' : 'Discount'}</span>
-                                      <span className="text-xs md:text-sm text-green-700 ml-2">({appliedPromoCode})</span>
+                                      <span className="text-base text-gray-700">{language === 'fr' ? 'Réduction' : 'Discount'}</span>
+                                      <span className="text-sm text-green-700 ml-2">({appliedPromoCode})</span>
                                     </div>
-                                    <span className="text-sm md:text-base font-medium text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
+                                    <span className="text-base font-medium text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
                                   </div>
                                 )}
                                 <div className="pt-4 border-t-2 border-gray-300 flex justify-between items-center">
-                                  <span className="text-base md:text-lg font-semibold text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
-                                  <span className="text-xl md:text-2xl font-bold text-gray-900">
+                                  <span className="text-lg font-semibold text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
+                                  <span className="text-2xl font-bold text-gray-900">
                                     {formatPriceWithCurrency(Math.max(0, getCartTotal() + (selectedShipping ? calculateShipping() : 0) - promoCodeDiscount))}
                                   </span>
                                 </div>
                               </div>
                               
-                              {/* Security Badge */}
+                              {/* Security Badge - Simplified */}
                               <div className="pt-4 border-t border-gray-200">
                                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
+                                  </svg>
                                   <span className="font-medium">{language === 'fr' ? 'Paiement sécurisé' : 'Secure Payment'}</span>
-                        </div>
-                      </div>
-                    </div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                </div>
+                        </div>
                 
                         {/* Payment Form */}
-                        <div className="md:col-span-7 lg:col-span-8 xl:col-span-7 order-1 md:order-2">
+                        <div className="md:col-span-7 order-1 md:order-2">
                           <div id="payment-form" className="bg-white rounded-lg border border-[#e5e7eb] p-6 md:p-8 shadow-sm">
                             {/* Accepted Payment Methods */}
                             <div className="mb-8 pb-6 border-b border-[#e5e7eb]">
