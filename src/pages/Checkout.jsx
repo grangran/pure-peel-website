@@ -1505,75 +1505,6 @@ export default function Checkout() {
                     </div>
                   )}
 
-                  {/* Promo Code Section */}
-                  <div className="bg-white rounded-lg border border-[#e5e7eb] p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
-                        <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </div>
-                      <h2 className="text-sm font-semibold text-gray-900">
-                        {language === 'fr' ? 'Code promo' : 'Promo Code'}
-                      </h2>
-                    </div>
-                    
-                    {appliedPromoCode ? (
-                      <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
-                        <div className="flex items-center gap-2">
-                          <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          <div>
-                            <p className="text-sm font-medium text-green-900">
-                              {language === 'fr' ? 'Code appliqué' : 'Code Applied'}: {appliedPromoCode}
-                            </p>
-                            <p className="text-xs text-green-700">
-                              {language === 'fr' ? 'Économie' : 'Savings'}: {formatPriceWithCurrency(promoCodeDiscount)}
-                            </p>
-                          </div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={handleRemovePromoCode}
-                          className="text-sm text-green-700 hover:text-green-900 font-medium underline"
-                        >
-                          {language === 'fr' ? 'Retirer' : 'Remove'}
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        <div className="flex gap-2">
-                          <input
-                            type="text"
-                            value={promoCode}
-                            onChange={(e) => {
-                              setPromoCode(e.target.value)
-                              setPromoCodeError('')
-                            }}
-                            placeholder={language === 'fr' ? 'Entrez le code promo' : 'Enter promo code'}
-                            className="flex-1 px-4 py-2.5 text-sm rounded-lg border border-[#d1d5db] bg-white text-[#111827] hover:border-amber-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 focus:shadow-md transition-all placeholder:text-[#9ca3af] shadow-sm"
-                          />
-                          <button
-                            type="button"
-                            onClick={handleApplyPromoCode}
-                            className="px-4 py-2.5 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 transition-colors shadow-sm hover:shadow-md whitespace-nowrap"
-                          >
-                            {language === 'fr' ? 'Appliquer' : 'Apply'}
-                          </button>
-                        </div>
-                        {promoCodeError && (
-                          <div className="flex items-start gap-2 text-sm text-[#dc2626] bg-[#fef2f2] border border-[#fecaca] rounded-lg p-3">
-                            <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <p>{promoCodeError}</p>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
                   {/* Payment Button */}
                   <div className="mt-6">
                     {stripeError && (
@@ -1647,10 +1578,10 @@ export default function Checkout() {
                         {/* Order Summary Sidebar */}
                         <div className="lg:col-span-1 order-2 lg:order-1">
                           <div className="bg-white rounded-lg border border-[#e5e7eb] p-6 shadow-sm sticky top-6">
-                        <button
-                          type="button"
+                            <button
+                              type="button"
                               onClick={() => setOrderSummaryOpen(!orderSummaryOpen)}
-                              className="w-full flex items-center justify-between text-sm font-semibold text-gray-900 mb-4 pb-3 border-b border-[#e5e7eb] hover:text-amber-600 transition-colors"
+                              className="w-full flex items-center justify-between text-base font-semibold text-gray-900 mb-5 pb-4 border-b border-[#e5e7eb] hover:text-amber-600 transition-colors"
                             >
                               <span>{language === 'fr' ? 'Résumé de la commande' : 'Order Summary'}</span>
                               <svg 
@@ -1661,103 +1592,176 @@ export default function Checkout() {
                               >
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                               </svg>
-                        </button>
+                            </button>
                             
                             {orderSummaryOpen && (
                               <>
-                            {/* Product Items */}
-                            <div className="mb-4 pb-4 border-b border-[#e5e7eb] max-h-[300px] overflow-y-auto">
-                              <div className="space-y-3">
-                                {cartItems.map((item) => {
-                                  const productId = item.id?.split('-').slice(0, -1).join('-') || item.id?.replace(/-mini|-small|-medium|-large|-clearbox/, '') || ''
-                                  const translatedName = getTranslation(language, `products.${productId}.name`)
-                                  const displayName = translatedName !== `products.${productId}.name` ? translatedName : item.name
-                                  
-                                  // Translate variant
-                                  const variantMap = {
-                                    'mini': language === 'fr' ? 'Mini' : 'Mini',
-                                    'small': language === 'fr' ? 'Petit' : 'Small',
-                                    'medium': language === 'fr' ? 'Moyen' : 'Medium',
-                                    'large': language === 'fr' ? 'Grand' : 'Large',
-                                    'clearbox': language === 'fr' ? 'Boîte transparente' : 'Clear Box'
-                                  }
-                                  const variantLabel = variantMap[item.variant?.toLowerCase()] || item.variant
-                                  
-                                  return (
-                                    <div key={`${item.id}-${item.variant}`} className="flex gap-3">
-                                      {/* Product Image */}
-                                      <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
-                                        <img 
-                                          src={item.image} 
-                                          alt={displayName} 
-                                          className="w-full h-full object-cover" 
-                                        />
-                  </div>
+                                {/* Product Items */}
+                                <div className="mb-6 pb-6 border-b border-[#e5e7eb]">
+                                  <h3 className="text-sm font-semibold text-gray-900 mb-4">
+                                    {language === 'fr' ? 'Articles' : 'Items'}
+                                  </h3>
+                                  <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2">
+                                    {cartItems.map((item) => {
+                                      const productId = item.id?.split('-').slice(0, -1).join('-') || item.id?.replace(/-mini|-small|-medium|-large|-clearbox/, '') || ''
+                                      const translatedName = getTranslation(language, `products.${productId}.name`)
+                                      const displayName = translatedName !== `products.${productId}.name` ? translatedName : item.name
                                       
-                                      {/* Product Info */}
-                                      <div className="flex-1 min-w-0">
-                                        <h4 className="text-sm font-medium text-gray-900 truncate mb-0.5">
-                                          {displayName}
-                                        </h4>
-                                        <p className="text-xs text-[#6b7280] mb-1">{variantLabel}</p>
-                                        <div className="flex items-center justify-between">
-                                          <span className="text-xs text-[#6b7280]">
-                                            {language === 'fr' ? 'Qté' : 'Qty'}: {item.quantity}
-                                          </span>
-                                          <span className="text-sm font-semibold text-gray-900">
-                                            {formatPriceWithCurrency(item.price * item.quantity)}
-                                          </span>
+                                      // Translate variant
+                                      const variantMap = {
+                                        'mini': language === 'fr' ? 'Mini' : 'Mini',
+                                        'small': language === 'fr' ? 'Petit' : 'Small',
+                                        'medium': language === 'fr' ? 'Moyen' : 'Medium',
+                                        'large': language === 'fr' ? 'Grand' : 'Large',
+                                        'clearbox': language === 'fr' ? 'Boîte transparente' : 'Clear Box'
+                                      }
+                                      const variantLabel = variantMap[item.variant?.toLowerCase()] || item.variant
+                                      
+                                      return (
+                                        <div key={`${item.id}-${item.variant}`} className="flex gap-4">
+                                          {/* Product Image */}
+                                          <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-200 shadow-sm">
+                                            <img 
+                                              src={item.image} 
+                                              alt={displayName} 
+                                              className="w-full h-full object-cover" 
+                                            />
+                                          </div>
+                                          
+                                          {/* Product Info */}
+                                          <div className="flex-1 min-w-0">
+                                            <h4 className="text-sm font-semibold text-gray-900 mb-1 leading-tight">
+                                              {displayName}
+                                            </h4>
+                                            <p className="text-xs text-[#6b7280] mb-2">{variantLabel}</p>
+                                            <div className="flex items-center justify-between">
+                                              <span className="text-xs text-[#6b7280] font-medium">
+                                                {language === 'fr' ? 'Qté' : 'Qty'}: {item.quantity}
+                                              </span>
+                                              <span className="text-sm font-bold text-gray-900">
+                                                {formatPriceWithCurrency(item.price * item.quantity)}
+                                              </span>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      )
+                                    })}
+                                  </div>
+                                </div>
+                                
+                                {/* Promo Code Section */}
+                                <div className="mb-6 pb-6 border-b border-[#e5e7eb]">
+                                  <div className="flex items-center gap-2 mb-4">
+                                    <div className="w-6 h-6 rounded-lg bg-amber-50 flex items-center justify-center">
+                                      <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                      </svg>
+                                    </div>
+                                    <h3 className="text-sm font-semibold text-gray-900">
+                                      {language === 'fr' ? 'Code promo' : 'Promo Code'}
+                                    </h3>
+                                  </div>
+                                  
+                                  {appliedPromoCode ? (
+                                    <div className="flex items-center justify-between p-3.5 bg-green-50 border border-green-200 rounded-lg">
+                                      <div className="flex items-center gap-2.5">
+                                        <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <div>
+                                          <p className="text-sm font-semibold text-green-900">
+                                            {appliedPromoCode}
+                                          </p>
+                                          <p className="text-xs text-green-700">
+                                            {language === 'fr' ? 'Économie' : 'Savings'}: {formatPriceWithCurrency(promoCodeDiscount)}
+                                          </p>
                                         </div>
                                       </div>
+                                      <button
+                                        type="button"
+                                        onClick={handleRemovePromoCode}
+                                        className="text-xs text-green-700 hover:text-green-900 font-medium underline"
+                                      >
+                                        {language === 'fr' ? 'Retirer' : 'Remove'}
+                                      </button>
                                     </div>
-                                  )
-                                })}
-                              </div>
-                            </div>
-                            
-                            <div className="space-y-3 mb-4">
-                              <div className="flex justify-between text-sm">
-                                <span className="text-[#6b7280]">{language === 'fr' ? 'Sous-total' : 'Subtotal'}</span>
-                                <span className="font-medium text-gray-900">{formatPriceWithCurrency(getCartTotal())}</span>
-                    </div>
-                              {selectedShipping && (
-                                <div className="flex justify-between text-sm">
-                                  <span className="text-[#6b7280]">{language === 'fr' ? 'Expédition' : 'Shipping'}</span>
-                                  <span className="font-medium text-gray-900">{formatPriceWithCurrency(calculateShipping())}</span>
-                </div>
-                              )}
-                              {appliedPromoCode && promoCodeDiscount > 0 && (
-                                <div className="flex justify-between text-sm">
-                                  <span className="text-[#6b7280]">
-                                    {language === 'fr' ? 'Code promo' : 'Promo Code'} ({appliedPromoCode})
-                                  </span>
-                                  <span className="font-medium text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
-                    </div>
-                      )}
-                              <div className="pt-3 border-t border-[#e5e7eb] flex justify-between">
-                                <span className="font-semibold text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
-                                <span className="font-bold text-lg text-gray-900">
-                                  {formatPriceWithCurrency(Math.max(0, getCartTotal() + (selectedShipping ? calculateShipping() : 0) - promoCodeDiscount))}
-                                </span>
-                    </div>
-                            </div>
+                                  ) : (
+                                    <div className="space-y-3">
+                                      <div className="flex gap-2">
+                                        <input
+                                          type="text"
+                                          value={promoCode}
+                                          onChange={(e) => {
+                                            setPromoCode(e.target.value)
+                                            setPromoCodeError('')
+                                          }}
+                                          placeholder={language === 'fr' ? 'Entrez le code promo' : 'Enter promo code'}
+                                          className="flex-1 px-4 py-2.5 text-sm rounded-lg border border-[#d1d5db] bg-white text-[#111827] hover:border-amber-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 focus:shadow-md transition-all placeholder:text-[#9ca3af] shadow-sm"
+                                        />
+                                        <button
+                                          type="button"
+                                          onClick={handleApplyPromoCode}
+                                          className="px-4 py-2.5 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 transition-colors shadow-sm hover:shadow-md whitespace-nowrap"
+                                        >
+                                          {language === 'fr' ? 'Appliquer' : 'Apply'}
+                                        </button>
+                                      </div>
+                                      {promoCodeError && (
+                                        <div className="flex items-start gap-2 text-xs text-[#dc2626] bg-[#fef2f2] border border-[#fecaca] rounded-lg p-2.5">
+                                          <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                          </svg>
+                                          <p>{promoCodeError}</p>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                                
+                                {/* Price Breakdown */}
+                                <div className="space-y-3.5 mb-6">
+                                  <div className="flex justify-between items-center text-sm">
+                                    <span className="text-[#6b7280]">{language === 'fr' ? 'Sous-total' : 'Subtotal'}</span>
+                                    <span className="font-semibold text-gray-900">{formatPriceWithCurrency(getCartTotal())}</span>
+                                  </div>
+                                  {selectedShipping && (
+                                    <div className="flex justify-between items-center text-sm">
+                                      <span className="text-[#6b7280]">{language === 'fr' ? 'Expédition' : 'Shipping'}</span>
+                                      <span className="font-semibold text-gray-900">{formatPriceWithCurrency(calculateShipping())}</span>
+                                    </div>
+                                  )}
+                                  {appliedPromoCode && promoCodeDiscount > 0 && (
+                                    <div className="flex justify-between items-center text-sm">
+                                      <span className="text-[#6b7280]">
+                                        {language === 'fr' ? 'Réduction' : 'Discount'}
+                                      </span>
+                                      <span className="font-semibold text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
+                                    </div>
+                                  )}
+                                  <div className="pt-4 border-t-2 border-[#e5e7eb] flex justify-between items-center">
+                                    <span className="font-bold text-base text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
+                                    <span className="font-bold text-xl text-gray-900">
+                                      {formatPriceWithCurrency(Math.max(0, getCartTotal() + (selectedShipping ? calculateShipping() : 0) - promoCodeDiscount))}
+                                    </span>
+                                  </div>
+                                </div>
+                                
+                                {/* Security Badge */}
+                                <div className="pt-4 border-t border-[#e5e7eb]">
+                                  <div className="flex items-center gap-2 text-xs text-[#6b7280] mb-2">
+                                    <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                    </svg>
+                                    <span className="font-medium">{language === 'fr' ? 'Paiement sécurisé' : 'Secure Payment'}</span>
+                                  </div>
+                                  <p className="text-xs text-[#6b7280] leading-relaxed">
+                                    {language === 'fr' 
+                                      ? 'Vos informations de paiement sont cryptées et sécurisées.'
+                                      : 'Your payment information is encrypted and secure.'}
+                                  </p>
+                                </div>
                               </>
                             )}
-                            
-                            {/* Security Badge */}
-                            <div className="mt-6 pt-4 border-t border-[#e5e7eb]">
-                              <div className="flex items-center gap-2 text-xs text-[#6b7280] mb-3">
-                                <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
-                                <span className="font-medium">{language === 'fr' ? 'Paiement sécurisé' : 'Secure Payment'}</span>
-                              </div>
-                              <p className="text-xs text-[#6b7280] leading-relaxed">
-                                {language === 'fr' 
-                                  ? 'Vos informations de paiement sont cryptées et sécurisées.'
-                                  : 'Your payment information is encrypted and secure.'}
-                              </p>
-                            </div>
                           </div>
                         </div>
 
