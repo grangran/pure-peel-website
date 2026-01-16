@@ -1040,76 +1040,101 @@ export default function Checkout() {
   }
 
   return (
-    <section ref={sectionRef} className="py-8 md:py-12 px-4 sm:px-6 md:px-8 bg-[#fafbfc] min-h-[calc(100vh-72px)]">
-      <div className="max-w-7xl mx-auto">
-        {/* Payment Details - Single Column Layout */}
-        {currentStep === 1 && (
-          <div className="max-w-2xl mx-auto">
-                {/* Back button */}
-                <button
-                  onClick={() => {
-                    if (showPaymentForm) {
-                      // Go back to shipping form
-                      setShowPaymentForm(false)
-                      setClientSecret(null)
-                    } else {
-                      // Go back to home
-                    window.history.pushState({ page: "/" }, "", "/")
-                    window.dispatchEvent(new Event("hashchange"))
-                    }
-                  }}
-                  className="flex items-center gap-2 text-sm text-[#425466] hover:text-[#0a2540] mb-6 transition-colors"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-                  </svg>
-                  {showPaymentForm 
-                    ? (language === 'fr' ? 'Retour aux informations d\'expédition' : 'Back to shipping information')
-                    : getTranslation(language, 'checkout.continueShopping')
-                  }
-                </button>
+    <section ref={sectionRef} className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <button
+              onClick={() => {
+                if (showPaymentForm) {
+                  setShowPaymentForm(false)
+                  setClientSecret(null)
+                } else {
+                  window.history.pushState({ page: "/" }, "", "/")
+                  window.dispatchEvent(new Event("hashchange"))
+                }
+              }}
+              className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors group"
+            >
+              <svg className="w-5 h-5 transform group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+              </svg>
+              <span className="hidden sm:inline">
+                {showPaymentForm 
+                  ? (language === 'fr' ? 'Retour aux informations d\'expédition' : 'Back to shipping')
+                  : getTranslation(language, 'checkout.continueShopping') || 'Continue shopping'}
+              </span>
+              <span className="sm:hidden">{language === 'fr' ? 'Retour' : 'Back'}</span>
+            </button>
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center">
+                <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-                {/* Show shipping form OR payment form, not both */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        {currentStep === 1 && (
+          <div className="max-w-7xl mx-auto">
+
                 {!showPaymentForm ? (
                   <>
-                    {/* Progress Indicator */}
-                <div className="mb-8">
-                      <div className="flex items-center justify-center gap-2 mb-6">
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center text-sm font-semibold shadow-sm">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                            </svg>
+                    {/* Progress Indicator - Stripe-inspired */}
+                    <div className="mb-12">
+                      <div className="flex items-center justify-center gap-4 mb-8">
+                        <div className="flex items-center gap-3">
+                          <div className="relative">
+                            <div className="w-10 h-10 rounded-full bg-amber-600 text-white flex items-center justify-center text-sm font-semibold shadow-lg ring-4 ring-amber-100">
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
                           </div>
-                          <span className="text-sm font-medium text-gray-900 hidden sm:inline">Shipping</span>
+                          <div className="hidden sm:block">
+                            <p className="text-sm font-semibold text-gray-900">{language === 'fr' ? 'Livraison' : 'Shipping'}</p>
+                            <p className="text-xs text-gray-500">{language === 'fr' ? 'En cours' : 'In progress'}</p>
+                          </div>
                         </div>
-                        <div className="w-12 h-0.5 bg-gray-300"></div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center text-sm font-semibold">
+                        <div className="w-16 h-0.5 bg-gray-200 relative">
+                          <div className="absolute inset-0 bg-amber-600 w-0 transition-all duration-500"></div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center text-sm font-semibold border-2 border-gray-200">
                             2
                           </div>
-                          <span className="text-sm font-medium text-gray-500 hidden sm:inline">Payment</span>
+                          <div className="hidden sm:block">
+                            <p className="text-sm font-medium text-gray-400">{language === 'fr' ? 'Paiement' : 'Payment'}</p>
+                            <p className="text-xs text-gray-400">{language === 'fr' ? 'En attente' : 'Pending'}</p>
+                          </div>
                         </div>
                       </div>
-                      <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2 tracking-tight">
-                    {getTranslation(language, 'checkout.shippingInformation')}
-                  </h1>
-                      <p className="text-sm text-[#6b7280] leading-relaxed">
-                    {getTranslation(language, 'checkout.completeOrder')}
-                  </p>
-                </div>
-                
-                {/* Order Summary on Step 1 - Mobile first, desktop sidebar */}
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 mb-8 max-w-7xl mx-auto">
-                  {/* Order Summary - Top on mobile, sidebar on desktop */}
-                  <div className="md:col-span-5 order-1">
-                    <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-                      {/* Header */}
-                      <div className="px-6 py-5 border-b border-gray-200">
-                        <h2 className="text-xl font-semibold text-gray-900">
-                          {language === 'fr' ? 'Résumé de la commande' : 'Order Summary'}
-                        </h2>
+                      <div className="text-center mb-8">
+                        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3 tracking-tight">
+                          {getTranslation(language, 'checkout.shippingInformation') || 'Shipping Information'}
+                        </h1>
+                        <p className="text-base text-gray-600 max-w-2xl mx-auto">
+                          {getTranslation(language, 'checkout.completeOrder') || 'Complete your order details below'}
+                        </p>
                       </div>
+                    </div>
+                
+                {/* Main Layout - Stripe-inspired */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 max-w-7xl mx-auto">
+                  {/* Order Summary - Sticky sidebar on desktop */}
+                  <div className="lg:col-span-5 order-1">
+                    <div className="lg:sticky lg:top-24">
+                      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                        {/* Header */}
+                        <div className="px-6 py-5 bg-gradient-to-r from-amber-50 to-orange-50 border-b border-gray-200">
+                          <h2 className="text-lg font-bold text-gray-900">
+                            {language === 'fr' ? 'Résumé de la commande' : 'Order Summary'}
+                          </h2>
+                        </div>
                       
                       <div className="p-6 space-y-6">
                         {/* Product Items */}
@@ -1130,9 +1155,9 @@ export default function Checkout() {
                             const variantLabel = variantMap[item.variant?.toLowerCase()] || item.variant
                             
                             return (
-                              <div key={`${item.id}-${item.variant}`} className="flex gap-4 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
+                              <div key={`${item.id}-${item.variant}`} className="flex gap-4 pb-5 border-b border-gray-100 last:border-0 last:pb-0">
                                 {/* Product Image */}
-                                <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
+                                <div className="w-20 h-20 rounded-xl overflow-hidden bg-gray-100 shrink-0 border-2 border-gray-200 shadow-sm">
                                   <img 
                                     src={item.image} 
                                     alt={displayName} 
@@ -1141,18 +1166,18 @@ export default function Checkout() {
                                 </div>
                                 
                                 {/* Product Info */}
-                                <div className="flex-1 min-w-0 flex flex-col justify-between">
+                                <div className="flex-1 min-w-0 flex flex-col justify-between py-1">
                                   <div>
-                                    <h4 className="text-sm font-medium text-gray-900 mb-1 leading-tight">
+                                    <h4 className="text-base font-semibold text-gray-900 mb-1 leading-tight">
                                       {displayName}
                                     </h4>
-                                    <p className="text-xs text-gray-500 mb-1">{variantLabel}</p>
+                                    <p className="text-sm text-gray-500 mb-2">{variantLabel}</p>
                                   </div>
-                                  <div className="flex items-center justify-between mt-1">
-                                    <span className="text-xs text-gray-600">
-                                      {language === 'fr' ? 'Quantité' : 'Quantity'}: <span className="font-semibold text-gray-900">{item.quantity}</span>
+                                  <div className="flex items-center justify-between mt-auto">
+                                    <span className="text-sm text-gray-600">
+                                      {language === 'fr' ? 'Qty' : 'Qty'}: <span className="font-semibold text-gray-900">{item.quantity}</span>
                                     </span>
-                                    <span className="text-sm font-semibold text-gray-900">
+                                    <span className="text-base font-bold text-gray-900">
                                       {formatPriceWithCurrency(item.price * item.quantity)}
                                     </span>
                                   </div>
@@ -1163,29 +1188,29 @@ export default function Checkout() {
                         </div>
                         
                         {/* Price Breakdown */}
-                        <div className="pt-4 border-t-2 border-gray-200 space-y-3">
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm text-gray-700">{language === 'fr' ? 'Sous-total' : 'Subtotal'}</span>
-                            <span className="text-sm font-medium text-gray-900">{formatPriceWithCurrency(getCartTotal())}</span>
+                        <div className="pt-6 border-t-2 border-gray-200 space-y-4">
+                          <div className="flex justify-between items-center py-1">
+                            <span className="text-sm font-medium text-gray-600">{language === 'fr' ? 'Sous-total' : 'Subtotal'}</span>
+                            <span className="text-sm font-semibold text-gray-900">{formatPriceWithCurrency(getCartTotal())}</span>
                           </div>
                           {selectedShipping && (
-                            <div className="flex justify-between items-center">
-                              <span className="text-sm text-gray-700">{language === 'fr' ? 'Expédition' : 'Shipping'}</span>
-                              <span className="text-sm font-medium text-gray-900">{formatPriceWithCurrency(calculateShipping())}</span>
+                            <div className="flex justify-between items-center py-1">
+                              <span className="text-sm font-medium text-gray-600">{language === 'fr' ? 'Expédition' : 'Shipping'}</span>
+                              <span className="text-sm font-semibold text-gray-900">{formatPriceWithCurrency(calculateShipping())}</span>
                             </div>
                           )}
                           {appliedPromoCode && promoCodeDiscount > 0 && (
-                            <div className="flex justify-between items-center py-2 px-3 bg-green-50 rounded-lg border border-green-200">
+                            <div className="flex justify-between items-center py-2.5 px-4 bg-green-50 rounded-lg border border-green-200 -mx-2">
                               <div>
-                                <span className="text-sm text-gray-700">{language === 'fr' ? 'Réduction' : 'Discount'}</span>
-                                <span className="text-xs text-green-700 ml-2">({appliedPromoCode})</span>
+                                <span className="text-sm font-medium text-green-700">{language === 'fr' ? 'Réduction' : 'Discount'}</span>
+                                <span className="text-xs text-green-600 ml-2 font-medium">({appliedPromoCode})</span>
                               </div>
-                              <span className="text-sm font-medium text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
+                              <span className="text-sm font-bold text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
                             </div>
                           )}
-                          <div className="pt-3 border-t-2 border-gray-300 flex justify-between items-center">
-                            <span className="text-base font-semibold text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
-                            <span className="text-xl font-bold text-gray-900">
+                          <div className="pt-4 border-t-2 border-gray-300 flex justify-between items-center">
+                            <span className="text-lg font-bold text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
+                            <span className="text-2xl font-bold text-gray-900">
                               {formatPriceWithCurrency(Math.max(0, getCartTotal() + (selectedShipping ? calculateShipping() : 0) - promoCodeDiscount))}
                             </span>
                           </div>
@@ -1194,23 +1219,23 @@ export default function Checkout() {
                     </div>
                   </div>
                   
-                  {/* Shipping Form - Bottom on mobile, main content on desktop */}
-                  <div className="md:col-span-7 order-2">
+                  {/* Shipping Form - Main content on desktop */}
+                  <div className="lg:col-span-7 order-2">
                 <form onSubmit={handlePaymentSubmit} className="space-y-6">
                   {/* Contact Information */}
-                  <div className="bg-white rounded-lg border border-[#e5e7eb] p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
-                    <div className="flex items-center gap-2 mb-5 pb-3 border-b border-[#e5e7eb]">
-                      <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
-                        <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                      <h2 className="text-sm font-semibold text-gray-900">Contact</h2>
+                  <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8">
+                    <div className="mb-6">
+                      <h2 className="text-lg font-bold text-gray-900 mb-1">
+                        {language === 'fr' ? 'Informations de contact' : 'Contact Information'}
+                      </h2>
+                      <p className="text-sm text-gray-500">
+                        {language === 'fr' ? 'Nous vous enverrons un email de confirmation' : 'We\'ll send you a confirmation email'}
+                      </p>
                     </div>
                     <div className="space-y-5">
                   <div>
-                      <label className="block text-xs font-medium text-[#374151] mb-1.5 uppercase tracking-wide">
-                          {getTranslation(language, 'checkout.email')}
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                          {getTranslation(language, 'checkout.email') || 'Email'}
                       </label>
                         <input
                           type="email"
@@ -1219,18 +1244,19 @@ export default function Checkout() {
                           autoComplete="email"
                           value={formData.email}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-3 text-sm rounded-lg border transition-all placeholder:text-[#9ca3af] shadow-sm ${
-                            errors.email ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-amber-300 hover:shadow-md'
-                          } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 focus:shadow-md`}
+                          className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all placeholder:text-gray-400 ${
+                            errors.email ? 'border-red-400 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-200' : 'border-gray-200 bg-white text-gray-900 hover:border-gray-300'
+                          } focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-500`}
+                          placeholder={language === 'fr' ? 'votre@email.com' : 'your@email.com'}
                           required
                           data-1p-ignore
                         />
                         {errors.email && (
-                          <div className="mt-1.5 flex items-start gap-1.5">
-                            <svg className="w-3.5 h-3.5 text-[#dc2626] mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="mt-2 flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                            <svg className="w-5 h-5 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <p className="text-[#dc2626] text-xs leading-relaxed">{errors.email}</p>
+                            <p className="text-sm text-red-700 leading-relaxed">{errors.email}</p>
                           </div>
                         )}
                       </div>
@@ -1238,17 +1264,15 @@ export default function Checkout() {
                   </div>
 
                   {/* Name */}
-                  <div className="bg-white rounded-lg border border-[#e5e7eb] p-6 shadow-sm hover:shadow-md transition-shadow duration-200">
-                    <div className="flex items-center gap-2 mb-5 pb-3 border-b border-[#e5e7eb]">
-                      <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
-                        <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
-                      </div>
-                      <h2 className="text-sm font-semibold text-gray-900">Name</h2>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8">
+                    <h2 className="text-lg font-bold text-gray-900 mb-6">
+                      {language === 'fr' ? 'Nom' : 'Name'}
+                    </h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <div>
+                        <label className="block text-sm font-semibold text-gray-900 mb-2">
+                          {getTranslation(language, 'checkout.firstName') || 'First Name'}
+                        </label>
                       <input
                         type="text"
                         name="firstName"
@@ -1256,10 +1280,10 @@ export default function Checkout() {
                         autoComplete="given-name"
                         value={formData.firstName}
                         onChange={handleInputChange}
-                          placeholder={getTranslation(language, 'checkout.firstName')}
-                        className={`w-full px-4 py-3 text-sm rounded-lg border transition-all placeholder:text-[#9ca3af] shadow-sm ${
-                          errors.firstName ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-amber-300 hover:shadow-md'
-                        } focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 focus:shadow-md`}
+                          placeholder={getTranslation(language, 'checkout.firstName') || 'First name'}
+                        className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all placeholder:text-gray-400 ${
+                          errors.firstName ? 'border-red-400 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-200' : 'border-gray-200 bg-white text-gray-900 hover:border-gray-300'
+                        } focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-500`}
                         required
                         data-1p-ignore
                       />
@@ -1316,7 +1340,7 @@ export default function Checkout() {
                       type="text"
                       name="address"
                       id="checkout-address"
-                      autoComplete="street-address"
+                      autoComplete="shipping street-address"
                       value={formData.address}
                       onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.streetAddress')}
@@ -1324,8 +1348,6 @@ export default function Checkout() {
                         errors.address ? 'border-[#ef4444] bg-[#fef2f2] text-[#dc2626]' : 'border-[#d1d5db] bg-white text-[#111827] hover:border-[#9ca3af]'
                       } focus:outline-none focus:ring-2 focus:ring-[#0a2540]/20 focus:border-[#0a2540]`}
                       required
-                      // Enable address autocomplete
-                      autoComplete="shipping street-address"
                       data-1p-ignore
                     />
                     {errors.address && (
@@ -1621,27 +1643,28 @@ export default function Checkout() {
                     <button
                       type="submit"
                       disabled={isSubmitting || !hasEnteredShippingDetails || !selectedShipping}
-                      className="w-full py-3.5 px-4 text-sm font-semibold rounded-lg border-0 cursor-pointer transition-all duration-200 bg-amber-600 text-white hover:bg-amber-700 active:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-amber-600 flex items-center justify-center gap-2 min-h-[48px] shadow-md hover:shadow-lg transform hover:scale-[1.01] active:scale-[0.99]"
+                      className="w-full py-4 px-6 text-base font-bold rounded-xl border-0 cursor-pointer transition-all duration-200 bg-gradient-to-r from-amber-600 to-orange-600 text-white hover:from-amber-700 hover:to-orange-700 active:from-amber-600 active:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-amber-600 disabled:hover:to-orange-600 flex items-center justify-center gap-3 min-h-[56px] shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
                     >
                       {isSubmitting ? (
                         <LoadingSpinner size="sm" color="white" text={getTranslation(language, 'checkout.processing')} />
                       ) : (
                         <>
                           {hasEnteredShippingDetails && selectedShipping 
-                            ? `Pay ${formatPriceWithCurrency(totalCAD)}`
-                            : (language === 'fr' ? 'Entrez les détails d\'expédition' : 'Enter shipping details')
+                            ? `${language === 'fr' ? 'Payer' : 'Pay'} ${formatPriceWithCurrency(totalCAD)}`
+                            : (language === 'fr' ? 'Continuer' : 'Continue')
                           }
                         </>
                       )}
                     </button>
 
-                    <p className="text-xs text-[#6b7280] text-center mt-3 leading-relaxed">
-                      {getTranslation(language, 'checkout.termsAgreement')}
+                    <p className="text-xs text-gray-500 text-center mt-4 leading-relaxed">
+                      {getTranslation(language, 'checkout.termsAgreement') || (language === 'fr' ? 'En continuant, vous acceptez nos conditions d\'utilisation' : 'By continuing, you agree to our terms of service')}
                     </p>
                   </div>
                 </form>
               </div>
             </div>
+                </div>
                 </>
                 ) : (
                   /* Stripe Payment Element - Single column, no left panel */
