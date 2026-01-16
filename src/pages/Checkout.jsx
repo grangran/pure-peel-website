@@ -1477,12 +1477,12 @@ export default function Checkout() {
                 ) : (
                   /* Embedded Stripe Checkout - Show when payment is ready */
                   clientSecret && (
-                    <div id="embedded-checkout" className="bg-white rounded-xl border border-gray-200 p-8">
+                    <div id="embedded-checkout" className="bg-white rounded-2xl border-2 border-gray-200 p-8 shadow-md">
                       <div className="mb-8">
-                        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+                        <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
                           {getTranslation(language, 'checkout.paymentDetails') || 'Payment Details'}
                         </h1>
-                        <p className="text-base text-gray-600">
+                        <p className="text-lg text-gray-600 font-medium">
                           {language === 'fr' 
                             ? 'Complétez votre paiement en toute sécurité'
                             : 'Complete your payment securely'}
