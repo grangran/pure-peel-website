@@ -592,6 +592,7 @@ export default function Checkout() {
       const result = validatePromoCode(appliedPromoCode)
       if (result.valid) {
         setPromoCodeDiscount(result.discount)
+        setPromoCodeType(result.promoType)
       }
     }
   }, [selectedShipping, cartItems, appliedPromoCode])
@@ -604,6 +605,8 @@ export default function Checkout() {
     const validCodes = {
       'FREETEST': { discount: 100, type: 'percent' }, // 100% off for testing
       'TEST100': { discount: 100, type: 'percent' }, // Alternative test code
+      'FREESHIP': { type: 'free_shipping' }, // Free shipping
+      'FREESHIPPING': { type: 'free_shipping' }, // Free shipping (alternative)
     }
     
     if (validCodes[codeUpper]) {
@@ -617,11 +620,15 @@ export default function Checkout() {
       if (promo.type === 'percent') {
         // Calculate discount in CAD
         const discountAmountCAD = (orderTotalCAD * promo.discount) / 100
-        return { valid: true, discount: discountAmountCAD, code: codeUpper }
+        return { valid: true, discount: discountAmountCAD, code: codeUpper, promoType: 'percent' }
+      } else if (promo.type === 'free_shipping') {
+        // Free shipping - discount equals shipping cost
+        const discountAmountCAD = shippingCAD
+        return { valid: true, discount: discountAmountCAD, code: codeUpper, promoType: 'free_shipping' }
       }
     }
     
-    return { valid: false, discount: 0, code: null }
+    return { valid: false, discount: 0, code: null, promoType: null }
   }
 
   const handleApplyPromoCode = () => {
@@ -637,17 +644,20 @@ export default function Checkout() {
     if (result.valid) {
       setAppliedPromoCode(result.code)
       setPromoCodeDiscount(result.discount)
+      setPromoCodeType(result.promoType)
       setPromoCodeError('')
     } else {
       setPromoCodeError(getTranslation(language, 'checkout.promoCode.invalid'))
       setAppliedPromoCode(null)
       setPromoCodeDiscount(0)
+      setPromoCodeType(null)
     }
   }
 
   const handleRemovePromoCode = () => {
     setAppliedPromoCode(null)
     setPromoCodeDiscount(0)
+    setPromoCodeType(null)
     setPromoCode('')
     setPromoCodeError('')
   }
@@ -1022,13 +1032,20 @@ export default function Checkout() {
                       <span className="text-white">
                         {!hasEnteredShippingDetails || !selectedShipping 
                           ? (language === 'fr' ? 'À calculer' : 'To be calculated')
-                          : (shippingCostCAD === 0 ? getTranslation(language, 'checkout.free') : formatPrice(shippingCostCAD))
+                          : (promoCodeType === 'free_shipping' || shippingCostCAD === 0 
+                              ? getTranslation(language, 'checkout.free') 
+                              : formatPrice(shippingCostCAD))
                         }
                       </span>
                     </div>
-                    {appliedPromoCode && hasEnteredShippingDetails && selectedShipping && (
+                    {appliedPromoCode && hasEnteredShippingDetails && selectedShipping && promoCodeDiscount > 0 && (
                       <div className="flex justify-between text-sm text-green-400">
-                        <span>{getTranslation(language, 'checkout.promoCode.discount')}</span>
+                        <span>
+                          {promoCodeType === 'free_shipping' 
+                            ? (language === 'fr' ? 'Expédition gratuite' : 'Free Shipping')
+                            : getTranslation(language, 'checkout.promoCode.discount')
+                          }
+                        </span>
                         <span>-{formatPrice(promoCodeDiscount)}</span>
                       </div>
                     )}
