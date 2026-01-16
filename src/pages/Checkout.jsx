@@ -185,6 +185,7 @@ export default function Checkout() {
   const [promoCodeDiscount, setPromoCodeDiscount] = useState(0) // Discount amount in CAD
   const [clientSecret, setClientSecret] = useState(null) // For Payment Element
   const [showPaymentForm, setShowPaymentForm] = useState(false) // Toggle Payment Element display
+  const [orderSummaryOpen, setOrderSummaryOpen] = useState(true) // Order summary dropdown state
   
   // Check for Stripe redirect
   useEffect(() => {
