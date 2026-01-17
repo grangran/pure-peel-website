@@ -815,6 +815,16 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       return res.status(400).json({ error: 'Invalid amount calculation. Please check your cart items and shipping.' })
     }
 
+    // Log total amount for debugging
+    console.log('💰 Order totals:', {
+      subtotal,
+      shippingCostCents: finalShippingCostCents,
+      tax,
+      discountAmountCents,
+      totalAmount,
+      totalInDollars: totalAmount / 100
+    })
+
     // Calculate shipping cost in selected currency (finalShippingCostCents is in CAD)
     const shippingCostInCurrency = useUSD ? Math.round(finalShippingCostCents * exchangeRate) : finalShippingCostCents
 
@@ -926,13 +936,46 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       }
     }
 
-    const session = await stripe.checkout.sessions.create(sessionConfig)
+    try {
+      const session = await stripe.checkout.sessions.create(sessionConfig)
 
-    // Return the checkout session URL - frontend will redirect to this
-    res.json({ 
-      sessionId: session.id,
-      url: session.url // Redirect user to this URL for Stripe hosted checkout
-    })
+      console.log('✅ Stripe Checkout Session created:', {
+        sessionId: session.id,
+        url: session.url,
+        mode: session.mode,
+        status: session.status,
+        paymentStatus: session.payment_status
+      })
+
+      // Return the checkout session URL - frontend will redirect to this
+      // Note: session.url can be null for embedded checkout, but we're using hosted checkout
+      if (!session.url) {
+        console.error('⚠️ Warning: Stripe session created but URL is null:', {
+          sessionId: session.id,
+          mode: session.mode,
+          status: session.status,
+          paymentStatus: session.payment_status
+        })
+        return res.status(500).json({ 
+          error: 'Failed to create checkout session URL. Please try again.' 
+        })
+      }
+
+      res.json({ 
+        sessionId: session.id,
+        url: session.url // Redirect user to this URL for Stripe hosted checkout
+      })
+    } catch (stripeError) {
+      console.error('❌ Stripe API Error:', {
+        message: stripeError.message,
+        type: stripeError.type,
+        code: stripeError.code,
+        statusCode: stripeError.statusCode
+      })
+      return res.status(500).json({ 
+        error: stripeError.message || 'Failed to create checkout session. Please try again.' 
+      })
+    }
   } catch (error) {
     console.error('Error creating checkout session:', error)
     res.status(500).json({ error: error.message })

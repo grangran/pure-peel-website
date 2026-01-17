@@ -733,6 +733,8 @@ export default function Checkout() {
       }
 
       const data = await response.json()
+      
+      console.log('📦 Server response:', data)
 
       // Redirect to Stripe Checkout
       if (data.url) {
@@ -741,7 +743,11 @@ export default function Checkout() {
         window.location.href = data.url // Redirect to Stripe hosted checkout page
       } else {
         console.error('❌ No checkout URL in response:', data)
-        throw new Error('Checkout session URL not provided by server')
+        // Check if there's an error message from the server
+        if (data.error) {
+          throw new Error(data.error)
+        }
+        throw new Error('Checkout session URL not provided by server. Please try again.')
       }
     } catch (error) {
       console.error('Payment error:', error)
