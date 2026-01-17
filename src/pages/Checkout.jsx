@@ -948,7 +948,10 @@ export default function Checkout() {
     // Extract numeric value and format consistently
     const numericValue = parseFloat(convertedPrice.toFixed(2))
     
-    if (currency === 'USD') {
+    // Ensure currency is explicitly set - use currency from context
+    const currentCurrency = currency || 'CAD' // Fallback to CAD if currency is undefined
+    
+    if (currentCurrency === 'USD') {
       return `$${numericValue.toFixed(2)} USD`
     } else {
       return `$${numericValue.toFixed(2)} CAD`
