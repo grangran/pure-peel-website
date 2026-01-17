@@ -29,6 +29,57 @@ const usStates = [
   "West Virginia", "Wisconsin", "Wyoming"
 ]
 
+// Input masking utilities
+const formatPhoneNumber = (value, country = 'Canada') => {
+  // Remove all non-digit characters
+  const digits = value.replace(/\D/g, '')
+  
+  if (country === 'United States') {
+    // US format: (XXX) XXX-XXXX
+    if (digits.length <= 3) return digits
+    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`
+  } else {
+    // Canadian format: (XXX) XXX-XXXX (same as US for now)
+    if (digits.length <= 3) return digits
+    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`
+  }
+}
+
+const formatPostalCode = (value, country = 'Canada') => {
+  if (country === 'United States') {
+    // US ZIP: 12345 or 12345-6789
+    const digits = value.replace(/\D/g, '')
+    if (digits.length <= 5) return digits
+    return `${digits.slice(0, 5)}-${digits.slice(5, 9)}`
+  } else {
+    // Canadian: A1A 1A1
+    const cleaned = value.replace(/[^A-Za-z0-9]/gi, '').toUpperCase()
+    if (cleaned.length <= 3) return cleaned
+    return `${cleaned.slice(0, 3)} ${cleaned.slice(3, 6)}`
+  }
+}
+
+// Real-time validation
+const validateEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
+
+const validatePhone = (phone, country = 'Canada') => {
+  const digits = phone.replace(/\D/g, '')
+  return digits.length >= 10 && digits.length <= 11
+}
+
+const validatePostalCode = (postalCode, country = 'Canada') => {
+  if (country === 'United States') {
+    return /^\d{5}(-\d{4})?$/.test(postalCode)
+  } else {
+    return /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/.test(postalCode)
+  }
+}
+
 export default function Checkout() {
   const { cartItems, getCartTotal, clearCart, setIsCartOpen } = useCart()
   const { language } = useLanguage()
@@ -232,16 +283,35 @@ export default function Checkout() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
-    // For Canadian postal codes, convert to uppercase but don't force display
     let processedValue = value
-    if (name === 'postalCode' && formData.country === "Canada") {
-      processedValue = value.toUpperCase()
+    
+    // Apply input masking
+    if (name === 'phone') {
+      processedValue = formatPhoneNumber(value, formData.country)
+    } else if (name === 'postalCode') {
+      processedValue = formatPostalCode(value, formData.country)
     }
+    
     setFormData(prev => ({ ...prev, [name]: processedValue }))
-    // Clear error when user starts typing
+    
+    // Real-time validation feedback
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: "" }))
+      setErrors(prev => {
+        const newErrors = { ...prev }
+        // Clear error if field is now valid
+        if (name === 'email' && validateEmail(processedValue)) {
+          delete newErrors[name]
+        } else if (name === 'phone' && validatePhone(processedValue, formData.country)) {
+          delete newErrors[name]
+        } else if (name === 'postalCode' && validatePostalCode(processedValue, formData.country)) {
+          delete newErrors[name]
+        } else if (processedValue.trim() && name !== 'email' && name !== 'phone' && name !== 'postalCode') {
+          delete newErrors[name]
+        }
+        return newErrors
+      })
     }
+    
     // Track when user enters shipping details
     if (name === 'postalCode' || name === 'province' || name === 'city' || name === 'country') {
       if (processedValue && !hasEnteredShippingDetails) {
@@ -256,6 +326,21 @@ export default function Checkout() {
         localStorage.removeItem('checkoutShippingOptions')
         localStorage.removeItem('checkoutShippingOption')
       }
+    }
+  }
+  
+  const handleBlur = (e) => {
+    const { name, value } = e.target
+    // Validate on blur for better UX
+    if (name === 'email' && value && !validateEmail(value)) {
+      setErrors(prev => ({ ...prev, email: language === 'fr' ? 'Veuillez entrer une adresse email valide' : 'Please enter a valid email address' }))
+    } else if (name === 'phone' && value && !validatePhone(value, formData.country)) {
+      setErrors(prev => ({ ...prev, phone: language === 'fr' ? 'Veuillez entrer un numéro de téléphone valide' : 'Please enter a valid phone number' }))
+    } else if (name === 'postalCode' && value && !validatePostalCode(value, formData.country)) {
+      const errorMsg = formData.country === 'United States'
+        ? (language === 'fr' ? 'Veuillez entrer un code postal américain valide' : 'Please enter a valid US ZIP code')
+        : (language === 'fr' ? 'Veuillez entrer un code postal canadien valide' : 'Please enter a valid Canadian postal code')
+      setErrors(prev => ({ ...prev, postalCode: errorMsg }))
     }
   }
 
@@ -998,8 +1083,14 @@ export default function Checkout() {
                           name="email"
                           id="checkout-email"
                           autoComplete="email"
+                          inputMode="email"
                           value={formData.email}
                           onChange={handleInputChange}
+                          onBlur={handleBlur}
+                          aria-label={language === 'fr' ? 'Adresse email' : 'Email address'}
+                          aria-required="true"
+                          aria-invalid={errors.email ? "true" : "false"}
+                          aria-describedby={errors.email ? "email-error" : undefined}
                           className={`w-full px-4 py-2.5 text-sm rounded-md border transition-all placeholder:text-gray-400 ${
                             errors.email ? 'border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-100' : 'border-gray-300 bg-white text-gray-900 hover:border-gray-400'
                           } focus:outline-none focus:ring-1 focus:ring-black focus:border-black`}
@@ -1008,8 +1099,8 @@ export default function Checkout() {
                           data-1p-ignore
                         />
                         {errors.email && (
-                          <div className="mt-2 flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
-                            <svg className="w-5 h-5 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div id="email-error" className="mt-2 flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg" role="alert" aria-live="polite">
+                            <svg className="w-5 h-5 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             <p className="text-sm text-red-700 leading-relaxed">{errors.email}</p>
@@ -1225,9 +1316,19 @@ export default function Checkout() {
                         autoComplete={formData.country === "United States" ? "shipping postal-code" : "shipping postal-code"}
                         value={formData.postalCode}
                         onChange={handleInputChange}
-                            placeholder={formData.country === "United States" 
-                              ? (getTranslation(language, 'checkout.zipCode') || '12345')
-                              : (getTranslation(language, 'checkout.postalCode') || 'A1A 1A1')}
+                        onBlur={handleBlur}
+                        inputMode={formData.country === "United States" ? "numeric" : "text"}
+                        pattern={formData.country === "United States" ? "\\d{5}(-\\d{4})?" : "[A-Za-z]\\d[A-Za-z][ -]?\\d[A-Za-z]\\d"}
+                        maxLength={formData.country === "United States" ? 10 : 7}
+                        aria-label={formData.country === "United States" 
+                          ? (language === 'fr' ? 'Code postal américain' : 'US ZIP code')
+                          : (language === 'fr' ? 'Code postal canadien' : 'Canadian postal code')}
+                        aria-required="true"
+                        aria-invalid={errors.postalCode ? "true" : "false"}
+                        aria-describedby={errors.postalCode ? "postalCode-error" : undefined}
+                        placeholder={formData.country === "United States" 
+                          ? (getTranslation(language, 'checkout.zipCode') || '12345')
+                          : (getTranslation(language, 'checkout.postalCode') || 'A1A 1A1')}
                         className={`w-full px-4 py-2.5 text-sm rounded-md border transition-all placeholder:text-gray-400 ${
                           errors.postalCode ? 'border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-100' : 'border-gray-300 bg-white text-gray-900 hover:border-gray-400'
                         } focus:outline-none focus:ring-1 focus:ring-black focus:border-black`}
@@ -1235,8 +1336,8 @@ export default function Checkout() {
                         data-1p-ignore
                       />
                       {errors.postalCode && (
-                        <div className="mt-2 flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
-                          <svg className="w-5 h-5 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div id="postalCode-error" className="mt-2 flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg" role="alert" aria-live="polite">
+                          <svg className="w-5 h-5 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                           <p className="text-sm text-red-700 leading-relaxed">{errors.postalCode}</p>
@@ -1257,9 +1358,16 @@ export default function Checkout() {
                           inputMode="tel"
                           name="phone"
                           id="checkout-phone"
-                          autoComplete="shipping tel"
+                          autoComplete="tel"
                           value={formData.phone}
                           onChange={handleInputChange}
+                          onBlur={handleBlur}
+                          maxLength={14}
+                          pattern="[0-9() -]*"
+                          aria-label={language === 'fr' ? 'Numéro de téléphone' : 'Phone number'}
+                          aria-required="true"
+                          aria-invalid={errors.phone ? "true" : "false"}
+                          aria-describedby={errors.phone ? "phone-error" : undefined}
                           placeholder={formData.country === "United States" 
                             ? (getTranslation(language, 'checkout.phonePlaceholderUS') || '(555) 123-4567')
                             : (getTranslation(language, 'checkout.phonePlaceholder') || '(555) 123-4567')}
@@ -1270,8 +1378,8 @@ export default function Checkout() {
                           data-1p-ignore
                         />
                         {errors.phone && (
-                          <div className="mt-2 flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
-                            <svg className="w-5 h-5 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div id="phone-error" className="mt-2 flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg" role="alert" aria-live="polite">
+                            <svg className="w-5 h-5 text-red-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             <p className="text-sm text-red-700 leading-relaxed">{errors.phone}</p>
@@ -1432,7 +1540,10 @@ export default function Checkout() {
                     <button
                       type="submit"
                       disabled={isSubmitting || !hasEnteredShippingDetails || !selectedShipping}
-                      className="w-full py-4 px-6 text-base font-bold rounded-xl border-0 cursor-pointer transition-all duration-200 bg-gradient-to-r from-amber-600 to-orange-600 text-white hover:from-amber-700 hover:to-orange-700 active:from-amber-600 active:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-amber-600 disabled:hover:to-orange-600 flex items-center justify-center gap-3 min-h-[56px] shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
+                      aria-label={hasEnteredShippingDetails && selectedShipping 
+                        ? (language === 'fr' ? `Payer ${formatPriceWithCurrency(totalCAD)}` : `Pay ${formatPriceWithCurrency(totalCAD)}`)
+                        : (language === 'fr' ? 'Continuer' : 'Continue')}
+                      className="w-full py-4 px-6 text-base font-bold rounded-xl border-0 cursor-pointer transition-all duration-200 bg-gradient-to-r from-amber-600 to-orange-600 text-white hover:from-amber-700 hover:to-orange-700 active:from-amber-600 active:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-amber-600 disabled:hover:to-orange-600 flex items-center justify-center gap-3 min-h-[56px] touch-manipulation shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
                     >
                       {isSubmitting ? (
                         <LoadingSpinner size="sm" color="white" text={getTranslation(language, 'checkout.processing')} />
@@ -1515,36 +1626,49 @@ export default function Checkout() {
                               
                         {/* Promo Code Section */}
                         {!appliedPromoCode ? (
-                                <div className="pt-4 border-t border-gray-200">
-                            <label className="block text-xs font-medium text-gray-700 mb-2">
-                                    {language === 'fr' ? 'Code promo' : 'Promo Code'}
-                      </label>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          value={promoCode}
-                          onChange={(e) => {
-                                        setPromoCode(e.target.value)
-                            setPromoCodeError('')
-                          }}
-                                      placeholder={language === 'fr' ? 'Entrez le code' : 'Enter code'}
-                                className="flex-1 px-3 py-2 text-xs rounded-md border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 transition-all placeholder:text-gray-400"
-                        />
-                        <button
-                          type="button"
-                          onClick={handleApplyPromoCode}
-                                className="px-3 py-2 bg-amber-600 text-white text-xs font-medium rounded-md hover:bg-amber-700 transition-colors whitespace-nowrap"
-                        >
-                                      {language === 'fr' ? 'Appliquer' : 'Apply'}
-                        </button>
-                  </div>
-                      {promoCodeError && (
-                              <p className="mt-1.5 text-xs text-red-600">{promoCodeError}</p>
+                          <div className="pt-4 border-t border-gray-200">
+                            <label htmlFor="promo-code-input" className="block text-xs font-medium text-gray-700 mb-2">
+                              {language === 'fr' ? 'Code promo' : 'Promo Code'}
+                            </label>
+                            <div className="flex gap-2">
+                              <input
+                                id="promo-code-input"
+                                type="text"
+                                value={promoCode}
+                                onChange={(e) => {
+                                  setPromoCode(e.target.value.toUpperCase())
+                                  setPromoCodeError('')
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    e.preventDefault()
+                                    handleApplyPromoCode()
+                                  }
+                                }}
+                                placeholder={language === 'fr' ? 'Entrez le code' : 'Enter code'}
+                                aria-label={language === 'fr' ? 'Code promo' : 'Promo code'}
+                                aria-invalid={promoCodeError ? "true" : "false"}
+                                aria-describedby={promoCodeError ? "promo-code-error" : undefined}
+                                className="flex-1 px-3 py-2.5 text-xs rounded-md border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 transition-all placeholder:text-gray-400 touch-manipulation"
+                              />
+                              <button
+                                type="button"
+                                onClick={handleApplyPromoCode}
+                                aria-label={language === 'fr' ? 'Appliquer le code promo' : 'Apply promo code'}
+                                className="px-4 py-2.5 bg-amber-600 text-white text-xs font-medium rounded-md hover:bg-amber-700 active:bg-amber-800 transition-colors whitespace-nowrap touch-manipulation min-h-[44px]"
+                              >
+                                {language === 'fr' ? 'Appliquer' : 'Apply'}
+                              </button>
+                            </div>
+                            {promoCodeError && (
+                              <p id="promo-code-error" className="mt-1.5 text-xs text-red-600" role="alert" aria-live="polite">
+                                {promoCodeError}
+                              </p>
                             )}
                           </div>
                         ) : (
                           <div className="pt-4 border-t border-gray-200">
-                            <div className="flex items-center justify-between py-2 px-3 bg-green-50 rounded border border-green-200">
+                            <div className="flex items-center justify-between py-2.5 px-3 bg-green-50 rounded border border-green-200">
                               <div className="flex items-center gap-2">
                                 <span className="text-xs font-medium text-green-700">{appliedPromoCode}</span>
                                 {appliedPromoCode === 'FREESHIP' && (
@@ -1554,13 +1678,14 @@ export default function Checkout() {
                               <button
                                 type="button"
                                 onClick={handleRemovePromoCode}
-                                className="text-xs text-green-700 hover:text-green-800 underline"
+                                aria-label={language === 'fr' ? 'Retirer le code promo' : 'Remove promo code'}
+                                className="text-xs text-green-700 hover:text-green-800 underline touch-manipulation min-h-[44px] px-2"
                               >
                                 {language === 'fr' ? 'Retirer' : 'Remove'}
                               </button>
                             </div>
-                    </div>
-                              )}
+                          </div>
+                        )}
                               
                         {/* Price Breakdown */}
                         <div className="pt-4 border-t border-gray-200 space-y-3">
