@@ -2050,10 +2050,8 @@ export default function Checkout() {
                 )
                 }
                 </div>
-              )
             )}
           </div>
-      </div>
 
         {/* Step 2: Confirmation */}
         {currentStep === 2 && (
