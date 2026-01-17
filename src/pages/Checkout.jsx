@@ -1694,9 +1694,9 @@ export default function Checkout() {
             )}
 
             {showPaymentForm && clientSecret && (
-              <div className="max-w-7xl mx-auto">
-                      {/* Progress Indicator - Stripe-inspired */}
-                      <div className="mb-12">
+              <div>
+                {/* Progress Indicator - Stripe-inspired */}
+                <div className="mb-12">
                         <div className="flex items-center justify-center gap-4 mb-8">
                           <div className="flex items-center gap-3">
                             <div className="relative">
@@ -1736,19 +1736,167 @@ export default function Checkout() {
                         </div>
                       </div>
                 
-                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 max-w-7xl mx-auto">
-                        {/* Order Summary Sidebar */}
-                        <div className="lg:col-span-5 order-1">
-                          <div className="lg:sticky lg:top-24">
-                            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                              {/* Header */}
-                              <div className="px-6 py-5 bg-gradient-to-r from-amber-50 to-orange-50 border-b border-gray-200">
-                                <h2 className="text-lg font-bold text-gray-900">
-                                  {language === 'fr' ? 'Résumé de la commande' : 'Order Summary'}
-                                </h2>
-                    </div>
+                      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 max-w-6xl mx-auto">
+                        {/* Payment Form - Main content on left */}
+                        <div className="lg:col-span-2">
+                          <div>
+                            <h2 className="text-base font-semibold text-gray-900 mb-1">
+                              {language === 'fr' ? 'Détails de paiement' : 'Payment Details'}
+                            </h2>
+                            <p className="text-sm text-gray-500 mb-6">
+                              {language === 'fr' ? 'Complétez votre paiement en toute sécurité' : 'Complete your payment securely'}
+                            </p>
                             
-                            <div className="p-6 space-y-6">
+                            {/* Accepted Payment Methods */}
+                            <div className="mb-6">
+                              <p className="text-xs font-medium text-gray-600 mb-3 uppercase tracking-wide">
+                                {language === 'fr' ? 'Méthodes de paiement acceptées' : 'Accepted Payment Methods'}
+                              </p>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded border border-gray-200">
+                                  <svg className="w-6 h-4" viewBox="0 0 40 24" fill="none">
+                                    <rect width="40" height="24" rx="2" fill="#1434CB"/>
+                                    <path d="M16.5 12h7m-7-3h7m-7 6h4" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+                                  </svg>
+                                  <span className="text-xs font-medium text-gray-700">Visa</span>
+                                </div>
+                                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded border border-gray-200">
+                                  <svg className="w-6 h-4" viewBox="0 0 40 24" fill="none">
+                                    <rect width="40" height="24" rx="2" fill="#EB001B"/>
+                                    <rect x="20" width="20" height="24" rx="2" fill="#F79E1B"/>
+                                  </svg>
+                                  <span className="text-xs font-medium text-gray-700">Mastercard</span>
+                                </div>
+                                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded border border-gray-200">
+                                  <svg className="w-6 h-4" viewBox="0 0 40 24" fill="#006FCF">
+                                    <rect width="40" height="24" rx="2" fill="#006FCF"/>
+                                    <path d="M20 8l-2 8h4l-2-8z" fill="white"/>
+                                  </svg>
+                                  <span className="text-xs font-medium text-gray-700">Amex</span>
+                                </div>
+                                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded border border-gray-200">
+                                  <span className="text-xs font-medium text-gray-700">Link</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <Elements 
+                              stripe={stripePromise} 
+                              options={{
+                                clientSecret,
+                                appearance: {
+                                  theme: 'stripe',
+                                  variables: {
+                                    colorPrimary: '#d97706',
+                                    colorBackground: '#ffffff',
+                                    colorText: '#111827',
+                                    colorTextSecondary: '#6b7280',
+                                    colorDanger: '#dc2626',
+                                    colorSuccess: '#10b981',
+                                    fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                                    fontSizeBase: '14px',
+                                    fontWeightNormal: '400',
+                                    fontWeightMedium: '500',
+                                    fontWeightBold: '600',
+                                    spacingUnit: '4px',
+                                    borderRadius: '8px',
+                                    spacingBorder: '1px',
+                                    colorTextPlaceholder: '#9ca3af',
+                                    colorIcon: '#6b7280',
+                                    colorIconHover: '#111827',
+                                    colorFocus: '#d97706',
+                                    spacingFocus: '2px',
+                                  },
+                                  rules: {
+                                    '.Input': {
+                                      border: '1px solid #d1d5db',
+                                      borderRadius: '8px',
+                                      padding: '12px 14px',
+                                      fontSize: '15px',
+                                      transition: 'all 0.2s ease',
+                                      boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                                    },
+                                    '.Input:focus': {
+                                      border: '1px solid #d97706',
+                                      boxShadow: '0 0 0 3px rgba(217, 119, 6, 0.1)',
+                                    },
+                                    '.Input--invalid': {
+                                      border: '1px solid #dc2626',
+                                      backgroundColor: '#fef2f2',
+                                    },
+                                    '.Label': {
+                                      fontSize: '13px',
+                                      fontWeight: '500',
+                                      color: '#374151',
+                                      textTransform: 'uppercase',
+                                      letterSpacing: '0.05em',
+                                      marginBottom: '8px',
+                                    },
+                                    '.Tab': {
+                                      borderRadius: '8px',
+                                      padding: '12px 18px',
+                                      border: '1px solid #e5e7eb',
+                                      transition: 'all 0.2s ease',
+                                    },
+                                    '.Tab--selected': {
+                                      border: '1px solid #d97706',
+                                      backgroundColor: '#d97706',
+                                      color: '#ffffff',
+                                      boxShadow: '0 2px 4px rgba(217, 119, 6, 0.2)',
+                                    },
+                                    '.Error': {
+                                      color: '#dc2626',
+                                      fontSize: '13px',
+                                      marginTop: '8px',
+                                      fontWeight: '500',
+                                    },
+                                  },
+                                },
+                                locale: language === 'fr' ? 'fr' : 'en',
+                              }}
+                            >
+                              <PaymentForm 
+                                clientSecret={clientSecret}
+                                onSuccess={() => {
+                                  console.log('✅ Payment completed')
+                                }}
+                              />
+                            </Elements>
+
+                            {/* Security Notice */}
+                            <div className="mt-6 pt-6 border-t border-gray-200">
+                              <div className="flex items-start gap-2">
+                                <svg className="w-4 h-4 text-green-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                                <div>
+                                  <p className="text-xs font-medium text-gray-900 mb-0.5">
+                                    {language === 'fr' ? 'Sécurisé par Stripe' : 'Secured by Stripe'}
+                                  </p>
+                                  <p className="text-xs text-gray-600 leading-relaxed">
+                                    {language === 'fr' 
+                                      ? 'Vos informations de paiement sont cryptées et traitées de manière sécurisée. Nous ne stockons jamais vos données de carte.'
+                                      : 'Your payment information is encrypted and processed securely. We never store your card details.'}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        </div>
+                  
+                  {/* Order Summary - Sticky sidebar on right */}
+                  <div className="lg:col-span-1">
+                    <div className="lg:sticky lg:top-24">
+                      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                        {/* Header */}
+                        <div className="px-6 py-4 border-b border-gray-200">
+                          <h2 className="text-base font-semibold text-gray-900">
+                            {language === 'fr' ? 'Résumé' : 'Order'}
+                          </h2>
+                        </div>
+                      
+                      <div className="p-6 space-y-6">
                               {/* Product Items */}
                               <div className="space-y-4">
                                 {cartItems.map((item) => {
@@ -1767,29 +1915,27 @@ export default function Checkout() {
                                   const variantLabel = variantMap[item.variant?.toLowerCase()] || item.variant
                                   
                                   return (
-                                    <div key={`${item.id}-${item.variant}`} className="flex gap-4 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
-                                      {/* Product Image - Larger */}
-                                      <div className="w-24 h-24 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
+                                    <div key={`${item.id}-${item.variant}`} className="flex gap-3 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
+                                      {/* Product Image */}
+                                      <div className="w-16 h-16 rounded overflow-hidden bg-gray-100 shrink-0">
                                         <img 
                                           src={item.image} 
                                           alt={displayName} 
                                           className="w-full h-full object-cover" 
                                         />
-                </div>
-                
+                                      </div>
+                                      
                                       {/* Product Info */}
-                                      <div className="flex-1 min-w-0 flex flex-col justify-between">
-                                        <div>
-                                          <h4 className="text-base font-medium text-gray-900 mb-1 leading-tight">
-                                            {displayName}
-                                          </h4>
-                                          <p className="text-sm text-gray-500 mb-2">{variantLabel}</p>
-                                        </div>
-                                        <div className="flex items-center justify-between mt-2">
-                                          <span className="text-sm text-gray-600">
-                                            {language === 'fr' ? 'Quantité' : 'Quantity'}: <span className="font-semibold text-gray-900">{item.quantity}</span>
+                                      <div className="flex-1 min-w-0">
+                                        <h4 className="text-sm font-medium text-gray-900 mb-0.5 leading-tight">
+                                          {displayName}
+                                        </h4>
+                                        <p className="text-xs text-gray-500 mb-1">{variantLabel}</p>
+                                        <div className="flex items-center justify-between mt-1">
+                                          <span className="text-xs text-gray-600">
+                                            {language === 'fr' ? 'Qty' : 'Qty'}: <span className="font-medium">{item.quantity}</span>
                                           </span>
-                                          <span className="text-base font-semibold text-gray-900">
+                                          <span className="text-sm font-semibold text-gray-900">
                                             {formatPriceWithCurrency(item.price * item.quantity)}
                                           </span>
                                         </div>
@@ -1830,213 +1976,38 @@ export default function Checkout() {
                     </div>
                               )}
                               
-                              {/* Price Breakdown - Simplified with better hierarchy */}
-                              <div className="pt-4 border-t-2 border-gray-200 space-y-4">
-                                <div className="flex justify-between items-center">
-                                  <span className="text-base text-gray-700">{language === 'fr' ? 'Sous-total' : 'Subtotal'}</span>
-                                  <span className="text-base font-medium text-gray-900">{formatPriceWithCurrency(getCartTotal())}</span>
-                                </div>
-                                {selectedShipping && (
-                                  <div className="flex justify-between items-center">
-                                    <span className="text-base text-gray-700">{language === 'fr' ? 'Expédition' : 'Shipping'}</span>
-                                    <span className="text-base font-medium text-gray-900">{formatPriceWithCurrency(calculateShipping())}</span>
-                                  </div>
-                                )}
-                                {appliedPromoCode && promoCodeDiscount > 0 && (
-                                  <div className="flex justify-between items-center py-2 px-3 bg-green-50 rounded-lg border border-green-200">
-                                    <div>
-                                      <span className="text-base text-gray-700">{language === 'fr' ? 'Réduction' : 'Discount'}</span>
-                                      <span className="text-sm text-green-700 ml-2">({appliedPromoCode})</span>
-                                    </div>
-                                    <span className="text-base font-medium text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
-                                  </div>
-                                )}
-                                <div className="pt-4 border-t-2 border-gray-300 flex justify-between items-center">
-                                  <span className="text-lg font-semibold text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
-                                  <span className="text-2xl font-bold text-gray-900">
-                                    {formatPriceWithCurrency(Math.max(0, getCartTotal() + (selectedShipping ? calculateShipping() : 0) - promoCodeDiscount))}
-                                  </span>
-                                </div>
-                              </div>
-                              
-                              {/* Security Badge - Simplified */}
-                              <div className="pt-4 border-t border-gray-200">
-                                <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
-                                  <span className="font-medium">{language === 'fr' ? 'Paiement sécurisé' : 'Secure Payment'}</span>
-                                </div>
-                              </div>
+                        {/* Price Breakdown */}
+                        <div className="pt-4 border-t border-gray-200 space-y-3">
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-gray-600">{language === 'fr' ? 'Sous-total' : 'Subtotal'}</span>
+                            <span className="font-medium text-gray-900">{formatPriceWithCurrency(getCartTotal())}</span>
+                          </div>
+                          {selectedShipping && (
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="text-gray-600">{language === 'fr' ? 'Expédition' : 'Shipping'}</span>
+                              <span className="font-medium text-gray-900">{formatPriceWithCurrency(calculateShipping())}</span>
                             </div>
+                          )}
+                          {appliedPromoCode && promoCodeDiscount > 0 && (
+                            <div className="flex justify-between items-center py-2 px-3 bg-green-50 rounded border border-green-200 -mx-3 text-sm">
+                              <div>
+                                <span className="text-green-700">{language === 'fr' ? 'Réduction' : 'Discount'}</span>
+                                <span className="text-xs text-green-600 ml-1">({appliedPromoCode})</span>
+                              </div>
+                              <span className="font-medium text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
+                            </div>
+                          )}
+                          <div className="pt-3 border-t border-gray-300 flex justify-between items-center">
+                            <span className="text-base font-semibold text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
+                            <span className="text-lg font-bold text-gray-900">
+                              {formatPriceWithCurrency(Math.max(0, getCartTotal() + (selectedShipping ? calculateShipping() : 0) - promoCodeDiscount))}
+                            </span>
                           </div>
                         </div>
-                
-                        {/* Payment Form */}
-                        <div className="lg:col-span-7 order-2">
-                          <div id="payment-form" className="bg-white rounded-2xl border border-gray-200 shadow-sm">
-                            {/* Header */}
-                            <div className="px-8 py-6 bg-gradient-to-r from-amber-50 to-orange-50 border-b border-gray-200 rounded-t-2xl">
-                              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                                {language === 'fr' ? 'Détails de paiement' : 'Payment Details'}
-                              </h2>
-                              <p className="text-sm text-gray-600">
-                                {language === 'fr' ? 'Complétez votre paiement en toute sécurité' : 'Complete your payment securely'}
-                              </p>
-                            </div>
-                            
-                            <div className="p-8 space-y-8">
-                              {/* Accepted Payment Methods */}
-                        <div>
-                                <p className="text-sm font-semibold text-gray-900 mb-4">
-                                  {language === 'fr' ? 'Méthodes de paiement acceptées' : 'Accepted Payment Methods'}
-                                </p>
-                                <div className="flex items-center gap-3 flex-wrap">
-                                  <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 rounded-lg border border-gray-200 hover:border-amber-300 transition-colors">
-                                    <svg className="w-8 h-5" viewBox="0 0 40 24" fill="none">
-                                      <rect width="40" height="24" rx="2" fill="#1434CB"/>
-                                      <path d="M16.5 12h7m-7-3h7m-7 6h4" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-                                    </svg>
-                                    <span className="text-sm font-semibold text-gray-700">Visa</span>
-                        </div>
-                                  <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 rounded-lg border border-gray-200 hover:border-amber-300 transition-colors">
-                                    <svg className="w-8 h-5" viewBox="0 0 40 24" fill="none">
-                                      <rect width="40" height="24" rx="2" fill="#EB001B"/>
-                                      <rect x="20" width="20" height="24" rx="2" fill="#F79E1B"/>
-                                    </svg>
-                                    <span className="text-sm font-semibold text-gray-700">Mastercard</span>
                       </div>
-                                  <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 rounded-lg border border-gray-200 hover:border-amber-300 transition-colors">
-                                    <svg className="w-8 h-5" viewBox="0 0 40 24" fill="#006FCF">
-                                      <rect width="40" height="24" rx="2" fill="#006FCF"/>
-                                      <path d="M20 8l-2 8h4l-2-8z" fill="white"/>
-                                    </svg>
-                                    <span className="text-sm font-semibold text-gray-700">Amex</span>
                     </div>
-                                  <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-50 rounded-lg border border-gray-200 hover:border-amber-300 transition-colors">
-                                    <span className="text-sm font-semibold text-gray-700">Link</span>
+                  </div>
                 </div>
-                  </div>
-                  </div>
-
-                            <Elements 
-                              stripe={stripePromise} 
-                              options={{
-                                clientSecret,
-                                appearance: {
-                                  theme: 'stripe',
-                                  variables: {
-                                    // Primary colors matching your brand (amber/orange)
-                                    colorPrimary: '#d97706', // amber-600
-                                    colorBackground: '#ffffff',
-                                    colorText: '#111827',
-                                    colorTextSecondary: '#6b7280',
-                                    colorDanger: '#dc2626',
-                                    colorSuccess: '#10b981',
-                                    
-                                    // Typography
-                                    fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                                    fontSizeBase: '14px',
-                                    fontWeightNormal: '400',
-                                    fontWeightMedium: '500',
-                                    fontWeightBold: '600',
-                                    
-                                    // Spacing and layout
-                                    spacingUnit: '4px',
-                                    borderRadius: '8px',
-                                    spacingBorder: '1px',
-                                    
-                                    // Form elements
-                                    colorTextPlaceholder: '#9ca3af',
-                                    colorIcon: '#6b7280',
-                                    colorIconHover: '#111827',
-                                    
-                                    // Focus states with brand color
-                                    colorFocus: '#d97706', // amber-600
-                                    spacingFocus: '2px',
-                                  },
-                                  rules: {
-                                    '.Input': {
-                                      border: '1px solid #d1d5db',
-                                      borderRadius: '8px',
-                                      padding: '12px 14px',
-                                      fontSize: '15px',
-                                      transition: 'all 0.2s ease',
-                                      boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-                                    },
-                                    '.Input:focus': {
-                                      border: '1px solid #d97706', // amber-600
-                                      boxShadow: '0 0 0 3px rgba(217, 119, 6, 0.1)', // amber-600 with opacity
-                                    },
-                                    '.Input--invalid': {
-                                      border: '1px solid #dc2626',
-                                      backgroundColor: '#fef2f2',
-                                    },
-                                    '.Label': {
-                                      fontSize: '13px',
-                                      fontWeight: '500',
-                                      color: '#374151',
-                                      textTransform: 'uppercase',
-                                      letterSpacing: '0.05em',
-                                      marginBottom: '8px',
-                                    },
-                                    '.Tab': {
-                                      borderRadius: '8px',
-                                      padding: '12px 18px',
-                                      border: '1px solid #e5e7eb',
-                                      transition: 'all 0.2s ease',
-                                    },
-                                    '.Tab--selected': {
-                                      border: '1px solid #d97706', // amber-600
-                                      backgroundColor: '#d97706', // amber-600
-                                      color: '#ffffff',
-                                      boxShadow: '0 2px 4px rgba(217, 119, 6, 0.2)',
-                                    },
-                                    '.Error': {
-                                      color: '#dc2626',
-                                      fontSize: '13px',
-                                      marginTop: '8px',
-                                      fontWeight: '500',
-                                    },
-                                  },
-                                },
-                                // Enable customer creation for payment method reuse
-                                // This allows returning customers to see saved payment methods
-                                locale: language === 'fr' ? 'fr' : 'en',
-                              }}
-                            >
-                              <PaymentForm 
-                                clientSecret={clientSecret}
-                                onSuccess={() => {
-                                  // Payment successful - handled by useEffect above
-                                  console.log('✅ Payment completed')
-                                }}
-                              />
-                            </Elements>
-
-                              {/* Security Notice */}
-                              <div className="pt-6 border-t border-gray-200">
-                                <div className="flex items-start gap-3">
-                                  <svg className="w-5 h-5 text-green-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                  </svg>
-                                  <div>
-                                    <p className="text-sm font-semibold text-gray-900 mb-1">
-                                      {language === 'fr' ? 'Sécurisé par Stripe' : 'Secured by Stripe'}
-                                    </p>
-                                    <p className="text-sm text-gray-600 leading-relaxed">
-                                      {language === 'fr' 
-                                        ? 'Vos informations de paiement sont cryptées et traitées de manière sécurisée. Nous ne stockons jamais vos données de carte.'
-                                        : 'Your payment information is encrypted and processed securely. We never store your card details.'}
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
               </div>
             )}
           </div>
@@ -2045,21 +2016,21 @@ export default function Checkout() {
         {/* Step 2: Confirmation */}
         {currentStep === 2 && (
           <div className="max-w-2xl mx-auto text-center">
-            <div className="bg-white rounded-lg shadow-sm border border-[#e3e8ef] p-12">
-              <div className="w-16 h-16 rounded-full bg-[#0a2540]/10 flex items-center justify-center mx-auto mb-6">
-                <svg className="w-8 h-8 text-[#0a2540]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12">
+              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h1 className="text-2xl font-semibold text-[#0a2540] mb-3">{getTranslation(language, 'checkout.orderConfirmed')}</h1>
-              <p className="text-[#425466] mb-6">
+              <h1 className="text-2xl font-semibold text-gray-900 mb-3">{getTranslation(language, 'checkout.orderConfirmed')}</h1>
+              <p className="text-gray-600 mb-6">
                 {getTranslation(language, 'checkout.thankYou')}{customerInfo.name ? `, ${customerInfo.name.split(' ')[0]}` : ''}!
               </p>
-              <div className="bg-[#f6f9fc] rounded-lg p-6 mb-8">
-                <p className="text-sm text-[#425466] mb-2">{getTranslation(language, 'checkout.orderNumber')}</p>
-                <p className="text-xl font-semibold text-[#0a2540]">{orderNumber}</p>
+              <div className="bg-gray-50 rounded-lg p-6 mb-8">
+                <p className="text-sm text-gray-600 mb-2">{getTranslation(language, 'checkout.orderNumber')}</p>
+                <p className="text-xl font-semibold text-gray-900">{orderNumber}</p>
               </div>
-              <p className="text-[#425466] mb-8">
+              <p className="text-gray-600 mb-8">
                 {customerInfo.email ? (
                   <>{getTranslation(language, 'checkout.confirmationEmail')} <strong>{customerInfo.email}</strong> {getTranslation(language, 'checkout.confirmationEmailSuffix')}</>
                 ) : (
