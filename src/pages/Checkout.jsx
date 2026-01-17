@@ -1063,9 +1063,21 @@ export default function Checkout() {
                         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3 tracking-tight">
                           {getTranslation(language, 'checkout.shippingInformation') || 'Shipping Information'}
                         </h1>
-                        <p className="text-base text-gray-600 max-w-2xl mx-auto">
+                        <p className="text-base text-gray-600 max-w-2xl mx-auto mb-3">
                           {getTranslation(language, 'checkout.completeOrder') || 'Complete your order details below'}
                         </p>
+                        {/* Prominent Currency Indicator */}
+                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-lg">
+                          <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span className="text-sm font-semibold text-amber-900">
+                            {currency === 'USD' 
+                              ? (language === 'fr' ? 'Tous les prix sont en USD ($)' : 'All prices are in USD ($)')
+                              : (language === 'fr' ? 'Tous les prix sont en CAD (CA$)' : 'All prices are in CAD (CA$)')
+                            }
+                          </span>
+                        </div>
                       </div>
                     </div>
                 
@@ -1731,6 +1743,16 @@ export default function Checkout() {
                         </>
                       )}
                     </button>
+
+                    {/* Currency reminder before redirecting to Stripe */}
+                    {hasEnteredShippingDetails && selectedShipping && (
+                      <p className="text-xs text-amber-700 text-center mt-3 font-medium">
+                        {currency === 'USD' 
+                          ? (language === 'fr' ? 'Vous serez redirigé vers Stripe pour payer en USD ($)' : 'You will be redirected to Stripe to pay in USD ($)')
+                          : (language === 'fr' ? 'Vous serez redirigé vers Stripe pour payer en CAD (CA$)' : 'You will be redirected to Stripe to pay in CAD (CA$)')
+                        }
+                      </p>
+                    )}
 
                     <p className="text-xs text-gray-500 text-center mt-4 leading-relaxed">
                       {getTranslation(language, 'checkout.termsAgreement') || (language === 'fr' ? 'En continuant, vous acceptez nos conditions d\'utilisation' : 'By continuing, you agree to our terms of service')}
