@@ -29,7 +29,6 @@ export const translations = {
       },
       productInfo: "Product Information",
       variants: {
-        miniBag: "Mini Bag",
         smallBag: "Small Bag",
         mediumBag: "Medium Bag",
         largeBag: "Large Bag",
@@ -134,8 +133,8 @@ export const translations = {
               answer: "Store in a cool, dry place away from direct sunlight. Keep in the original sealed packaging until ready to use. Once opened, transfer to an airtight container (glass jar or resealable bag) to maintain freshness and prevent moisture absorption."
             },
             {
-              question: "What's the difference between the sizes (Mini, Small, Medium, Large)?",
-              answer: "All sizes contain the same high-quality dehydrated citrus slices—only quantity differs. Quantities vary by citrus type (limes have more slices per bag than oranges due to their smaller size). Choose the size that fits your needs:\n\n• Mini Bag: Sample size for first-time customers or testing recipes (1-2 cocktails or single tea session)\n• Small Bag: Personal use for home bartenders or tea enthusiasts (3-5 drinks or small dinner parties)\n• Medium Bag: Family size for regular use (weekly meal prep, multiple cocktails, gatherings of 6-10 people)\n• Large Bag: Best value for frequent users, restaurants, or large events (catering, entertaining, stocking up)\n• Clear Box: Premium gift-ready packaging (special occasions, corporate gifts, elegant displays)\n\nCheck each product page for specific quantities per size."
+              question: "What's the difference between the sizes (Small, Medium, Large)?",
+              answer: "All sizes contain the same high-quality dehydrated citrus slices—only quantity differs. Quantities vary by citrus type (limes have more slices per bag than oranges due to their smaller size). Choose the size that fits your needs:\n\n• Small Bag: Personal use for home bartenders or tea enthusiasts (3-5 drinks or small dinner parties)\n• Medium Bag: Family size for regular use (weekly meal prep, multiple cocktails, gatherings of 6-10 people)\n• Large Bag: Best value for frequent users, restaurants, or large events (catering, entertaining, stocking up)\n• Clear Box: Premium gift-ready packaging (special occasions, corporate gifts, elegant displays)\n\nCheck each product page for specific quantities per size."
             },
             {
               question: "Can I use these in cocktails?",
@@ -892,7 +891,6 @@ export const translations = {
       },
       productInfo: "Informations sur le Produit",
       variants: {
-        miniBag: "Mini Sac",
         smallBag: "Petit Sac",
         mediumBag: "Sac Moyen",
         largeBag: "Grand Sac",
@@ -997,8 +995,8 @@ export const translations = {
               answer: "Conservez-les dans un endroit frais et sec, à l'abri de la lumière directe du soleil. Gardez-les dans l'emballage scellé d'origine jusqu'à ce que vous soyez prêt à les utiliser. Une fois ouvertes, transférez-les dans un contenant hermétique (pot en verre ou sac refermable) pour maintenir la fraîcheur et empêcher l'absorption d'humidité."
             },
             {
-              question: "Quelle est la différence entre les tailles (Mini, Petit, Moyen, Grand)?",
-              answer: "Toutes les tailles contiennent les mêmes tranches d'agrumes déshydratées de haute qualité—seule la quantité diffère. Les quantités varient selon le type d'agrumes (les limes ont plus de tranches par sac que les oranges en raison de leur taille plus petite). Choisissez la taille qui correspond à vos besoins :\n\n• Sac Mini: Taille d'échantillon pour nouveaux clients ou tester des recettes (1-2 cocktails ou séance de thé)\n• Sac Petit: Usage personnel pour barmen à domicile ou amateurs de thé (3-5 boissons ou petits dîners)\n• Sac Moyen: Taille familiale pour usage régulier (préparation de repas hebdomadaire, plusieurs cocktails, rassemblements de 6-10 personnes)\n• Sac Grand: Meilleure valeur pour utilisateurs fréquents, restaurants ou grands événements (traiteur, divertissements, stockage)\n• Boîte Transparente: Emballage premium prêt pour cadeau (occasions spéciales, cadeaux d'entreprise, présentations élégantes)\n\nConsultez chaque page de produit pour les quantités spécifiques par taille."
+              question: "Quelle est la différence entre les tailles (Petit, Moyen, Grand)?",
+              answer: "Toutes les tailles contiennent les mêmes tranches d'agrumes déshydratées de haute qualité—seule la quantité diffère. Les quantités varient selon le type d'agrumes (les limes ont plus de tranches par sac que les oranges en raison de leur taille plus petite). Choisissez la taille qui correspond à vos besoins :\n\n• Sac Petit: Usage personnel pour barmen à domicile ou amateurs de thé (3-5 boissons ou petits dîners)\n• Sac Moyen: Taille familiale pour usage régulier (préparation de repas hebdomadaire, plusieurs cocktails, rassemblements de 6-10 personnes)\n• Sac Grand: Meilleure valeur pour utilisateurs fréquents, restaurants ou grands événements (traiteur, divertissements, stockage)\n• Boîte Transparente: Emballage premium prêt pour cadeau (occasions spéciales, cadeaux d'entreprise, présentations élégantes)\n\nConsultez chaque page de produit pour les quantités spécifiques par taille."
             },
             {
               question: "Puis-je les utiliser dans des cocktails?",
@@ -1812,10 +1810,6 @@ export function getTranslation(language, key) {
 export function translateVariantLabel(language, label) {
   const t = (key) => getTranslation(language, `productPage.variants.${key}`)
   
-  if (label.includes('Mini Bag')) {
-    const pcs = label.match(/\d+/)?.[0] || ''
-    return `${t('miniBag')} — ${pcs} ${t('pcs')}`
-  }
   if (label.includes('Small Bag')) {
     const pcs = label.match(/\d+/)?.[0] || ''
     return `${t('smallBag')} — ${pcs} ${t('pcs')}`

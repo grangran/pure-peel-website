@@ -145,10 +145,7 @@ export default function ShippingReturns() {
                 </div>
               </div>
               
-              <div className="group border border-amber-500 bg-amber-50 rounded-lg p-4 hover:border-amber-600 hover:bg-amber-100 transition-all duration-200 relative">
-                <div className="absolute top-2 right-2">
-                  <span className="px-2 py-1 text-[10px] font-semibold text-gray-900 bg-white rounded uppercase tracking-wide">Fastest</span>
-                </div>
+              <div className="group border border-amber-500 bg-amber-50 rounded-lg p-4 hover:border-amber-600 hover:bg-amber-100 transition-all duration-200">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
@@ -235,10 +232,7 @@ export default function ShippingReturns() {
                 </div>
               </div>
               
-              <div className="group border border-amber-500 bg-amber-50 rounded-lg p-4 hover:border-amber-600 hover:bg-amber-100 transition-all duration-200 relative">
-                <div className="absolute top-2 right-2">
-                  <span className="px-2 py-1 text-[10px] font-semibold text-gray-900 bg-white rounded uppercase tracking-wide">Fastest</span>
-                </div>
+              <div className="group border border-amber-500 bg-amber-50 rounded-lg p-4 hover:border-amber-600 hover:bg-amber-100 transition-all duration-200">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
