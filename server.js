@@ -1433,37 +1433,29 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
     }
 
     // Calculate package weight
-    // Product weights (UPDATE with your actual weights in kg)
+    // Product weights (measured weights in kg)
     // These are product-only weights - packaging is added separately
     const PRODUCT_WEIGHTS = {
-      'mini': 0.05,   // kg - UPDATE with actual Mini Bag weight
-      'small': 0.1,   // kg - UPDATE with actual Small Bag weight
-      'medium': 0.2,  // kg - UPDATE with actual Medium Bag weight
-      'large': 0.35,  // kg - UPDATE with actual Large Bag weight
-      'clearbox': 0.2 // kg - UPDATE with actual Clear Box weight
+      'small': 0.075,   // kg - Small Bag (measured: max 75g across all products)
+      'medium': 0.14,   // kg - Medium Bag (measured: max 140g across all products)
+      'large': 0.34,    // kg - Large Bag (calculated: max 340g based on proportional scaling)
+      'clearbox': 0.165 // kg - Clear Box (measured: max 165g across all products)
     }
 
-    // Box sizes with dimensions and packaging weights (UPDATE with your actual boxes)
+    // Box sizes with dimensions and packaging weights
     const BOX_SIZES = {
       small: {
-        length: 20,   // cm - UPDATE with your actual small box length
-        width: 15,    // cm - UPDATE with your actual small box width
-        height: 5,    // cm - UPDATE with your actual small box height
-        packagingWeight: 0.1, // kg - Weight of box, padding, label, tape - UPDATE
-        maxItems: 3
-      },
-      medium: {
-        length: 25,   // cm - UPDATE with your actual medium box length
-        width: 20,    // cm - UPDATE with your actual medium box width
-        height: 8,    // cm - UPDATE with your actual medium box height
-        packagingWeight: 0.15, // kg - Weight of box, padding, label, tape - UPDATE
-        maxItems: 8
+        length: 23,   // cm - Measured box size
+        width: 15,    // cm - Measured box size
+        height: 13,   // cm - Measured box size
+        packagingWeight: 0.1, // kg - Estimated (measure when available)
+        maxItems: 5
       },
       large: {
-        length: 30,   // cm - UPDATE with your actual large box length
-        width: 25,    // cm - UPDATE with your actual large box width
-        height: 10,   // cm - UPDATE with your actual large box height
-        packagingWeight: 0.2, // kg - Weight of box, padding, label, tape - UPDATE
+        length: 27,   // cm - Measured box size
+        width: 25,    // cm - Measured box size
+        height: 15,   // cm - Measured box size
+        packagingWeight: 0.2, // kg - Estimated (measure when available)
         maxItems: 999
       }
     }
@@ -1475,8 +1467,7 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
         const variantLower = (item.variant || '').toLowerCase()
         let itemWeight = 0.1 // Default weight
         
-        if (variantLower.includes('mini')) itemWeight = PRODUCT_WEIGHTS.mini
-        else if (variantLower.includes('small')) itemWeight = PRODUCT_WEIGHTS.small
+        if (variantLower.includes('small')) itemWeight = PRODUCT_WEIGHTS.small
         else if (variantLower.includes('medium')) itemWeight = PRODUCT_WEIGHTS.medium
         else if (variantLower.includes('large')) itemWeight = PRODUCT_WEIGHTS.large
         else if (variantLower.includes('clear')) itemWeight = PRODUCT_WEIGHTS.clearbox
@@ -1489,8 +1480,6 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
       let boxSize
       if (itemsCount <= BOX_SIZES.small.maxItems) {
         boxSize = BOX_SIZES.small
-      } else if (itemsCount <= BOX_SIZES.medium.maxItems) {
-        boxSize = BOX_SIZES.medium
       } else {
         boxSize = BOX_SIZES.large
       }
@@ -1508,8 +1497,6 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
     let dimensions
     if (itemsCount <= BOX_SIZES.small.maxItems) {
       dimensions = { length: BOX_SIZES.small.length, width: BOX_SIZES.small.width, height: BOX_SIZES.small.height }
-    } else if (itemsCount <= BOX_SIZES.medium.maxItems) {
-      dimensions = { length: BOX_SIZES.medium.length, width: BOX_SIZES.medium.width, height: BOX_SIZES.medium.height }
     } else {
       dimensions = { length: BOX_SIZES.large.length, width: BOX_SIZES.large.width, height: BOX_SIZES.large.height }
     }

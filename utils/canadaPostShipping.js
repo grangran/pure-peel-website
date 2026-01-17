@@ -197,27 +197,20 @@ const PRODUCT_WEIGHTS = {
   'clearbox': 0.165 // kg - Clear Box (measured: max 165g across all products)
 }
 
-// Box sizes with dimensions and packaging weights (UPDATE with your actual boxes)
+// Box sizes with dimensions and packaging weights
 const BOX_SIZES = {
   small: {
-    length: 20,   // cm - UPDATE with your actual small box length
-    width: 15,    // cm - UPDATE with your actual small box width
-    height: 5,    // cm - UPDATE with your actual small box height
-    packagingWeight: 0.1, // kg - Weight of box, padding, label, tape - UPDATE
-    maxItems: 3
-  },
-  medium: {
-    length: 25,   // cm - UPDATE with your actual medium box length
-    width: 20,    // cm - UPDATE with your actual medium box width
-    height: 8,    // cm - UPDATE with your actual medium box height
-    packagingWeight: 0.15, // kg - Weight of box, padding, label, tape - UPDATE
-    maxItems: 8
+    length: 23,   // cm - Measured box size
+    width: 15,    // cm - Measured box size
+    height: 13,   // cm - Measured box size
+    packagingWeight: 0.1, // kg - Estimated (measure when available)
+    maxItems: 5
   },
   large: {
-    length: 30,   // cm - UPDATE with your actual large box length
-    width: 25,    // cm - UPDATE with your actual large box width
-    height: 10,   // cm - UPDATE with your actual large box height
-    packagingWeight: 0.2, // kg - Weight of box, padding, label, tape - UPDATE
+    length: 27,   // cm - Measured box size
+    width: 25,    // cm - Measured box size
+    height: 15,   // cm - Measured box size
+    packagingWeight: 0.2, // kg - Estimated (measure when available)
     maxItems: 999
   }
 }
@@ -246,8 +239,6 @@ function calculatePackageWeight(items) {
   let boxSize
   if (itemsCount <= BOX_SIZES.small.maxItems) {
     boxSize = BOX_SIZES.small
-  } else if (itemsCount <= BOX_SIZES.medium.maxItems) {
-    boxSize = BOX_SIZES.medium
   } else {
     boxSize = BOX_SIZES.large
   }
@@ -269,8 +260,6 @@ function calculatePackageDimensions(items) {
   let boxSize
   if (itemsCount <= BOX_SIZES.small.maxItems) {
     boxSize = BOX_SIZES.small
-  } else if (itemsCount <= BOX_SIZES.medium.maxItems) {
-    boxSize = BOX_SIZES.medium
   } else {
     boxSize = BOX_SIZES.large
   }

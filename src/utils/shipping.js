@@ -20,27 +20,19 @@ const PRODUCT_WEIGHTS = {
 // Canada Post requires: length + (2 × width) + (2 × height) ≤ 300cm
 const BOX_SIZES = {
   small: {
-    // Small box - e.g., for 1-3 items
-    length: 20,   // cm - UPDATE with your actual box size
-    width: 15,    // cm - UPDATE with your actual box size
-    height: 5,    // cm - UPDATE with your actual box size
-    packagingWeight: 0.1, // kg - Weight of box, padding, label, tape (UPDATE)
-    maxItems: 3   // Maximum items this box can fit
-  },
-  medium: {
-    // Medium box - e.g., for 4-8 items
-    length: 25,   // cm - UPDATE with your actual box size
-    width: 20,    // cm - UPDATE with your actual box size
-    height: 8,    // cm - UPDATE with your actual box size
-    packagingWeight: 0.15, // kg - Weight of box, padding, label, tape (UPDATE)
-    maxItems: 8   // Maximum items this box can fit
+    // Small box - for 1-5 items
+    length: 23,   // cm - Measured box size
+    width: 15,    // cm - Measured box size
+    height: 13,   // cm - Measured box size
+    packagingWeight: 0.1, // kg - Estimated (measure when available)
+    maxItems: 5   // Maximum items this box can fit
   },
   large: {
-    // Large box - e.g., for 9+ items
-    length: 30,   // cm - UPDATE with your actual box size
-    width: 25,    // cm - UPDATE with your actual box size
-    height: 10,   // cm - UPDATE with your actual box size
-    packagingWeight: 0.2, // kg - Weight of box, padding, label, tape (UPDATE)
+    // Large box - for 6+ items
+    length: 27,   // cm - Measured box size
+    width: 25,    // cm - Measured box size
+    height: 15,   // cm - Measured box size
+    packagingWeight: 0.2, // kg - Estimated (measure when available)
     maxItems: 999 // No practical limit
   }
 }
@@ -74,8 +66,6 @@ export const calculatePackageWeight = (cartItems) => {
   
   if (itemsCount <= BOX_SIZES.small.maxItems) {
     boxSize = BOX_SIZES.small
-  } else if (itemsCount <= BOX_SIZES.medium.maxItems) {
-    boxSize = BOX_SIZES.medium
   } else {
     boxSize = BOX_SIZES.large
   }
@@ -99,8 +89,6 @@ export const getPackageDimensions = (cartItems) => {
   let boxSize
   if (itemsCount <= BOX_SIZES.small.maxItems) {
     boxSize = BOX_SIZES.small
-  } else if (itemsCount <= BOX_SIZES.medium.maxItems) {
-    boxSize = BOX_SIZES.medium
   } else {
     boxSize = BOX_SIZES.large
   }
