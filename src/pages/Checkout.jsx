@@ -733,7 +733,7 @@ export default function Checkout() {
       }
 
       const data = await response.json()
-      
+
       console.log('📦 Server response:', data)
 
       // Redirect to Stripe Checkout
@@ -908,8 +908,8 @@ export default function Checkout() {
           <div className="flex items-center justify-between h-16">
             <button
               onClick={() => {
-                window.history.pushState({ page: "/" }, "", "/")
-                window.dispatchEvent(new Event("hashchange"))
+                  window.history.pushState({ page: "/" }, "", "/")
+                  window.dispatchEvent(new Event("hashchange"))
               }}
               className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors group"
             >
@@ -935,7 +935,7 @@ export default function Checkout() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         {currentStep === 1 && (
           <div className="max-w-7xl mx-auto">
-            <>
+                  <>
                     {/* Progress Indicator - Stripe-inspired */}
                     <div className="mb-12">
                       <div className="flex items-center justify-center gap-4 mb-8">
@@ -983,11 +983,11 @@ export default function Checkout() {
                   {/* Contact Information */}
                   <div>
                     <h2 className="text-base font-semibold text-gray-900 mb-1">
-                      {language === 'fr' ? 'Informations de contact' : 'Contact Information'}
-                    </h2>
+                        {language === 'fr' ? 'Informations de contact' : 'Contact Information'}
+                      </h2>
                     <p className="text-sm text-gray-500 mb-4">
-                      {language === 'fr' ? 'Nous vous enverrons un email de confirmation' : 'We\'ll send you a confirmation email'}
-                    </p>
+                        {language === 'fr' ? 'Nous vous enverrons un email de confirmation' : 'We\'ll send you a confirmation email'}
+                      </p>
                     <div className="space-y-4">
                   <div>
                       <label className="block text-sm font-semibold text-gray-900 mb-2">
@@ -1085,11 +1085,11 @@ export default function Checkout() {
                   {/* Shipping Address */}
                   <div>
                     <h2 className="text-base font-semibold text-gray-900 mb-1">
-                      {language === 'fr' ? 'Adresse de livraison' : 'Shipping Address'}
-                    </h2>
+                        {language === 'fr' ? 'Adresse de livraison' : 'Shipping Address'}
+                      </h2>
                     <p className="text-sm text-gray-500 mb-4">
-                      {language === 'fr' ? 'Où devons-nous envoyer votre commande?' : 'Where should we send your order?'}
-                    </p>
+                        {language === 'fr' ? 'Où devons-nous envoyer votre commande?' : 'Where should we send your order?'}
+                      </p>
                     <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-semibold text-gray-900 mb-2">
@@ -1247,7 +1247,10 @@ export default function Checkout() {
 
                       <div>
                         <label className="block text-sm font-semibold text-gray-900 mb-2">
-                          {getTranslation(language, 'checkout.phone') || 'Phone Number'}
+                          {(() => {
+                            const translation = getTranslation(language, 'checkout.phone')
+                            return translation !== 'checkout.phone' ? translation : (language === 'fr' ? 'Téléphone' : 'Phone Number')
+                          })()}
                         </label>
                         <input
                           type="tel"
@@ -1448,94 +1451,94 @@ export default function Checkout() {
                     </p>
                   </div>
                 </form>
-                  </div>
-                  
+                      </div>
+                
                   {/* Order Summary - Sticky sidebar on right */}
                   <div className="lg:col-span-1">
-                    <div className="lg:sticky lg:top-24">
+                          <div className="lg:sticky lg:top-24">
                       <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                        {/* Header */}
+                              {/* Header */}
                         <div className="px-6 py-4 border-b border-gray-200">
                           <h2 className="text-base font-semibold text-gray-900">
                             {language === 'fr' ? 'Résumé' : 'Order'}
-                          </h2>
-                        </div>
-                      
-                      <div className="p-6 space-y-6">
-                        {/* Product Items */}
-                        <div className="space-y-4">
-                          {cartItems.map((item) => {
-                            const productId = item.id?.split('-').slice(0, -1).join('-') || item.id?.replace(/-mini|-small|-medium|-large|-clearbox/, '') || ''
-                            const translatedName = getTranslation(language, `products.${productId}.name`)
-                            const displayName = translatedName !== `products.${productId}.name` ? translatedName : item.name
+                                </h2>
+                    </div>
                             
-                            // Translate variant
-                            const variantMap = {
-                              'mini': language === 'fr' ? 'Mini' : 'Mini',
-                              'small': language === 'fr' ? 'Petit' : 'Small',
-                              'medium': language === 'fr' ? 'Moyen' : 'Medium',
-                              'large': language === 'fr' ? 'Grand' : 'Large',
-                              'clearbox': language === 'fr' ? 'Boîte transparente' : 'Clear Box'
-                            }
-                            const variantLabel = variantMap[item.variant?.toLowerCase()] || item.variant
-                            
-                            return (
+                            <div className="p-6 space-y-6">
+                              {/* Product Items */}
+                              <div className="space-y-4">
+                                {cartItems.map((item) => {
+                                  const productId = item.id?.split('-').slice(0, -1).join('-') || item.id?.replace(/-mini|-small|-medium|-large|-clearbox/, '') || ''
+                                  const translatedName = getTranslation(language, `products.${productId}.name`)
+                                  const displayName = translatedName !== `products.${productId}.name` ? translatedName : item.name
+                                  
+                                  // Translate variant
+                                  const variantMap = {
+                                    'mini': language === 'fr' ? 'Mini' : 'Mini',
+                                    'small': language === 'fr' ? 'Petit' : 'Small',
+                                    'medium': language === 'fr' ? 'Moyen' : 'Medium',
+                                    'large': language === 'fr' ? 'Grand' : 'Large',
+                                    'clearbox': language === 'fr' ? 'Boîte transparente' : 'Clear Box'
+                                  }
+                                  const variantLabel = variantMap[item.variant?.toLowerCase()] || item.variant
+                                  
+                                  return (
                               <div key={`${item.id}-${item.variant}`} className="flex gap-3 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
                                 {/* Product Image */}
                                 <div className="w-16 h-16 rounded overflow-hidden bg-gray-100 shrink-0">
-                                  <img 
-                                    src={item.image} 
-                                    alt={displayName} 
-                                    className="w-full h-full object-cover" 
-                                  />
-                                </div>
-                                
-                                {/* Product Info */}
+                                        <img 
+                                          src={item.image} 
+                                          alt={displayName} 
+                                          className="w-full h-full object-cover" 
+                                        />
+                </div>
+                
+                                      {/* Product Info */}
                                 <div className="flex-1 min-w-0">
                                   <h4 className="text-sm font-medium text-gray-900 mb-0.5 leading-tight">
-                                    {displayName}
-                                  </h4>
+                                            {displayName}
+                                          </h4>
                                   <p className="text-xs text-gray-500 mb-1">{variantLabel}</p>
                                   <div className="flex items-center justify-between mt-1">
                                     <span className="text-xs text-gray-600">
                                       {language === 'fr' ? 'Qty' : 'Qty'}: <span className="font-medium">{item.quantity}</span>
-                                    </span>
+                                          </span>
                                     <span className="text-sm font-semibold text-gray-900">
-                                      {formatPriceWithCurrency(item.price * item.quantity)}
-                                    </span>
-                                  </div>
-                                </div>
+                                            {formatPriceWithCurrency(item.price * item.quantity)}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )
+                                })}
                               </div>
-                            )
-                          })}
-                        </div>
-                        
+                              
                         {/* Promo Code Section */}
                         {!appliedPromoCode ? (
-                          <div className="pt-4 border-t border-gray-200">
+                                <div className="pt-4 border-t border-gray-200">
                             <label className="block text-xs font-medium text-gray-700 mb-2">
-                              {language === 'fr' ? 'Code promo' : 'Promo Code'}
-                            </label>
-                            <div className="flex gap-2">
-                              <input
-                                type="text"
-                                value={promoCode}
-                                onChange={(e) => {
-                                  setPromoCode(e.target.value)
-                                  setPromoCodeError('')
-                                }}
-                                placeholder={language === 'fr' ? 'Entrez le code' : 'Enter code'}
+                                    {language === 'fr' ? 'Code promo' : 'Promo Code'}
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={promoCode}
+                          onChange={(e) => {
+                                        setPromoCode(e.target.value)
+                            setPromoCodeError('')
+                          }}
+                                      placeholder={language === 'fr' ? 'Entrez le code' : 'Enter code'}
                                 className="flex-1 px-3 py-2 text-xs rounded-md border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 transition-all placeholder:text-gray-400"
-                              />
-                              <button
-                                type="button"
-                                onClick={handleApplyPromoCode}
+                        />
+                        <button
+                          type="button"
+                          onClick={handleApplyPromoCode}
                                 className="px-3 py-2 bg-amber-600 text-white text-xs font-medium rounded-md hover:bg-amber-700 transition-colors whitespace-nowrap"
-                              >
-                                {language === 'fr' ? 'Appliquer' : 'Apply'}
-                              </button>
-                            </div>
-                            {promoCodeError && (
+                        >
+                                      {language === 'fr' ? 'Appliquer' : 'Apply'}
+                        </button>
+                  </div>
+                      {promoCodeError && (
                               <p className="mt-1.5 text-xs text-red-600">{promoCodeError}</p>
                             )}
                           </div>
@@ -1556,16 +1559,16 @@ export default function Checkout() {
                                 {language === 'fr' ? 'Retirer' : 'Remove'}
                               </button>
                             </div>
-                          </div>
-                        )}
-                        
+                    </div>
+                              )}
+                              
                         {/* Price Breakdown */}
                         <div className="pt-4 border-t border-gray-200 space-y-3">
                           <div className="flex justify-between items-center text-sm">
                             <span className="text-gray-600">{language === 'fr' ? 'Sous-total' : 'Subtotal'}</span>
                             <span className="font-medium text-gray-900">{formatPriceWithCurrency(getCartTotal())}</span>
-                          </div>
-                          {selectedShipping && (
+                                </div>
+                                {selectedShipping && (
                             <div className="flex justify-between items-center text-sm">
                               <span className="text-gray-600">{language === 'fr' ? 'Expédition' : 'Shipping'}</span>
                               <span className="font-medium text-gray-900">
@@ -1577,31 +1580,31 @@ export default function Checkout() {
                                   {formatPriceWithCurrency(Math.max(0, calculateShipping() - (appliedPromoCode === 'FREESHIP' ? promoCodeDiscount : 0)))}
                                 </span>
                               </span>
-                            </div>
-                          )}
-                          {appliedPromoCode && promoCodeDiscount > 0 && (
+                                  </div>
+                                )}
+                                {appliedPromoCode && promoCodeDiscount > 0 && (
                             <div className="flex justify-between items-center py-2 px-3 bg-green-50 rounded border border-green-200 -mx-3 text-sm">
-                              <div>
+                                    <div>
                                 <span className="text-green-700 font-medium">{language === 'fr' ? 'Réduction' : 'Discount'}</span>
                                 {appliedPromoCode === 'FREESHIP' && (
                                   <span className="text-xs text-green-600 ml-1">({language === 'fr' ? 'Livraison gratuite' : 'Free Shipping'})</span>
                                 )}
-                              </div>
+                                    </div>
                               <span className="font-semibold text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
-                            </div>
-                          )}
+                                  </div>
+                                )}
                           <div className="pt-3 border-t border-gray-300 flex justify-between items-center">
                             <span className="text-base font-semibold text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
                             <span className="text-lg font-bold text-gray-900">
-                              {formatPriceWithCurrency(Math.max(0, getCartTotal() + (selectedShipping ? calculateShipping() : 0) - promoCodeDiscount))}
-                            </span>
+                                    {formatPriceWithCurrency(Math.max(0, getCartTotal() + (selectedShipping ? calculateShipping() : 0) - promoCodeDiscount))}
+                                  </span>
+                                </div>
+                              </div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                  </div>
-                </div>
               </>
           </div>
         )}
