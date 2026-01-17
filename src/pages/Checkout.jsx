@@ -8,135 +8,6 @@ import { trackCheckoutStarted, trackPurchase } from "../utils/analytics"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Skeleton from "../components/Skeleton"
 import PageLoader from "../components/PageLoader"
-import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
-import stripePromise from '../config/stripe'
-
-// Payment Form Component using Stripe Payment Element (single column, no left panel)
-function PaymentForm({ clientSecret, onSuccess }) {
-  const stripe = useStripe()
-  const elements = useElements()
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [error, setError] = useState(null)
-  const { language } = useLanguage()
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    
-    if (!stripe || !elements) {
-      return
-    }
-
-    setIsProcessing(true)
-    setError(null)
-
-    const { error: submitError } = await elements.submit()
-    if (submitError) {
-      setError(submitError.message)
-      setIsProcessing(false)
-      return
-    }
-
-    const { error: confirmError } = await stripe.confirmPayment({
-      elements,
-      clientSecret,
-      confirmParams: {
-        return_url: `${window.location.origin}/checkout?success=true`,
-      },
-      redirect: 'if_required',
-    })
-
-    if (confirmError) {
-      setError(confirmError.message)
-      setIsProcessing(false)
-    } else {
-      // Payment succeeded
-      onSuccess()
-    }
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="payment-element-wrapper">
-        <PaymentElement 
-          options={{
-            // Layout: tabs for better organization
-            layout: 'tabs',
-            
-            // Enable wallets (Apple Pay, Google Pay, Link)
-            wallets: {
-              applePay: 'auto',
-              googlePay: 'auto',
-              link: 'auto',
-            },
-            
-            // Configure billing details collection
-            // We already collect shipping address, so minimize billing collection
-            fields: {
-              billingDetails: {
-                name: 'never', // Already collected in shipping form
-                email: 'never', // Already collected in contact section
-                phone: 'never', // Already collected in shipping form
-                address: {
-                  country: 'never', // Already collected in shipping form
-                  line1: 'never', // Already collected in shipping form
-                  line2: 'never', // Already collected in shipping form
-                  city: 'never', // Already collected in shipping form
-                  state: 'never', // Already collected in shipping form
-                  postalCode: 'never', // Already collected in shipping form
-                },
-              },
-            },
-            
-            // Enable saved payment methods for returning customers
-            // Stripe automatically handles consent collection for compliance
-            paymentMethodTypes: ['card', 'link'],
-            
-            // CVC recollection: require CVC for saved cards (security best practice)
-            // This is handled automatically by Stripe based on risk assessment
-          }}
-        />
-      </div>
-      {error && (
-        <div className="bg-[#fef2f2] border border-[#fecaca] rounded-lg p-4 mb-4 shadow-sm">
-          <div className="flex items-start gap-3">
-            <div className="w-5 h-5 rounded-full bg-[#dc2626] flex items-center justify-center shrink-0 mt-0.5">
-              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-semibold text-[#dc2626] mb-1.5">
-                {language === 'fr' ? 'Erreur de paiement' : 'Payment Error'}
-              </p>
-              <p className="text-sm text-[#991b1b] leading-relaxed mb-2">{error}</p>
-              <div className="text-xs text-[#991b1b] bg-[#fee2e2] rounded p-2 mt-2">
-                <p className="font-medium mb-1">
-                  {language === 'fr' ? 'Conseils pour résoudre le problème :' : 'Tips to resolve:'}
-                </p>
-                <ul className="list-disc list-inside space-y-0.5">
-                  <li>{language === 'fr' ? 'Vérifiez que tous les champs sont correctement remplis' : 'Verify all fields are correctly filled'}</li>
-                  <li>{language === 'fr' ? 'Assurez-vous que votre carte n\'est pas expirée' : 'Ensure your card is not expired'}</li>
-                  <li>{language === 'fr' ? 'Vérifiez que vous avez suffisamment de fonds' : 'Check you have sufficient funds'}</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      <button
-        type="submit"
-        disabled={!stripe || isProcessing}
-        className="w-full py-3.5 px-4 text-sm font-semibold rounded-lg border-0 cursor-pointer transition-all duration-200 bg-amber-600 text-white hover:bg-amber-700 active:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-amber-600 flex items-center justify-center gap-2 min-h-[48px] shadow-md hover:shadow-lg transform hover:scale-[1.01] active:scale-[0.99]"
-      >
-        {isProcessing ? (
-          <LoadingSpinner size="sm" color="white" text={language === 'fr' ? 'Traitement...' : 'Processing...'} />
-        ) : (
-          language === 'fr' ? 'Payer maintenant' : 'Pay now'
-        )}
-      </button>
-    </form>
-  )
-}
 
 const canadianProvinces = [
   "Alberta", "British Columbia", "Manitoba", "New Brunswick", 
@@ -185,9 +56,6 @@ export default function Checkout() {
   const [appliedPromoCode, setAppliedPromoCode] = useState(null)
   const [promoCodeError, setPromoCodeError] = useState('')
   const [promoCodeDiscount, setPromoCodeDiscount] = useState(0) // Discount amount in CAD
-  const [clientSecret, setClientSecret] = useState(null) // For Payment Element
-  const [showPaymentForm, setShowPaymentForm] = useState(false) // Toggle Payment Element display
-  const [orderSummaryOpen, setOrderSummaryOpen] = useState(true) // Order summary dropdown state
   
   // Check for Stripe redirect
   useEffect(() => {
@@ -200,9 +68,6 @@ export default function Checkout() {
       // Payment was successful - clear saved form data
       localStorage.removeItem('checkoutFormData')
       localStorage.removeItem('checkoutShippingOption')
-      // Hide payment form if it was shown
-      setShowPaymentForm(false)
-      setClientSecret(null)
       handlePaymentSuccess(sessionId)
       // Clean up URL
       if (window.location.search) {
@@ -211,8 +76,6 @@ export default function Checkout() {
     } else if (canceled === 'true') {
       // Payment was canceled - restore form data and return to checkout
       setCurrentStep(1)
-      setShowPaymentForm(false)
-      setClientSecret(null)
       setStripeError('Payment was canceled. Your information has been saved. You can try again when ready.')
       // Clean up URL by removing query parameters
       if (window.location.search) {
@@ -839,7 +702,7 @@ export default function Checkout() {
           cartTotal: getCartTotal()
         })
         
-        response = await fetch(`${API_URL}/api/create-payment-intent`, {
+        response = await fetch(`${API_URL}/api/create-checkout-session`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -871,22 +734,14 @@ export default function Checkout() {
 
       const data = await response.json()
 
-      // Use Payment Element (single column, no left panel)
-      if (data.clientSecret) {
-        console.log('✅ Payment Intent clientSecret received:', data.clientSecret)
-        setClientSecret(data.clientSecret)
-        setShowPaymentForm(true)
-        setIsSubmitting(false) // Reset submitting state since we're showing payment form
-        // Scroll to payment form
-        setTimeout(() => {
-          const paymentElement = document.getElementById('payment-form')
-          if (paymentElement) {
-            paymentElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
-          }
-        }, 100)
+      // Redirect to Stripe Checkout
+      if (data.url) {
+        console.log('✅ Redirecting to Stripe Checkout:', data.url)
+        setIsRedirecting(true)
+        window.location.href = data.url // Redirect to Stripe hosted checkout page
       } else {
-        console.error('❌ No clientSecret in response:', data)
-        throw new Error('Payment Intent clientSecret not provided by server')
+        console.error('❌ No checkout URL in response:', data)
+        throw new Error('Checkout session URL not provided by server')
       }
     } catch (error) {
       console.error('Payment error:', error)
@@ -1047,13 +902,8 @@ export default function Checkout() {
           <div className="flex items-center justify-between h-16">
             <button
               onClick={() => {
-                if (showPaymentForm) {
-                  setShowPaymentForm(false)
-                  setClientSecret(null)
-                } else {
-                  window.history.pushState({ page: "/" }, "", "/")
-                  window.dispatchEvent(new Event("hashchange"))
-                }
+                window.history.pushState({ page: "/" }, "", "/")
+                window.dispatchEvent(new Event("hashchange"))
               }}
               className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors group"
             >
@@ -1061,9 +911,7 @@ export default function Checkout() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
               </svg>
               <span className="hidden sm:inline">
-                {showPaymentForm 
-                  ? (language === 'fr' ? 'Retour aux informations d\'expédition' : 'Back to shipping')
-                  : getTranslation(language, 'checkout.continueShopping') || 'Continue shopping'}
+                {getTranslation(language, 'checkout.continueShopping') || 'Continue shopping'}
               </span>
               <span className="sm:hidden">{language === 'fr' ? 'Retour' : 'Back'}</span>
             </button>
@@ -1081,8 +929,7 @@ export default function Checkout() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         {currentStep === 1 && (
           <div className="max-w-7xl mx-auto">
-            {!showPaymentForm && (
-              <>
+            <>
                     {/* Progress Indicator - Stripe-inspired */}
                     <div className="mb-12">
                       <div className="flex items-center justify-center gap-4 mb-8">
@@ -1691,296 +1538,6 @@ export default function Checkout() {
                   </div>
                 </div>
               </>
-            )}
-
-            {showPaymentForm && clientSecret && (
-              <div>
-                {/* Clean Progress Indicator */}
-                <div className="mb-10">
-                  <div className="flex items-center justify-center gap-3 mb-6">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center text-xs font-medium">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                      <span className="text-sm font-medium text-gray-700">{language === 'fr' ? 'Livraison' : 'Shipping'}</span>
-                    </div>
-                    <div className="w-12 h-px bg-amber-600"></div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-amber-600 text-white flex items-center justify-center text-xs font-medium">
-                        2
-                      </div>
-                      <span className="text-sm font-medium text-gray-900">{language === 'fr' ? 'Paiement' : 'Payment'}</span>
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2 tracking-tight">
-                      {getTranslation(language, 'checkout.paymentDetails') || 'Payment Details'}
-                    </h1>
-                    <p className="text-sm text-gray-500">
-                      {language === 'fr' 
-                        ? 'Complétez votre paiement en toute sécurité'
-                        : 'Complete your payment securely'}
-                    </p>
-                  </div>
-                </div>
-                
-                {/* Main Layout */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 max-w-6xl mx-auto">
-                  {/* Payment Form - Main content */}
-                  <div className="lg:col-span-2">
-                    <div className="space-y-6">
-                      {/* Payment Methods Icons */}
-                      <div>
-                        <p className="text-xs font-medium text-gray-500 mb-3 uppercase tracking-wider">
-                          {language === 'fr' ? 'Méthodes acceptées' : 'Accepted Methods'}
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <svg className="h-5" viewBox="0 0 40 24" fill="none">
-                            <rect width="40" height="24" rx="2" fill="#1434CB"/>
-                            <path d="M16.5 12h7m-7-3h7m-7 6h4" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-                          </svg>
-                          <svg className="h-5" viewBox="0 0 40 24" fill="none">
-                            <rect width="40" height="24" rx="2" fill="#EB001B"/>
-                            <rect x="20" width="20" height="24" rx="2" fill="#F79E1B"/>
-                          </svg>
-                          <svg className="h-5" viewBox="0 0 40 24" fill="#006FCF">
-                            <rect width="40" height="24" rx="2" fill="#006FCF"/>
-                            <path d="M20 8l-2 8h4l-2-8z" fill="white"/>
-                          </svg>
-                          <span className="ml-2 text-xs text-gray-500">and more</span>
-                        </div>
-                      </div>
-
-                      {/* Stripe Payment Element */}
-                      <div className="py-2">
-                        <Elements 
-                          stripe={stripePromise} 
-                          options={{
-                            clientSecret,
-                            appearance: {
-                              theme: 'stripe',
-                              variables: {
-                                colorPrimary: '#d97706',
-                                colorBackground: '#ffffff',
-                                colorText: '#111827',
-                                colorTextSecondary: '#6b7280',
-                                colorDanger: '#dc2626',
-                                colorSuccess: '#10b981',
-                                fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                                fontSizeBase: '15px',
-                                fontWeightNormal: '400',
-                                fontWeightMedium: '500',
-                                fontWeightBold: '600',
-                                spacingUnit: '4px',
-                                borderRadius: '8px',
-                                spacingBorder: '1px',
-                                colorTextPlaceholder: '#9ca3af',
-                                colorIcon: '#6b7280',
-                                colorIconHover: '#111827',
-                                colorFocus: '#d97706',
-                                spacingFocus: '2px',
-                              },
-                              rules: {
-                                '.Input': {
-                                  border: '1px solid #d1d5db',
-                                  borderRadius: '8px',
-                                  padding: '14px 16px',
-                                  fontSize: '15px',
-                                  transition: 'all 0.2s ease',
-                                  boxShadow: 'none',
-                                },
-                                '.Input:focus': {
-                                  border: '1px solid #d97706',
-                                  boxShadow: '0 0 0 3px rgba(217, 119, 6, 0.1)',
-                                  outline: 'none',
-                                },
-                                '.Input--invalid': {
-                                  border: '1px solid #dc2626',
-                                  backgroundColor: '#fef2f2',
-                                },
-                                '.Label': {
-                                  fontSize: '13px',
-                                  fontWeight: '500',
-                                  color: '#374151',
-                                  textTransform: 'uppercase',
-                                  letterSpacing: '0.05em',
-                                  marginBottom: '8px',
-                                },
-                                '.Tab': {
-                                  borderRadius: '8px',
-                                  padding: '10px 16px',
-                                  border: '1px solid #e5e7eb',
-                                  transition: 'all 0.2s ease',
-                                  fontSize: '14px',
-                                },
-                                '.Tab--selected': {
-                                  border: '1px solid #d97706',
-                                  backgroundColor: '#d97706',
-                                  color: '#ffffff',
-                                  boxShadow: '0 2px 4px rgba(217, 119, 6, 0.2)',
-                                },
-                                '.Error': {
-                                  color: '#dc2626',
-                                  fontSize: '13px',
-                                  marginTop: '8px',
-                                  fontWeight: '500',
-                                },
-                              },
-                            },
-                            locale: language === 'fr' ? 'fr' : 'en',
-                          }}
-                        >
-                          <PaymentForm 
-                            clientSecret={clientSecret}
-                            onSuccess={() => {
-                              console.log('✅ Payment completed')
-                            }}
-                          />
-                        </Elements>
-                      </div>
-
-                      {/* Security Notice */}
-                      <div className="pt-6 border-t border-gray-100">
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
-                          <svg className="w-4 h-4 text-green-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                          </svg>
-                          <span>{language === 'fr' ? 'Sécurisé par Stripe' : 'Secured by Stripe'}</span>
-                          <span>•</span>
-                          <span>{language === 'fr' ? 'Nous ne stockons pas vos données de carte' : 'We never store your card details'}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Order Summary - Sticky sidebar on right */}
-                  <div className="lg:col-span-1">
-                    <div className="lg:sticky lg:top-24">
-                      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                        {/* Header */}
-                        <div className="px-6 py-4 border-b border-gray-200">
-                          <h2 className="text-base font-semibold text-gray-900">
-                            {language === 'fr' ? 'Résumé' : 'Order'}
-                          </h2>
-                        </div>
-                      
-                      <div className="p-6 space-y-6">
-                              {/* Product Items */}
-                              <div className="space-y-4">
-                                {cartItems.map((item) => {
-                                  const productId = item.id?.split('-').slice(0, -1).join('-') || item.id?.replace(/-mini|-small|-medium|-large|-clearbox/, '') || ''
-                                  const translatedName = getTranslation(language, `products.${productId}.name`)
-                                  const displayName = translatedName !== `products.${productId}.name` ? translatedName : item.name
-                                  
-                                  // Translate variant
-                                  const variantMap = {
-                                    'mini': language === 'fr' ? 'Mini' : 'Mini',
-                                    'small': language === 'fr' ? 'Petit' : 'Small',
-                                    'medium': language === 'fr' ? 'Moyen' : 'Medium',
-                                    'large': language === 'fr' ? 'Grand' : 'Large',
-                                    'clearbox': language === 'fr' ? 'Boîte transparente' : 'Clear Box'
-                                  }
-                                  const variantLabel = variantMap[item.variant?.toLowerCase()] || item.variant
-                                  
-                                  return (
-                                    <div key={`${item.id}-${item.variant}`} className="flex gap-3 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
-                                      {/* Product Image */}
-                                      <div className="w-16 h-16 rounded overflow-hidden bg-gray-100 shrink-0">
-                                        <img 
-                                          src={item.image} 
-                                          alt={displayName} 
-                                          className="w-full h-full object-cover" 
-                                        />
-                                      </div>
-                                      
-                                      {/* Product Info */}
-                                      <div className="flex-1 min-w-0">
-                                        <h4 className="text-sm font-medium text-gray-900 mb-0.5 leading-tight">
-                                          {displayName}
-                                        </h4>
-                                        <p className="text-xs text-gray-500 mb-1">{variantLabel}</p>
-                                        <div className="flex items-center justify-between mt-1">
-                                          <span className="text-xs text-gray-600">
-                                            {language === 'fr' ? 'Qty' : 'Qty'}: <span className="font-medium">{item.quantity}</span>
-                                          </span>
-                                          <span className="text-sm font-semibold text-gray-900">
-                                            {formatPriceWithCurrency(item.price * item.quantity)}
-                                          </span>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  )
-                                })}
-                              </div>
-                              
-                              {/* Promo Code Section - Only shown when needed */}
-                              {!appliedPromoCode && (
-                                <div className="pt-4 border-t border-gray-200">
-                                  <label className="block text-sm font-medium text-gray-700 mb-3">
-                                    {language === 'fr' ? 'Code promo' : 'Promo Code'}
-                      </label>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          value={promoCode}
-                          onChange={(e) => {
-                                        setPromoCode(e.target.value)
-                            setPromoCodeError('')
-                          }}
-                                      placeholder={language === 'fr' ? 'Entrez le code' : 'Enter code'}
-                                      className="flex-1 px-4 py-2.5 text-sm rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all placeholder:text-gray-400"
-                        />
-                        <button
-                          type="button"
-                          onClick={handleApplyPromoCode}
-                                      className="px-5 py-2.5 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 transition-colors whitespace-nowrap"
-                        >
-                                      {language === 'fr' ? 'Appliquer' : 'Apply'}
-                        </button>
-                  </div>
-                      {promoCodeError && (
-                                    <p className="mt-2 text-sm text-red-600">{promoCodeError}</p>
-                      )}
-                    </div>
-                              )}
-                              
-                        {/* Price Breakdown */}
-                        <div className="pt-4 border-t border-gray-200 space-y-3">
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="text-gray-600">{language === 'fr' ? 'Sous-total' : 'Subtotal'}</span>
-                            <span className="font-medium text-gray-900">{formatPriceWithCurrency(getCartTotal())}</span>
-                          </div>
-                          {selectedShipping && (
-                            <div className="flex justify-between items-center text-sm">
-                              <span className="text-gray-600">{language === 'fr' ? 'Expédition' : 'Shipping'}</span>
-                              <span className="font-medium text-gray-900">{formatPriceWithCurrency(calculateShipping())}</span>
-                            </div>
-                          )}
-                          {appliedPromoCode && promoCodeDiscount > 0 && (
-                            <div className="flex justify-between items-center py-2 px-3 bg-green-50 rounded border border-green-200 -mx-3 text-sm">
-                              <div>
-                                <span className="text-green-700">{language === 'fr' ? 'Réduction' : 'Discount'}</span>
-                                <span className="text-xs text-green-600 ml-1">({appliedPromoCode})</span>
-                              </div>
-                              <span className="font-medium text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
-                            </div>
-                          )}
-                          <div className="pt-3 border-t border-gray-300 flex justify-between items-center">
-                            <span className="text-base font-semibold text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
-                            <span className="text-lg font-bold text-gray-900">
-                              {formatPriceWithCurrency(Math.max(0, getCartTotal() + (selectedShipping ? calculateShipping() : 0) - promoCodeDiscount))}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         )}
 

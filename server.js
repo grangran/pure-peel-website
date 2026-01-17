@@ -830,25 +830,22 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       firstLineItemCurrency: lineItems[0]?.price_data?.currency
     })
 
-    // Create Stripe Checkout Session
+    // Create Stripe Checkout Session (Hosted Checkout - redirects to Stripe)
     // Note: 'card' automatically enables Apple Pay and Google Pay when available
-    // payment_method_types: ['card'] enables card payments and automatically includes Apple Pay and Google Pay
     // IMPORTANT: All line_items and shipping_options must use the SAME currency to prevent Stripe from showing a currency selector
-    // Disable Adaptive Pricing to prevent Stripe from showing currency selector
-    // For Embedded Checkout, use ui_mode: 'embedded' and return_url (NOT success_url or cancel_url)
+    const origin = req.headers.origin || 'http://localhost:5173'
     const sessionConfig = {
       payment_method_types: ['card'], // Automatically enables Apple Pay, Google Pay, and Link when available
       line_items: lineItems,
       mode: 'payment',
-      ui_mode: 'embedded', // Set embedded mode from the start
-      return_url: `${req.headers.origin || 'http://localhost:5173'}/checkout?success=true&session_id={CHECKOUT_SESSION_ID}`, // Only return_url is supported with embedded mode
+      success_url: `${origin}/checkout?success=true&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/checkout?canceled=true`,
       adaptive_pricing: {
         enabled: false, // Disable Adaptive Pricing to prevent currency selector
       },
       // Set locale based on currency to ensure proper currency display
-      // en-US for USD, en-CA for CAD
-      locale: stripeCurrency === 'usd' ? 'en' : 'en', // Stripe will format based on currency code
-      // Add custom text to clarify currency (especially for USD since Stripe doesn't show "USD" text)
+      locale: stripeCurrency === 'usd' ? 'en' : 'en',
+      // Add custom text to clarify currency
       custom_text: {
         submit: {
           message: stripeCurrency === 'usd' 
@@ -857,15 +854,12 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
         }
       },
       customer_email: shippingInfo.email,
-      // Always collect shipping address, even for free orders
-      // This is required for Canada Post label creation
+      // Always collect shipping address - required for Canada Post label creation
       shipping_address_collection: {
         allowed_countries: ['CA', 'US'],
       },
-      // Force shipping address collection by requiring it
-      // Note: For free orders, we still need the address for label creation
       phone_number_collection: {
-        enabled: false, // Optional, but can help ensure address is collected
+        enabled: false,
       },
       metadata: {
         customer_name: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
@@ -932,16 +926,12 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       }
     }
 
-    // ui_mode and return_url are already set in sessionConfig above
-    // Note: success_url and cancel_url are NOT supported with ui_mode: 'embedded'
-
     const session = await stripe.checkout.sessions.create(sessionConfig)
 
-    // For Embedded Checkout, return clientSecret instead of url
+    // Return the checkout session URL - frontend will redirect to this
     res.json({ 
-      sessionId: session.id, 
-      clientSecret: session.client_secret,
-      url: session.url // Keep for backward compatibility, but won't be used in embedded mode
+      sessionId: session.id,
+      url: session.url // Redirect user to this URL for Stripe hosted checkout
     })
   } catch (error) {
     console.error('Error creating checkout session:', error)
