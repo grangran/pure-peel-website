@@ -220,11 +220,11 @@ export const translations = {
           questions: [
             {
               question: "What is your return policy?",
-              answer: "Due to food safety regulations and hygiene concerns, we do not accept returns or exchanges on food products. However, we stand behind the quality of our products. If you receive a damaged, defective, or incorrect product, please contact us immediately at support@purepeelco.com with your order number and photos of the issue. We will replace any product that is damaged, defective, or incorrect at no cost to you."
+              answer: "Due to food safety regulations and hygiene concerns, we do not accept returns or exchanges on food products. However, we stand behind the quality of our products. If you receive a damaged, defective, or incorrect product, please contact us immediately at support@purepeelco.com with your order number and photos of the issue. We will replace any product that is damaged, defective, or incorrect at no cost to you, or issue a full refund at your request."
             },
             {
               question: "Can I get a refund or return my order?",
-              answer: "Due to food safety regulations, we do not accept returns or offer refunds for food products. However, if you receive a damaged, defective, or incorrect product, we will send a replacement at no cost to you. Please contact us immediately at support@purepeelco.com within 48 hours of delivery with your order number and photos of the issue. You do not need to return the original product - we'll send a replacement right away."
+              answer: "We offer refunds for orders that are damaged, defective, incorrect, or lost in transit. Due to food safety regulations, we cannot accept returns of opened food products. However, if you experience any issues with your order, please contact us immediately at support@purepeelco.com within 48 hours of delivery with your order number and photos of the issue (if applicable). We will work with you to resolve the issue by offering either a replacement or a full refund. You do not need to return the original product - we'll process your refund or replacement right away."
             }
           ]
         },
@@ -543,7 +543,7 @@ export const translations = {
         damagedItems: "Damaged Items: Take photos of the damaged package and items, then contact us within 48 hours of delivery",
         lostPackages: "Lost Packages: Contact us if your package hasn't arrived within 7-12 business days of the expected delivery date (depending on shipping method)",
         incorrectItems: "Incorrect Items: Contact us immediately if you received the wrong items",
-        text2: "We will work with Canada Post to resolve the issue and will replace or refund your order as appropriate. We may require photos or additional information to process your claim."
+        text2: "We will work with Canada Post to resolve the issue and will replace or refund your order as appropriate. You can choose between a replacement or a full refund. We may require photos or additional information to process your claim."
       },
       internationalShipping: {
         title: "International Shipping",
@@ -685,11 +685,11 @@ export const translations = {
       },
       returns: {
         title: "Returns and Refunds",
-        text: "Due to food safety regulations and hygiene concerns, we do not accept returns or exchanges on food products. However, we stand behind the quality of our products:",
-        noReturns: "Returns are not accepted for food safety reasons",
+        text: "Due to food safety regulations and hygiene concerns, we do not accept returns or exchanges on food products. However, we stand behind the quality of our products and offer refunds or replacements for:",
+        noReturns: "Returns are not accepted for food safety reasons (opened products cannot be returned)",
         qualityGuarantee: "If you receive a damaged, defective, or incorrect product, contact us immediately at support@purepeelco.com with your order number and photos of the issue",
-        replacement: "We will replace any product that is damaged, defective, or incorrect at no cost to you",
-        refunds: "Refunds may be issued at our discretion for damaged, defective, or incorrect products",
+        replacement: "We will replace any product that is damaged, defective, or incorrect at no cost to you, or issue a full refund at your request",
+        refunds: "Refunds are available for damaged, defective, incorrect, or lost products - contact us within 48 hours of delivery",
         contact: "Please contact us within 48 hours of delivery if you experience any issues with your order"
       },
       intellectualProperty: {
@@ -1082,11 +1082,11 @@ export const translations = {
           questions: [
             {
               question: "Quelle est votre politique de retour?",
-              answer: "En raison des réglementations sur la salubrité des aliments et des préoccupations d'hygiène, nous n'acceptons pas les retours ou les échanges sur les produits alimentaires. Cependant, nous garantissons la qualité de nos produits. Si vous recevez un produit endommagé, défectueux ou incorrect, veuillez nous contacter immédiatement à support@purepeelco.com avec votre numéro de commande et des photos du problème. Nous remplacerons tout produit endommagé, défectueux ou incorrect sans frais pour vous."
+              answer: "En raison des réglementations sur la salubrité des aliments et des préoccupations d'hygiène, nous n'acceptons pas les retours ou les échanges sur les produits alimentaires. Cependant, nous garantissons la qualité de nos produits. Si vous recevez un produit endommagé, défectueux ou incorrect, veuillez nous contacter immédiatement à support@purepeelco.com avec votre numéro de commande et des photos du problème. Nous remplacerons tout produit endommagé, défectueux ou incorrect sans frais pour vous, ou nous émettrons un remboursement complet à votre demande."
             },
             {
               question: "Puis-je obtenir un remboursement ou retourner ma commande?",
-              answer: "En raison des réglementations sur la salubrité des aliments, nous n'acceptons pas les retours ni n'offrons de remboursements pour les produits alimentaires. Cependant, si vous recevez un produit endommagé, défectueux ou incorrect, nous enverrons un remplacement sans frais pour vous. Veuillez nous contacter immédiatement à support@purepeelco.com dans les 48 heures suivant la livraison avec votre numéro de commande et des photos du problème. Vous n'avez pas besoin de retourner le produit original - nous enverrons un remplacement immédiatement."
+              answer: "Nous offrons des remboursements pour les commandes endommagées, défectueuses, incorrectes ou perdues en transit. En raison des réglementations sur la salubrité des aliments, nous ne pouvons pas accepter les retours de produits alimentaires ouverts. Cependant, si vous rencontrez des problèmes avec votre commande, veuillez nous contacter immédiatement à support@purepeelco.com dans les 48 heures suivant la livraison avec votre numéro de commande et des photos du problème (le cas échéant). Nous travaillerons avec vous pour résoudre le problème en offrant soit un remplacement, soit un remboursement complet. Vous n'avez pas besoin de retourner le produit original - nous traiterons votre remboursement ou remplacement immédiatement."
             }
           ]
         },
@@ -1467,7 +1467,7 @@ export const translations = {
         damagedItems: "Articles Endommagés : Prenez des photos du colis et des articles endommagés, puis contactez-nous dans les 48 heures suivant la livraison",
         lostPackages: "Colis Perdus : Contactez-nous si votre colis n'est pas arrivé dans les 7-12 jours ouvrables suivant la date de livraison prévue (selon la méthode d'expédition)",
         incorrectItems: "Articles Incorrects : Contactez-nous immédiatement si vous avez reçu les mauvais articles",
-        text2: "Nous travaillerons avec Postes Canada pour résoudre le problème et remplacer ou rembourser votre commande selon le cas. Nous pouvons demander des photos ou des informations supplémentaires pour traiter votre réclamation."
+        text2: "Nous travaillerons avec Postes Canada pour résoudre le problème et remplacer ou rembourser votre commande selon le cas. Vous pouvez choisir entre un remplacement ou un remboursement complet. Nous pouvons demander des photos ou des informations supplémentaires pour traiter votre réclamation."
       },
       internationalShipping: {
         title: "Expédition Internationale",
@@ -1609,11 +1609,11 @@ export const translations = {
       },
       returns: {
         title: "Retours et Remboursements",
-        text: "En raison des réglementations sur la salubrité des aliments et des préoccupations d'hygiène, nous n'acceptons pas les retours ou les échanges sur les produits alimentaires. Cependant, nous garantissons la qualité de nos produits :",
-        noReturns: "Les retours ne sont pas acceptés pour des raisons de salubrité des aliments",
+        text: "En raison des réglementations sur la salubrité des aliments et des préoccupations d'hygiène, nous n'acceptons pas les retours ou les échanges sur les produits alimentaires. Cependant, nous garantissons la qualité de nos produits et offrons des remboursements ou des remplacements pour :",
+        noReturns: "Les retours ne sont pas acceptés pour des raisons de salubrité des aliments (les produits ouverts ne peuvent pas être retournés)",
         qualityGuarantee: "Si vous recevez un produit endommagé, défectueux ou incorrect, contactez-nous immédiatement à support@purepeelco.com avec votre numéro de commande et des photos du problème",
-        replacement: "Nous remplacerons tout produit endommagé, défectueux ou incorrect sans frais pour vous",
-        refunds: "Des remboursements peuvent être émis à notre discrétion pour les produits endommagés, défectueux ou incorrects",
+        replacement: "Nous remplacerons tout produit endommagé, défectueux ou incorrect sans frais pour vous, ou nous émettrons un remboursement complet à votre demande",
+        refunds: "Les remboursements sont disponibles pour les produits endommagés, défectueux, incorrects ou perdus - contactez-nous dans les 48 heures suivant la livraison",
         contact: "Veuillez nous contacter dans les 48 heures suivant la livraison si vous rencontrez des problèmes avec votre commande"
       },
       intellectualProperty: {
