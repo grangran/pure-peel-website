@@ -1081,9 +1081,8 @@ export default function Checkout() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         {currentStep === 1 && (
           <div className="max-w-7xl mx-auto">
-
-                {!showPaymentForm ? (
-                  <>
+            {!showPaymentForm && (
+              <>
                     {/* Progress Indicator - Stripe-inspired */}
                     <div className="mb-12">
                       <div className="flex items-center justify-center gap-4 mb-8">
@@ -1700,10 +1699,11 @@ export default function Checkout() {
               </div>
             </div>
                 </div>
-                </>
-                ) : (
-                  clientSecret && (
-                    <div className="max-w-7xl mx-auto">
+              </>
+            )}
+
+            {showPaymentForm && clientSecret && (
+              <div className="max-w-7xl mx-auto">
                       {/* Progress Indicator - Stripe-inspired */}
                       <div className="mb-12">
                         <div className="flex items-center justify-center gap-4 mb-8">
@@ -2046,11 +2046,10 @@ export default function Checkout() {
                         </div>
                       </div>
                     </div>
-                  )
-                )
-                }
               </div>
             )}
+          </div>
+        )}
 
         {/* Step 2: Confirmation */}
         {currentStep === 2 && (
