@@ -1123,115 +1123,19 @@ export default function Checkout() {
                     </div>
                 
                 {/* Main Layout - Stripe-inspired */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 max-w-7xl mx-auto">
-                  {/* Order Summary - Sticky sidebar on desktop */}
-                  <div className="lg:col-span-5 order-1">
-                    <div className="lg:sticky lg:top-24">
-                      <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-                        {/* Header */}
-                        <div className="px-6 py-4 border-b border-gray-100">
-                          <h2 className="text-lg font-bold text-gray-900">
-                            {language === 'fr' ? 'Résumé de la commande' : 'Order Summary'}
-                          </h2>
-                        </div>
-                      
-                      <div className="p-6 space-y-6">
-                        {/* Product Items */}
-                        <div className="space-y-4">
-                          {cartItems.map((item) => {
-                            const productId = item.id?.split('-').slice(0, -1).join('-') || item.id?.replace(/-mini|-small|-medium|-large|-clearbox/, '') || ''
-                            const translatedName = getTranslation(language, `products.${productId}.name`)
-                            const displayName = translatedName !== `products.${productId}.name` ? translatedName : item.name
-                            
-                            // Translate variant
-                            const variantMap = {
-                              'mini': language === 'fr' ? 'Mini' : 'Mini',
-                              'small': language === 'fr' ? 'Petit' : 'Small',
-                              'medium': language === 'fr' ? 'Moyen' : 'Medium',
-                              'large': language === 'fr' ? 'Grand' : 'Large',
-                              'clearbox': language === 'fr' ? 'Boîte transparente' : 'Clear Box'
-                            }
-                            const variantLabel = variantMap[item.variant?.toLowerCase()] || item.variant
-                            
-                            return (
-                              <div key={`${item.id}-${item.variant}`} className="flex gap-4 pb-5 border-b border-gray-100 last:border-0 last:pb-0">
-                                {/* Product Image */}
-                                <div className="w-20 h-20 rounded-xl overflow-hidden bg-gray-100 shrink-0 border-2 border-gray-200 shadow-sm">
-                                  <img 
-                                    src={item.image} 
-                                    alt={displayName} 
-                                    className="w-full h-full object-cover" 
-                                  />
-                                </div>
-                                
-                                {/* Product Info */}
-                                <div className="flex-1 min-w-0 flex flex-col justify-between py-1">
-                                  <div>
-                                    <h4 className="text-base font-semibold text-gray-900 mb-1 leading-tight">
-                                      {displayName}
-                                    </h4>
-                                    <p className="text-sm text-gray-500 mb-2">{variantLabel}</p>
-                                  </div>
-                                  <div className="flex items-center justify-between mt-auto">
-                                    <span className="text-sm text-gray-600">
-                                      {language === 'fr' ? 'Qty' : 'Qty'}: <span className="font-semibold text-gray-900">{item.quantity}</span>
-                                    </span>
-                                    <span className="text-base font-bold text-gray-900">
-                                      {formatPriceWithCurrency(item.price * item.quantity)}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            )
-                          })}
-                        </div>
-                        
-                        {/* Price Breakdown */}
-                        <div className="pt-6 border-t-2 border-gray-200 space-y-4">
-                          <div className="flex justify-between items-center py-1">
-                            <span className="text-sm font-medium text-gray-600">{language === 'fr' ? 'Sous-total' : 'Subtotal'}</span>
-                            <span className="text-sm font-semibold text-gray-900">{formatPriceWithCurrency(getCartTotal())}</span>
-                          </div>
-                          {selectedShipping && (
-                            <div className="flex justify-between items-center py-1">
-                              <span className="text-sm font-medium text-gray-600">{language === 'fr' ? 'Expédition' : 'Shipping'}</span>
-                              <span className="text-sm font-semibold text-gray-900">{formatPriceWithCurrency(calculateShipping())}</span>
-                            </div>
-                          )}
-                          {appliedPromoCode && promoCodeDiscount > 0 && (
-                            <div className="flex justify-between items-center py-2.5 px-4 bg-green-50 rounded-lg border border-green-200 -mx-2">
-                              <div>
-                                <span className="text-sm font-medium text-green-700">{language === 'fr' ? 'Réduction' : 'Discount'}</span>
-                                <span className="text-xs text-green-600 ml-2 font-medium">({appliedPromoCode})</span>
-                              </div>
-                              <span className="text-sm font-bold text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
-                            </div>
-                          )}
-                          <div className="pt-4 border-t-2 border-gray-300 flex justify-between items-center">
-                            <span className="text-lg font-bold text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
-                            <span className="text-2xl font-bold text-gray-900">
-                              {formatPriceWithCurrency(Math.max(0, getCartTotal() + (selectedShipping ? calculateShipping() : 0) - promoCodeDiscount))}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Shipping Form - Main content on desktop */}
-                  <div className="lg:col-span-7 order-2">
-                <form onSubmit={handlePaymentSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 max-w-6xl mx-auto">
+                  {/* Shipping Form - Main content on left */}
+                  <div className="lg:col-span-2">
+                <form onSubmit={handlePaymentSubmit} className="space-y-8">
                   {/* Contact Information */}
-                  <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-                    <div className="mb-6">
-                      <h2 className="text-lg font-bold text-gray-900 mb-1">
-                        {language === 'fr' ? 'Informations de contact' : 'Contact Information'}
-                      </h2>
-                      <p className="text-sm text-gray-500">
-                        {language === 'fr' ? 'Nous vous enverrons un email de confirmation' : 'We\'ll send you a confirmation email'}
-                      </p>
-                    </div>
-                    <div className="space-y-5">
+                  <div>
+                    <h2 className="text-base font-semibold text-gray-900 mb-1">
+                      {language === 'fr' ? 'Informations de contact' : 'Contact Information'}
+                    </h2>
+                    <p className="text-sm text-gray-500 mb-4">
+                      {language === 'fr' ? 'Nous vous enverrons un email de confirmation' : 'We\'ll send you a confirmation email'}
+                    </p>
+                    <div className="space-y-4">
                   <div>
                       <label className="block text-sm font-semibold text-gray-900 mb-2">
                           {getTranslation(language, 'checkout.email') || 'Email'}
@@ -1243,9 +1147,9 @@ export default function Checkout() {
                           autoComplete="email"
                           value={formData.email}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-3 text-sm rounded-lg border border-gray-300 transition-all placeholder:text-gray-400 ${
-                            errors.email ? 'border-red-400 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-200' : 'border-gray-200 bg-white text-gray-900 hover:border-gray-300'
-                          } focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-500`}
+                          className={`w-full px-4 py-2.5 text-sm rounded-md border transition-all placeholder:text-gray-400 ${
+                            errors.email ? 'border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-100' : 'border-gray-300 bg-white text-gray-900 hover:border-gray-400'
+                          } focus:outline-none focus:ring-1 focus:ring-black focus:border-black`}
                           placeholder={language === 'fr' ? 'votre@email.com' : 'your@email.com'}
                           required
                           data-1p-ignore
@@ -1263,11 +1167,11 @@ export default function Checkout() {
                   </div>
 
                   {/* Name */}
-                  <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-                    <h2 className="text-lg font-bold text-gray-900 mb-6">
+                  <div>
+                    <h2 className="text-base font-semibold text-gray-900 mb-4">
                       {language === 'fr' ? 'Nom' : 'Name'}
                     </h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-semibold text-gray-900 mb-2">
                           {getTranslation(language, 'checkout.firstName') || 'First Name'}
@@ -1280,9 +1184,9 @@ export default function Checkout() {
                         value={formData.firstName}
                         onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.firstName') || 'First name'}
-                        className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all placeholder:text-gray-400 ${
-                          errors.firstName ? 'border-red-400 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-200' : 'border-gray-200 bg-white text-gray-900 hover:border-gray-300'
-                        } focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-500`}
+                        className={`w-full px-4 py-2.5 text-sm rounded-md border transition-all placeholder:text-gray-400 ${
+                          errors.firstName ? 'border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-100' : 'border-gray-300 bg-white text-gray-900 hover:border-gray-400'
+                        } focus:outline-none focus:ring-1 focus:ring-black focus:border-black`}
                         required
                         data-1p-ignore
                       />
@@ -1307,9 +1211,9 @@ export default function Checkout() {
                         value={formData.lastName}
                         onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.lastName') || 'Last name'}
-                        className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all placeholder:text-gray-400 ${
-                          errors.lastName ? 'border-red-400 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-200' : 'border-gray-200 bg-white text-gray-900 hover:border-gray-300'
-                        } focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-500`}
+                        className={`w-full px-4 py-2.5 text-sm rounded-md border transition-all placeholder:text-gray-400 ${
+                          errors.lastName ? 'border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-100' : 'border-gray-300 bg-white text-gray-900 hover:border-gray-400'
+                        } focus:outline-none focus:ring-1 focus:ring-black focus:border-black`}
                         required
                         data-1p-ignore
                       />
@@ -1326,16 +1230,14 @@ export default function Checkout() {
                   </div>
 
                   {/* Shipping Address */}
-                  <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-                    <div className="mb-6">
-                      <h2 className="text-lg font-bold text-gray-900 mb-1">
-                        {language === 'fr' ? 'Adresse de livraison' : 'Shipping Address'}
-                      </h2>
-                      <p className="text-sm text-gray-500">
-                        {language === 'fr' ? 'Où devons-nous envoyer votre commande?' : 'Where should we send your order?'}
-                      </p>
-                    </div>
-                    <div className="space-y-5">
+                  <div>
+                    <h2 className="text-base font-semibold text-gray-900 mb-1">
+                      {language === 'fr' ? 'Adresse de livraison' : 'Shipping Address'}
+                    </h2>
+                    <p className="text-sm text-gray-500 mb-4">
+                      {language === 'fr' ? 'Où devons-nous envoyer votre commande?' : 'Where should we send your order?'}
+                    </p>
+                    <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-semibold text-gray-900 mb-2">
                       {getTranslation(language, 'checkout.streetAddress') || 'Street Address'}
@@ -1348,9 +1250,9 @@ export default function Checkout() {
                       value={formData.address}
                       onChange={handleInputChange}
                           placeholder={getTranslation(language, 'checkout.streetAddress') || '123 Main St'}
-                      className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all placeholder:text-gray-400 ${
-                        errors.address ? 'border-red-400 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-200' : 'border-gray-200 bg-white text-gray-900 hover:border-gray-300'
-                      } focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-500`}
+                      className={`w-full px-4 py-2.5 text-sm rounded-md border transition-all placeholder:text-gray-400 ${
+                        errors.address ? 'border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-100' : 'border-gray-300 bg-white text-gray-900 hover:border-gray-400'
+                      } focus:outline-none focus:ring-1 focus:ring-black focus:border-black`}
                       required
                       data-1p-ignore
                     />
@@ -1374,9 +1276,9 @@ export default function Checkout() {
                           autoComplete="shipping country"
                           value={formData.country}
                           onChange={handleInputChange}
-                          className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all ${
-                            errors.country ? 'border-red-400 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-200' : 'border-gray-200 bg-white text-gray-900 hover:border-gray-300'
-                          } focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-500`}
+                          className={`w-full px-4 py-2.5 text-sm rounded-md border transition-all ${
+                            errors.country ? 'border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-100' : 'border-gray-300 bg-white text-gray-900 hover:border-gray-400'
+                          } focus:outline-none focus:ring-1 focus:ring-black focus:border-black`}
                           required
                           data-1p-ignore
                         >
@@ -1406,9 +1308,9 @@ export default function Checkout() {
                         value={formData.city}
                         onChange={handleInputChange}
                             placeholder={getTranslation(language, 'checkout.city') || 'City'}
-                        className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all placeholder:text-gray-400 ${
-                          errors.city ? 'border-red-400 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-200' : 'border-gray-200 bg-white text-gray-900 hover:border-gray-300'
-                        } focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-500`}
+                        className={`w-full px-4 py-2.5 text-sm rounded-md border transition-all placeholder:text-gray-400 ${
+                          errors.city ? 'border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-100' : 'border-gray-300 bg-white text-gray-900 hover:border-gray-400'
+                        } focus:outline-none focus:ring-1 focus:ring-black focus:border-black`}
                         required
                         data-1p-ignore
                       />
@@ -1433,9 +1335,9 @@ export default function Checkout() {
                         autoComplete="shipping address-level1"
                         value={formData.province}
                         onChange={handleInputChange}
-                        className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all ${
-                          errors.province ? 'border-red-400 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-200' : 'border-gray-200 bg-white text-gray-900 hover:border-gray-300'
-                        } focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-500`}
+                        className={`w-full px-4 py-2.5 text-sm rounded-md border transition-all ${
+                          errors.province ? 'border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-100' : 'border-gray-300 bg-white text-gray-900 hover:border-gray-400'
+                        } focus:outline-none focus:ring-1 focus:ring-black focus:border-black`}
                         required
                         data-1p-ignore
                       >
@@ -1473,9 +1375,9 @@ export default function Checkout() {
                             placeholder={formData.country === "United States" 
                               ? (getTranslation(language, 'checkout.zipCode') || '12345')
                               : (getTranslation(language, 'checkout.postalCode') || 'A1A 1A1')}
-                        className={`w-full px-4 py-3.5 text-base rounded-xl border-2 transition-all placeholder:text-gray-400 ${
-                          errors.postalCode ? 'border-red-400 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-200' : 'border-gray-200 bg-white text-gray-900 hover:border-gray-300'
-                        } focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-500`}
+                        className={`w-full px-4 py-2.5 text-sm rounded-md border transition-all placeholder:text-gray-400 ${
+                          errors.postalCode ? 'border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-100' : 'border-gray-300 bg-white text-gray-900 hover:border-gray-400'
+                        } focus:outline-none focus:ring-1 focus:ring-black focus:border-black`}
                         required
                         data-1p-ignore
                       />
@@ -1505,9 +1407,9 @@ export default function Checkout() {
                           placeholder={formData.country === "United States" 
                             ? (getTranslation(language, 'checkout.phonePlaceholderUS') || '(555) 123-4567')
                             : (getTranslation(language, 'checkout.phonePlaceholder') || '(555) 123-4567')}
-                          className={`w-full px-4 py-3 text-sm rounded-lg border border-gray-300 transition-all placeholder:text-gray-400 ${
-                            errors.phone ? 'border-red-400 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-200' : 'border-gray-200 bg-white text-gray-900 hover:border-gray-300'
-                          } focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-500`}
+                          className={`w-full px-4 py-2.5 text-sm rounded-md border transition-all placeholder:text-gray-400 ${
+                            errors.phone ? 'border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-100' : 'border-gray-300 bg-white text-gray-900 hover:border-gray-400'
+                          } focus:outline-none focus:ring-1 focus:ring-black focus:border-black`}
                           required
                           data-1p-ignore
                         />
@@ -1524,28 +1426,25 @@ export default function Checkout() {
                   </div>
 
                   {/* Order Notes */}
-                  <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-                    <label className="block text-sm font-semibold text-gray-900 mb-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       {getTranslation(language, 'checkout.orderNotes') || 'Order Notes (Optional)'}
                     </label>
-                    <p className="text-sm text-gray-500 mb-4">
-                      {language === 'fr' ? 'Avez-vous des instructions spéciales?' : 'Any special delivery instructions?'}
-                    </p>
                     <textarea
                       name="notes"
                       value={formData.notes}
                       onChange={handleInputChange}
-                      rows="5"
-                      className="w-full px-4 py-3.5 text-base rounded-xl border-2 border-gray-200 bg-white text-gray-900 hover:border-gray-300 focus:outline-none focus:ring-4 focus:ring-amber-100 focus:border-amber-500 transition-all resize-none placeholder:text-gray-400"
+                      rows="3"
+                      className="w-full px-4 py-2.5 text-sm rounded-md border border-gray-300 bg-white text-gray-900 hover:border-gray-400 focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-all resize-none placeholder:text-gray-400"
                       placeholder={getTranslation(language, 'checkout.orderNotesPlaceholder') || 'Leave a note for delivery...'}
                     />
                   </div>
 
                   {/* Shipping Options - Only show after user enters shipping details */}
                   {hasEnteredShippingDetails && formData.postalCode && formData.province && formData.city && formData.country && (
-                    <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-                      <div className="mb-6">
-                        <h2 className="text-lg font-bold text-gray-900 mb-1">
+                    <div>
+                      <div className="mb-4">
+                        <h2 className="text-base font-semibold text-gray-900 mb-1">
                           {getTranslation(language, 'checkout.shippingMethod') || 'Shipping Method'}
                         </h2>
                         <p className="text-sm text-gray-500">
@@ -1662,7 +1561,7 @@ export default function Checkout() {
                   )}
 
                   {/* Payment Button */}
-                  <div className="mt-8 pt-8 border-t-2 border-gray-200">
+                  <div className="pt-6 border-t border-gray-200">
                     {stripeError && (
                       <div className="bg-red-50 border-2 border-red-200 rounded-xl p-5 mb-6">
                         <div className="flex items-start gap-3">
@@ -1696,8 +1595,100 @@ export default function Checkout() {
                     </p>
                   </div>
                 </form>
-              </div>
-            </div>
+                  </div>
+                  
+                  {/* Order Summary - Sticky sidebar on right */}
+                  <div className="lg:col-span-1">
+                    <div className="lg:sticky lg:top-24">
+                      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                        {/* Header */}
+                        <div className="px-6 py-4 border-b border-gray-200">
+                          <h2 className="text-base font-semibold text-gray-900">
+                            {language === 'fr' ? 'Résumé' : 'Order'}
+                          </h2>
+                        </div>
+                      
+                      <div className="p-6 space-y-6">
+                        {/* Product Items */}
+                        <div className="space-y-4">
+                          {cartItems.map((item) => {
+                            const productId = item.id?.split('-').slice(0, -1).join('-') || item.id?.replace(/-mini|-small|-medium|-large|-clearbox/, '') || ''
+                            const translatedName = getTranslation(language, `products.${productId}.name`)
+                            const displayName = translatedName !== `products.${productId}.name` ? translatedName : item.name
+                            
+                            // Translate variant
+                            const variantMap = {
+                              'mini': language === 'fr' ? 'Mini' : 'Mini',
+                              'small': language === 'fr' ? 'Petit' : 'Small',
+                              'medium': language === 'fr' ? 'Moyen' : 'Medium',
+                              'large': language === 'fr' ? 'Grand' : 'Large',
+                              'clearbox': language === 'fr' ? 'Boîte transparente' : 'Clear Box'
+                            }
+                            const variantLabel = variantMap[item.variant?.toLowerCase()] || item.variant
+                            
+                            return (
+                              <div key={`${item.id}-${item.variant}`} className="flex gap-3 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
+                                {/* Product Image */}
+                                <div className="w-16 h-16 rounded overflow-hidden bg-gray-100 shrink-0">
+                                  <img 
+                                    src={item.image} 
+                                    alt={displayName} 
+                                    className="w-full h-full object-cover" 
+                                  />
+                                </div>
+                                
+                                {/* Product Info */}
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="text-sm font-medium text-gray-900 mb-0.5 leading-tight">
+                                    {displayName}
+                                  </h4>
+                                  <p className="text-xs text-gray-500 mb-1">{variantLabel}</p>
+                                  <div className="flex items-center justify-between mt-1">
+                                    <span className="text-xs text-gray-600">
+                                      {language === 'fr' ? 'Qty' : 'Qty'}: <span className="font-medium">{item.quantity}</span>
+                                    </span>
+                                    <span className="text-sm font-semibold text-gray-900">
+                                      {formatPriceWithCurrency(item.price * item.quantity)}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                        
+                        {/* Price Breakdown */}
+                        <div className="pt-4 border-t border-gray-200 space-y-3">
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-gray-600">{language === 'fr' ? 'Sous-total' : 'Subtotal'}</span>
+                            <span className="font-medium text-gray-900">{formatPriceWithCurrency(getCartTotal())}</span>
+                          </div>
+                          {selectedShipping && (
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="text-gray-600">{language === 'fr' ? 'Expédition' : 'Shipping'}</span>
+                              <span className="font-medium text-gray-900">{formatPriceWithCurrency(calculateShipping())}</span>
+                            </div>
+                          )}
+                          {appliedPromoCode && promoCodeDiscount > 0 && (
+                            <div className="flex justify-between items-center py-2 px-3 bg-green-50 rounded border border-green-200 -mx-3 text-sm">
+                              <div>
+                                <span className="text-green-700">{language === 'fr' ? 'Réduction' : 'Discount'}</span>
+                                <span className="text-xs text-green-600 ml-1">({appliedPromoCode})</span>
+                              </div>
+                              <span className="font-medium text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
+                            </div>
+                          )}
+                          <div className="pt-3 border-t border-gray-300 flex justify-between items-center">
+                            <span className="text-base font-semibold text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
+                            <span className="text-lg font-bold text-gray-900">
+                              {formatPriceWithCurrency(Math.max(0, getCartTotal() + (selectedShipping ? calculateShipping() : 0) - promoCodeDiscount))}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  </div>
                 </div>
               </>
             )}
