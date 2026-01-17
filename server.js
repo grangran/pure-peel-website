@@ -855,12 +855,14 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       },
       // Set locale based on currency to ensure proper currency display
       locale: stripeCurrency === 'usd' ? 'en' : 'en',
-      // Add custom text to clarify currency
+      // Add custom text to clarify currency - this appears near the payment button
+      // Note: Stripe automatically formats currency symbols (USD shows as "$", CAD shows as "CA$")
+      // We can't change this, but we can clarify with custom messages
       custom_text: {
         submit: {
           message: stripeCurrency === 'usd' 
-            ? 'All amounts are in USD' 
-            : 'All amounts are in CAD'
+            ? 'All prices shown are in USD ($)' 
+            : 'All prices shown are in CAD (CA$)'
         }
       },
       customer_email: shippingInfo.email,
