@@ -1501,6 +1501,16 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
       dimensions = { length: BOX_SIZES.large.length, width: BOX_SIZES.large.width, height: BOX_SIZES.large.height }
     }
 
+    // Log package calculation details
+    console.log('📦 Shipping Rate Calculation Details:')
+    console.log('   Cart Items:', cartItems.map(item => `${item.quantity}x ${item.variant || item.name}`).join(', '))
+    console.log('   Total Items:', itemsCount)
+    console.log('   Box Selected:', itemsCount <= BOX_SIZES.small.maxItems ? 'Small' : 'Large')
+    console.log('   Package Weight:', `${weight.toFixed(3)} kg`)
+    console.log('   Package Dimensions:', `${dimensions.length}×${dimensions.width}×${dimensions.height} cm`)
+    console.log('   Origin:', `${origin.city}, ${origin.province} ${origin.postalCode}`)
+    console.log('   Destination:', `${destination.city}, ${destination.province} ${destination.postalCode} (${country})`)
+
     // Helper functions for estimated rates - Updated for 2024 Canada Post rates
     const calculateEstimatedRate = (postalCode, weight, serviceType, country = 'Canada') => {
       if (country === 'United States') {
@@ -1783,9 +1793,17 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
         }
 
         const xmlData = await response.text()
-        let rates = parseCanadaPostResponse(xmlData, country)
+        const packageDetails = {
+          weight: weight,
+          dimensions: dimensions,
+          origin: origin,
+          destination: destination,
+          itemsCount: itemsCount,
+          boxSize: itemsCount <= BOX_SIZES.small.maxItems ? 'Small' : 'Large'
+        }
+        let rates = parseCanadaPostResponse(xmlData, country, packageDetails)
         
-        // Ensure price hierarchy: Regular < Expedited < Xpresspost
+        // Sort by service type priority (but keep exact prices from Canada Post)
         if (rates && rates.length > 0) {
           // Sort by service type priority
           const servicePriority = {
@@ -1800,30 +1818,23 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
             return priorityA - priorityB
           })
           
-          // Ensure Expedited is at least $1 more than Regular
-          const regularIndex = rates.findIndex(r => r.name === 'Regular Parcel')
-          const expeditedIndex = rates.findIndex(r => r.name === 'Expedited Parcel')
-          const xpresspostIndex = rates.findIndex(r => r.name === 'Xpresspost')
-          
-          if (regularIndex !== -1 && expeditedIndex !== -1) {
-            const regularPrice = rates[regularIndex].price
-            const expeditedPrice = rates[expeditedIndex].price
-            if (expeditedPrice <= regularPrice) {
-              rates[expeditedIndex].price = Math.ceil((regularPrice + 1) * 100) / 100
-            }
-          }
-          
-          // Ensure Xpresspost is at least $1 more than Expedited
-          if (expeditedIndex !== -1 && xpresspostIndex !== -1) {
-            const expeditedPrice = rates[expeditedIndex].price
-            const xpresspostPrice = rates[xpresspostIndex].price
-            if (xpresspostPrice <= expeditedPrice) {
-              rates[xpresspostIndex].price = Math.ceil((expeditedPrice + 1) * 100) / 100
-            }
-          }
-          
+          // Log the exact rates and package details for debugging
           console.log(`✅ Canada Post API returned ${rates.length} rates for ${country}`)
-          return res.json({ options: rates })
+          console.log(`📦 Package details:`, {
+            weight: `${weight.toFixed(3)} kg`,
+            dimensions: `${dimensions.length}×${dimensions.width}×${dimensions.height} cm`,
+            boxSize: packageDetails.boxSize,
+            itemsCount: itemsCount,
+            origin: `${origin.city}, ${origin.province} ${origin.postalCode}`,
+            destination: `${destination.city}, ${destination.province} ${destination.postalCode}`,
+            country: country
+          })
+          console.log(`💰 Exact Canada Post rates:`, rates.map(r => `${r.name}: $${r.price.toFixed(2)}`).join(', '))
+          
+          return res.json({ 
+            options: rates,
+            packageDetails: packageDetails // Include package details in response
+          })
         }
         
         // Fall through to estimated rates if parsing failed
@@ -1879,7 +1890,7 @@ app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
 })
 
 // Parse Canada Post XML response
-function parseCanadaPostResponse(xml, country = 'Canada') {
+function parseCanadaPostResponse(xml, country = 'Canada', packageDetails = null) {
   const rates = []
   
   try {
@@ -1952,14 +1963,21 @@ function parseCanadaPostResponse(xml, country = 'Canada') {
         }
       }
       
-      rates.push({
+      const rateObj = {
         id: serviceInfo.name.toLowerCase().replace(/\s+/g, '-'),
         name: serviceInfo.name,
         price: price,
         estimatedDays: serviceInfo.days,
         description: description,
         serviceCode: serviceCode
-      })
+      }
+      
+      // Include package details if provided (for debugging/transparency)
+      if (packageDetails) {
+        rateObj._packageDetails = packageDetails
+      }
+      
+      rates.push(rateObj)
     }
     
     // Sort by price (cheapest first)
