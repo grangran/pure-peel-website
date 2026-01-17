@@ -7,7 +7,7 @@ import { getTranslation } from "../utils/translations"
 export default function ShippingReturns() {
   const [sectionRef, isSectionVisible] = useScrollReveal({ threshold: 0.1 })
   const { language } = useLanguage()
-  const { formatPrice, currency: contextCurrency, setCurrency } = useCurrency()
+  const { formatPrice, currency: contextCurrency, setCurrency, convertPrice } = useCurrency()
   const [currency, setLocalCurrency] = useState(() => {
     // Read from localStorage immediately on mount
     if (typeof window !== 'undefined') {
@@ -16,6 +16,19 @@ export default function ShippingReturns() {
     }
     return 'CAD'
   })
+
+  // Helper function to format price with explicit currency code (USD/CAD)
+  const formatPriceWithCurrency = (priceCAD) => {
+    const convertedPrice = convertPrice(priceCAD)
+    // Always format with explicit currency code for consistency
+    const numericValue = parseFloat(convertedPrice.toFixed(2))
+    
+    if (currency === 'USD') {
+      return `$${numericValue.toFixed(2)} USD`
+    } else {
+      return `$${numericValue.toFixed(2)} CAD`
+    }
+  }
 
   // Sync currency from context and localStorage
   useEffect(() => {
