@@ -943,19 +943,14 @@ export default function Checkout() {
 
   // Helper function to format price with explicit currency code (USD/CAD)
   const formatPriceWithCurrency = (priceCAD) => {
-    const formatted = formatPrice(priceCAD)
-    // formatPrice returns formatted string like "$12.50" or "CA$12.50"
-    // We want to ensure it always shows "USD" or "CAD" explicitly
+    const convertedPrice = convertPrice(priceCAD)
+    // Always format with explicit currency code for consistency
+    // Extract numeric value and format consistently
+    const numericValue = parseFloat(convertedPrice.toFixed(2))
+    
     if (currency === 'USD') {
-      // Remove any existing currency symbols and add "USD"
-      // Handle formats like "$12.50" or "CA$12.50"
-      const amount = formatted.replace(/[^\d.,]/g, '') // Extract numbers
-      const numericValue = parseFloat(amount.replace(/,/g, ''))
       return `$${numericValue.toFixed(2)} USD`
     } else {
-      // For CAD, ensure it shows "CAD" explicitly
-      const amount = formatted.replace(/[^\d.,]/g, '') // Extract numbers
-      const numericValue = parseFloat(amount.replace(/,/g, ''))
       return `$${numericValue.toFixed(2)} CAD`
     }
   }
