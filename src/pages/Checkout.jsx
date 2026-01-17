@@ -2049,7 +2049,7 @@ export default function Checkout() {
                   )
                 )
                 }
-                </div>
+              </div>
             )}
 
         {/* Step 2: Confirmation */}
