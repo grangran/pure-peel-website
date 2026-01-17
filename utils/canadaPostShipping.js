@@ -191,7 +191,6 @@ export async function createCanadaPostLabel(order) {
 // Product weights (UPDATE with your actual weights in kg)
 // These are product-only weights - packaging is added separately
 const PRODUCT_WEIGHTS = {
-  'mini': 0.05,   // kg - UPDATE with actual Mini Bag weight
   'small': 0.1,   // kg - UPDATE with actual Small Bag weight
   'medium': 0.2,  // kg - UPDATE with actual Medium Bag weight
   'large': 0.35,  // kg - UPDATE with actual Large Bag weight
@@ -234,8 +233,7 @@ function calculatePackageWeight(items) {
     const variantLower = (item.variant || '').toLowerCase()
     let itemWeight = 0.1 // Default weight
     
-    if (variantLower.includes('mini')) itemWeight = PRODUCT_WEIGHTS.mini
-    else if (variantLower.includes('small')) itemWeight = PRODUCT_WEIGHTS.small
+    if (variantLower.includes('small')) itemWeight = PRODUCT_WEIGHTS.small
     else if (variantLower.includes('medium')) itemWeight = PRODUCT_WEIGHTS.medium
     else if (variantLower.includes('large')) itemWeight = PRODUCT_WEIGHTS.large
     else if (variantLower.includes('clear')) itemWeight = PRODUCT_WEIGHTS.clearbox

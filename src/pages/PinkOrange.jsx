@@ -14,13 +14,6 @@ const pinkOrangeProduct = {
   ],
   variants: [
     {
-      id: "pink-orange-mini",
-      label: "Mini Bag — 10 pcs",
-      option: "Mini Bag (10 pcs)",
-      price: 6,
-      image: "/images/pink-orange-product.jpg"
-    },
-    {
       id: "pink-orange-small",
       label: "Small Bag — 20 pcs",
       option: "Small Bag (20 pcs)",

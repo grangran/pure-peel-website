@@ -14,13 +14,6 @@ const limeProduct = {
   ],
   variants: [
     {
-      id: "lime-mini",
-      label: "Mini Bag — 20 pcs",
-      option: "Mini Bag (20 pcs)",
-      price: 6,
-      image: "/images/lime-product.jpg"
-    },
-    {
       id: "lime-small",
       label: "Small Bag — 50 pcs",
       option: "Small Bag (50 pcs)",

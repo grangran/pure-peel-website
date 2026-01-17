@@ -1092,7 +1092,6 @@ export default function Checkout() {
                             
                             // Translate variant
                             const variantMap = {
-                              'mini': language === 'fr' ? 'Mini' : 'Mini',
                               'small': language === 'fr' ? 'Petit' : 'Small',
                               'medium': language === 'fr' ? 'Moyen' : 'Medium',
                               'large': language === 'fr' ? 'Grand' : 'Large',

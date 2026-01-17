@@ -11,13 +11,6 @@ const orangeProduct = {
   showBulkInquiry: true, // Enable bulk inquiry button for this product
   variants: [
     {
-      id: "orange-mini",
-      label: "Mini Bag — 10 pcs",
-      option: "Mini Bag (10 pcs)",
-      price: 5,
-      image: "/images/orange-product.jpg"
-    },
-    {
       id: "orange-small",
       label: "Small Bag — 20 pcs",
       option: "Small Bag (20 pcs)",

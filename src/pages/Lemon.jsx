@@ -11,13 +11,6 @@ const lemonProduct = {
   showBulkInquiry: true, // Enable bulk inquiry button for this product
   variants: [
     {
-      id: "lemon-mini",
-      label: "Mini Bag — 15 pcs",
-      option: "Mini Bag (15 pcs)",
-      price: 7,
-      image: "/images/lemon-product.jpg"
-    },
-    {
       id: "lemon-small",
       label: "Small Bag — 35 pcs",
       option: "Small Bag (35 pcs)",

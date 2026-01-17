@@ -7,7 +7,6 @@
 // Weights should include: Product + Inner packaging (if any)
 // Packaging weight (box, padding, label, tape) will be added separately
 const PRODUCT_WEIGHTS = {
-  'mini': 0.05,   // kg - Mini Bag (update with actual weight)
   'small': 0.1,   // kg - Small Bag (update with actual weight)
   'medium': 0.2,  // kg - Medium Bag (update with actual weight)
   'large': 0.35,  // kg - Large Bag (update with actual weight)
@@ -61,8 +60,7 @@ export const calculatePackageWeight = (cartItems) => {
     // Determine product weight based on variant name
     let itemWeight = 0.1 // Default weight (fallback)
     
-    if (variantLower.includes('mini')) itemWeight = PRODUCT_WEIGHTS.mini
-    else if (variantLower.includes('small')) itemWeight = PRODUCT_WEIGHTS.small
+    if (variantLower.includes('small')) itemWeight = PRODUCT_WEIGHTS.small
     else if (variantLower.includes('medium')) itemWeight = PRODUCT_WEIGHTS.medium
     else if (variantLower.includes('large')) itemWeight = PRODUCT_WEIGHTS.large
     else if (variantLower.includes('clear')) itemWeight = PRODUCT_WEIGHTS.clearbox
