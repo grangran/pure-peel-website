@@ -782,7 +782,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     
     // Check if this is a free shipping code
     const promoCodeUpper = promoCode ? promoCode.toUpperCase().trim() : ''
-    const isFreeShippingCode = promoCodeUpper === 'FREESHIP' // 100% off shipping only
+    const isFreeShippingCode = promoCodeUpper === 'PEEL26FS' // 100% off shipping only
     console.log('🎟️ Promo code check:', {
       promoCode: promoCodeUpper || 'none',
       discountAmountCents,
@@ -790,7 +790,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       isFreeShippingCode
     })
     
-    // Handle FREESHIP code which gives 100% off shipping only
+    // Handle PEEL26FS code which gives 100% off shipping only
     let finalShippingCostCents = shippingCostCents
     if (isFreeShippingCode) {
       finalShippingCostCents = 0
@@ -1039,7 +1039,7 @@ app.post('/api/create-payment-intent', checkoutLimiter, async (req, res) => {
     const discountAmount = parseFloat(req.body.discount) || 0
     const discountAmountCents = Math.max(0, Math.round(discountAmount * 100))
     const promoCodeUpper = promoCode ? promoCode.toUpperCase().trim() : ''
-    const isFreeShippingCode = promoCodeUpper === 'FREESHIP' // 100% off shipping only
+    const isFreeShippingCode = promoCodeUpper === 'PEEL26FS' // 100% off shipping only
     const orderTotalCents = subtotal + shippingCostCents + tax
     const finalShippingCostCents = isFreeShippingCode ? 0 : shippingCostCents
     const totalAmountCAD = Math.max(0, subtotal + finalShippingCostCents + tax - discountAmountCents)

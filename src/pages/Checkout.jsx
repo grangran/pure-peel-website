@@ -691,7 +691,7 @@ export default function Checkout() {
     
     // Define valid promo codes
     const validCodes = {
-      'FREESHIP': { discount: 100, type: 'shipping' }, // 100% off shipping only
+      'PEEL26FS': { discount: 100, type: 'shipping' }, // 100% off shipping only
     }
     
     if (validCodes[codeUpper]) {
@@ -1177,7 +1177,7 @@ export default function Checkout() {
                             <div className="flex items-center justify-between py-2.5 px-3 bg-green-50 rounded border border-green-200">
                               <div className="flex items-center gap-2">
                                 <span className="text-xs font-medium text-green-700">{appliedPromoCode}</span>
-                                {appliedPromoCode === 'FREESHIP' && (
+                                {appliedPromoCode === 'PEEL26FS' && (
                                   <span className="text-xs text-green-600">({language === 'fr' ? 'Livraison gratuite' : 'Free Shipping'})</span>
                                 )}
                               </div>
@@ -1203,12 +1203,12 @@ export default function Checkout() {
                             <div className="flex justify-between items-center text-sm">
                               <span className="text-gray-600">{language === 'fr' ? 'Expédition' : 'Shipping'}</span>
                               <span className="font-medium text-gray-900">
-                                {appliedPromoCode === 'FREESHIP' && promoCodeDiscount > 0 
+                                {appliedPromoCode === 'PEEL26FS' && promoCodeDiscount > 0 
                                   ? <span className="line-through text-gray-400 mr-1">{formatPriceWithCurrency(calculateShipping())}</span>
                                   : null
                                 }
-                                <span className={appliedPromoCode === 'FREESHIP' && promoCodeDiscount > 0 ? 'text-green-600 font-semibold' : ''}>
-                                  {formatPriceWithCurrency(Math.max(0, calculateShipping() - (appliedPromoCode === 'FREESHIP' ? promoCodeDiscount : 0)))}
+                                <span className={appliedPromoCode === 'PEEL26FS' && promoCodeDiscount > 0 ? 'text-green-600 font-semibold' : ''}>
+                                  {formatPriceWithCurrency(Math.max(0, calculateShipping() - (appliedPromoCode === 'PEEL26FS' ? promoCodeDiscount : 0)))}
                                 </span>
                               </span>
                             </div>
@@ -1217,7 +1217,7 @@ export default function Checkout() {
                             <div className="flex justify-between items-center py-2 px-3 bg-green-50 rounded border border-green-200 -mx-3 text-sm">
                               <div>
                                 <span className="text-green-700 font-medium">{language === 'fr' ? 'Réduction' : 'Discount'}</span>
-                                {appliedPromoCode === 'FREESHIP' && (
+                                {appliedPromoCode === 'PEEL26FS' && (
                                   <span className="text-xs text-green-600 ml-1">({language === 'fr' ? 'Livraison gratuite' : 'Free Shipping'})</span>
                                 )}
                               </div>
