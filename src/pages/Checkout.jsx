@@ -948,12 +948,23 @@ export default function Checkout() {
     // Extract numeric value and format consistently
     const numericValue = parseFloat(convertedPrice.toFixed(2))
     
-    // Ensure currency is explicitly set - use currency from context
-    const currentCurrency = currency || 'CAD' // Fallback to CAD if currency is undefined
+    // Get currency from context - ensure it's uppercase for comparison
+    // Also check localStorage as fallback in case context hasn't updated
+    let currentCurrency = 'CAD'
+    if (currency && typeof currency === 'string') {
+      currentCurrency = currency.toUpperCase()
+    } else if (typeof window !== 'undefined') {
+      const storedCurrency = localStorage.getItem('currency')
+      if (storedCurrency && (storedCurrency === 'USD' || storedCurrency === 'CAD')) {
+        currentCurrency = storedCurrency.toUpperCase()
+      }
+    }
     
+    // Always return with currency code explicitly
     if (currentCurrency === 'USD') {
       return `$${numericValue.toFixed(2)} USD`
     } else {
+      // Default to CAD if not USD
       return `$${numericValue.toFixed(2)} CAD`
     }
   }
