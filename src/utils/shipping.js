@@ -7,10 +7,10 @@
 // Weights should include: Product + Inner packaging (if any)
 // Packaging weight (box, padding, label, tape) will be added separately
 const PRODUCT_WEIGHTS = {
-  'small': 0.1,   // kg - Small Bag (update with actual weight)
-  'medium': 0.2,  // kg - Medium Bag (update with actual weight)
-  'large': 0.35,  // kg - Large Bag (update with actual weight)
-  'clearbox': 0.2 // kg - Clear Box (update with actual weight)
+  'small': 0.075,   // kg - Small Bag (measured: max 75g across all products)
+  'medium': 0.14,   // kg - Medium Bag (measured: max 140g across all products)
+  'large': 0.34,    // kg - Large Bag (calculated: max 340g based on proportional scaling)
+  'clearbox': 0.165 // kg - Clear Box (measured: max 165g across all products)
 }
 
 // ============================================================================
