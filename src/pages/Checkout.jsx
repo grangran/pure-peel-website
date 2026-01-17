@@ -1062,8 +1062,174 @@ export default function Checkout() {
                 
                 {/* Main Layout - Stripe-inspired */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 max-w-6xl mx-auto">
+                  {/* Order Summary - Show first on mobile, right sidebar on desktop */}
+                  <div className="lg:col-span-1 order-1 lg:order-2">
+                    <div className="lg:sticky lg:top-24">
+                      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                        {/* Header */}
+                        <div className="px-6 py-4 border-b border-gray-200">
+                          <h2 className="text-base font-semibold text-gray-900">
+                            {language === 'fr' ? 'Résumé' : 'Order'}
+                          </h2>
+                        </div>
+                      
+                      <div className="p-6 space-y-6">
+                        {/* Product Items */}
+                        <div className="space-y-4">
+                          {cartItems.map((item) => {
+                            const productId = item.id?.split('-').slice(0, -1).join('-') || item.id?.replace(/-mini|-small|-medium|-large|-clearbox/, '') || ''
+                            const translatedName = getTranslation(language, `products.${productId}.name`)
+                            const displayName = translatedName !== `products.${productId}.name` ? translatedName : item.name
+                            
+                            // Translate variant
+                            const variantMap = {
+                              'mini': language === 'fr' ? 'Mini' : 'Mini',
+                              'small': language === 'fr' ? 'Petit' : 'Small',
+                              'medium': language === 'fr' ? 'Moyen' : 'Medium',
+                              'large': language === 'fr' ? 'Grand' : 'Large',
+                              'clearbox': language === 'fr' ? 'Boîte transparente' : 'Clear Box'
+                            }
+                            const variantLabel = variantMap[item.variant?.toLowerCase()] || item.variant
+                            
+                            return (
+                              <div key={`${item.id}-${item.variant}`} className="flex gap-3 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
+                                {/* Product Image */}
+                                <div className="w-16 h-16 rounded overflow-hidden bg-gray-100 shrink-0">
+                                  <img 
+                                    src={item.image} 
+                                    alt={displayName} 
+                                    className="w-full h-full object-cover" 
+                                  />
+                                </div>
+                                
+                                {/* Product Info */}
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="text-sm font-medium text-gray-900 mb-0.5 leading-tight">
+                                      {displayName}
+                                    </h4>
+                                  <p className="text-xs text-gray-500 mb-1">{variantLabel}</p>
+                                  <div className="flex items-center justify-between mt-1">
+                                    <span className="text-xs text-gray-600">
+                                      {language === 'fr' ? 'Qty' : 'Qty'}: <span className="font-medium">{item.quantity}</span>
+                                    </span>
+                                    <span className="text-sm font-semibold text-gray-900">
+                                      {formatPriceWithCurrency(item.price * item.quantity)}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                        
+                        {/* Promo Code Section */}
+                        {!appliedPromoCode ? (
+                          <div className="pt-4 border-t border-gray-200">
+                            <label htmlFor="promo-code-input" className="block text-xs font-medium text-gray-700 mb-2">
+                              {language === 'fr' ? 'Code promo' : 'Promo Code'}
+                            </label>
+                            <div className="flex gap-2">
+                              <input
+                                id="promo-code-input"
+                                type="text"
+                                value={promoCode}
+                                onChange={(e) => {
+                                  setPromoCode(e.target.value.toUpperCase())
+                                  setPromoCodeError('')
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    e.preventDefault()
+                                    handleApplyPromoCode()
+                                  }
+                                }}
+                                placeholder={language === 'fr' ? 'Entrez le code' : 'Enter code'}
+                                aria-label={language === 'fr' ? 'Code promo' : 'Promo code'}
+                                aria-invalid={promoCodeError ? "true" : "false"}
+                                aria-describedby={promoCodeError ? "promo-code-error" : undefined}
+                                className="flex-1 px-3 py-2.5 text-xs rounded-md border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 transition-all placeholder:text-gray-400 touch-manipulation"
+                              />
+                              <button
+                                type="button"
+                                onClick={handleApplyPromoCode}
+                                aria-label={language === 'fr' ? 'Appliquer le code promo' : 'Apply promo code'}
+                                className="px-4 py-2.5 bg-amber-600 text-white text-xs font-medium rounded-md hover:bg-amber-700 active:bg-amber-800 transition-colors whitespace-nowrap touch-manipulation min-h-[44px]"
+                              >
+                                {language === 'fr' ? 'Appliquer' : 'Apply'}
+                              </button>
+                            </div>
+                            {promoCodeError && (
+                              <p id="promo-code-error" className="mt-1.5 text-xs text-red-600" role="alert" aria-live="polite">
+                                {promoCodeError}
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="pt-4 border-t border-gray-200">
+                            <div className="flex items-center justify-between py-2.5 px-3 bg-green-50 rounded border border-green-200">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-medium text-green-700">{appliedPromoCode}</span>
+                                {appliedPromoCode === 'FREESHIP' && (
+                                  <span className="text-xs text-green-600">({language === 'fr' ? 'Livraison gratuite' : 'Free Shipping'})</span>
+                                )}
+                              </div>
+                              <button
+                                type="button"
+                                onClick={handleRemovePromoCode}
+                                aria-label={language === 'fr' ? 'Retirer le code promo' : 'Remove promo code'}
+                                className="text-xs text-green-700 hover:text-green-800 underline touch-manipulation min-h-[44px] px-2"
+                              >
+                                {language === 'fr' ? 'Retirer' : 'Remove'}
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                              
+                        {/* Price Breakdown */}
+                        <div className="pt-4 border-t border-gray-200 space-y-3">
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-gray-600">{language === 'fr' ? 'Sous-total' : 'Subtotal'}</span>
+                            <span className="font-medium text-gray-900">{formatPriceWithCurrency(getCartTotal())}</span>
+                          </div>
+                          {selectedShipping && (
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="text-gray-600">{language === 'fr' ? 'Expédition' : 'Shipping'}</span>
+                              <span className="font-medium text-gray-900">
+                                {appliedPromoCode === 'FREESHIP' && promoCodeDiscount > 0 
+                                  ? <span className="line-through text-gray-400 mr-1">{formatPriceWithCurrency(calculateShipping())}</span>
+                                  : null
+                                }
+                                <span className={appliedPromoCode === 'FREESHIP' && promoCodeDiscount > 0 ? 'text-green-600 font-semibold' : ''}>
+                                  {formatPriceWithCurrency(Math.max(0, calculateShipping() - (appliedPromoCode === 'FREESHIP' ? promoCodeDiscount : 0)))}
+                                </span>
+                              </span>
+                            </div>
+                          )}
+                          {appliedPromoCode && promoCodeDiscount > 0 && (
+                            <div className="flex justify-between items-center py-2 px-3 bg-green-50 rounded border border-green-200 -mx-3 text-sm">
+                              <div>
+                                <span className="text-green-700 font-medium">{language === 'fr' ? 'Réduction' : 'Discount'}</span>
+                                {appliedPromoCode === 'FREESHIP' && (
+                                  <span className="text-xs text-green-600 ml-1">({language === 'fr' ? 'Livraison gratuite' : 'Free Shipping'})</span>
+                                )}
+                              </div>
+                              <span className="font-semibold text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
+                            </div>
+                          )}
+                          <div className="pt-3 border-t border-gray-300 flex justify-between items-center">
+                            <span className="text-base font-semibold text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
+                            <span className="text-lg font-bold text-gray-900">
+                              {formatPriceWithCurrency(Math.max(0, getCartTotal() + (selectedShipping ? calculateShipping() : 0) - promoCodeDiscount))}
+                            </span>
+                          </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
                   {/* Shipping Form - Main content on left */}
-                  <div className="lg:col-span-2">
+                  <div className="lg:col-span-2 order-2 lg:order-1">
                 <form onSubmit={handlePaymentSubmit} className="space-y-8">
                   {/* Contact Information */}
                   <div>
@@ -1326,9 +1492,9 @@ export default function Checkout() {
                         aria-required="true"
                         aria-invalid={errors.postalCode ? "true" : "false"}
                         aria-describedby={errors.postalCode ? "postalCode-error" : undefined}
-                        placeholder={formData.country === "United States" 
-                          ? (getTranslation(language, 'checkout.zipCode') || '12345')
-                          : (getTranslation(language, 'checkout.postalCode') || 'A1A 1A1')}
+                            placeholder={formData.country === "United States" 
+                              ? (getTranslation(language, 'checkout.zipCode') || '12345')
+                              : (getTranslation(language, 'checkout.postalCode') || 'A1A 1A1')}
                         className={`w-full px-4 py-2.5 text-sm rounded-md border transition-all placeholder:text-gray-400 ${
                           errors.postalCode ? 'border-red-300 bg-red-50 text-red-900 focus:border-red-500 focus:ring-red-100' : 'border-gray-300 bg-white text-gray-900 hover:border-gray-400'
                         } focus:outline-none focus:ring-1 focus:ring-black focus:border-black`}
@@ -1563,172 +1729,6 @@ export default function Checkout() {
                   </div>
                 </form>
                       </div>
-                
-                  {/* Order Summary - Sticky sidebar on right */}
-                  <div className="lg:col-span-1">
-                          <div className="lg:sticky lg:top-24">
-                      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                              {/* Header */}
-                        <div className="px-6 py-4 border-b border-gray-200">
-                          <h2 className="text-base font-semibold text-gray-900">
-                            {language === 'fr' ? 'Résumé' : 'Order'}
-                                </h2>
-                    </div>
-                            
-                            <div className="p-6 space-y-6">
-                              {/* Product Items */}
-                              <div className="space-y-4">
-                                {cartItems.map((item) => {
-                                  const productId = item.id?.split('-').slice(0, -1).join('-') || item.id?.replace(/-mini|-small|-medium|-large|-clearbox/, '') || ''
-                                  const translatedName = getTranslation(language, `products.${productId}.name`)
-                                  const displayName = translatedName !== `products.${productId}.name` ? translatedName : item.name
-                                  
-                                  // Translate variant
-                                  const variantMap = {
-                                    'mini': language === 'fr' ? 'Mini' : 'Mini',
-                                    'small': language === 'fr' ? 'Petit' : 'Small',
-                                    'medium': language === 'fr' ? 'Moyen' : 'Medium',
-                                    'large': language === 'fr' ? 'Grand' : 'Large',
-                                    'clearbox': language === 'fr' ? 'Boîte transparente' : 'Clear Box'
-                                  }
-                                  const variantLabel = variantMap[item.variant?.toLowerCase()] || item.variant
-                                  
-                                  return (
-                              <div key={`${item.id}-${item.variant}`} className="flex gap-3 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
-                                {/* Product Image */}
-                                <div className="w-16 h-16 rounded overflow-hidden bg-gray-100 shrink-0">
-                                        <img 
-                                          src={item.image} 
-                                          alt={displayName} 
-                                          className="w-full h-full object-cover" 
-                                        />
-                </div>
-                
-                                      {/* Product Info */}
-                                <div className="flex-1 min-w-0">
-                                  <h4 className="text-sm font-medium text-gray-900 mb-0.5 leading-tight">
-                                            {displayName}
-                                          </h4>
-                                  <p className="text-xs text-gray-500 mb-1">{variantLabel}</p>
-                                  <div className="flex items-center justify-between mt-1">
-                                    <span className="text-xs text-gray-600">
-                                      {language === 'fr' ? 'Qty' : 'Qty'}: <span className="font-medium">{item.quantity}</span>
-                                          </span>
-                                    <span className="text-sm font-semibold text-gray-900">
-                                            {formatPriceWithCurrency(item.price * item.quantity)}
-                                          </span>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  )
-                                })}
-                              </div>
-                              
-                        {/* Promo Code Section */}
-                        {!appliedPromoCode ? (
-                          <div className="pt-4 border-t border-gray-200">
-                            <label htmlFor="promo-code-input" className="block text-xs font-medium text-gray-700 mb-2">
-                              {language === 'fr' ? 'Code promo' : 'Promo Code'}
-                            </label>
-                            <div className="flex gap-2">
-                              <input
-                                id="promo-code-input"
-                                type="text"
-                                value={promoCode}
-                                onChange={(e) => {
-                                  setPromoCode(e.target.value.toUpperCase())
-                                  setPromoCodeError('')
-                                }}
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter') {
-                                    e.preventDefault()
-                                    handleApplyPromoCode()
-                                  }
-                                }}
-                                placeholder={language === 'fr' ? 'Entrez le code' : 'Enter code'}
-                                aria-label={language === 'fr' ? 'Code promo' : 'Promo code'}
-                                aria-invalid={promoCodeError ? "true" : "false"}
-                                aria-describedby={promoCodeError ? "promo-code-error" : undefined}
-                                className="flex-1 px-3 py-2.5 text-xs rounded-md border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 transition-all placeholder:text-gray-400 touch-manipulation"
-                              />
-                              <button
-                                type="button"
-                                onClick={handleApplyPromoCode}
-                                aria-label={language === 'fr' ? 'Appliquer le code promo' : 'Apply promo code'}
-                                className="px-4 py-2.5 bg-amber-600 text-white text-xs font-medium rounded-md hover:bg-amber-700 active:bg-amber-800 transition-colors whitespace-nowrap touch-manipulation min-h-[44px]"
-                              >
-                                {language === 'fr' ? 'Appliquer' : 'Apply'}
-                              </button>
-                            </div>
-                            {promoCodeError && (
-                              <p id="promo-code-error" className="mt-1.5 text-xs text-red-600" role="alert" aria-live="polite">
-                                {promoCodeError}
-                              </p>
-                            )}
-                          </div>
-                        ) : (
-                          <div className="pt-4 border-t border-gray-200">
-                            <div className="flex items-center justify-between py-2.5 px-3 bg-green-50 rounded border border-green-200">
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs font-medium text-green-700">{appliedPromoCode}</span>
-                                {appliedPromoCode === 'FREESHIP' && (
-                                  <span className="text-xs text-green-600">({language === 'fr' ? 'Livraison gratuite' : 'Free Shipping'})</span>
-                                )}
-                              </div>
-                              <button
-                                type="button"
-                                onClick={handleRemovePromoCode}
-                                aria-label={language === 'fr' ? 'Retirer le code promo' : 'Remove promo code'}
-                                className="text-xs text-green-700 hover:text-green-800 underline touch-manipulation min-h-[44px] px-2"
-                              >
-                                {language === 'fr' ? 'Retirer' : 'Remove'}
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                              
-                        {/* Price Breakdown */}
-                        <div className="pt-4 border-t border-gray-200 space-y-3">
-                          <div className="flex justify-between items-center text-sm">
-                            <span className="text-gray-600">{language === 'fr' ? 'Sous-total' : 'Subtotal'}</span>
-                            <span className="font-medium text-gray-900">{formatPriceWithCurrency(getCartTotal())}</span>
-                                </div>
-                                {selectedShipping && (
-                            <div className="flex justify-between items-center text-sm">
-                              <span className="text-gray-600">{language === 'fr' ? 'Expédition' : 'Shipping'}</span>
-                              <span className="font-medium text-gray-900">
-                                {appliedPromoCode === 'FREESHIP' && promoCodeDiscount > 0 
-                                  ? <span className="line-through text-gray-400 mr-1">{formatPriceWithCurrency(calculateShipping())}</span>
-                                  : null
-                                }
-                                <span className={appliedPromoCode === 'FREESHIP' && promoCodeDiscount > 0 ? 'text-green-600 font-semibold' : ''}>
-                                  {formatPriceWithCurrency(Math.max(0, calculateShipping() - (appliedPromoCode === 'FREESHIP' ? promoCodeDiscount : 0)))}
-                                </span>
-                              </span>
-                                  </div>
-                                )}
-                                {appliedPromoCode && promoCodeDiscount > 0 && (
-                            <div className="flex justify-between items-center py-2 px-3 bg-green-50 rounded border border-green-200 -mx-3 text-sm">
-                                    <div>
-                                <span className="text-green-700 font-medium">{language === 'fr' ? 'Réduction' : 'Discount'}</span>
-                                {appliedPromoCode === 'FREESHIP' && (
-                                  <span className="text-xs text-green-600 ml-1">({language === 'fr' ? 'Livraison gratuite' : 'Free Shipping'})</span>
-                                )}
-                                    </div>
-                              <span className="font-semibold text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
-                                  </div>
-                                )}
-                          <div className="pt-3 border-t border-gray-300 flex justify-between items-center">
-                            <span className="text-base font-semibold text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
-                            <span className="text-lg font-bold text-gray-900">
-                                    {formatPriceWithCurrency(Math.max(0, getCartTotal() + (selectedShipping ? calculateShipping() : 0) - promoCodeDiscount))}
-                                  </span>
-                                </div>
-                              </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
                         </div>
               </>
           </div>
