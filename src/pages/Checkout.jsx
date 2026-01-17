@@ -1510,6 +1510,55 @@ export default function Checkout() {
                           })}
                         </div>
                         
+                        {/* Promo Code Section */}
+                        {!appliedPromoCode ? (
+                          <div className="pt-4 border-t border-gray-200">
+                            <label className="block text-xs font-medium text-gray-700 mb-2">
+                              {language === 'fr' ? 'Code promo' : 'Promo Code'}
+                            </label>
+                            <div className="flex gap-2">
+                              <input
+                                type="text"
+                                value={promoCode}
+                                onChange={(e) => {
+                                  setPromoCode(e.target.value)
+                                  setPromoCodeError('')
+                                }}
+                                placeholder={language === 'fr' ? 'Entrez le code' : 'Enter code'}
+                                className="flex-1 px-3 py-2 text-xs rounded-md border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 transition-all placeholder:text-gray-400"
+                              />
+                              <button
+                                type="button"
+                                onClick={handleApplyPromoCode}
+                                className="px-3 py-2 bg-amber-600 text-white text-xs font-medium rounded-md hover:bg-amber-700 transition-colors whitespace-nowrap"
+                              >
+                                {language === 'fr' ? 'Appliquer' : 'Apply'}
+                              </button>
+                            </div>
+                            {promoCodeError && (
+                              <p className="mt-1.5 text-xs text-red-600">{promoCodeError}</p>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="pt-4 border-t border-gray-200">
+                            <div className="flex items-center justify-between py-2 px-3 bg-green-50 rounded border border-green-200">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-medium text-green-700">{appliedPromoCode}</span>
+                                {appliedPromoCode === 'FREESHIP' && (
+                                  <span className="text-xs text-green-600">({language === 'fr' ? 'Livraison gratuite' : 'Free Shipping'})</span>
+                                )}
+                              </div>
+                              <button
+                                type="button"
+                                onClick={handleRemovePromoCode}
+                                className="text-xs text-green-700 hover:text-green-800 underline"
+                              >
+                                {language === 'fr' ? 'Retirer' : 'Remove'}
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                        
                         {/* Price Breakdown */}
                         <div className="pt-4 border-t border-gray-200 space-y-3">
                           <div className="flex justify-between items-center text-sm">
@@ -1519,16 +1568,26 @@ export default function Checkout() {
                           {selectedShipping && (
                             <div className="flex justify-between items-center text-sm">
                               <span className="text-gray-600">{language === 'fr' ? 'Expédition' : 'Shipping'}</span>
-                              <span className="font-medium text-gray-900">{formatPriceWithCurrency(calculateShipping())}</span>
+                              <span className="font-medium text-gray-900">
+                                {appliedPromoCode === 'FREESHIP' && promoCodeDiscount > 0 
+                                  ? <span className="line-through text-gray-400 mr-1">{formatPriceWithCurrency(calculateShipping())}</span>
+                                  : null
+                                }
+                                <span className={appliedPromoCode === 'FREESHIP' && promoCodeDiscount > 0 ? 'text-green-600 font-semibold' : ''}>
+                                  {formatPriceWithCurrency(Math.max(0, calculateShipping() - (appliedPromoCode === 'FREESHIP' ? promoCodeDiscount : 0)))}
+                                </span>
+                              </span>
                             </div>
                           )}
                           {appliedPromoCode && promoCodeDiscount > 0 && (
                             <div className="flex justify-between items-center py-2 px-3 bg-green-50 rounded border border-green-200 -mx-3 text-sm">
                               <div>
-                                <span className="text-green-700">{language === 'fr' ? 'Réduction' : 'Discount'}</span>
-                                <span className="text-xs text-green-600 ml-1">({appliedPromoCode})</span>
+                                <span className="text-green-700 font-medium">{language === 'fr' ? 'Réduction' : 'Discount'}</span>
+                                {appliedPromoCode === 'FREESHIP' && (
+                                  <span className="text-xs text-green-600 ml-1">({language === 'fr' ? 'Livraison gratuite' : 'Free Shipping'})</span>
+                                )}
                               </div>
-                              <span className="font-medium text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
+                              <span className="font-semibold text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
                             </div>
                           )}
                           <div className="pt-3 border-t border-gray-300 flex justify-between items-center">
