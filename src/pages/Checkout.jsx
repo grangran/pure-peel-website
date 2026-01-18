@@ -116,17 +116,27 @@ export default function Checkout() {
     const canceled = urlParams.get('canceled')
     const sessionId = urlParams.get('session_id')
 
+    console.log('🔍 Checking URL params:', { success, canceled, sessionId, search: window.location.search })
+
     if (success === 'true' && sessionId) {
+      console.log('✅ Success detected - setting currentStep to 2 and processing payment')
       // Payment was successful - set step to 2 immediately to prevent empty cart message
       setCurrentStep(2)
       // Clear saved form data
       localStorage.removeItem('checkoutFormData')
       localStorage.removeItem('checkoutShippingOption')
-      handlePaymentSuccess(sessionId)
-      // Clean up URL
+      // Process payment success (this will set orderNumber)
+      handlePaymentSuccess(sessionId).then(() => {
+        // Clean up URL AFTER order number is set (delay to prevent race condition)
+        setTimeout(() => {
       if (window.location.search) {
         window.history.replaceState({}, '', '/checkout')
       }
+        }, 500)
+      }).catch(error => {
+        console.error('❌ Error processing payment success:', error)
+        setIsSubmitting(false)
+      })
     } else if (canceled === 'true') {
       // Payment was canceled - restore form data and return to checkout
       setCurrentStep(1)
@@ -633,32 +643,34 @@ export default function Checkout() {
     return 12.00 // Default estimated shipping in CAD
   }
 
-  // Reset to checkout form if user navigates back from confirmation
-  // This effect runs when the component mounts or when currentStep changes
-  // BUT: Don't reset if we're in the middle of processing a successful payment
+  // Reset to checkout form ONLY if user explicitly navigates away from confirmation
+  // DO NOT reset if we're processing a payment success
   useEffect(() => {
-    // Only reset if:
+    // Only reset if ALL of these are true:
     // 1. We're on confirmation step
     // 2. No order number has been set
-    // 3. URL doesn't indicate success
+    // 3. URL doesn't indicate success (and never did)
     // 4. We're not currently submitting/processing payment
-    // This prevents resetting during the brief moment between URL cleanup and order number setting
-    if (currentStep === 2 && !orderNumber && !isSubmitting) {
+    // 5. We've been on confirmation for more than 2 seconds (to allow async operations)
       const urlParams = new URLSearchParams(window.location.search)
       const success = urlParams.get('success')
-      if (!success) {
-        // Small delay to ensure success handler has a chance to run
-        // If orderNumber is set within 1 second, don't reset
-        const timeoutId = setTimeout(() => {
-          if (!orderNumber) {
-            // User navigated back - reset to checkout form
-            console.log('⚠️ Resetting to checkout - no order number and no success param')
-            setCurrentStep(1)
-          }
-        }, 1000)
-        
-        return () => clearTimeout(timeoutId)
+    
+    // If there's a success param, don't reset - we're processing a payment
+    if (success === 'true') {
+      return
+    }
+    
+    if (currentStep === 2 && !orderNumber && !isSubmitting && !success) {
+      // Wait 2 seconds before resetting to allow async operations to complete
+      const timeoutId = setTimeout(() => {
+        // Double-check conditions before resetting
+        if (currentStep === 2 && !orderNumber) {
+          console.log('⚠️ Resetting to checkout - confirmation state without order number (user likely navigated back)')
+        setCurrentStep(1)
       }
+      }, 2000)
+      
+      return () => clearTimeout(timeoutId)
     }
   }, [currentStep, orderNumber, isSubmitting]) // Watch these values
 
@@ -881,10 +893,24 @@ export default function Checkout() {
 
   const handlePaymentSuccess = async (sessionId) => {
     try {
+      console.log('📦 Processing payment success for session:', sessionId)
+      setIsSubmitting(true) // Mark as processing to prevent reset
+      
       // Verify the payment with the backend
       const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
       const response = await fetch(`${API_URL}/api/checkout-session/${sessionId}`)
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch session: ${response.status}`)
+      }
+      
       const session = await response.json()
+      console.log('📦 Session retrieved:', { 
+        id: session.id, 
+        payment_status: session.payment_status, 
+        amount_total: session.amount_total,
+        hasMetadata: !!session.metadata 
+      })
 
       // For free orders, payment_status might be 'no_payment_required' or 'unpaid'
       const isFreeOrder = (session.amount_total || 0) === 0
