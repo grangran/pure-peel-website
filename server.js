@@ -792,8 +792,13 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     
     // Handle PEEL26FS code which gives 100% off shipping only
     let finalShippingCostCents = shippingCostCents
+    let finalDiscountCents = discountAmountCents
+    
     if (isFreeShippingCode) {
+      // For free shipping codes, set shipping to 0 and don't apply discount to total
+      // (discount is already applied by setting shipping to 0)
       finalShippingCostCents = 0
+      finalDiscountCents = 0 // Don't subtract discount amount - shipping is already free
       console.log('🎁 Free shipping applied - shipping set to $0', {
         promoCode: promoCodeUpper,
         originalShipping: shippingCostCents,
@@ -803,11 +808,14 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     } else {
       console.log('💰 Regular discount or no discount - shipping remains:', {
         promoCode: promoCodeUpper || 'none',
-        shippingCost: shippingCostCents
+        shippingCost: shippingCostCents,
+        discountAmount: discountAmountCents
       })
     }
     
-    const totalAmount = Math.max(0, subtotal + finalShippingCostCents + tax - discountAmountCents)
+    // Calculate total: for free shipping codes, discount is already applied (shipping = 0)
+    // For regular discounts, subtract discount amount from total
+    const totalAmount = Math.max(0, subtotal + finalShippingCostCents + tax - finalDiscountCents)
     
     // Validate all amounts are valid integers
     if (isNaN(shippingCostCents) || isNaN(subtotal) || isNaN(discountAmountCents)) {
