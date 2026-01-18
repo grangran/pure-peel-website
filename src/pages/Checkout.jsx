@@ -1786,7 +1786,7 @@ export default function Checkout() {
                       aria-label={hasEnteredShippingDetails && selectedShipping 
                         ? (language === 'fr' ? `Payer ${formatPriceWithCurrency(totalCAD)}` : `Pay ${formatPriceWithCurrency(totalCAD)}`)
                         : (language === 'fr' ? 'Continuer' : 'Continue')}
-                      className="w-full py-4 px-6 text-base font-bold rounded-xl border-0 cursor-pointer transition-all duration-200 bg-gradient-to-r from-amber-600 to-orange-600 text-white hover:from-amber-700 hover:to-orange-700 active:from-amber-600 active:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-amber-600 disabled:hover:to-orange-600 flex items-center justify-center gap-3 min-h-[56px] touch-manipulation shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
+                      className="w-full py-4 px-6 text-base font-bold rounded-xl border-0 cursor-pointer transition-all duration-200 bg-linear-to-r from-amber-600 to-orange-600 text-white hover:from-amber-700 hover:to-orange-700 active:from-amber-600 active:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-amber-600 disabled:hover:to-orange-600 flex items-center justify-center gap-3 min-h-[56px] touch-manipulation shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
                     >
                       {isSubmitting ? (
                         <LoadingSpinner size="sm" color="white" text={getTranslation(language, 'checkout.processing')} />
@@ -1828,7 +1828,7 @@ export default function Checkout() {
           <div className="max-w-3xl mx-auto text-center animate-fade-in">
             <div className="bg-white rounded-2xl shadow-xl border border-amber-100 overflow-hidden">
               {/* Brand Header with Gradient */}
-              <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 px-8 py-8 text-white">
+              <div className="bg-linear-to-r from-amber-500 via-amber-600 to-orange-600 px-8 py-8 text-white">
                 <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center mx-auto mb-4 shadow-lg ring-4 ring-white/20 animate-scale-in">
                   <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -1845,7 +1845,7 @@ export default function Checkout() {
               {/* Content Area */}
               <div className="px-8 py-10">
                 {/* Order Number Card - Brand Styled */}
-                <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-8 mb-8 border-2 border-amber-200 shadow-inner">
+                <div className="bg-linear-to-br from-amber-50 to-orange-50 rounded-xl p-8 mb-8 border-2 border-amber-200 shadow-inner">
                   <p className="text-sm font-semibold text-amber-700 uppercase tracking-wider mb-3">
                     {getTranslation(language, 'checkout.orderNumber')}
                   </p>
@@ -1861,7 +1861,7 @@ export default function Checkout() {
                 {/* Email Confirmation */}
                 <div className="mb-8 px-4">
                   <div className="flex items-start justify-center gap-3 mb-4">
-                    <svg className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                     <p className="text-gray-700 leading-relaxed max-w-lg">
@@ -1882,7 +1882,7 @@ export default function Checkout() {
                     window.history.pushState({ page: "/" }, "", "/")
                     window.dispatchEvent(new Event("hashchange"))
                   }}
-                  className="w-full max-w-md mx-auto px-8 py-4 bg-gradient-to-r from-amber-600 to-orange-600 text-white font-semibold rounded-xl hover:from-amber-700 hover:to-orange-700 active:scale-[0.98] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center justify-center gap-2 text-base"
+                  className="w-full max-w-md mx-auto px-8 py-4 bg-linear-to-r from-amber-600 to-orange-600 text-white font-semibold rounded-xl hover:from-amber-700 hover:to-orange-700 active:scale-[0.98] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center justify-center gap-2 text-base"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
