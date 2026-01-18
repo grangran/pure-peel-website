@@ -635,17 +635,32 @@ export default function Checkout() {
 
   // Reset to checkout form if user navigates back from confirmation
   // This effect runs when the component mounts or when currentStep changes
+  // BUT: Don't reset if we're in the middle of processing a successful payment
   useEffect(() => {
-    // If we're on confirmation but URL doesn't indicate success and no order number, reset to checkout
-    if (currentStep === 2 && !orderNumber) {
+    // Only reset if:
+    // 1. We're on confirmation step
+    // 2. No order number has been set
+    // 3. URL doesn't indicate success
+    // 4. We're not currently submitting/processing payment
+    // This prevents resetting during the brief moment between URL cleanup and order number setting
+    if (currentStep === 2 && !orderNumber && !isSubmitting) {
       const urlParams = new URLSearchParams(window.location.search)
       const success = urlParams.get('success')
       if (!success) {
-        // User navigated back - reset to checkout form
-        setCurrentStep(1)
+        // Small delay to ensure success handler has a chance to run
+        // If orderNumber is set within 1 second, don't reset
+        const timeoutId = setTimeout(() => {
+          if (!orderNumber) {
+            // User navigated back - reset to checkout form
+            console.log('⚠️ Resetting to checkout - no order number and no success param')
+            setCurrentStep(1)
+          }
+        }, 1000)
+        
+        return () => clearTimeout(timeoutId)
       }
     }
-  }, []) // Only run on mount - let App.jsx handle all navigation
+  }, [currentStep, orderNumber, isSubmitting]) // Watch these values
 
   // Fetch shipping rates when postal code, province/state, city, and country are filled
   // Only fetch if address changed (don't refetch if we already have rates for this address)
@@ -1769,7 +1784,10 @@ export default function Checkout() {
         )}
 
         {/* Step 2: Confirmation */}
-        {currentStep === 2 && (
+        {currentStep === 2 && (() => {
+          console.log('✅ Rendering confirmation page', { currentStep, orderNumber, customerInfo })
+          return true
+        })() && (
           <div className="max-w-2xl mx-auto text-center">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12">
               <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-6">
@@ -1783,7 +1801,13 @@ export default function Checkout() {
               </p>
               <div className="bg-gray-50 rounded-lg p-6 mb-8">
                 <p className="text-sm text-gray-600 mb-2">{getTranslation(language, 'checkout.orderNumber')}</p>
-                <p className="text-xl font-semibold text-gray-900">{orderNumber}</p>
+                <p className="text-xl font-semibold text-gray-900">
+                  {orderNumber || (
+                    <span className="text-gray-400 italic">
+                      {language === 'fr' ? 'Chargement...' : 'Loading...'}
+                    </span>
+                  )}
+                </p>
               </div>
               <p className="text-gray-600 mb-8">
                 {customerInfo.email ? (
