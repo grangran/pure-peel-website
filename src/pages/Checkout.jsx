@@ -1824,10 +1824,7 @@ export default function Checkout() {
         )}
 
         {/* Step 2: Confirmation */}
-        {currentStep === 2 && (() => {
-          console.log('✅ Rendering confirmation page', { currentStep, orderNumber, customerInfo })
-          return true
-        })() && (
+        {currentStep === 2 && (
           <div className="max-w-2xl mx-auto text-center">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12">
               <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-6">
