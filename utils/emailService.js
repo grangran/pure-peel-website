@@ -109,11 +109,16 @@ const orderConfirmationTemplateEN = (order, trackingUrl) => {
       <div class="items">
         <h3 style="margin-top: 0;">Items Ordered:</h3>
         <ul style="list-style: none; padding: 0; margin: 0;">
-          ${(order.items || []).map(item => 
-            `<li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
-              ${item.name || 'Item'}${item.variant ? ` - ${item.variant}` : ''} - Qty: ${item.quantity || 1} - $${(item.total || item.price * (item.quantity || 1) || 0).toFixed(2)}
+          ${(order.items || []).map(item => {
+            // Format item name - if variant is already in name, don't duplicate it
+            let itemDisplay = item.name || 'Item'
+            if (item.variant && !itemDisplay.includes(item.variant)) {
+              itemDisplay += ` - ${item.variant}`
+            }
+            return `<li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+              ${itemDisplay} - Qty: ${item.quantity || 1} - $${(item.total || item.price * (item.quantity || 1) || 0).toFixed(2)}
             </li>`
-          ).join('')}
+          }).join('')}
         </ul>
       </div>
 
@@ -220,11 +225,16 @@ const orderConfirmationTemplateFR = (order, trackingUrl) => {
       <div class="items">
         <h3 style="margin-top: 0;">Articles Commandés :</h3>
         <ul style="list-style: none; padding: 0; margin: 0;">
-          ${(order.items || []).map(item => 
-            `<li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
-              ${item.name || 'Article'}${item.variant ? ` - ${item.variant}` : ''} - Qté : ${item.quantity || 1} - ${(item.total || item.price * (item.quantity || 1) || 0).toFixed(2)} $
+          ${(order.items || []).map(item => {
+            // Format item name - if variant is already in name, don't duplicate it
+            let itemDisplay = item.name || 'Article'
+            if (item.variant && !itemDisplay.includes(item.variant)) {
+              itemDisplay += ` - ${item.variant}`
+            }
+            return `<li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+              ${itemDisplay} - Qté : ${item.quantity || 1} - ${(item.total || item.price * (item.quantity || 1) || 0).toFixed(2)} $
             </li>`
-          ).join('')}
+          }).join('')}
         </ul>
       </div>
 
