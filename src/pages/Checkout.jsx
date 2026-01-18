@@ -95,6 +95,7 @@ export default function Checkout() {
   
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [orderNumber, setOrderNumber] = useState(null)
+  const [generatedOrderId, setGeneratedOrderId] = useState(null) // Store order ID when generated
   const [stripeError, setStripeError] = useState(null)
   const [customerInfo, setCustomerInfo] = useState({ name: '', email: '' })
   const [shippingOptions, setShippingOptions] = useState([])
@@ -781,6 +782,7 @@ export default function Checkout() {
       try {
         // Generate order ID BEFORE creating checkout session to ensure consistency
         const orderId = `PP-${Date.now().toString().slice(-8)}`
+        setGeneratedOrderId(orderId) // Store order ID for later use
         
         // Log currency before sending to backend
         console.log('💱 Frontend sending to backend:', {
@@ -875,8 +877,17 @@ export default function Checkout() {
       
       if (isPaidOrFree) {
         // Get order number from metadata (should match what we sent)
-        const newOrderNumber = session.metadata?.order_id || `PP-${Date.now().toString().slice(-8)}`
+        // Use generatedOrderId as fallback to ensure consistency (don't generate new one)
+        const newOrderNumber = session.metadata?.order_id || generatedOrderId || `PP-${Date.now().toString().slice(-8)}`
         setOrderNumber(newOrderNumber)
+        
+        // Log order ID resolution for debugging
+        console.log('📋 Order ID resolution (frontend):', {
+          fromMetadata: session.metadata?.order_id,
+          fromGeneratedId: generatedOrderId,
+          finalOrderNumber: newOrderNumber,
+          wasGenerated: !session.metadata?.order_id && !generatedOrderId
+        })
         
         // Get customer info from session
         const customerName = session.metadata?.customer_name || session.customer_details?.name || formData.firstName || 'Customer'

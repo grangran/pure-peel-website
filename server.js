@@ -888,6 +888,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
         language: shippingInfo.language || 'en', // Store language preference
         timezone: shippingInfo.timezone || 'America/Toronto', // Store customer timezone
         promo_code: promoCode || '',
+        // IMPORTANT: Use order_id from frontend - this ensures frontend and backend use the same order ID
         order_id: shippingInfo.order_id || `PP-${Date.now().toString().slice(-8)}`, // Use order_id from frontend or generate one
         // Store shipping address from form as fallback (in case Stripe doesn't collect it for free orders)
         shipping_address_line1: shippingInfo.address || '',
