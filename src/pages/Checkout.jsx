@@ -971,17 +971,31 @@ export default function Checkout() {
         localStorage.removeItem('checkoutFormData')
         localStorage.removeItem('checkoutShippingOption')
         
-        // Clean up URL by removing query parameters
-        if (window.location.search) {
-          window.history.replaceState({}, '', '/checkout')
-        }
+        // Ensure confirmation page is shown
+        setCurrentStep(2)
+        console.log('✅ Payment success processed - confirmation page should be visible', {
+          orderNumber: newOrderNumber,
+          currentStep: 2
+        })
         
+        // Clean up URL by removing query parameters (but keep it briefly for reset check)
+        // Don't clean immediately - let the success param stay during processing
+        setTimeout(() => {
+          if (window.location.search) {
+            window.history.replaceState({}, '', '/checkout')
+          }
+        }, 1000)
+        
+        setIsSubmitting(false)
+      } else {
+        console.warn('⚠️ Payment not confirmed - payment_status:', session.payment_status)
         setIsSubmitting(false)
       }
     } catch (error) {
-      console.error('Error verifying payment:', error)
-      setStripeError(getTranslation(language, 'checkout.paymentVerificationFailed'))
+      console.error('❌ Error verifying payment:', error)
+      setStripeError(getTranslation(language, 'checkout.paymentVerificationFailed') || 'Error verifying payment')
       setIsSubmitting(false)
+      // Don't reset currentStep on error - let user see the error
     }
   }
 
