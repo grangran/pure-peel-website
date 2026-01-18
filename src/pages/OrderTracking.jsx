@@ -299,16 +299,26 @@ export default function OrderTracking() {
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4">{getTranslation(language, 'orderTracking.itemsOrdered')}</h3>
               <div className="space-y-3">
-                {order.items?.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                    <div>
-                      <p className="font-medium text-gray-900">{item.name}</p>
-                      <p className="text-sm text-gray-600">{item.variant}</p>
-                      <p className="text-sm text-gray-500 mt-1">{getTranslation(language, 'orderTracking.quantity')} {item.quantity}</p>
+                {order.items?.map((item, index) => {
+                  // Format item name - if variant is already in name, don't duplicate it
+                  const itemName = item.name || 'Item'
+                  const itemVariant = item.variant || ''
+                  // Check if variant is already included in the name
+                  const variantInName = itemVariant && itemName.includes(itemVariant)
+                  
+                  return (
+                    <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div>
+                        <p className="font-medium text-gray-900">{itemName}</p>
+                        {!variantInName && itemVariant && (
+                          <p className="text-sm text-gray-600">{itemVariant}</p>
+                        )}
+                        <p className="text-sm text-gray-500 mt-1">{getTranslation(language, 'orderTracking.quantity')} {item.quantity}</p>
+                      </div>
+                      <p className="font-semibold text-gray-900">${item.total.toFixed(2)}</p>
                     </div>
-                    <p className="font-semibold text-gray-900">${item.total.toFixed(2)}</p>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
 
