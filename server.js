@@ -780,9 +780,10 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     // Calculate order total to check if discount covers everything (including shipping)
     const orderTotalCents = subtotal + shippingCostCents + tax
     
-    // Check if this is a free shipping code
+    // Check if this is a free shipping code or free order code (test code)
     const promoCodeUpper = promoCode ? promoCode.toUpperCase().trim() : ''
     const isFreeShippingCode = promoCodeUpper === 'PEEL26FS' // 100% off shipping only
+    const isFreeOrderCode = promoCodeUpper === 'TEST100' // 100% off entire order (TEST ONLY)
     console.log('🎟️ Promo code check:', {
       promoCode: promoCodeUpper || 'none',
       discountAmountCents,
@@ -791,10 +792,20 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     })
     
     // Handle PEEL26FS code which gives 100% off shipping only
+    // Handle TEST100 code which gives 100% off entire order (TEST ONLY)
     let finalShippingCostCents = shippingCostCents
     let finalDiscountCents = discountAmountCents
     
-    if (isFreeShippingCode) {
+    if (isFreeOrderCode) {
+      // For free order test codes, set total to 0 (entire order is free)
+      finalShippingCostCents = 0
+      finalDiscountCents = orderTotalCents // Discount equals entire order total
+      console.log('🧪 TEST CODE: Free order applied - entire order is $0', {
+        promoCode: promoCodeUpper,
+        originalTotal: orderTotalCents,
+        finalTotal: 0
+      })
+    } else if (isFreeShippingCode) {
       // For free shipping codes, set shipping to 0 and don't apply discount to total
       // (discount is already applied by setting shipping to 0)
       finalShippingCostCents = 0
@@ -813,9 +824,12 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       })
     }
     
-    // Calculate total: for free shipping codes, discount is already applied (shipping = 0)
+    // Calculate total: for free order codes, total is 0
+    // For free shipping codes, discount is already applied (shipping = 0)
     // For regular discounts, subtract discount amount from total
-    const totalAmount = Math.max(0, subtotal + finalShippingCostCents + tax - finalDiscountCents)
+    const totalAmount = isFreeOrderCode 
+      ? 0 // Entire order is free
+      : Math.max(0, subtotal + finalShippingCostCents + tax - finalDiscountCents)
     
     // Validate all amounts are valid integers
     if (isNaN(shippingCostCents) || isNaN(subtotal) || isNaN(discountAmountCents)) {
@@ -951,7 +965,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     }
 
     try {
-      const session = await stripe.checkout.sessions.create(sessionConfig)
+    const session = await stripe.checkout.sessions.create(sessionConfig)
 
       console.log('✅ Stripe Checkout Session created:', {
         sessionId: session.id,
@@ -975,8 +989,8 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
         })
       }
 
-      res.json({ 
-        sessionId: session.id,
+    res.json({ 
+      sessionId: session.id, 
         url: session.url // Redirect user to this URL for Stripe hosted checkout
       })
     } catch (stripeError) {

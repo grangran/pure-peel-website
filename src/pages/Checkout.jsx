@@ -695,6 +695,7 @@ export default function Checkout() {
     // Define valid promo codes
     const validCodes = {
       'PEEL26FS': { discount: 100, type: 'shipping' }, // 100% off shipping only
+      'TEST100': { discount: 100, type: 'percent' }, // 100% off entire order (TEST ONLY)
     }
     
     if (validCodes[codeUpper]) {
