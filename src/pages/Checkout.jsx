@@ -1825,43 +1825,79 @@ export default function Checkout() {
 
         {/* Step 2: Confirmation */}
         {currentStep === 2 && (
-          <div className="max-w-2xl mx-auto text-center">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12">
-              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-6">
-                <svg className="w-8 h-8 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <h1 className="text-2xl font-semibold text-gray-900 mb-3">{getTranslation(language, 'checkout.orderConfirmed')}</h1>
-              <p className="text-gray-600 mb-6">
-                {getTranslation(language, 'checkout.thankYou')}{customerInfo.name ? `, ${customerInfo.name.split(' ')[0]}` : ''}!
-              </p>
-              <div className="bg-gray-50 rounded-lg p-6 mb-8">
-                <p className="text-sm text-gray-600 mb-2">{getTranslation(language, 'checkout.orderNumber')}</p>
-                <p className="text-xl font-semibold text-gray-900">
-                  {orderNumber || (
-                    <span className="text-gray-400 italic">
-                      {language === 'fr' ? 'Chargement...' : 'Loading...'}
-                    </span>
-                  )}
+          <div className="max-w-3xl mx-auto text-center animate-fade-in">
+            <div className="bg-white rounded-2xl shadow-xl border border-amber-100 overflow-hidden">
+              {/* Brand Header with Gradient */}
+              <div className="bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 px-8 py-8 text-white">
+                <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center mx-auto mb-4 shadow-lg ring-4 ring-white/20 animate-scale-in">
+                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="3">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h1 className="text-3xl md:text-4xl font-bold mb-2 drop-shadow-md">
+                  {getTranslation(language, 'checkout.orderConfirmed')}
+                </h1>
+                <p className="text-lg text-amber-50 font-medium">
+                  {getTranslation(language, 'checkout.thankYou')}{customerInfo.name ? `, ${customerInfo.name.split(' ')[0]}` : ''}! 🍁
                 </p>
               </div>
-              <p className="text-gray-600 mb-8">
-                {customerInfo.email ? (
-                  <>{getTranslation(language, 'checkout.confirmationEmail')} <strong>{customerInfo.email}</strong> {getTranslation(language, 'checkout.confirmationEmailSuffix')}</>
-                ) : (
-                  <>{getTranslation(language, 'checkout.confirmationEmailNoEmail')}</>
-                )}
-              </p>
-              <button
-              onClick={() => {
-                window.history.pushState({ page: "/" }, "", "/")
-                window.dispatchEvent(new Event("hashchange"))
-              }}
-                className="px-6 py-2.5 bg-amber-600 text-white font-medium rounded-lg hover:bg-amber-700 transition-colors"
-              >
-                {getTranslation(language, 'checkout.continueShopping')}
-              </button>
+
+              {/* Content Area */}
+              <div className="px-8 py-10">
+                {/* Order Number Card - Brand Styled */}
+                <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-8 mb-8 border-2 border-amber-200 shadow-inner">
+                  <p className="text-sm font-semibold text-amber-700 uppercase tracking-wider mb-3">
+                    {getTranslation(language, 'checkout.orderNumber')}
+                  </p>
+                  <p className="text-3xl md:text-4xl font-bold text-amber-900 tracking-tight font-mono">
+                    {orderNumber || (
+                      <span className="text-amber-400 italic animate-pulse">
+                        {language === 'fr' ? 'Chargement...' : 'Loading...'}
+                      </span>
+                    )}
+                  </p>
+                </div>
+
+                {/* Email Confirmation */}
+                <div className="mb-8 px-4">
+                  <div className="flex items-start justify-center gap-3 mb-4">
+                    <svg className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <p className="text-gray-700 leading-relaxed max-w-lg">
+                      {customerInfo.email ? (
+                        <>
+                          {getTranslation(language, 'checkout.confirmationEmail')} <strong className="text-amber-600">{customerInfo.email}</strong> {getTranslation(language, 'checkout.confirmationEmailSuffix')}
+                        </>
+                      ) : (
+                        <>{getTranslation(language, 'checkout.confirmationEmailNoEmail')}</>
+                      )}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Continue Shopping Button - Brand Styled */}
+                <button
+                  onClick={() => {
+                    window.history.pushState({ page: "/" }, "", "/")
+                    window.dispatchEvent(new Event("hashchange"))
+                  }}
+                  className="w-full max-w-md mx-auto px-8 py-4 bg-gradient-to-r from-amber-600 to-orange-600 text-white font-semibold rounded-xl hover:from-amber-700 hover:to-orange-700 active:scale-[0.98] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] flex items-center justify-center gap-2 text-base"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                  </svg>
+                  {getTranslation(language, 'checkout.continueShopping')}
+                </button>
+
+                {/* Made in Canada Badge */}
+                <div className="mt-8 pt-6 border-t border-gray-200">
+                  <p className="text-sm text-gray-500 flex items-center justify-center gap-2">
+                    <span>Made in Canada</span>
+                    <span className="text-xl">🍁</span>
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         )}
