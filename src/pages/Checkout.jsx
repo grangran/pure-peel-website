@@ -116,7 +116,9 @@ export default function Checkout() {
     const sessionId = urlParams.get('session_id')
 
     if (success === 'true' && sessionId) {
-      // Payment was successful - clear saved form data
+      // Payment was successful - set step to 2 immediately to prevent empty cart message
+      setCurrentStep(2)
+      // Clear saved form data
       localStorage.removeItem('checkoutFormData')
       localStorage.removeItem('checkoutShippingOption')
       handlePaymentSuccess(sessionId)
@@ -633,8 +635,8 @@ export default function Checkout() {
   // Reset to checkout form if user navigates back from confirmation
   // This effect runs when the component mounts or when currentStep changes
   useEffect(() => {
-    // If we're on confirmation but URL doesn't indicate success, reset to checkout
-    if (currentStep === 2) {
+    // If we're on confirmation but URL doesn't indicate success and no order number, reset to checkout
+    if (currentStep === 2 && !orderNumber) {
       const urlParams = new URLSearchParams(window.location.search)
       const success = urlParams.get('success')
       if (!success) {
@@ -1192,7 +1194,7 @@ export default function Checkout() {
                             </div>
                           </div>
                         )}
-                              
+                        
                         {/* Price Breakdown */}
                         <div className="pt-4 border-t border-gray-200 space-y-3">
                           <div className="flex justify-between items-center text-sm">
@@ -1732,7 +1734,7 @@ export default function Checkout() {
                     </button>
 
                     <p className="text-xs text-gray-500 text-center mt-4 leading-relaxed">
-                      {language === 'fr' 
+                            {language === 'fr' 
                         ? <>En continuant, vous acceptez nos <a href="/terms" onClick={(e) => { e.preventDefault(); window.history.pushState({ page: "/terms" }, "", "/terms"); window.dispatchEvent(new Event("hashchange")); }} className="text-amber-600 hover:text-amber-700 underline">conditions d'utilisation</a> et notre <a href="/privacy" onClick={(e) => { e.preventDefault(); window.history.pushState({ page: "/privacy" }, "", "/privacy"); window.dispatchEvent(new Event("hashchange")); }} className="text-amber-600 hover:text-amber-700 underline">politique de confidentialité</a></>
                         : <>By continuing, you agree to our <a href="/terms" onClick={(e) => { e.preventDefault(); window.history.pushState({ page: "/terms" }, "", "/terms"); window.dispatchEvent(new Event("hashchange")); }} className="text-amber-600 hover:text-amber-700 underline">terms of service</a> and <a href="/privacy" onClick={(e) => { e.preventDefault(); window.history.pushState({ page: "/privacy" }, "", "/privacy"); window.dispatchEvent(new Event("hashchange")); }} className="text-amber-600 hover:text-amber-700 underline">privacy policy</a></>
                       }
@@ -1740,16 +1742,16 @@ export default function Checkout() {
                     {/* Security Indicator */}
                     <div className="flex items-center justify-center gap-2 mt-3">
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                      </svg>
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                  </svg>
                       <span className="text-xs text-gray-500">
                         {language === 'fr' ? 'Paiement sécurisé par Stripe' : 'Secured by Stripe'}
                       </span>
-                    </div>
-                  </div>
+                                  </div>
+                                </div>
                 </form>
-                      </div>
-                        </div>
+                              </div>
+                            </div>
               </>
           </div>
         )}
