@@ -914,8 +914,9 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
       }],
     }
 
-    // Apply discount if promo code is used
-    if (promoCode && discountAmountCents > 0) {
+    // Apply discount if promo code is used (but NOT for free shipping codes - shipping is already free)
+    // Free shipping codes are handled by setting finalShippingCostCents = 0, not by discount coupon
+    if (promoCode && discountAmountCents > 0 && !isFreeShippingCode) {
       try {
         // Calculate discount percentage based on order total
         const orderTotalForDiscount = subtotal + finalShippingCostCents + tax
@@ -923,7 +924,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
           ? Math.max(1, Math.min(100, Math.round((discountAmountCents / orderTotalForDiscount) * 100)))
           : 100 // If total is $0, discount is 100%
         
-        console.log('🎟️ Applying promo code:', {
+        console.log('🎟️ Applying promo code discount coupon:', {
           promoCode,
           discountAmountCents,
           originalOrderTotal: subtotal + shippingCostCents + tax,
@@ -944,6 +945,8 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
         console.error('❌ Error applying discount:', error.message || error)
         console.error('Failed to apply discount, continuing without discount')
       }
+    } else if (isFreeShippingCode) {
+      console.log('🎁 Free shipping code applied - no discount coupon needed (shipping is already $0)')
     }
 
     try {
