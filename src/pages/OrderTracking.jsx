@@ -82,8 +82,10 @@ export default function OrderTracking() {
 
   const handleLookup = async (e, prefillOrderId = null, prefillEmail = null) => {
     e.preventDefault()
-    setLoading(true)
+    // Clear previous order and error states at the start of each search
+    setOrder(null)
     setError(null)
+    setLoading(true)
     setSearched(true)
 
     const lookupOrderId = prefillOrderId || orderId.trim()
