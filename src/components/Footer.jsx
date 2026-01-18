@@ -43,24 +43,9 @@ export default function Footer() {
             <p className="text-stone-400 text-sm mb-4 font-medium">
               {getTranslation(language, 'productPage.trustBadges.madeInCanada')}
             </p>
-            <p className="text-stone-500 text-xs leading-relaxed max-w-xs mb-4">
+            <p className="text-stone-500 text-xs leading-relaxed max-w-xs">
               Premium dehydrated citrus slices for cocktails, teas, and culinary creations.
             </p>
-            
-            {/* Contact Information */}
-            <div className="mt-6 pt-6 border-t border-stone-800/50">
-              <h5 className="text-white text-xs font-semibold uppercase tracking-wider mb-3">
-                {language === 'fr' ? 'Contact' : 'Contact'}
-              </h5>
-              <p className="text-stone-400 text-xs">
-                <a 
-                  href="mailto:orders@purepeelco.com" 
-                  className="text-stone-400 hover:text-amber-400 transition-colors duration-200 underline"
-                >
-                  orders@purepeelco.com
-                </a>
-              </p>
-            </div>
           </div>
 
           {/* Shop Column */}
