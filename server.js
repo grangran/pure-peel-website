@@ -805,14 +805,16 @@ const validateCheckoutSession = [
 ]
 
 // Shipping rates validation schema
+// Note: Made more lenient to handle various input formats from frontend
 const validateShippingRates = [
   body('destination').notEmpty().withMessage('Destination information is required'),
   body('destination.postalCode').trim().matches(/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$|^\d{5}(-\d{4})?$/)
     .withMessage('Valid postal code is required (Canadian or US format)'),
-  body('destination.city').trim().isLength({ min: 1, max: 100 }).matches(/^[a-zA-Z\s'-]+$/)
+  body('destination.city').trim().isLength({ min: 1, max: 100 })
     .withMessage('City must be 1-100 characters'),
-  body('destination.province').trim().isLength({ min: 2, max: 2 }).isUppercase()
-    .withMessage('Province/State must be 2 characters'),
+  // Make province validation more lenient - accept 2-50 characters (handles "Ontario", "ON", etc.)
+  body('destination.province').trim().isLength({ min: 2, max: 50 })
+    .withMessage('Province/State must be 2-50 characters'),
   body('destination.country').optional().trim().isLength({ max: 50 }),
   
   body('cartItems').isArray({ min: 1 }).withMessage('Cart items must be a non-empty array'),
@@ -1082,11 +1084,24 @@ app.post('/api/create-checkout-session', checkoutLimiter, validateCheckoutSessio
     }
     
     // Calculate total: for free order codes, total is 0
-    // For free shipping codes, discount is already applied (shipping = 0)
+    // For free shipping codes, discount is already applied (shipping = 0, so only subtract item discounts if any)
     // For regular discounts, subtract discount amount from total
+    // IMPORTANT: For free shipping codes, we set finalDiscountCents = 0, so only shipping is free, not the items
     const totalAmount = isFreeOrderCode 
-      ? 0 // Entire order is free
-      : Math.max(0, subtotal + finalShippingCostCents + tax - finalDiscountCents)
+      ? 0 // Entire order is free (TEST100 code only)
+      : Math.max(0, subtotal + finalShippingCostCents + tax - finalDiscountCents) // For free shipping, this is subtotal + 0 + 0 - 0 = subtotal
+    
+    // Debug log for free shipping code scenario
+    if (isFreeShippingCode) {
+      console.log('🎁 Free shipping calculation:', {
+        subtotal,
+        finalShippingCostCents,
+        tax,
+        finalDiscountCents,
+        totalAmount,
+        note: 'Shipping is free, but items still cost money'
+      })
+    }
     
     // Validate all amounts are valid integers
     if (isNaN(shippingCostCents) || isNaN(subtotal) || isNaN(discountAmountCents)) {
@@ -1668,7 +1683,26 @@ app.post('/api/get-shipping-rates', shippingLimiter, validateShippingRates, asyn
     // All fields are validated, sanitized, and type-checked above
     
     const country = destination.country || 'Canada'
-    console.log('🌍 Shipping rate request - Country:', country, 'Postal Code:', destination.postalCode)
+    
+    // Normalize province to 2-letter code for Canada Post API (e.g., "Ontario" -> "ON")
+    // Handle various province formats from frontend
+    let province = (destination.province || '').trim().toUpperCase()
+    const provinceMap = {
+      'ONTARIO': 'ON', 'QUEBEC': 'QC', 'QUEBÉC': 'QC', 'NOVA SCOTIA': 'NS',
+      'NEW BRUNSWICK': 'NB', 'MANITOBA': 'MB', 'BRITISH COLUMBIA': 'BC',
+      'PRINCE EDWARD ISLAND': 'PE', 'SASKATCHEWAN': 'SK', 'ALBERTA': 'AB',
+      'NEWFOUNDLAND AND LABRADOR': 'NL', 'NEWFOUNDLAND': 'NL',
+      'NORTHWEST TERRITORIES': 'NT', 'YUKON': 'YT', 'NUNAVUT': 'NU'
+    }
+    if (province.length > 2 && provinceMap[province]) {
+      province = provinceMap[province]
+    } else if (province.length > 2) {
+      // Try to extract 2-letter code if it's embedded (e.g., "ON - Ontario")
+      const match = province.match(/\b([A-Z]{2})\b/)
+      if (match) province = match[1]
+    }
+    
+    console.log('🌍 Shipping rate request - Country:', country, 'Postal Code:', destination.postalCode, 'Province:', province)
 
     // Your origin address (where you ship from)
     const origin = {
