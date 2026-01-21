@@ -339,6 +339,7 @@ export default function Checkout() {
         // Clear saved shipping data when address changes
         localStorage.removeItem('checkoutShippingOptions')
         localStorage.removeItem('checkoutShippingOption')
+        // Note: Shipping promo code handling is done in useEffect above
       }
     }
   }
@@ -699,10 +700,15 @@ export default function Checkout() {
       return () => clearTimeout(timer)
       }
       // If address hasn't changed, keep using saved options (already restored on mount)
-    } else if (!hasEnteredShippingDetails) {
-      // Clear shipping options if user hasn't entered details yet
+    } else if (!hasEnteredShippingDetails || !formData.postalCode || !formData.province || !formData.city || !formData.country) {
+      // Clear shipping options if user hasn't entered details yet or address fields are empty
       setShippingOptions([])
       setSelectedShipping(null)
+      setSavedAddressKey(null)
+      localStorage.removeItem('checkoutShippingOptions')
+      localStorage.removeItem('checkoutShippingOption')
+      localStorage.removeItem('checkoutAddressKey')
+      // Note: Shipping promo code handling when shipping is cleared is done in useEffect above
     }
   }, [formData.postalCode, formData.province, formData.city, formData.country, cartItems, hasEnteredShippingDetails, savedAddressKey])
 
@@ -715,6 +721,23 @@ export default function Checkout() {
       }
     }
   }, [selectedShipping, cartItems, appliedPromoCode])
+
+  // Handle shipping promo codes when shipping is removed/cleared
+  useEffect(() => {
+    // If shipping is removed (no selectedShipping and no shipping options) but a shipping promo code is applied
+    if ((!selectedShipping || shippingOptions.length === 0) && appliedPromoCode) {
+      const result = validatePromoCode(appliedPromoCode)
+      // Check if the applied code is a shipping-only promo code
+      if (result.shippingOnly) {
+        // Shipping was removed - move the code back to pending state
+        setPendingShippingPromoCode(appliedPromoCode)
+        setAppliedPromoCode(null)
+        setPromoCodeDiscount(0) // Reset discount since there's no shipping
+        setPromoCodeError('')
+        console.log('⚠️ Shipping removed - promo code moved to pending:', appliedPromoCode)
+      }
+    }
+  }, [selectedShipping, shippingOptions, appliedPromoCode])
 
   // Auto-apply pending shipping promo code once shipping rates are available
   useEffect(() => {
