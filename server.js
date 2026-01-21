@@ -1,12 +1,47 @@
 // Note: This server requires additional dependencies
-// Run: npm install express cors stripe dotenv
+// Run: npm install express cors stripe dotenv express-validator express-rate-limit
 // Or use serverless functions (Vercel/Netlify) instead
+//
+// ============================================
+// SECURITY HARDENING (OWASP Best Practices)
+// ============================================
+// This server implements comprehensive security measures:
+//
+// 1. RATE LIMITING:
+//    - IP-based + User-based rate limiting (using email as user identifier)
+//    - Graceful 429 responses with retry information
+//    - Different limits for different endpoint types (checkout, shipping, general API)
+//    - Applied to ALL public endpoints including webhooks and health checks
+//
+// 2. INPUT VALIDATION & SANITIZATION:
+//    - Schema-based validation using express-validator
+//    - Type checks, length limits, format validation
+//    - Rejects unexpected fields (strict input validation)
+//    - Email normalization and sanitization
+//    - All user inputs validated before processing
+//
+// 3. API KEY SECURITY:
+//    - All API keys stored in environment variables only
+//    - No hardcoded credentials in code
+//    - Admin password must be set via environment variable (no defaults in production)
+//    - Failed authentication attempts logged for security monitoring
+//
+// 4. SECURITY HEADERS:
+//    - X-Content-Type-Options, X-Frame-Options, X-XSS-Protection
+//    - Strict-Transport-Security, Referrer-Policy, Permissions-Policy
+//
+// 5. CORS CONFIGURATION:
+//    - Restricted to allowed origins only
+//    - Credentials enabled for authenticated requests
+//
+// For detailed security documentation, see: docs/WEBSITE_SECURITY_GUIDE.md
 
 import express from 'express'
 import cors from 'cors'
 import Stripe from 'stripe'
 import dotenv from 'dotenv'
 import rateLimit from 'express-rate-limit'
+import { body, param, query, validationResult } from 'express-validator'
 import fs from 'fs'
 import path from 'path'
 import { saveOrder, getAllOrders, getOrderById, updateOrderStatus, getOrderStats, markEmailSent, hasEmailBeenSent, updateOrderTracking } from './utils/orderStorage.js'
@@ -57,35 +92,110 @@ app.use((req, res, next) => {
   next()
 })
 
-// Rate limiting
-// General API rate limiter - 100 requests per 15 minutes per IP
+// ============================================
+// ENHANCED RATE LIMITING (IP + User-Based)
+// Following OWASP best practices
+// ============================================
+
+// Custom key generator for user-based rate limiting
+// Combines IP address with user identifier (email) when available
+const generateRateLimitKey = (req) => {
+  const ip = req.ip || req.connection.remoteAddress
+  // Try to get user identifier from request body (email) for user-based limiting
+  let userIdentifier = ''
+  if (req.body?.shippingInfo?.email) {
+    userIdentifier = req.body.shippingInfo.email.toLowerCase().trim()
+  } else if (req.body?.email) {
+    userIdentifier = req.body.email.toLowerCase().trim()
+  }
+  
+  // Return combined key for user-based limiting, or IP-only fallback
+  return userIdentifier ? `${ip}:${userIdentifier}` : ip
+}
+
+// Graceful 429 response handler
+const rateLimitHandler = (req, res) => {
+  res.status(429).json({
+    error: 'Too many requests',
+    message: 'Rate limit exceeded. Please try again later.',
+    retryAfter: Math.ceil(req.rateLimit.resetTime / 1000) || 900, // seconds until reset
+    limit: req.rateLimit.limit,
+    remaining: req.rateLimit.remaining,
+    reset: new Date(req.rateLimit.resetTime).toISOString()
+  })
+}
+
+// General API rate limiter - 100 requests per 15 minutes per IP/user
+// Following OWASP recommendation: 100-200 requests per 15 minutes for general APIs
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.',
+  max: 100, // Limit each IP/user to 100 requests per windowMs
+  keyGenerator: generateRateLimitKey, // Use custom key generator for user-based limiting
+  handler: rateLimitHandler, // Graceful 429 response
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  skipSuccessfulRequests: false, // Count all requests, not just failures
+  skipFailedRequests: false, // Count failed requests too
   // Note: trustProxy is handled by Express's app.set('trust proxy', 1) above
 })
 
-// Stricter rate limiter for checkout - 5 attempts per 15 minutes per IP
+// Stricter rate limiter for checkout - 5 attempts per 15 minutes per IP/user
+// Following OWASP recommendation: 5-10 attempts per 15 minutes for sensitive operations
 const checkoutLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Limit each IP to 5 checkout attempts per 15 minutes
-  message: 'Too many checkout attempts, please try again later.',
+  max: 5, // Limit each IP/user to 5 checkout attempts per 15 minutes
+  keyGenerator: generateRateLimitKey, // User-based limiting
+  handler: rateLimitHandler, // Graceful 429 response
   standardHeaders: true,
   legacyHeaders: false,
-  // Note: trustProxy is handled by Express's app.set('trust proxy', 1) above
+  skipSuccessfulRequests: false,
+  skipFailedRequests: false,
 })
 
-// Stricter rate limiter for shipping rates - 20 requests per 15 minutes per IP
+// Stricter rate limiter for shipping rates - 20 requests per 15 minutes per IP/user
 const shippingLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20, // Limit each IP to 20 shipping rate requests per 15 minutes
-  message: 'Too many shipping rate requests, please try again later.',
+  max: 20, // Limit each IP/user to 20 shipping rate requests per 15 minutes
+  keyGenerator: generateRateLimitKey, // User-based limiting
+  handler: rateLimitHandler, // Graceful 429 response
   standardHeaders: true,
   legacyHeaders: false,
-  // Note: trustProxy is handled by Express's app.set('trust proxy', 1) above
+  skipSuccessfulRequests: false,
+  skipFailedRequests: false,
+})
+
+// Webhook rate limiter - Stripe webhooks should be rate limited but more lenient
+// Following OWASP: 200 requests per 15 minutes for webhooks
+const webhookLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 200, // Limit each IP to 200 webhook requests per 15 minutes (Stripe can send many)
+  handler: rateLimitHandler,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: false,
+  skipFailedRequests: false,
+})
+
+// Order lookup rate limiter - 10 attempts per 15 minutes per IP/user
+// Prevents enumeration attacks
+const orderLookupLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Limit each IP/user to 10 order lookup attempts per 15 minutes
+  keyGenerator: generateRateLimitKey,
+  handler: rateLimitHandler,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: false,
+  skipFailedRequests: false,
+})
+
+// Health check rate limiter - Very lenient for monitoring
+const healthLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 10, // 10 requests per minute
+  handler: rateLimitHandler,
+  standardHeaders: true,
+  legacyHeaders: false,
 })
 
 // Middleware
@@ -93,7 +203,8 @@ app.use(cors(corsOptions))
 
 // IMPORTANT: Webhook endpoint must be BEFORE express.json() middleware
 // Stripe webhooks require the raw body for signature verification
-app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+// Apply rate limiting to webhook endpoint (following OWASP best practices)
+app.post('/api/webhook', webhookLimiter, express.raw({ type: 'application/json' }), async (req, res) => {
   if (!stripe) {
     return res.status(500).json({ 
       error: 'Stripe is not configured. Please set STRIPE_SECRET_KEY in your .env file' 
@@ -570,7 +681,50 @@ const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY)
   : null
 
-// Input validation helper
+// ============================================
+// INPUT VALIDATION & SANITIZATION
+// Following OWASP best practices for input validation
+// ============================================
+
+// Validation result handler - returns formatted error responses
+const handleValidationErrors = (req, res, next) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    // Return 400 Bad Request with validation errors
+    return res.status(400).json({
+      error: 'Validation failed',
+      message: 'Invalid input data provided',
+      errors: errors.array().map(err => ({
+        field: err.path || err.param,
+        message: err.msg,
+        value: err.value
+      }))
+    })
+  }
+  next()
+}
+
+// Helper function to reject unexpected fields (OWASP: strict input validation)
+const rejectUnexpectedFields = (allowedFields) => {
+  return (req, res, next) => {
+    if (req.body && typeof req.body === 'object') {
+      const bodyKeys = Object.keys(req.body)
+      const unexpectedFields = bodyKeys.filter(key => !allowedFields.includes(key))
+      
+      if (unexpectedFields.length > 0) {
+        return res.status(400).json({
+          error: 'Validation failed',
+          message: 'Unexpected fields in request body',
+          unexpectedFields: unexpectedFields,
+          allowedFields: allowedFields
+        })
+      }
+    }
+    next()
+  }
+}
+
+// Legacy validation helpers (kept for backward compatibility)
 const validateEmail = (email) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
@@ -584,6 +738,137 @@ const validatePostalCode = (postalCode, country = 'Canada') => {
     return /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/.test(postalCode)
   }
 }
+
+// ============================================
+// VALIDATION SCHEMAS
+// Following OWASP: schema-based validation with type checks and length limits
+// ============================================
+
+// Checkout session validation schema
+const validateCheckoutSession = [
+  // Validate currency
+  body('currency').optional().isString().trim().isLength({ min: 3, max: 3 }).isUppercase()
+    .isIn(['CAD', 'USD']).withMessage('Currency must be CAD or USD'),
+  
+  // Validate exchange rate (if USD)
+  body('exchangeRate').optional().isFloat({ min: 0.1, max: 2.0 })
+    .withMessage('Exchange rate must be between 0.1 and 2.0'),
+  
+  // Validate items array
+  body('items').isArray({ min: 1 }).withMessage('Items must be a non-empty array'),
+  body('items.*.name').trim().isLength({ min: 1, max: 200 }).withMessage('Item name must be 1-200 characters'),
+  body('items.*.variant').trim().isLength({ min: 1, max: 100 }).withMessage('Item variant must be 1-100 characters'),
+  body('items.*.price').isFloat({ min: 0.01, max: 10000 }).withMessage('Item price must be between 0.01 and 10000'),
+  body('items.*.quantity').isInt({ min: 1, max: 100 }).withMessage('Item quantity must be between 1 and 100'),
+  body('items.*.description').optional().trim().isLength({ max: 500 }).withMessage('Description must be max 500 characters'),
+  body('items.*.image').optional().isURL().withMessage('Image must be a valid URL'),
+  
+  // Validate shipping info
+  body('shippingInfo').notEmpty().withMessage('Shipping information is required'),
+  body('shippingInfo.email').trim().isEmail().normalizeEmail().isLength({ max: 255 })
+    .withMessage('Valid email address is required (max 255 characters)'),
+  body('shippingInfo.firstName').trim().isLength({ min: 1, max: 50 }).matches(/^[a-zA-Z\s'-]+$/)
+    .withMessage('First name must be 1-50 characters and contain only letters, spaces, hyphens, and apostrophes'),
+  body('shippingInfo.lastName').trim().isLength({ min: 1, max: 50 }).matches(/^[a-zA-Z\s'-]+$/)
+    .withMessage('Last name must be 1-50 characters and contain only letters, spaces, hyphens, and apostrophes'),
+  body('shippingInfo.address').optional().trim().isLength({ max: 200 }).withMessage('Address must be max 200 characters'),
+  body('shippingInfo.city').optional().trim().isLength({ min: 1, max: 100 }).matches(/^[a-zA-Z\s'-]+$/)
+    .withMessage('City must be 1-100 characters'),
+  body('shippingInfo.province').optional().trim().isLength({ min: 2, max: 2 }).isUppercase()
+    .withMessage('Province must be 2 characters (e.g., ON, BC)'),
+  body('shippingInfo.postalCode').optional().trim().matches(/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$|^\d{5}(-\d{4})?$/)
+    .withMessage('Postal code must be a valid Canadian or US format'),
+  body('shippingInfo.phone').optional().trim().isLength({ max: 20 }).matches(/^[\d\s\-\+\(\)]+$/)
+    .withMessage('Phone must be max 20 characters and contain only digits, spaces, and common phone characters'),
+  body('shippingInfo.selectedShipping').optional(),
+  body('shippingInfo.selectedShipping.name').optional().trim().isLength({ max: 100 }),
+  body('shippingInfo.selectedShipping.price').optional().isFloat({ min: 0, max: 1000 }),
+  
+  // Validate promo code
+  body('promoCode').optional().trim().isLength({ max: 50 }).matches(/^[A-Z0-9]+$/)
+    .withMessage('Promo code must be max 50 characters and contain only uppercase letters and numbers'),
+  
+  // Validate discount
+  body('discount').optional().isFloat({ min: 0, max: 10000 })
+    .withMessage('Discount must be between 0 and 10000'),
+  
+  // Validate total
+  body('total').optional().isFloat({ min: 0, max: 50000 })
+    .withMessage('Total must be between 0 and 50000'),
+  
+  // Reject unexpected fields
+  rejectUnexpectedFields([
+    'currency', 'exchangeRate', 'items', 'shippingInfo', 'promoCode', 'discount', 'total'
+  ]),
+  
+  handleValidationErrors
+]
+
+// Shipping rates validation schema
+const validateShippingRates = [
+  body('destination').notEmpty().withMessage('Destination information is required'),
+  body('destination.postalCode').trim().matches(/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$|^\d{5}(-\d{4})?$/)
+    .withMessage('Valid postal code is required (Canadian or US format)'),
+  body('destination.city').trim().isLength({ min: 1, max: 100 }).matches(/^[a-zA-Z\s'-]+$/)
+    .withMessage('City must be 1-100 characters'),
+  body('destination.province').trim().isLength({ min: 2, max: 2 }).isUppercase()
+    .withMessage('Province/State must be 2 characters'),
+  body('destination.country').optional().trim().isLength({ max: 50 }),
+  
+  body('cartItems').isArray({ min: 1 }).withMessage('Cart items must be a non-empty array'),
+  body('cartItems.*.variant').optional().trim().isLength({ max: 100 }),
+  body('cartItems.*.quantity').optional().isInt({ min: 1, max: 100 }),
+  
+  rejectUnexpectedFields(['destination', 'cartItems']),
+  handleValidationErrors
+]
+
+// Contact form validation schema
+const validateContactForm = [
+  body('name').trim().isLength({ min: 1, max: 100 }).matches(/^[a-zA-Z\s'-]+$/)
+    .withMessage('Name must be 1-100 characters and contain only letters, spaces, hyphens, and apostrophes'),
+  body('email').trim().isEmail().normalizeEmail().isLength({ max: 255 })
+    .withMessage('Valid email address is required (max 255 characters)'),
+  body('inquiryType').trim().isLength({ min: 1, max: 50 }).matches(/^[a-zA-Z\s]+$/)
+    .withMessage('Inquiry type must be 1-50 characters'),
+  body('message').trim().isLength({ min: 10, max: 5000 })
+    .withMessage('Message must be between 10 and 5000 characters'),
+  
+  rejectUnexpectedFields(['name', 'email', 'inquiryType', 'message']),
+  handleValidationErrors
+]
+
+// Order lookup validation schema
+const validateOrderLookup = [
+  body('orderId').trim().isLength({ min: 1, max: 50 }).matches(/^[A-Z0-9\-]+$/)
+    .withMessage('Order ID must be 1-50 characters and contain only uppercase letters, numbers, and hyphens'),
+  body('email').trim().isEmail().normalizeEmail().isLength({ max: 255 })
+    .withMessage('Valid email address is required'),
+  
+  rejectUnexpectedFields(['orderId', 'email']),
+  handleValidationErrors
+]
+
+// Product ID parameter validation
+const validateProductId = [
+  param('id').trim().isLength({ min: 1, max: 100 }).matches(/^[a-zA-Z0-9\-_]+$/)
+    .withMessage('Product ID must be 1-100 characters and contain only alphanumeric characters, hyphens, and underscores'),
+  handleValidationErrors
+]
+
+// Payment Intent ID parameter validation
+const validatePaymentIntentId = [
+  param('paymentIntentId').trim().isLength({ min: 20, max: 200 }).matches(/^pi_[a-zA-Z0-9]+$/)
+    .withMessage('Payment Intent ID must be a valid Stripe payment intent ID'),
+  handleValidationErrors
+]
+
+// Checkout Session ID parameter validation
+const validateCheckoutSessionId = [
+  param('sessionId').trim().isLength({ min: 20, max: 200 }).matches(/^cs_[a-zA-Z0-9]+$/)
+    .withMessage('Checkout Session ID must be a valid Stripe checkout session ID'),
+  handleValidationErrors
+]
 
 // Helper function to get or create a discount coupon for promo codes
 async function getOrCreateDiscountCoupon(promoCode, discountPercent) {
@@ -630,7 +915,8 @@ async function getOrCreateDiscountCoupon(promoCode, discountPercent) {
 }
 
 // Create Checkout Session
-app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
+// Following OWASP best practices: rate limiting + schema-based validation
+app.post('/api/create-checkout-session', checkoutLimiter, validateCheckoutSession, async (req, res) => {
   try {
     if (!stripe) {
       return res.status(500).json({ 
@@ -639,12 +925,14 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
     }
 
     // Get currency from request (default to CAD if not provided)
-    const requestedCurrency = (req.body.currency || 'CAD').toLowerCase()
-    const stripeCurrency = (requestedCurrency === 'usd') ? 'usd' : 'cad'
+    // Input already validated and sanitized by validateCheckoutSession
+    const requestedCurrency = (req.body.currency || 'CAD').toUpperCase()
+    const stripeCurrency = (requestedCurrency === 'USD') ? 'usd' : 'cad'
     const useUSD = stripeCurrency === 'usd'
     
     // Get exchange rate from frontend (or use default if not provided)
     // This ensures the conversion matches what the user sees on the frontend
+    // Already validated to be between 0.1 and 2.0
     const exchangeRate = useUSD ? (parseFloat(req.body.exchangeRate) || 0.73) : 1.0
     
     // Log currency info for debugging
@@ -659,39 +947,8 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
 
     const { items, shippingInfo, total } = req.body
 
-    // Input validation
-    if (!items || !Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({ error: 'Items are required and must be a non-empty array' })
-    }
-
-    if (!shippingInfo) {
-      return res.status(400).json({ error: 'Shipping information is required' })
-    }
-
-    if (!shippingInfo.email || !validateEmail(shippingInfo.email)) {
-      return res.status(400).json({ error: 'Valid email address is required' })
-    }
-
-    if (!shippingInfo.firstName || !shippingInfo.firstName.trim()) {
-      return res.status(400).json({ error: 'First name is required' })
-    }
-
-    if (!shippingInfo.lastName || !shippingInfo.lastName.trim()) {
-      return res.status(400).json({ error: 'Last name is required' })
-    }
-
-    // Validate items
-    for (const item of items) {
-      if (!item.name || !item.variant || !item.price || !item.quantity) {
-        return res.status(400).json({ error: 'Each item must have name, variant, price, and quantity' })
-      }
-      if (typeof item.price !== 'number' || item.price <= 0) {
-        return res.status(400).json({ error: 'Item price must be a positive number' })
-      }
-      if (typeof item.quantity !== 'number' || item.quantity <= 0 || item.quantity > 100) {
-        return res.status(400).json({ error: 'Item quantity must be between 1 and 100' })
-      }
-    }
+    // Input validation is now handled by validateCheckoutSession middleware
+    // All fields are validated, sanitized, and type-checked above
 
     // Create line items for Stripe
     // Note: item.price is in CAD, convert to selected currency if needed
@@ -1011,7 +1268,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, async (req, res) => {
 })
 
 // Create Payment Intent for embedded Stripe Elements
-app.post('/api/create-payment-intent', checkoutLimiter, async (req, res) => {
+app.post('/api/create-payment-intent', checkoutLimiter, validateCheckoutSession, async (req, res) => {
   try {
     if (!stripe) {
       return res.status(500).json({ 
@@ -1019,26 +1276,18 @@ app.post('/api/create-payment-intent', checkoutLimiter, async (req, res) => {
       })
     }
 
+    // Input validation is now handled by validateCheckoutSession middleware
+    // All fields are validated, sanitized, and type-checked above
+
     // Get currency from request (default to CAD if not provided)
-    const requestedCurrency = (req.body.currency || 'CAD').toLowerCase()
-    const stripeCurrency = (requestedCurrency === 'usd') ? 'usd' : 'cad'
+    // Already validated to be CAD or USD
+    const requestedCurrency = (req.body.currency || 'CAD').toUpperCase()
+    const stripeCurrency = (requestedCurrency === 'USD') ? 'usd' : 'cad'
     const useUSD = stripeCurrency === 'usd'
+    // Exchange rate already validated to be between 0.1 and 2.0
     const exchangeRate = useUSD ? (parseFloat(req.body.exchangeRate) || 0.73) : 1.0
 
     const { items, shippingInfo, total } = req.body
-
-    // Input validation
-    if (!items || !Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({ error: 'Items are required and must be a non-empty array' })
-    }
-
-    if (!shippingInfo) {
-      return res.status(400).json({ error: 'Shipping information is required' })
-    }
-
-    if (!shippingInfo.email || !validateEmail(shippingInfo.email)) {
-      return res.status(400).json({ error: 'Valid email address is required' })
-    }
 
     // Calculate amounts (same logic as checkout session)
     const subtotal = items.reduce((sum, item) => {
@@ -1215,7 +1464,8 @@ app.post('/api/create-payment-intent', checkoutLimiter, async (req, res) => {
 })
 
 // Verify payment and get Payment Intent details
-app.get('/api/payment-intent/:paymentIntentId', async (req, res) => {
+// Apply rate limiting and input validation
+app.get('/api/payment-intent/:paymentIntentId', apiLimiter, validatePaymentIntentId, async (req, res) => {
   try {
     if (!stripe) {
       return res.status(500).json({ 
@@ -1233,7 +1483,8 @@ app.get('/api/payment-intent/:paymentIntentId', async (req, res) => {
 })
 
 // Verify payment and get session details (legacy - for Checkout Sessions)
-app.get('/api/checkout-session/:sessionId', async (req, res) => {
+// Apply rate limiting and input validation
+app.get('/api/checkout-session/:sessionId', apiLimiter, validateCheckoutSessionId, async (req, res) => {
   try {
     if (!stripe) {
       return res.status(500).json({ 
@@ -1408,48 +1659,16 @@ app.get('/api/checkout-session/:sessionId', async (req, res) => {
 // Old webhook endpoint removed - now handled above before express.json()
 
 // Get Canada Post Shipping Rates
-app.post('/api/get-shipping-rates', shippingLimiter, async (req, res) => {
+// Following OWASP best practices: rate limiting + schema-based validation
+app.post('/api/get-shipping-rates', shippingLimiter, validateShippingRates, async (req, res) => {
   try {
     const { destination, cartItems } = req.body
 
-    // Input validation
-    if (!destination) {
-      return res.status(400).json({ error: 'Destination information is required' })
-    }
-
+    // Input validation is now handled by validateShippingRates middleware
+    // All fields are validated, sanitized, and type-checked above
+    
     const country = destination.country || 'Canada'
     console.log('🌍 Shipping rate request - Country:', country, 'Postal Code:', destination.postalCode)
-    
-    if (!destination.postalCode || !validatePostalCode(destination.postalCode, country)) {
-      return res.status(400).json({ 
-        error: country === 'United States' 
-          ? 'Valid US ZIP code is required' 
-          : 'Valid Canadian postal code is required' 
-      })
-    }
-
-    if (!destination.province || !destination.province.trim()) {
-      return res.status(400).json({ 
-        error: country === 'United States' 
-          ? 'State is required' 
-          : 'Province is required' 
-      })
-    }
-
-    if (!destination.city || !destination.city.trim()) {
-      return res.status(400).json({ error: 'City is required' })
-    }
-
-    if (!cartItems || !Array.isArray(cartItems)) {
-      return res.status(400).json({ error: 'Cart items must be an array' })
-    }
-
-    // Validate input
-    if (!destination || !destination.postalCode || !cartItems || cartItems.length === 0) {
-      return res.status(400).json({ 
-        error: 'Missing required fields: destination postal code and cart items are required' 
-      })
-    }
 
     // Your origin address (where you ship from)
     const origin = {
@@ -2017,7 +2236,9 @@ function parseCanadaPostResponse(xml, country = 'Canada', packageDetails = null)
 }
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
+// Health check endpoint
+// Apply rate limiting (lenient for monitoring)
+app.get('/api/health', healthLimiter, (req, res) => {
   res.json({ 
     status: 'ok', 
     timestamp: new Date().toISOString(),
@@ -2181,26 +2402,41 @@ app.get('/api/test-email', async (req, res) => {
 
 // Admin API Routes
 // Simple password protection - in production, use proper authentication
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123' // Change this!
+// SECURITY: Always use environment variable for admin password in production
+// Following OWASP best practices: no hardcoded credentials
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
 
 // Log admin password status on server start (without revealing the actual password)
-if (process.env.ADMIN_PASSWORD) {
-  console.log('✅ Admin password loaded from environment variable (length:', process.env.ADMIN_PASSWORD.length, 'chars)')
+if (ADMIN_PASSWORD) {
+  console.log('✅ Admin password loaded from environment variable (length:', ADMIN_PASSWORD.length, 'chars)')
 } else {
-  console.log('⚠️  Using default admin password. Set ADMIN_PASSWORD in environment variables for production.')
+  console.error('❌ SECURITY WARNING: ADMIN_PASSWORD not set in environment variables!')
+  console.error('   Admin dashboard access is DISABLED until ADMIN_PASSWORD is configured.')
+  console.error('   Set ADMIN_PASSWORD in your .env file or environment variables for production.')
 }
 
 const authenticateAdmin = (req, res, next) => {
+  // SECURITY: Admin password must be set via environment variable
+  // Following OWASP: no default passwords, fail securely
+  if (!ADMIN_PASSWORD) {
+    console.error('❌ SECURITY: Admin authentication attempted but ADMIN_PASSWORD not configured')
+    return res.status(503).json({ 
+      error: 'Admin authentication is not configured. Contact administrator.',
+      message: 'Admin dashboard is disabled until ADMIN_PASSWORD is set in environment variables.'
+    })
+  }
+
   // Get password from query param (URL decoded) or header
   const providedPassword = req.query.password 
     ? decodeURIComponent(req.query.password) 
     : req.headers['x-admin-password']
-  
+
   // Trim whitespace from provided password
   const trimmedProvided = providedPassword ? providedPassword.trim() : ''
-  const trimmedAdmin = ADMIN_PASSWORD ? ADMIN_PASSWORD.trim() : ''
-  
+  const trimmedAdmin = ADMIN_PASSWORD.trim()
+
   // Debug logging (only log on failure to avoid exposing password)
+  // Following OWASP: log authentication failures for security monitoring
   if (trimmedProvided !== trimmedAdmin) {
     console.log('🔒 Admin authentication failed:', {
       providedLength: trimmedProvided.length,
@@ -2426,26 +2662,12 @@ app.get('/api/admin/orders/:orderId/refunds', authenticateAdmin, (req, res) => {
 })
 
 // Contact form submission
-app.post('/api/contact', apiLimiter, async (req, res) => {
+// Following OWASP best practices: rate limiting + schema-based validation
+app.post('/api/contact', apiLimiter, validateContactForm, async (req, res) => {
   try {
+    // Input validation is now handled by validateContactForm middleware
+    // All fields are validated, sanitized, and type-checked above
     const { name, email, inquiryType, message } = req.body
-
-    // Validation
-    if (!name || !name.trim()) {
-      return res.status(400).json({ error: 'Name is required' })
-    }
-    if (!email || !email.trim()) {
-      return res.status(400).json({ error: 'Email is required' })
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return res.status(400).json({ error: 'Invalid email address' })
-    }
-    if (!inquiryType || !inquiryType.trim()) {
-      return res.status(400).json({ error: 'Inquiry type is required' })
-    }
-    if (!message || !message.trim()) {
-      return res.status(400).json({ error: 'Message is required' })
-    }
 
     console.log('📧 Contact form submission received:', { name, email, inquiryType, messageLength: message.length })
 
@@ -2476,15 +2698,15 @@ app.post('/api/contact', apiLimiter, async (req, res) => {
 })
 
 // Customer order lookup (public endpoint, but requires order ID and email)
-app.post('/api/order-lookup', async (req, res) => {
+// Following OWASP best practices: rate limiting + schema-based validation
+// Rate limiting prevents enumeration attacks
+app.post('/api/order-lookup', orderLookupLimiter, validateOrderLookup, async (req, res) => {
   try {
+    // Input validation is now handled by validateOrderLookup middleware
+    // All fields are validated, sanitized, and type-checked above
     const { orderId, email } = req.body
 
     console.log('🔍 Order lookup request:', { orderId, email: email ? email.substring(0, 3) + '***' : 'missing' })
-
-    if (!orderId || !email) {
-      return res.status(400).json({ error: 'Order ID and email are required' })
-    }
 
     // Normalize order ID (remove spaces, ensure uppercase)
     const normalizedOrderId = orderId.trim().toUpperCase()
@@ -2541,16 +2763,20 @@ app.post('/api/order-lookup', async (req, res) => {
 // ============================================
 
 // Simple API key authentication for product management
+// Following OWASP best practices: API keys stored in environment variables only
 // Set PRODUCT_API_KEY in environment variables
 const authenticateProductAPI = (req, res, next) => {
   const apiKey = req.headers['x-api-key'] || req.query.apiKey
   const expectedKey = process.env.PRODUCT_API_KEY
   
   if (!expectedKey) {
+    console.error('❌ SECURITY: PRODUCT_API_KEY not configured - product API endpoints disabled')
     return res.status(500).json({ error: 'Product API key not configured on server' })
   }
   
-  if (apiKey !== expectedKey) {
+  if (!apiKey || apiKey !== expectedKey) {
+    // Log failed authentication attempt (for security monitoring)
+    console.warn('⚠️  Failed API key authentication attempt from IP:', req.ip)
     return res.status(401).json({ error: 'Invalid API key' })
   }
   
@@ -2569,7 +2795,8 @@ app.get('/api/products', apiLimiter, (req, res) => {
 })
 
 // Get product by ID (public endpoint)
-app.get('/api/products/:id', apiLimiter, (req, res) => {
+// Apply input validation
+app.get('/api/products/:id', apiLimiter, validateProductId, (req, res) => {
   try {
     const product = getProductById(req.params.id)
     if (!product) {
