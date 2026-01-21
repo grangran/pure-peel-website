@@ -108,6 +108,7 @@ export default function Checkout() {
   const [appliedPromoCode, setAppliedPromoCode] = useState(null)
   const [promoCodeError, setPromoCodeError] = useState('')
   const [promoCodeDiscount, setPromoCodeDiscount] = useState(0) // Discount amount in CAD
+  const [pendingShippingPromoCode, setPendingShippingPromoCode] = useState(null) // Store shipping promo code to apply once rates are available
   
   // Check for Stripe redirect
   useEffect(() => {
@@ -715,6 +716,22 @@ export default function Checkout() {
     }
   }, [selectedShipping, cartItems, appliedPromoCode])
 
+  // Auto-apply pending shipping promo code once shipping rates are available
+  useEffect(() => {
+    if (pendingShippingPromoCode && selectedShipping && shippingOptions.length > 0) {
+      // Shipping rates are now available, apply the pending promo code
+      const result = validatePromoCode(pendingShippingPromoCode)
+      if (result.valid && result.shippingOnly) {
+        setAppliedPromoCode(result.code)
+        setPromoCodeDiscount(result.discount)
+        setPromoCode(pendingShippingPromoCode)
+        setPendingShippingPromoCode(null)
+        setPromoCodeError('')
+        console.log('✅ Applied pending shipping promo code:', pendingShippingPromoCode)
+      }
+    }
+  }, [selectedShipping, shippingOptions, pendingShippingPromoCode])
+
   // Promo code validation
   const validatePromoCode = (code) => {
     const codeUpper = code.toUpperCase().trim()
@@ -739,8 +756,19 @@ export default function Checkout() {
         return { valid: true, discount: discountAmountCAD, code: codeUpper }
       } else if (promo.type === 'shipping') {
         // Calculate discount in CAD (applies only to shipping)
-        const discountAmountCAD = (shippingCAD * promo.discount) / 100
-        return { valid: true, discount: discountAmountCAD, code: codeUpper, shippingOnly: true }
+        // Only calculate if shipping is actually available (not using fallback)
+        const hasRealShippingRate = selectedShipping && shippingOptions.length > 0
+        const discountAmountCAD = hasRealShippingRate 
+          ? (shippingCAD * promo.discount) / 100 
+          : 0 // Don't calculate discount if shipping rates aren't available yet
+        return { 
+          valid: true, 
+          discount: discountAmountCAD, 
+          code: codeUpper, 
+          shippingOnly: true,
+          requiresShipping: true, // Flag that this promo code requires shipping rates
+          hasShippingRates: hasRealShippingRate
+        }
       }
     }
     
@@ -751,20 +779,36 @@ export default function Checkout() {
     setPromoCodeError('')
     
     if (!promoCode.trim()) {
-      setPromoCodeError(getTranslation(language, 'checkout.promoCode.enterCode'))
+      setPromoCodeError(getTranslation(language, 'checkout.promoCode.enterCode') || 'Please enter a promo code')
       return
     }
     
     const result = validatePromoCode(promoCode)
     
     if (result.valid) {
+      // Check if this is a shipping promo code that requires shipping rates
+      if (result.shippingOnly && result.requiresShipping && !result.hasShippingRates) {
+        // Shipping rates aren't available yet - store the code to apply later
+        setPendingShippingPromoCode(result.code)
+        setPromoCodeError(
+          language === 'fr' 
+            ? 'Les tarifs d\'expédition seront calculés une fois que vous aurez saisi votre adresse. Le code sera appliqué automatiquement.'
+            : 'Shipping rates will be calculated once you enter your address. The code will be applied automatically.'
+        )
+        // Don't set as applied yet - will be applied once shipping rates are available
+        return
+      }
+      
+      // Apply the promo code immediately
       setAppliedPromoCode(result.code)
       setPromoCodeDiscount(result.discount)
+      setPendingShippingPromoCode(null) // Clear any pending code
       setPromoCodeError('')
     } else {
-      setPromoCodeError(getTranslation(language, 'checkout.promoCode.invalid'))
+      setPromoCodeError(getTranslation(language, 'checkout.promoCode.invalid') || 'Invalid promo code')
       setAppliedPromoCode(null)
       setPromoCodeDiscount(0)
+      setPendingShippingPromoCode(null)
     }
   }
 
@@ -773,6 +817,7 @@ export default function Checkout() {
     setPromoCodeDiscount(0)
     setPromoCode('')
     setPromoCodeError('')
+    setPendingShippingPromoCode(null) // Also clear pending shipping promo code
   }
 
   const handlePaymentSubmit = async (e) => {
@@ -1236,9 +1281,22 @@ export default function Checkout() {
                               </button>
                             </div>
                             {promoCodeError && (
-                              <p id="promo-code-error" className="mt-1.5 text-xs text-red-600" role="alert" aria-live="polite">
+                              <p 
+                                id="promo-code-error" 
+                                className={`mt-1.5 text-xs ${pendingShippingPromoCode ? 'text-amber-600 bg-amber-50 p-2 rounded border border-amber-200' : 'text-red-600'}`} 
+                                role="alert" 
+                                aria-live="polite"
+                              >
                                 {promoCodeError}
                               </p>
+                            )}
+                            {pendingShippingPromoCode && !appliedPromoCode && (
+                              <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700" role="status" aria-live="polite">
+                                <span className="font-medium">{language === 'fr' ? 'Code en attente' : 'Code pending'}:</span>{' '}
+                                {pendingShippingPromoCode} - {language === 'fr' 
+                                  ? 'Sera appliqué une fois les tarifs d\'expédition calculés'
+                                  : 'Will be applied once shipping rates are calculated'}
+                              </div>
                             )}
                           </div>
                         ) : (
