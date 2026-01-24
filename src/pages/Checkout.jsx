@@ -893,7 +893,36 @@ export default function Checkout() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            items: cartItems,
+            items: cartItems.map(item => {
+              // Ensure image is a valid absolute URL or remove it
+              const itemData = {
+                id: item.id,
+                name: item.name,
+                variant: item.variant,
+                price: item.price,
+                quantity: item.quantity,
+                description: item.description || ''
+              }
+              
+              // Only include image if it's a valid absolute URL
+              if (item.image) {
+                try {
+                  // If it's already a full URL, use it
+                  if (item.image.startsWith('http://') || item.image.startsWith('https://')) {
+                    itemData.image = item.image
+                  } else if (item.image.startsWith('/')) {
+                    // Convert relative path to absolute URL
+                    const baseUrl = window.location.origin
+                    itemData.image = `${baseUrl}${item.image}`
+                  }
+                  // If it doesn't start with / or http, skip it (invalid format)
+                } catch (e) {
+                  // Skip image if URL construction fails
+                }
+              }
+              
+              return itemData
+            }),
             shippingInfo: {
               ...formData,
               selectedShipping: selectedShipping,
@@ -902,7 +931,7 @@ export default function Checkout() {
               timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
             },
             total: getCartTotal(),
-            promoCode: appliedPromoCode || null,
+            promoCode: appliedPromoCode ? appliedPromoCode.toUpperCase().trim() : undefined,
             discount: appliedPromoCode ? promoCodeDiscount : 0,
             currency: currency, // Pass selected currency to backend
             exchangeRate: exchangeRate, // Pass exchange rate to backend for accurate conversion

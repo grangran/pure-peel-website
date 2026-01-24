@@ -761,7 +761,17 @@ const validateCheckoutSession = [
   body('items.*.price').isFloat({ min: 0.01, max: 10000 }).withMessage('Item price must be between 0.01 and 10000'),
   body('items.*.quantity').isInt({ min: 1, max: 100 }).withMessage('Item quantity must be between 1 and 100'),
   body('items.*.description').optional().trim().isLength({ max: 500 }).withMessage('Description must be max 500 characters'),
-  body('items.*.image').optional().isURL().withMessage('Image must be a valid URL'),
+  body('items.*.image').optional().custom((value) => {
+    // Allow empty string, null, undefined, or valid URL
+    if (!value || value === '') return true
+    // Check if it's a valid URL
+    try {
+      new URL(value)
+      return true
+    } catch {
+      return false
+    }
+  }).withMessage('Image must be a valid URL if provided'),
   
   // Validate shipping info
   body('shippingInfo').notEmpty().withMessage('Shipping information is required'),
@@ -785,8 +795,13 @@ const validateCheckoutSession = [
   body('shippingInfo.selectedShipping.price').optional().isFloat({ min: 0, max: 1000 }),
   
   // Validate promo code
-  body('promoCode').optional().trim().isLength({ max: 50 }).matches(/^[A-Z0-9]+$/)
-    .withMessage('Promo code must be max 50 characters and contain only uppercase letters and numbers'),
+  body('promoCode').optional().custom((value) => {
+    // Allow undefined, null, or empty string
+    if (!value || value === '' || value === null) return true
+    // If provided, must be valid format
+    const trimmed = String(value).trim().toUpperCase()
+    return trimmed.length <= 50 && /^[A-Z0-9]+$/.test(trimmed)
+  }).withMessage('Promo code must be max 50 characters and contain only uppercase letters and numbers'),
   
   // Validate discount
   body('discount').optional().isFloat({ min: 0, max: 10000 })
