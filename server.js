@@ -774,8 +774,8 @@ const validateCheckoutSession = [
   body('shippingInfo.address').optional().trim().isLength({ max: 200 }).withMessage('Address must be max 200 characters'),
   body('shippingInfo.city').optional().trim().isLength({ min: 1, max: 100 }).matches(/^[a-zA-Z\s'-]+$/)
     .withMessage('City must be 1-100 characters'),
-  body('shippingInfo.province').optional().trim().isLength({ min: 2, max: 2 }).isUppercase()
-    .withMessage('Province must be 2 characters (e.g., ON, BC)'),
+  body('shippingInfo.province').optional().trim().isLength({ min: 2, max: 50 })
+    .withMessage('Province must be 2-50 characters'),
   body('shippingInfo.postalCode').optional().trim().matches(/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$|^\d{5}(-\d{4})?$/)
     .withMessage('Postal code must be a valid Canadian or US format'),
   body('shippingInfo.phone').optional().trim().isLength({ max: 20 }).matches(/^[\d\s\-\+\(\)]+$/)
@@ -951,6 +951,23 @@ app.post('/api/create-checkout-session', checkoutLimiter, validateCheckoutSessio
 
     // Input validation is now handled by validateCheckoutSession middleware
     // All fields are validated, sanitized, and type-checked above
+    
+    // Normalize province to 2-letter code if full name is provided
+    if (shippingInfo.province && shippingInfo.province.length > 2) {
+      const provinceMap = {
+        'ontario': 'ON', 'alberta': 'AB', 'british columbia': 'BC', 'bc': 'BC',
+        'manitoba': 'MB', 'new brunswick': 'NB', 'newfoundland': 'NL', 'newfoundland and labrador': 'NL',
+        'northwest territories': 'NT', 'nova scotia': 'NS', 'nunavut': 'NU',
+        'prince edward island': 'PE', 'pei': 'PE', 'quebec': 'QC', 'saskatchewan': 'SK', 'yukon': 'YT'
+      }
+      const normalized = provinceMap[shippingInfo.province.toLowerCase().trim()]
+      if (normalized) {
+        shippingInfo.province = normalized
+      }
+    } else if (shippingInfo.province) {
+      // Ensure it's uppercase if it's already a 2-letter code
+      shippingInfo.province = shippingInfo.province.toUpperCase().trim()
+    }
 
     // Create line items for Stripe
     // Note: item.price is in CAD, convert to selected currency if needed
