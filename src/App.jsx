@@ -5,7 +5,6 @@ import Hero from "./components/Hero"
 import About from "./components/About"
 import Products from "./components/Products"
 import Lifestyle from "./components/Lifestyle"
-import Reviews from "./components/Reviews"
 import ContactPage from "./pages/Contact"
 import Footer from "./components/Footer"
 import Cart from "./components/Cart"
@@ -426,7 +425,6 @@ export default function App() {
       <Products key={`products-${currentPage}-${navigationKey}`} />
       <Lifestyle key={`lifestyle-${currentPage}-${navigationKey}`} />
       <About key={`about-${currentPage}-${navigationKey}`} />
-      <Reviews key={`reviews-${currentPage}-${navigationKey}`} />
       <Footer key={`footer-${currentPage}-${navigationKey}`} />
       {CartComponent}
     </>
