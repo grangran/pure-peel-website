@@ -763,6 +763,8 @@ export default function Checkout() {
     const validCodes = {
       'PEEL26FS': { discount: 100, type: 'shipping' }, // 100% off shipping only
       'TEST100': { discount: 100, type: 'percent' }, // 100% off entire order (TEST ONLY)
+      'FREETEST': { discount: 100, type: 'percent' }, // 100% off entire order (TEST ONLY - easier to remember)
+      'TESTFREE': { discount: 100, type: 'percent' }, // 100% off entire order (TEST ONLY - alternative)
     }
     
     if (validCodes[codeUpper]) {
@@ -1113,8 +1115,10 @@ export default function Checkout() {
   // Tax is 0% - Products are zero-rated as unsweetened dried fruits
   const tax = 0
   // Calculate total in CAD - formatPrice will handle currency conversion automatically
+  // Calculate total - for free order codes, ensure total is exactly 0
+  const isFreeOrderCode = appliedPromoCode && ['TEST100', 'FREETEST', 'TESTFREE'].includes(appliedPromoCode.toUpperCase())
   const totalCAD = hasEnteredShippingDetails && selectedShipping 
-    ? Math.max(0, subtotalCAD + shippingCostCAD + tax - promoCodeDiscount)
+    ? (isFreeOrderCode ? 0 : Math.max(0, subtotalCAD + shippingCostCAD + tax - promoCodeDiscount))
     : subtotalCAD
 
   // Helper function to format price with explicit currency code (USD/CAD)
@@ -1416,7 +1420,11 @@ export default function Checkout() {
                           <div className="pt-3 border-t border-gray-300 flex justify-between items-center">
                             <span className="text-base font-semibold text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
                             <span className="text-lg font-bold text-gray-900">
-                              {formatPriceWithCurrency(Math.max(0, getCartTotal() + (selectedShipping ? calculateShipping() : 0) - promoCodeDiscount))}
+                              {(() => {
+                                const isFreeOrder = appliedPromoCode && ['TEST100', 'FREETEST', 'TESTFREE'].includes(appliedPromoCode.toUpperCase())
+                                const calculatedTotal = getCartTotal() + (selectedShipping ? calculateShipping() : 0) - promoCodeDiscount
+                                return formatPriceWithCurrency(isFreeOrder ? 0 : Math.max(0, calculatedTotal))
+                              })()}
                             </span>
                           </div>
                           </div>
@@ -1902,7 +1910,9 @@ export default function Checkout() {
                       type="submit"
                       disabled={isSubmitting || !hasEnteredShippingDetails || !selectedShipping}
                       aria-label={hasEnteredShippingDetails && selectedShipping 
-                        ? (language === 'fr' ? `Payer ${formatPriceWithCurrency(totalCAD)}` : `Pay ${formatPriceWithCurrency(totalCAD)}`)
+                        ? (totalCAD === 0 
+                            ? (language === 'fr' ? 'Compléter la commande (gratuite)' : 'Complete Free Order')
+                            : (language === 'fr' ? `Payer ${formatPriceWithCurrency(totalCAD)}` : `Pay ${formatPriceWithCurrency(totalCAD)}`))
                         : (language === 'fr' ? 'Continuer' : 'Continue')}
                       className="w-full py-4 px-6 text-base font-bold rounded-xl border-0 cursor-pointer transition-all duration-200 bg-linear-to-r from-amber-600 to-orange-600 text-white hover:from-amber-700 hover:to-orange-700 active:from-amber-600 active:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-amber-600 disabled:hover:to-orange-600 flex items-center justify-center gap-3 min-h-[56px] touch-manipulation shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
                     >
@@ -1911,7 +1921,9 @@ export default function Checkout() {
                       ) : (
                         <>
                           {hasEnteredShippingDetails && selectedShipping 
-                            ? `${language === 'fr' ? 'Payer' : 'Pay'} ${formatPriceWithCurrency(totalCAD)}`
+                            ? (totalCAD === 0 
+                                ? (language === 'fr' ? 'Compléter la commande (gratuite)' : 'Complete Free Order')
+                                : `${language === 'fr' ? 'Payer' : 'Pay'} ${formatPriceWithCurrency(totalCAD)}`)
                             : (language === 'fr' ? 'Continuer' : 'Continue')
                           }
                         </>

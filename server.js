@@ -1074,7 +1074,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, validateCheckoutSessio
     // Check if this is a free shipping code or free order code (test code)
     const promoCodeUpper = promoCode ? promoCode.toUpperCase().trim() : ''
     const isFreeShippingCode = promoCodeUpper === 'PEEL26FS' // 100% off shipping only
-    const isFreeOrderCode = promoCodeUpper === 'TEST100' // 100% off entire order (TEST ONLY)
+    const isFreeOrderCode = ['TEST100', 'FREETEST', 'TESTFREE'].includes(promoCodeUpper) // 100% off entire order (TEST ONLY)
     console.log('🎟️ Promo code check:', {
       promoCode: promoCodeUpper || 'none',
       discountAmountCents,
@@ -1235,7 +1235,8 @@ app.post('/api/create-checkout-session', checkoutLimiter, validateCheckoutSessio
 
     // Apply discount if promo code is used (but NOT for free shipping codes - shipping is already free)
     // Free shipping codes are handled by setting finalShippingCostCents = 0, not by discount coupon
-    if (promoCode && discountAmountCents > 0 && !isFreeShippingCode) {
+    // Also skip discount coupon for free order codes - total is already $0
+    if (promoCode && discountAmountCents > 0 && !isFreeShippingCode && !isFreeOrderCode) {
       try {
         // Calculate discount percentage based on order total
         const orderTotalForDiscount = subtotal + finalShippingCostCents + tax
