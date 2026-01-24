@@ -59,6 +59,24 @@
       gtag('js', new Date());
       window.gtag = gtag;
     </script>
+    
+    <!-- Suppress MetaMask web3 deprecation warnings (harmless but noisy) -->
+    <script>
+      // Suppress MetaMask console warnings about deprecated web3 injection
+      // This is harmless - MetaMask extension injects scripts into all pages
+      if (typeof window !== 'undefined' && window.console) {
+        const originalWarn = console.warn;
+        console.warn = function(...args) {
+          const message = args.join(' ');
+          // Filter out MetaMask web3 deprecation warnings
+          if (message.includes('MetaMask no longer injects web3') || 
+              message.includes('replacing-window-web3')) {
+            return; // Suppress this specific warning
+          }
+          originalWarn.apply(console, args);
+        };
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
