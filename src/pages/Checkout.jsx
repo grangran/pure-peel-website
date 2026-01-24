@@ -717,19 +717,30 @@ export default function Checkout() {
     if (appliedPromoCode) {
       const result = validatePromoCode(appliedPromoCode)
       if (result.valid) {
+        // For free order codes, ensure discount equals full order total
+        const currentSubtotal = getCartTotal()
+        const currentShipping = selectedShipping ? selectedShipping.price : (shippingOptions.length > 0 ? shippingOptions[0].price : 12.00)
+        const currentTotal = currentSubtotal + currentShipping
+        
+        // For free order codes, discount must equal the full order total
+        const finalDiscount = result.isFreeOrder ? currentTotal : result.discount
+        
         console.log('🔄 Recalculating promo code discount:', {
           code: appliedPromoCode,
           oldDiscount: promoCodeDiscount,
-          newDiscount: result.discount,
-          subtotal: getCartTotal(),
-          shipping: calculateShipping(),
-          total: getCartTotal() + calculateShipping(),
-          isFreeOrder: result.isFreeOrder
+          calculatedDiscount: result.discount,
+          finalDiscount: finalDiscount,
+          subtotal: currentSubtotal,
+          shipping: currentShipping,
+          total: currentTotal,
+          isFreeOrder: result.isFreeOrder,
+          discountMatchesTotal: finalDiscount === currentTotal
         })
-        setPromoCodeDiscount(result.discount)
+        
+        setPromoCodeDiscount(finalDiscount)
       }
     }
-  }, [selectedShipping, cartItems, appliedPromoCode])
+  }, [selectedShipping, shippingOptions, cartItems, appliedPromoCode])
 
   // Handle shipping promo codes when shipping is removed/cleared
   useEffect(() => {
@@ -975,7 +986,21 @@ export default function Checkout() {
             },
             total: getCartTotal(),
             promoCode: appliedPromoCode ? appliedPromoCode.toUpperCase().trim() : undefined,
-            discount: appliedPromoCode ? promoCodeDiscount : 0,
+            discount: (() => {
+              // For free order codes, ensure discount equals full order total when sending to backend
+              const isFreeOrderCode = appliedPromoCode && ['TEST100', 'FREETEST', 'TESTFREE'].includes(appliedPromoCode.toUpperCase())
+              if (isFreeOrderCode && selectedShipping) {
+                const fullTotal = getCartTotal() + selectedShipping.price
+                console.log('📤 Sending free order discount to backend:', {
+                  code: appliedPromoCode,
+                  calculatedDiscount: promoCodeDiscount,
+                  fullTotal: fullTotal,
+                  sendingDiscount: fullTotal
+                })
+                return fullTotal
+              }
+              return appliedPromoCode ? promoCodeDiscount : 0
+            })(),
             currency: currency, // Pass selected currency to backend
             exchangeRate: exchangeRate, // Pass exchange rate to backend for accurate conversion
           }),
