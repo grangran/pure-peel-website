@@ -780,7 +780,10 @@ export default function Checkout() {
       const promo = validCodes[codeUpper]
       // Always calculate discount in CAD (all prices are stored in CAD)
       const subtotalCAD = getCartTotal() // Already in CAD
-      const shippingCAD = calculateShipping() // Already in CAD
+      // For free order codes, we need the actual shipping cost (not default)
+      // If shipping isn't selected yet, we can't calculate the full discount accurately
+      // But we'll still calculate it based on available data and it will be recalculated when shipping is selected
+      const shippingCAD = selectedShipping ? selectedShipping.price : calculateShipping() // Use actual shipping if available
       const tax = 0
       const orderTotalCAD = subtotalCAD + shippingCAD + tax
       
@@ -788,6 +791,14 @@ export default function Checkout() {
         // Calculate discount in CAD (applies to entire order)
         // For 100% discount codes, discount equals the entire order total
         const discountAmountCAD = (orderTotalCAD * promo.discount) / 100
+        console.log('💰 Free order discount calculation:', {
+          code: codeUpper,
+          subtotalCAD,
+          shippingCAD,
+          orderTotalCAD,
+          discountAmountCAD,
+          hasSelectedShipping: !!selectedShipping
+        })
         return { 
           valid: true, 
           discount: discountAmountCAD, 
