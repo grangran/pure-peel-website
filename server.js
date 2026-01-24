@@ -1269,7 +1269,19 @@ app.post('/api/create-checkout-session', checkoutLimiter, validateCheckoutSessio
     } else if (isFreeShippingCode) {
       console.log('🎁 Free shipping code applied - no discount coupon needed (shipping is already $0)')
     } else if (isFreeOrderCode) {
-      console.log('🧪 Free order code applied - no discount coupon needed (total is already $0)')
+      // For free order codes, we need to apply a 100% discount coupon to make the total $0
+      try {
+        console.log('🧪 Free order code detected - creating 100% discount coupon')
+        const couponId = await getOrCreateDiscountCoupon(promoCodeUpper, 100)
+        if (couponId) {
+          sessionConfig.discounts = [{ coupon: couponId }]
+          console.log('✅ 100% discount coupon applied for free order:', couponId)
+        } else {
+          console.error('❌ Failed to create 100% discount coupon for free order')
+        }
+      } catch (error) {
+        console.error('❌ Error creating 100% discount coupon for free order:', error.message || error)
+      }
     }
 
     try {
