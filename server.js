@@ -1308,8 +1308,26 @@ app.post('/api/create-checkout-session', checkoutLimiter, validateCheckoutSessio
         url: session.url,
         mode: session.mode,
         status: session.status,
-        paymentStatus: session.payment_status
+        paymentStatus: session.payment_status,
+        amountTotal: session.amount_total,
+        amountSubtotal: session.amount_subtotal,
+        totalDetails: session.total_details,
+        hasDiscounts: !!session.discounts,
+        discounts: session.discounts,
+        isFreeOrder: isFreeOrderCode,
+        expectedTotal: 0
       })
+      
+      // For free orders, verify the total is actually $0
+      if (isFreeOrderCode && session.amount_total !== 0) {
+        console.error('⚠️ WARNING: Free order code applied but Stripe session total is not $0!', {
+          sessionId: session.id,
+          amountTotal: session.amount_total,
+          expectedTotal: 0,
+          hasDiscounts: !!session.discounts,
+          discounts: session.discounts
+        })
+      }
 
       // Return the checkout session URL - frontend will redirect to this
       // Note: session.url can be null for embedded checkout, but we're using hosted checkout
