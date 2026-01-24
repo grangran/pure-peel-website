@@ -717,27 +717,7 @@ export default function Checkout() {
     if (appliedPromoCode) {
       const result = validatePromoCode(appliedPromoCode)
       if (result.valid) {
-        // For free order codes, ensure discount equals full order total
-        const currentSubtotal = getCartTotal()
-        const currentShipping = selectedShipping ? selectedShipping.price : (shippingOptions.length > 0 ? shippingOptions[0].price : 12.00)
-        const currentTotal = currentSubtotal + currentShipping
-        
-        // For free order codes, discount must equal the full order total
-        const finalDiscount = result.isFreeOrder ? currentTotal : result.discount
-        
-        console.log('🔄 Recalculating promo code discount:', {
-          code: appliedPromoCode,
-          oldDiscount: promoCodeDiscount,
-          calculatedDiscount: result.discount,
-          finalDiscount: finalDiscount,
-          subtotal: currentSubtotal,
-          shipping: currentShipping,
-          total: currentTotal,
-          isFreeOrder: result.isFreeOrder,
-          discountMatchesTotal: finalDiscount === currentTotal
-        })
-        
-        setPromoCodeDiscount(finalDiscount)
+        setPromoCodeDiscount(result.discount)
       }
     }
   }, [selectedShipping, shippingOptions, cartItems, appliedPromoCode])
@@ -782,41 +762,16 @@ export default function Checkout() {
     // Define valid promo codes
     const validCodes = {
       'PEEL26FS': { discount: 100, type: 'shipping' }, // 100% off shipping only
-      'TEST100': { discount: 100, type: 'percent' }, // 100% off entire order (TEST ONLY)
-      'FREETEST': { discount: 100, type: 'percent' }, // 100% off entire order (TEST ONLY - easier to remember)
-      'TESTFREE': { discount: 100, type: 'percent' }, // 100% off entire order (TEST ONLY - alternative)
     }
     
     if (validCodes[codeUpper]) {
       const promo = validCodes[codeUpper]
       // Always calculate discount in CAD (all prices are stored in CAD)
       const subtotalCAD = getCartTotal() // Already in CAD
-      // For free order codes, we need the actual shipping cost (not default)
-      // If shipping isn't selected yet, we can't calculate the full discount accurately
-      // But we'll still calculate it based on available data and it will be recalculated when shipping is selected
       const shippingCAD = selectedShipping ? selectedShipping.price : calculateShipping() // Use actual shipping if available
       const tax = 0
-      const orderTotalCAD = subtotalCAD + shippingCAD + tax
       
-      if (promo.type === 'percent') {
-        // Calculate discount in CAD (applies to entire order)
-        // For 100% discount codes, discount equals the entire order total
-        const discountAmountCAD = (orderTotalCAD * promo.discount) / 100
-        console.log('💰 Free order discount calculation:', {
-          code: codeUpper,
-          subtotalCAD,
-          shippingCAD,
-          orderTotalCAD,
-          discountAmountCAD,
-          hasSelectedShipping: !!selectedShipping
-        })
-        return { 
-          valid: true, 
-          discount: discountAmountCAD, 
-          code: codeUpper,
-          isFreeOrder: promo.discount === 100 // Flag for free order codes
-        }
-      } else if (promo.type === 'shipping') {
+      if (promo.type === 'shipping') {
         // Calculate discount in CAD (applies only to shipping)
         // Only calculate if shipping is actually available (not using fallback)
         const hasRealShippingRate = selectedShipping && shippingOptions.length > 0
@@ -867,16 +822,6 @@ export default function Checkout() {
       setPendingShippingPromoCode(null) // Clear any pending code
       setPromoCodeError('')
       
-      // Log for debugging free order codes
-      if (result.isFreeOrder) {
-        console.log('🎁 Free order code applied:', {
-          code: result.code,
-          discount: result.discount,
-          subtotal: getCartTotal(),
-          shipping: calculateShipping(),
-          total: getCartTotal() + calculateShipping()
-        })
-      }
     } else {
       setPromoCodeError(getTranslation(language, 'checkout.promoCode.invalid') || 'Invalid promo code')
       setAppliedPromoCode(null)
@@ -914,11 +859,7 @@ export default function Checkout() {
     // Zero-rated goods under Schedule VI Part III of the Excise Tax Act
     // Dehydrated citrus products (unsweetened, no preservatives) qualify as zero-rated basic groceries
     const tax = 0 // 0% HST/GST - Products are zero-rated as unsweetened dried fruits
-    // For free order codes, ensure total is 0 regardless of discount calculation
-    const isFreeOrderCode = appliedPromoCode && ['TEST100', 'FREETEST', 'TESTFREE'].includes(appliedPromoCode.toUpperCase())
-    const totalCAD = isFreeOrderCode 
-      ? 0 
-      : Math.max(0, subtotalCAD + shippingCAD + tax - promoCodeDiscount)
+    const totalCAD = Math.max(0, subtotalCAD + shippingCAD + tax - promoCodeDiscount)
     const total = currency === 'USD' ? convertPrice(totalCAD) : totalCAD // For analytics tracking only
     trackCheckoutStarted(cartItems, total)
     
@@ -986,32 +927,7 @@ export default function Checkout() {
             },
             total: getCartTotal(),
             promoCode: appliedPromoCode ? appliedPromoCode.toUpperCase().trim() : undefined,
-            discount: (() => {
-              // For free order codes, ensure discount equals full order total when sending to backend
-              const isFreeOrderCode = appliedPromoCode && ['TEST100', 'FREETEST', 'TESTFREE'].includes(appliedPromoCode.toUpperCase())
-              if (isFreeOrderCode && selectedShipping) {
-                const subtotal = getCartTotal()
-                const shipping = selectedShipping.price
-                const fullTotal = subtotal + shipping
-                console.log('📤 Sending free order discount to backend:', {
-                  code: appliedPromoCode,
-                  subtotal: subtotal,
-                  shipping: shipping,
-                  calculatedDiscount: promoCodeDiscount,
-                  fullTotal: fullTotal,
-                  sendingDiscount: fullTotal,
-                  discountShouldEqualTotal: Math.abs(promoCodeDiscount - fullTotal) < 0.01
-                })
-                // Always send the full total as discount for free order codes
-                return fullTotal
-              }
-              const discountToSend = appliedPromoCode ? promoCodeDiscount : 0
-              console.log('📤 Sending discount to backend:', {
-                code: appliedPromoCode || 'none',
-                discount: discountToSend
-              })
-              return discountToSend
-            })(),
+            discount: appliedPromoCode ? promoCodeDiscount : 0,
             currency: currency, // Pass selected currency to backend
             exchangeRate: exchangeRate, // Pass exchange rate to backend for accurate conversion
           }),
@@ -1208,10 +1124,8 @@ export default function Checkout() {
   // Tax is 0% - Products are zero-rated as unsweetened dried fruits
   const tax = 0
   // Calculate total in CAD - formatPrice will handle currency conversion automatically
-  // Calculate total - for free order codes, ensure total is exactly 0
-  const isFreeOrderCode = appliedPromoCode && ['TEST100', 'FREETEST', 'TESTFREE'].includes(appliedPromoCode.toUpperCase())
   const totalCAD = hasEnteredShippingDetails && selectedShipping 
-    ? (isFreeOrderCode ? 0 : Math.max(0, subtotalCAD + shippingCostCAD + tax - promoCodeDiscount))
+    ? Math.max(0, subtotalCAD + shippingCostCAD + tax - promoCodeDiscount)
     : subtotalCAD
 
   // Helper function to format price with explicit currency code (USD/CAD)
@@ -1506,42 +1420,14 @@ export default function Checkout() {
                                 {appliedPromoCode === 'PEEL26FS' && (
                                   <span className="text-xs text-green-600 ml-1">({language === 'fr' ? 'Livraison gratuite' : 'Free Shipping'})</span>
                                 )}
-                                {['TEST100', 'FREETEST', 'TESTFREE'].includes(appliedPromoCode.toUpperCase()) && (
-                                  <span className="text-xs text-green-600 ml-1">({language === 'fr' ? 'Commande gratuite' : 'Free Order'})</span>
-                                )}
                               </div>
-                              <span className="font-semibold text-green-600">
-                                -{formatPriceWithCurrency((() => {
-                                  // For free order codes, ensure displayed discount equals full order total
-                                  const isFreeOrder = ['TEST100', 'FREETEST', 'TESTFREE'].includes(appliedPromoCode.toUpperCase())
-                                  if (isFreeOrder && selectedShipping) {
-                                    const fullTotal = getCartTotal() + selectedShipping.price
-                                    if (Math.abs(promoCodeDiscount - fullTotal) > 0.01) {
-                                      console.warn('⚠️ Discount mismatch! Displaying corrected discount:', {
-                                        storedDiscount: promoCodeDiscount,
-                                        fullTotal: fullTotal,
-                                        displaying: fullTotal
-                                      })
-                                      return fullTotal
-                                    }
-                                  }
-                                  return promoCodeDiscount
-                                })())}
-                              </span>
+                              <span className="font-semibold text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
                             </div>
                           )}
                           <div className="pt-3 border-t border-gray-300 flex justify-between items-center">
                             <span className="text-base font-semibold text-gray-900">{language === 'fr' ? 'Total' : 'Total'}</span>
                             <span className="text-lg font-bold text-gray-900">
-                              {(() => {
-                                const isFreeOrder = appliedPromoCode && ['TEST100', 'FREETEST', 'TESTFREE'].includes(appliedPromoCode.toUpperCase())
-                                if (isFreeOrder) {
-                                  // For free order codes, always show $0 regardless of discount calculation
-                                  return formatPriceWithCurrency(0)
-                                }
-                                const calculatedTotal = getCartTotal() + (selectedShipping ? calculateShipping() : 0) - promoCodeDiscount
-                                return formatPriceWithCurrency(Math.max(0, calculatedTotal))
-                              })()}
+                              {formatPriceWithCurrency(Math.max(0, getCartTotal() + (selectedShipping ? calculateShipping() : 0) - promoCodeDiscount))}
                             </span>
                           </div>
                           </div>
@@ -2027,9 +1913,7 @@ export default function Checkout() {
                       type="submit"
                       disabled={isSubmitting || !hasEnteredShippingDetails || !selectedShipping}
                       aria-label={hasEnteredShippingDetails && selectedShipping 
-                        ? (totalCAD === 0 
-                            ? (language === 'fr' ? 'Compléter la commande (gratuite)' : 'Complete Free Order')
-                            : (language === 'fr' ? `Payer ${formatPriceWithCurrency(totalCAD)}` : `Pay ${formatPriceWithCurrency(totalCAD)}`))
+                        ? (language === 'fr' ? `Payer ${formatPriceWithCurrency(totalCAD)}` : `Pay ${formatPriceWithCurrency(totalCAD)}`)
                         : (language === 'fr' ? 'Continuer' : 'Continue')}
                       className="w-full py-4 px-6 text-base font-bold rounded-xl border-0 cursor-pointer transition-all duration-200 bg-linear-to-r from-amber-600 to-orange-600 text-white hover:from-amber-700 hover:to-orange-700 active:from-amber-600 active:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-amber-600 disabled:hover:to-orange-600 flex items-center justify-center gap-3 min-h-[56px] touch-manipulation shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
                     >
@@ -2038,9 +1922,7 @@ export default function Checkout() {
                       ) : (
                         <>
                           {hasEnteredShippingDetails && selectedShipping 
-                            ? (totalCAD === 0 
-                                ? (language === 'fr' ? 'Compléter la commande (gratuite)' : 'Complete Free Order')
-                                : `${language === 'fr' ? 'Payer' : 'Pay'} ${formatPriceWithCurrency(totalCAD)}`)
+                            ? `${language === 'fr' ? 'Payer' : 'Pay'} ${formatPriceWithCurrency(totalCAD)}`
                             : (language === 'fr' ? 'Continuer' : 'Continue')
                           }
                         </>

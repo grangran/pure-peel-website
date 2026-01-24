@@ -1072,10 +1072,9 @@ app.post('/api/create-checkout-session', checkoutLimiter, validateCheckoutSessio
     // Calculate order total to check if discount covers everything (including shipping)
     const orderTotalCents = subtotal + shippingCostCents + tax
     
-    // Check if this is a free shipping code or free order code (test code)
+    // Check if this is a free shipping code
     const promoCodeUpper = promoCode ? promoCode.toUpperCase().trim() : ''
     const isFreeShippingCode = promoCodeUpper === 'PEEL26FS' // 100% off shipping only
-    const isFreeOrderCode = ['TEST100', 'FREETEST', 'TESTFREE'].includes(promoCodeUpper) // 100% off entire order (TEST ONLY)
     console.log('🎟️ Promo code check:', {
       promoCode: promoCodeUpper || 'none',
       discountAmountCents,
@@ -1084,20 +1083,10 @@ app.post('/api/create-checkout-session', checkoutLimiter, validateCheckoutSessio
     })
     
     // Handle PEEL26FS code which gives 100% off shipping only
-    // Handle TEST100 code which gives 100% off entire order (TEST ONLY)
     let finalShippingCostCents = shippingCostCents
     let finalDiscountCents = discountAmountCents
     
-    if (isFreeOrderCode) {
-      // For free order test codes, set total to 0 (entire order is free)
-      finalShippingCostCents = 0
-      finalDiscountCents = orderTotalCents // Discount equals entire order total
-      console.log('🧪 TEST CODE: Free order applied - entire order is $0', {
-        promoCode: promoCodeUpper,
-        originalTotal: orderTotalCents,
-        finalTotal: 0
-      })
-    } else if (isFreeShippingCode) {
+    if (isFreeShippingCode) {
       // For free shipping codes, set shipping to 0 and don't apply discount to total
       // (discount is already applied by setting shipping to 0)
       finalShippingCostCents = 0
@@ -1116,13 +1105,10 @@ app.post('/api/create-checkout-session', checkoutLimiter, validateCheckoutSessio
       })
     }
     
-    // Calculate total: for free order codes, total is 0
-    // For free shipping codes, discount is already applied (shipping = 0, so only subtract item discounts if any)
+    // Calculate total: for free shipping codes, discount is already applied (shipping = 0, so only subtract item discounts if any)
     // For regular discounts, subtract discount amount from total
     // IMPORTANT: For free shipping codes, we set finalDiscountCents = 0, so only shipping is free, not the items
-    const totalAmount = isFreeOrderCode 
-      ? 0 // Entire order is free (TEST100 code only)
-      : Math.max(0, subtotal + finalShippingCostCents + tax - finalDiscountCents) // For free shipping, this is subtotal + 0 + 0 - 0 = subtotal
+    const totalAmount = Math.max(0, subtotal + finalShippingCostCents + tax - finalDiscountCents) // For free shipping, this is subtotal + 0 + 0 - 0 = subtotal
     
     // Debug log for free shipping code scenario
     if (isFreeShippingCode) {
@@ -1236,8 +1222,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, validateCheckoutSessio
 
     // Apply discount if promo code is used (but NOT for free shipping codes - shipping is already free)
     // Free shipping codes are handled by setting finalShippingCostCents = 0, not by discount coupon
-    // Also skip discount coupon for free order codes - total is already $0
-    if (promoCode && discountAmountCents > 0 && !isFreeShippingCode && !isFreeOrderCode) {
+    if (promoCode && discountAmountCents > 0 && !isFreeShippingCode) {
       try {
         // Calculate discount percentage based on order total
         const orderTotalForDiscount = subtotal + finalShippingCostCents + tax
@@ -1268,36 +1253,6 @@ app.post('/api/create-checkout-session', checkoutLimiter, validateCheckoutSessio
       }
     } else if (isFreeShippingCode) {
       console.log('🎁 Free shipping code applied - no discount coupon needed (shipping is already $0)')
-    } else if (isFreeOrderCode) {
-      // For free order codes, we need to apply a 100% discount coupon to make the total $0
-      try {
-        console.log('🧪 Free order code detected - creating 100% discount coupon', {
-          promoCode: promoCodeUpper,
-          subtotal,
-          shippingCostCents,
-          finalShippingCostCents,
-          orderTotalCents,
-          totalAmount
-        })
-        const couponId = await getOrCreateDiscountCoupon(promoCodeUpper, 100)
-        if (couponId) {
-          sessionConfig.discounts = [{ coupon: couponId }]
-          console.log('✅ 100% discount coupon applied for free order:', {
-            couponId,
-            sessionConfigHasDiscounts: !!sessionConfig.discounts,
-            discountsArray: sessionConfig.discounts
-          })
-        } else {
-          console.error('❌ Failed to create 100% discount coupon for free order - couponId is null')
-        }
-      } catch (error) {
-        console.error('❌ Error creating 100% discount coupon for free order:', {
-          error: error.message,
-          stack: error.stack,
-          code: error.code,
-          type: error.type
-        })
-      }
     }
 
     try {
@@ -1308,26 +1263,8 @@ app.post('/api/create-checkout-session', checkoutLimiter, validateCheckoutSessio
         url: session.url,
         mode: session.mode,
         status: session.status,
-        paymentStatus: session.payment_status,
-        amountTotal: session.amount_total,
-        amountSubtotal: session.amount_subtotal,
-        totalDetails: session.total_details,
-        hasDiscounts: !!session.discounts,
-        discounts: session.discounts,
-        isFreeOrder: isFreeOrderCode,
-        expectedTotal: 0
+        paymentStatus: session.payment_status
       })
-      
-      // For free orders, verify the total is actually $0
-      if (isFreeOrderCode && session.amount_total !== 0) {
-        console.error('⚠️ WARNING: Free order code applied but Stripe session total is not $0!', {
-          sessionId: session.id,
-          amountTotal: session.amount_total,
-          expectedTotal: 0,
-          hasDiscounts: !!session.discounts,
-          discounts: session.discounts
-        })
-      }
 
       // Return the checkout session URL - frontend will redirect to this
       // Note: session.url can be null for embedded checkout, but we're using hosted checkout
