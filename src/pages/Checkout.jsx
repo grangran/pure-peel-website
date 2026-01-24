@@ -717,6 +717,15 @@ export default function Checkout() {
     if (appliedPromoCode) {
       const result = validatePromoCode(appliedPromoCode)
       if (result.valid) {
+        console.log('🔄 Recalculating promo code discount:', {
+          code: appliedPromoCode,
+          oldDiscount: promoCodeDiscount,
+          newDiscount: result.discount,
+          subtotal: getCartTotal(),
+          shipping: calculateShipping(),
+          total: getCartTotal() + calculateShipping(),
+          isFreeOrder: result.isFreeOrder
+        })
         setPromoCodeDiscount(result.discount)
       }
     }
@@ -777,8 +786,14 @@ export default function Checkout() {
       
       if (promo.type === 'percent') {
         // Calculate discount in CAD (applies to entire order)
+        // For 100% discount codes, discount equals the entire order total
         const discountAmountCAD = (orderTotalCAD * promo.discount) / 100
-        return { valid: true, discount: discountAmountCAD, code: codeUpper }
+        return { 
+          valid: true, 
+          discount: discountAmountCAD, 
+          code: codeUpper,
+          isFreeOrder: promo.discount === 100 // Flag for free order codes
+        }
       } else if (promo.type === 'shipping') {
         // Calculate discount in CAD (applies only to shipping)
         // Only calculate if shipping is actually available (not using fallback)
@@ -829,6 +844,17 @@ export default function Checkout() {
       setPromoCodeDiscount(result.discount)
       setPendingShippingPromoCode(null) // Clear any pending code
       setPromoCodeError('')
+      
+      // Log for debugging free order codes
+      if (result.isFreeOrder) {
+        console.log('🎁 Free order code applied:', {
+          code: result.code,
+          discount: result.discount,
+          subtotal: getCartTotal(),
+          shipping: calculateShipping(),
+          total: getCartTotal() + calculateShipping()
+        })
+      }
     } else {
       setPromoCodeError(getTranslation(language, 'checkout.promoCode.invalid') || 'Invalid promo code')
       setAppliedPromoCode(null)
@@ -1428,6 +1454,9 @@ export default function Checkout() {
                                 <span className="text-green-700 font-medium">{language === 'fr' ? 'Réduction' : 'Discount'}</span>
                                 {appliedPromoCode === 'PEEL26FS' && (
                                   <span className="text-xs text-green-600 ml-1">({language === 'fr' ? 'Livraison gratuite' : 'Free Shipping'})</span>
+                                )}
+                                {['TEST100', 'FREETEST', 'TESTFREE'].includes(appliedPromoCode.toUpperCase()) && (
+                                  <span className="text-xs text-green-600 ml-1">({language === 'fr' ? 'Commande gratuite' : 'Free Order'})</span>
                                 )}
                               </div>
                               <span className="font-semibold text-green-600">-{formatPriceWithCurrency(promoCodeDiscount)}</span>
