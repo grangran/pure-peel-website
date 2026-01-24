@@ -1467,8 +1467,12 @@ export default function Checkout() {
                             <span className="text-lg font-bold text-gray-900">
                               {(() => {
                                 const isFreeOrder = appliedPromoCode && ['TEST100', 'FREETEST', 'TESTFREE'].includes(appliedPromoCode.toUpperCase())
+                                if (isFreeOrder) {
+                                  // For free order codes, always show $0 regardless of discount calculation
+                                  return formatPriceWithCurrency(0)
+                                }
                                 const calculatedTotal = getCartTotal() + (selectedShipping ? calculateShipping() : 0) - promoCodeDiscount
-                                return formatPriceWithCurrency(isFreeOrder ? 0 : Math.max(0, calculatedTotal))
+                                return formatPriceWithCurrency(Math.max(0, calculatedTotal))
                               })()}
                             </span>
                           </div>
