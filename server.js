@@ -1267,6 +1267,8 @@ app.post('/api/create-checkout-session', checkoutLimiter, validateCheckoutSessio
       }
     } else if (isFreeShippingCode) {
       console.log('🎁 Free shipping code applied - no discount coupon needed (shipping is already $0)')
+    } else if (isFreeOrderCode) {
+      console.log('🧪 Free order code applied - no discount coupon needed (total is already $0)')
     }
 
     try {
