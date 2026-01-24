@@ -1009,6 +1009,7 @@ export default function Checkout() {
       const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
       
       // Validate session ID format before making request
+      // Stripe session IDs format: cs_live_... or cs_test_... (can contain underscores)
       if (!sessionId || !sessionId.match(/^cs_[a-zA-Z0-9_]+$/)) {
         console.error('❌ Invalid session ID format:', sessionId)
         throw new Error('Invalid checkout session ID')

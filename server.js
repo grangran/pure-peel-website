@@ -881,8 +881,9 @@ const validatePaymentIntentId = [
 ]
 
 // Checkout Session ID parameter validation
+// Stripe session IDs format: cs_live_... or cs_test_... (can contain underscores)
 const validateCheckoutSessionId = [
-  param('sessionId').trim().isLength({ min: 20, max: 200 }).matches(/^cs_[a-zA-Z0-9]+$/)
+  param('sessionId').trim().isLength({ min: 20, max: 200 }).matches(/^cs_[a-zA-Z0-9_]+$/)
     .withMessage('Checkout Session ID must be a valid Stripe checkout session ID'),
   handleValidationErrors
 ]
