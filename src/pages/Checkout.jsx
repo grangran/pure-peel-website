@@ -1007,10 +1007,25 @@ export default function Checkout() {
       
       // Verify the payment with the backend
       const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
+      
+      // Validate session ID format before making request
+      if (!sessionId || !sessionId.match(/^cs_[a-zA-Z0-9_]+$/)) {
+        console.error('❌ Invalid session ID format:', sessionId)
+        throw new Error('Invalid checkout session ID')
+      }
+      
       const response = await fetch(`${API_URL}/api/checkout-session/${sessionId}`)
       
       if (!response.ok) {
-        throw new Error(`Failed to fetch session: ${response.status}`)
+        const errorData = await response.json().catch(() => ({ error: `Server error: ${response.status}` }))
+        const errorMessage = errorData.error || errorData.message || `Failed to fetch session: ${response.status}`
+        console.error('❌ Checkout session verification failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorMessage,
+          sessionId: sessionId.substring(0, 20) + '...' // Log partial ID for debugging
+        })
+        throw new Error(errorMessage)
       }
       
       const session = await response.json()
