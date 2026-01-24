@@ -914,7 +914,17 @@ export default function Checkout() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: `Server error: ${response.status}` }))
-        throw new Error(errorData.error || `Failed to create checkout session (${response.status})`)
+        
+        // Show detailed validation errors if available
+        if (errorData.errors && Array.isArray(errorData.errors) && errorData.errors.length > 0) {
+          const errorMessages = errorData.errors.map(err => 
+            `${err.field || 'Field'}: ${err.message || 'Invalid value'}`
+          ).join('; ')
+          console.error('Validation errors:', errorData.errors)
+          throw new Error(`Validation failed: ${errorMessages}`)
+        }
+        
+        throw new Error(errorData.error || errorData.message || `Failed to create checkout session (${response.status})`)
       }
 
       const data = await response.json()
@@ -1642,7 +1652,6 @@ export default function Checkout() {
                         onChange={handleInputChange}
                         onBlur={handleBlur}
                         inputMode={formData.country === "United States" ? "numeric" : "text"}
-                        pattern={formData.country === "United States" ? "\\d{5}(-\\d{4})?" : "[A-Za-z]\\d[A-Za-z][\\s-]?\\d[A-Za-z]\\d"}
                         maxLength={formData.country === "United States" ? 10 : 7}
                         aria-label={formData.country === "United States" 
                           ? (language === 'fr' ? 'Code postal américain' : 'US ZIP code')
@@ -1687,7 +1696,6 @@ export default function Checkout() {
                           onChange={handleInputChange}
                           onBlur={handleBlur}
                           maxLength={14}
-                          pattern="[0-9()\\- ]*"
                           aria-label={language === 'fr' ? 'Numéro de téléphone' : 'Phone number'}
                           aria-required="true"
                           aria-invalid={errors.phone ? "true" : "false"}
