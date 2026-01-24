@@ -990,16 +990,27 @@ export default function Checkout() {
               // For free order codes, ensure discount equals full order total when sending to backend
               const isFreeOrderCode = appliedPromoCode && ['TEST100', 'FREETEST', 'TESTFREE'].includes(appliedPromoCode.toUpperCase())
               if (isFreeOrderCode && selectedShipping) {
-                const fullTotal = getCartTotal() + selectedShipping.price
+                const subtotal = getCartTotal()
+                const shipping = selectedShipping.price
+                const fullTotal = subtotal + shipping
                 console.log('📤 Sending free order discount to backend:', {
                   code: appliedPromoCode,
+                  subtotal: subtotal,
+                  shipping: shipping,
                   calculatedDiscount: promoCodeDiscount,
                   fullTotal: fullTotal,
-                  sendingDiscount: fullTotal
+                  sendingDiscount: fullTotal,
+                  discountShouldEqualTotal: Math.abs(promoCodeDiscount - fullTotal) < 0.01
                 })
+                // Always send the full total as discount for free order codes
                 return fullTotal
               }
-              return appliedPromoCode ? promoCodeDiscount : 0
+              const discountToSend = appliedPromoCode ? promoCodeDiscount : 0
+              console.log('📤 Sending discount to backend:', {
+                code: appliedPromoCode || 'none',
+                discount: discountToSend
+              })
+              return discountToSend
             })(),
             currency: currency, // Pass selected currency to backend
             exchangeRate: exchangeRate, // Pass exchange rate to backend for accurate conversion
