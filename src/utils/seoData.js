@@ -198,7 +198,8 @@ export const organizationData = {
   address: {
     '@type': 'PostalAddress',
     addressCountry: 'CA',
-    addressLocality: 'Canada'
+    addressRegion: 'ON',
+    addressLocality: 'Ontario'
   },
   sameAs: [
     'https://www.instagram.com/purepeelco/'

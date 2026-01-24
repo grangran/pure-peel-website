@@ -35,12 +35,65 @@ export default function About() {
         />
         <p 
           ref={textRef}
-          className={`max-w-3xl mx-auto text-stone-600 text-sm md:text-base leading-relaxed font-normal transition-all duration-700 ease-out px-4 tracking-wide ${
+          className={`max-w-3xl mx-auto text-stone-600 text-sm md:text-base leading-relaxed font-normal transition-all duration-700 ease-out px-4 tracking-wide mb-6 ${
             isTextVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
           {getTranslation(language, 'about.description')}
         </p>
+        
+        {/* Business Information */}
+        <div 
+          className={`max-w-2xl mx-auto mt-8 px-4 transition-all duration-700 ease-out ${
+            isTextVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+          }`}
+          style={{ transitionDelay: '200ms' }}
+        >
+          <div className="bg-stone-50 rounded-lg p-6 border border-stone-200">
+            <h3 className="text-lg font-semibold text-stone-900 mb-4">
+              {language === 'fr' ? 'Informations sur l\'entreprise' : 'Business Information'}
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-stone-700">
+              <div>
+                <p className="font-semibold text-stone-900 mb-1">
+                  {language === 'fr' ? 'Nom de l\'entreprise' : 'Business Name'}
+                </p>
+                <p>Pure Peel Co.</p>
+              </div>
+              <div>
+                <p className="font-semibold text-stone-900 mb-1">
+                  {language === 'fr' ? 'Localisation' : 'Location'}
+                </p>
+                <p>Ontario, Canada</p>
+              </div>
+              <div>
+                <p className="font-semibold text-stone-900 mb-1">
+                  {language === 'fr' ? 'Email' : 'Email'}
+                </p>
+                <p>
+                  <a href="mailto:info@purepeelco.com" className="text-amber-600 hover:text-amber-700">
+                    info@purepeelco.com
+                  </a>
+                </p>
+              </div>
+              <div>
+                <p className="font-semibold text-stone-900 mb-1">
+                  {language === 'fr' ? 'Réseaux sociaux' : 'Social Media'}
+                </p>
+                <p>
+                  <a 
+                    href="https://www.instagram.com/purepeelco/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-amber-600 hover:text-amber-700"
+                  >
+                    @purepeelco
+                  </a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   )

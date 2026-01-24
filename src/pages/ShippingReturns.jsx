@@ -248,7 +248,7 @@ export default function ShippingReturns() {
           {/* Shipping Times */}
           <div className="mb-5 md:mb-6 pt-6 border-t-2 border-gray-200">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-linear-to-br from-blue-400 to-blue-600 flex items-center justify-center">
                 <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -258,7 +258,7 @@ export default function ShippingReturns() {
             <p className="text-sm md:text-base text-[#425466] mb-4">
               {getTranslation(language, 'shipping.shippingTimes.text1')}
             </p>
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-200 rounded-lg p-4 md:p-5 mb-4 shadow-sm">
+            <div className="bg-linear-to-br from-blue-50 to-blue-100/50 border border-blue-200 rounded-lg p-4 md:p-5 mb-4 shadow-sm">
               <div className="flex items-center gap-2 mb-3">
                 <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -291,14 +291,14 @@ export default function ShippingReturns() {
           {/* Shipping Costs */}
           <div className="mb-5 md:mb-6 pt-6 border-t-2 border-gray-200">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-linear-to-br from-green-400 to-green-600 flex items-center justify-center">
                 <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <h3 className="text-lg md:text-xl font-semibold text-gray-900">{getTranslation(language, 'shipping.shippingCosts.title')}</h3>
             </div>
-            <div className="bg-gradient-to-br from-green-50 to-green-100/50 border border-green-200 rounded-lg p-4 md:p-5 mb-4 shadow-sm">
+            <div className="bg-linear-to-br from-green-50 to-green-100/50 border border-green-200 rounded-lg p-4 md:p-5 mb-4 shadow-sm">
               <div className="flex items-center gap-2 mb-3">
                 <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -336,7 +336,7 @@ export default function ShippingReturns() {
           {/* Order Tracking */}
           <div className="mb-5 md:mb-6 pt-6 border-t-2 border-gray-200">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-linear-to-br from-purple-400 to-purple-600 flex items-center justify-center">
                 <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -346,7 +346,7 @@ export default function ShippingReturns() {
             <p className="text-sm md:text-base text-[#425466] mb-4">
               {getTranslation(language, 'shipping.orderTracking.text1')}
             </p>
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 border border-purple-200 rounded-lg p-4 md:p-5 shadow-sm">
+            <div className="bg-linear-to-br from-purple-50 to-purple-100/50 border border-purple-200 rounded-lg p-4 md:p-5 shadow-sm">
               <ul className="space-y-3 text-xs md:text-sm text-[#425466]">
                 <li className="flex items-start gap-3">
                   <svg className="w-5 h-5 text-purple-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -376,7 +376,7 @@ export default function ShippingReturns() {
           {/* Damaged or Lost Packages */}
           <div className="mb-5 md:mb-6 pt-6 border-t-2 border-gray-200">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-gradient-to-br from-red-400 to-red-600 flex items-center justify-center">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-linear-to-br from-red-400 to-red-600 flex items-center justify-center">
                 <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
@@ -386,7 +386,7 @@ export default function ShippingReturns() {
             <p className="text-sm md:text-base text-[#425466] mb-4">
               {getTranslation(language, 'shipping.damagedOrLost.text1')}
             </p>
-            <div className="bg-gradient-to-br from-red-50 to-red-100/50 border border-red-200 rounded-lg p-4 md:p-5 shadow-sm">
+            <div className="bg-linear-to-br from-red-50 to-red-100/50 border border-red-200 rounded-lg p-4 md:p-5 shadow-sm">
               <ul className="space-y-3 text-xs md:text-sm text-[#425466]">
                 <li className="flex items-start gap-3">
                   <svg className="w-5 h-5 text-red-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -417,7 +417,7 @@ export default function ShippingReturns() {
           {/* International Shipping */}
           <div className="pt-6 border-t-2 border-gray-200">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-linear-to-br from-indigo-400 to-indigo-600 flex items-center justify-center">
                 <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 002 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -436,7 +436,7 @@ export default function ShippingReturns() {
         {/* Issue Resolution & Product Replacement */}
         <div className="bg-white rounded-lg shadow-sm border border-[#e3e8ef] p-6">
           <div className="flex items-center gap-3 mb-6 md:mb-8">
-            <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
+            <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-linear-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
               <svg className="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -452,7 +452,7 @@ export default function ShippingReturns() {
               </svg>
               <h3 className="text-lg md:text-xl font-semibold text-gray-900">{getTranslation(language, 'shipping.returns.policy.title')}</h3>
             </div>
-            <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 border border-amber-200 rounded-lg p-4 md:p-5 mb-4 shadow-sm">
+            <div className="bg-linear-to-br from-amber-50 to-amber-100/50 border border-amber-200 rounded-lg p-4 md:p-5 mb-4 shadow-sm">
               <div className="flex items-start gap-3">
                 <svg className="w-5 h-5 text-gray-900 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -481,7 +481,7 @@ export default function ShippingReturns() {
             <p className="text-sm md:text-base text-[#425466] mb-4">
               {getTranslation(language, 'shipping.returns.howWeResolve.text1')}
             </p>
-            <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 border border-emerald-200 rounded-lg p-4 md:p-5 shadow-sm">
+            <div className="bg-linear-to-brrom-emerald-50 to-emerald-100/50 border border-emerald-200 rounded-lg p-4 md:p-5 shadow-sm">
               <ol className="space-y-3 text-xs md:text-sm text-[#425466]">
                 <li className="flex items-start gap-3">
                   <span className="shrink-0 w-6 h-6 rounded-full bg-emerald-500 text-white text-xs font-bold flex items-center justify-center mt-0.5">1</span>
@@ -512,7 +512,7 @@ export default function ShippingReturns() {
               <h3 className="text-lg md:text-xl font-semibold text-gray-900">{getTranslation(language, 'shipping.returns.issuesWeResolve.title')}</h3>
             </div>
             <p className="text-sm md:text-base text-[#425466] mb-4">{getTranslation(language, 'shipping.returns.issuesWeResolve.text1')}</p>
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-200 rounded-lg p-4 md:p-5 shadow-sm">
+            <div className="bg-linear-to-br from-blue-50 to-blue-100/50 border border-blue-200 rounded-lg p-4 md:p-5 shadow-sm">
               <ul className="space-y-2.5 text-xs md:text-sm text-[#425466]">
                 <li className="flex items-start gap-3">
                   <svg className="w-5 h-5 text-blue-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

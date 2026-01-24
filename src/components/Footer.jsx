@@ -220,8 +220,51 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Business Information Section */}
+        <div className="pt-8 border-t border-stone-800/50 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
+            <div>
+              <h5 className="text-white text-xs font-bold tracking-wider uppercase mb-3">Business Address</h5>
+              <p className="text-stone-400 text-sm leading-relaxed">
+                Pure Peel Co.<br />
+                Ontario, Canada<br />
+                <a href="mailto:info@purepeelco.com" className="text-amber-400 hover:text-amber-300 transition-colors">
+                  info@purepeelco.com
+                </a>
+              </p>
+            </div>
+            <div>
+              <h5 className="text-white text-xs font-bold tracking-wider uppercase mb-3">Customer Service</h5>
+              <p className="text-stone-400 text-sm leading-relaxed">
+                <a href="/contact" className="text-amber-400 hover:text-amber-300 transition-colors">
+                  Contact Us
+                </a><br />
+                <a href="/faq" className="text-amber-400 hover:text-amber-300 transition-colors">
+                  FAQ
+                </a><br />
+                <a href="/shipping-returns" className="text-amber-400 hover:text-amber-300 transition-colors">
+                  Shipping & Returns
+                </a>
+              </p>
+            </div>
+            <div>
+              <h5 className="text-white text-xs font-bold tracking-wider uppercase mb-3">Connect With Us</h5>
+              <p className="text-stone-400 text-sm leading-relaxed">
+                <a 
+                  href="https://www.instagram.com/purepeelco/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-amber-400 hover:text-amber-300 transition-colors"
+                >
+                  Instagram: @purepeelco
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Bottom Bar */}
-        <div className="pt-10 border-t border-stone-800/50">
+        <div className="pt-6 border-t border-stone-800/50">
           <div className="text-center">
             <p className="text-sm text-stone-500 m-0 font-medium">
               © {currentYear} Pure Peel Co. 🍁 All rights reserved.
