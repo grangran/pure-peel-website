@@ -12,7 +12,9 @@ const SEO = ({
   // Always use the canonical domain (non-www, HTTPS)
   const baseUrl = 'https://purepeelco.com'
   
-  const fullUrl = `${baseUrl}${url}`
+  // Normalize URL - remove trailing slash for homepage, keep for other pages
+  const normalizedUrl = url === '/' ? '' : url
+  const fullUrl = `${baseUrl}${normalizedUrl}`
   const fullImageUrl = image.startsWith('http') ? image : `${baseUrl}${image}`
 
   useEffect(() => {
