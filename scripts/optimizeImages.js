@@ -102,6 +102,10 @@ async function optimizeImage(filePath) {
     const webpPath = path.join(OUTPUT_DIR, `${baseName}.webp`);
     let sharpInstance = sharp(filePath);
     
+    // Auto-rotate based on EXIF orientation data
+    // This ensures images are displayed correctly regardless of how they were taken
+    sharpInstance = sharpInstance.rotate(); // Auto-rotates based on EXIF orientation
+    
     // Resize if image is larger than target (maintains aspect ratio)
     if (needsResize) {
       console.log(`   📐 Resizing to max: ${targetDims.width}x${targetDims.height} (maintaining aspect ratio)`);
