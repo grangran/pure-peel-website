@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "server": "node server.js",
-    "dev:all": "concurrently \"npm run dev\" \"npm run server\""
+    "dev:all": "concurrently \"npm run dev\" \"npm run server\"",
+    "optimize:images": "node scripts/optimizeImages.js"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^5.4.1",

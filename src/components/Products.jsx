@@ -3,6 +3,7 @@ import { useScrollReveal } from "../hooks/useScrollReveal"
 import { useLanguage } from "../context/LanguageContext"
 import { getTranslation } from "../utils/translations"
 import Skeleton from "./Skeleton"
+import OptimizedImage from "./OptimizedImage"
 
 const citrusProducts = [
   {
@@ -59,7 +60,7 @@ function ProductCard({ product, index, onProductClick }) {
     >
       <div className={`w-full h-[305px] mb-0 rounded-t-3xl overflow-hidden relative ${
         product.id === 'pink-orange' ? 'bg-transparent' : 'bg-stone-50'
-      }`}>
+      }`} style={{ aspectRatio: '340/305' }}>
         {imageLoading && (
           <div className={`absolute inset-0 flex items-center justify-center ${
             product.id === 'pink-orange' ? 'bg-transparent' : 'bg-stone-100'
@@ -67,17 +68,19 @@ function ProductCard({ product, index, onProductClick }) {
             <Skeleton type="image" width="100%" height="100%" />
           </div>
         )}
-        <img 
-          src={product.image} 
+        <OptimizedImage
+          src={product.image}
           alt={`${product.name} slices`}
           className={`w-full h-full object-cover object-center transition-all duration-700 group-hover:scale-110 ${
             imageLoading ? 'opacity-0' : 'opacity-100'
           }`}
           width="340"
           height="305"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 340px"
           decoding="async"
           onLoad={() => setImageLoading(false)}
-          loading="lazy"
+          loading={index === 0 ? "eager" : "lazy"}
+          fetchPriority={index === 0 ? "high" : "auto"}
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
       </div>

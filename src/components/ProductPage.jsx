@@ -6,6 +6,7 @@ import { getTranslation, translateVariantLabel } from "../utils/translations"
 import Skeleton from "./Skeleton"
 import LoadingSpinner from "./LoadingSpinner"
 import ProductInfoLabel from "./ProductInfoLabel"
+import OptimizedImage from "./OptimizedImage"
 
 export default function ProductPage({ product }) {
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0])
@@ -194,7 +195,7 @@ export default function ProductPage({ product }) {
                             : "opacity-0 z-0 scale-95"
                         }`}
                       >
-                        <img
+                        <OptimizedImage
                           src={image}
                           alt={`${product.name} - Image ${index + 1}`}
                           className={`w-full h-full object-contain drop-shadow-md ${
@@ -202,6 +203,7 @@ export default function ProductPage({ product }) {
                           }`}
                           width="600"
                           height="600"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px"
                           fetchPriority={index === 0 && currentImageIndex === 0 ? "high" : "auto"}
                           decoding="async"
                           onLoad={() => {

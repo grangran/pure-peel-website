@@ -1,6 +1,7 @@
 import { useScrollReveal } from "../hooks/useScrollReveal"
 import { useLanguage } from "../context/LanguageContext"
 import { getTranslation } from "../utils/translations"
+import OptimizedImage from "./OptimizedImage"
 
 export default function About() {
   const [sectionRef, isSectionVisible] = useScrollReveal({ threshold: 0.2 })
@@ -25,13 +26,17 @@ export default function About() {
         >
           {getTranslation(language, 'about.title')}
         </h2>
-        <img 
+        <OptimizedImage
           ref={logoRef}
-          src="/logo.png" 
-          alt="Pure Peel Co. Logo" 
+          src="/logo.png"
+          alt="Pure Peel Co. Logo"
           className={`w-36 md:w-44 h-auto mx-auto my-6 md:my-8 block opacity-95 transition-all duration-700 ease-out hover:scale-[1.03] hover:opacity-100 ${
             isLogoVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
           }`}
+          width="176"
+          height="181"
+          sizes="(max-width: 768px) 144px, 176px"
+          loading="lazy"
         />
         <p 
           ref={textRef}

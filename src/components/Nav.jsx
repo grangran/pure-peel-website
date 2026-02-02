@@ -3,6 +3,7 @@ import { useCart } from "../context/CartContext"
 import { useLanguage } from "../context/LanguageContext"
 import { useCurrency } from "../context/CurrencyContext"
 import { getTranslation } from "../utils/translations"
+import OptimizedImage from "./OptimizedImage"
 
 export default function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -152,13 +153,17 @@ export default function Nav() {
             e.preventDefault()
           }}
         >
-          <img 
-            src="/logo.png" 
-            alt="Pure Peel Co." 
+          <OptimizedImage
+            src="/logo.png"
+            alt="Pure Peel Co."
             className="h-[48px] sm:h-[56px] md:h-[72px] w-auto max-w-[100px] sm:max-w-[150px] md:max-w-[360px] block object-contain pointer-events-none"
+            width="176"
+            height="181"
+            sizes="(max-width: 640px) 100px, (max-width: 768px) 150px, 360px"
             loading="eager"
+            fetchPriority="high"
             onError={(e) => {
-              console.error('Logo failed to load:', e.target.src)
+              console.error('Logo failed to load:', e.target?.src)
             }}
           />
         </a>

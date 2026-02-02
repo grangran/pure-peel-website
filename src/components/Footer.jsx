@@ -1,6 +1,7 @@
 import { useScrollReveal } from "../hooks/useScrollReveal"
 import { useLanguage } from "../context/LanguageContext"
 import { getTranslation } from "../utils/translations"
+import OptimizedImage from "./OptimizedImage"
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
@@ -34,10 +35,14 @@ export default function Footer() {
           {/* Brand Column */}
           <div className="sm:col-span-2 lg:col-span-1">
             <div className="mb-5">
-              <img 
-                src="/logo.png" 
-                alt="Pure Peel Co." 
-                className="w-[120px] h-auto opacity-95 transition-opacity duration-300 hover:opacity-100" 
+              <OptimizedImage
+                src="/logo.png"
+                alt="Pure Peel Co."
+                className="w-[120px] h-auto opacity-95 transition-opacity duration-300 hover:opacity-100"
+                width="120"
+                height="123"
+                sizes="120px"
+                loading="lazy"
               />
             </div>
             <p className="text-stone-400 text-sm mb-4 font-medium">

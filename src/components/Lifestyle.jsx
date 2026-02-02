@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react"
 import { useScrollReveal } from "../hooks/useScrollReveal"
 import { useLanguage } from "../context/LanguageContext"
 import { getTranslation } from "../utils/translations"
+import OptimizedImage from "./OptimizedImage"
 
 const lifestyleItems = [
   {
@@ -203,7 +204,7 @@ export default function Lifestyle() {
                 }`}
               >
                 {/* Main image - covers container */}
-                <img
+                <OptimizedImage
                   src={item.image}
                   alt={getTranslation(language, `lifestyle.slides.${item.key}.caption`)}
                   className="w-full h-full object-cover object-center"
@@ -215,7 +216,7 @@ export default function Lifestyle() {
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1280px"
                   onError={(e) => {
                     console.error("Failed to load image:", item.image, e);
-                    e.target.style.display = 'none';
+                    if (e.target) e.target.style.display = 'none';
                   }}
                   onLoad={() => {
                     console.log("Image loaded successfully:", item.image);

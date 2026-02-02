@@ -9,13 +9,30 @@ export default function Hero() {
 
   useEffect(() => {
     setIsVisible(true)
+    
+    // Check WebP support and preload appropriate image
+    const checkWebPSupport = () => {
+      const canvas = document.createElement('canvas')
+      canvas.width = 1
+      canvas.height = 1
+      return canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0
+    }
+    
+    const supportsWebP = checkWebPSupport()
+    const imageUrl = supportsWebP ? '/images/driedcitrusbanner.webp' : '/images/driedcitrusbanner.jpg'
+    
     // Preload hero background image for faster loading
     const link = document.createElement('link')
     link.rel = 'preload'
     link.as = 'image'
-    link.href = '/images/driedcitrusbanner.jpg'
-    // Note: fetchPriority is only valid for <img> elements, not <link> elements
+    link.href = imageUrl
     document.head.appendChild(link)
+    
+    // Set background image based on WebP support
+    const bgDiv = document.querySelector('.hero-bg')
+    if (bgDiv) {
+      bgDiv.style.backgroundImage = `url('${imageUrl}')`
+    }
     
     return () => {
       if (document.head.contains(link)) {
@@ -72,9 +89,9 @@ export default function Hero() {
     <section className="relative w-full min-h-[85vh] sm:min-h-[92vh] flex items-center justify-center overflow-hidden">
       {/* Background image */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
+        className="hero-bg absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
         style={{ 
-          backgroundImage: "url('/images/driedcitrusbanner.jpg')",
+          backgroundImage: "url('/images/driedcitrusbanner.webp')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
