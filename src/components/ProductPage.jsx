@@ -63,6 +63,8 @@ export default function ProductPage({ product }) {
   }, [selectedVariant.id])
 
   const handleVariantChange = (variant) => {
+    // No-op if clicking the already selected variant (avoids hiding image when onLoad doesn't re-fire for same src)
+    if (variant.id === selectedVariant.id) return
     setIsImageFading(true)
     setImageLoading(true)
     setCurrentImageIndex(0) // Reset to first image when variant changes
