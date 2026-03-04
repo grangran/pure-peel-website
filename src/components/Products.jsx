@@ -128,10 +128,19 @@ export default function Products() {
           </div>
           <h2 
             ref={citrusTitleRef}
-            className={`text-center text-[clamp(1.75rem,5vw,3.5rem)] font-bold mb-12 md:mb-16 text-stone-900 tracking-tight transition-all duration-800 ease-out ${
+            className={`products-section-title text-center mb-12 md:mb-16 transition-all duration-800 ease-out ${
               isCitrusTitleVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
-          >
+            style={{
+              fontFamily: "'Cormorant Garamond', Georgia, serif",
+              fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+              fontWeight: 300,
+              fontStyle: 'italic',
+              color: '#1c1008',
+              letterSpacing: '-0.01em',
+            }}
+            >
+            
             {getTranslation(language, 'products.citrusCollection')}
           </h2>
           
