@@ -349,7 +349,9 @@ const welcomeEmailTemplateEN = (promoCode = 'WELCOME10') => {
         <p class="code">${promoCode}</p>
         <p class="code-desc">10% off your first order</p>
       </div>
-      <a href="${shopUrl}" class="cta">Shop Now</a>
+      <div style="text-align: center;">
+        <a href="${shopUrl}" class="cta">Shop Now</a>
+      </div>
     </div>
     <div class="footer">
       <p style="margin: 0;">You're receiving this because you signed up at purepeelco.com.</p>
@@ -398,7 +400,9 @@ const welcomeEmailTemplateFR = (promoCode = 'WELCOME10') => {
         <p class="code">${promoCode}</p>
         <p class="code-desc">10 % de réduction sur votre première commande</p>
       </div>
-      <a href="${shopUrl}" class="cta">Magasiner</a>
+      <div style="text-align: center;">
+        <a href="${shopUrl}" class="cta">Magasiner</a>
+      </div>
     </div>
     <div class="footer">
       <p style="margin: 0;">Vous recevez ceci car vous vous êtes inscrit sur purepeelco.com.</p>
