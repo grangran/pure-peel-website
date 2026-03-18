@@ -6,8 +6,9 @@ import rateLimit from 'express-rate-limit'
 import { body, param, query, validationResult } from 'express-validator'
 import fs from 'fs'
 import path from 'path'
+import { Resend } from 'resend'
 import { saveOrder, getAllOrders, getOrderById, updateOrderStatus, getOrderStats, markEmailSent, hasEmailBeenSent, updateOrderTracking } from './utils/orderStorage.js'
-import { sendOrderConfirmation, sendShippingNotification, sendAdminNotification, sendContactForm } from './utils/emailService.js'
+import { sendOrderConfirmation, sendShippingNotification, sendAdminNotification, sendContactForm, sendWelcomeEmail, getOrderConfirmationPreview, getWelcomeEmailPreview } from './utils/emailService.js'
 import { createCanadaPostLabel } from './utils/canadaPostShipping.js'
 import { getAllProducts, getProductById, saveProduct, updateProduct, deleteProduct, bulkSaveProducts } from './utils/productStorage.js'
 
@@ -29,10 +30,15 @@ const corsOptions = {
     const allowedOrigins = [
       'https://purepeelco.com',
       'https://www.purepeelco.com',
-      'http://localhost:5173', // Development only
-      'http://localhost:3000' // Development only
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'http://localhost:5178',
+      'http://localhost:3000',
+      'http://127.0.0.1:5173',
+      'http://127.0.0.1:5174',
+      'http://127.0.0.1:5178',
+      'http://127.0.0.1:3000'
     ]
-    
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true)
     } else {
@@ -642,6 +648,9 @@ app.use('/api/', apiLimiter)
 const stripe = process.env.STRIPE_SECRET_KEY 
   ? new Stripe(process.env.STRIPE_SECRET_KEY)
   : null
+
+// Resend client for welcome email (subscribe flow)
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
 
 // ============================================
 // INPUT VALIDATION & SANITIZATION
@@ -2263,6 +2272,26 @@ app.get('/api/health', healthLimiter, (req, res) => {
   })
 })
 
+// Email template preview (view in browser; safe for local dev)
+app.get('/api/preview-email', (req, res) => {
+  // Disable in production launch builds.
+  if (process.env.NODE_ENV === 'production') {
+    return res.status(404).send('Not found')
+  }
+
+  const template = (req.query.template || 'order').toLowerCase()
+  const lang = (req.query.lang || 'en').toLowerCase()
+  const language = lang === 'fr' ? 'fr' : 'en'
+  let html
+  if (template === 'welcome') {
+    html = getWelcomeEmailPreview(language)
+  } else {
+    html = getOrderConfirmationPreview(language)
+  }
+  res.setHeader('Content-Type', 'text/html; charset=utf-8')
+  res.send(html)
+})
+
 // Check Resend email delivery status
 app.get('/api/check-email/:messageId', async (req, res) => {
   try {
@@ -2928,6 +2957,89 @@ app.post('/api/products/bulk', authenticateProductAPI, apiLimiter, (req, res) =>
     res.status(500).json({ error: error.message })
   }
 })
+
+// Klaviyo email subscription
+app.post('/api/subscribe', apiLimiter, async (req, res) => {
+  const { email, language } = req.body
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ error: 'Invalid email address' })
+  }
+
+  // Normalize language value for template selection
+  const normalizedLanguage = language === 'fr' ? 'fr' : 'en'
+
+  const apiKey = process.env.KLAVIYO_API_KEY
+  const listId = process.env.KLAVIYO_LIST_ID
+
+  if (!apiKey || !listId) {
+    console.error('❌ Klaviyo API key or list ID not configured')
+    return res.status(500).json({ error: 'Email service not configured' })
+  }
+
+  try {
+    // Create or update profile
+    const profileRes = await fetch('https://a.klaviyo.com/api/profiles/', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Klaviyo-API-Key ${apiKey}`,
+        'Content-Type': 'application/json',
+        'revision': '2024-02-15'
+      },
+      body: JSON.stringify({
+        data: {
+          type: 'profile',
+          attributes: { email }
+        }
+      })
+    })
+
+    // 201 = created, 409 = already exists - both are fine
+    const profileData = await profileRes.json()
+    const profileId = profileData?.data?.id
+
+    if (!profileId) {
+      // If 409 conflict, extract existing profile ID from error meta
+      const existingId = profileData?.errors?.[0]?.meta?.duplicate_profile_id
+      if (!existingId) {
+        console.error('❌ Klaviyo profile error:', JSON.stringify(profileData))
+        return res.status(500).json({ error: 'Failed to create profile' })
+      }
+      await subscribeToList(existingId, listId, apiKey)
+    } else {
+      await subscribeToList(profileId, listId, apiKey)
+    }
+
+    console.log('✅ Klaviyo subscriber added:', email)
+
+    // Send welcome email (10% off code) via emailService template
+    const welcomeResult = await sendWelcomeEmail(email, { language: normalizedLanguage })
+    if (!welcomeResult.success) {
+      console.warn('⚠️ Welcome email not sent:', welcomeResult.error || welcomeResult.reason)
+    }
+
+    res.json({ success: true })
+
+  } catch (err) {
+    console.error('❌ Klaviyo error:', err.message)
+    res.status(500).json({ error: 'Subscription failed' })
+  }
+})
+
+
+
+async function subscribeToList(profileId, listId, apiKey) {
+  await fetch(`https://a.klaviyo.com/api/lists/${listId}/relationships/profiles/`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Klaviyo-API-Key ${apiKey}`,
+      'Content-Type': 'application/json',
+      'revision': '2024-02-15'
+    }, 
+    body: JSON.stringify({ 
+      data: [{ type: 'profile', id: profileId }]
+    })
+  })
+}
 
 app.listen(PORT, () => {
   console.log(`\n🚀 Server running on http://localhost:${PORT}`)

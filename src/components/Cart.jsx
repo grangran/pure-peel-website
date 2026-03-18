@@ -4,6 +4,19 @@ import { useLanguage } from "../context/LanguageContext"
 import { useCurrency } from "../context/CurrencyContext"
 import { getTranslation, translateVariantLabel } from "../utils/translations"
 
+const S = {
+  serif:     "'Cormorant Garamond', Georgia, serif",
+  sans:      "'Jost', sans-serif",
+  dark:      "#0f0a04",
+  cream:     "#faf7f2",
+  creamDark: "#f2ece0",
+  gold:      "#e8c84a",
+  orange:    "#c85a08",
+  border:    "rgba(15,10,4,0.08)",
+  textMid:   "rgba(15,10,4,0.5)",
+  textLight: "rgba(15,10,4,0.35)",
+}
+
 export default function Cart({ isOpen, onClose }) {
   const { cartItems, removeFromCart, updateQuantity, getCartTotal } = useCart()
   const [removingItem, setRemovingItem] = useState(null)
@@ -12,27 +25,19 @@ export default function Cart({ isOpen, onClose }) {
 
   const handleQuantityChange = (productId, variant, newQuantity) => {
     const quantity = parseInt(newQuantity) || 0
-    if (quantity <= 0) {
-      handleRemoveItem(productId, variant)
-    } else {
-      updateQuantity(productId, variant, quantity)
-    }
+    if (quantity <= 0) handleRemoveItem(productId, variant)
+    else updateQuantity(productId, variant, quantity)
   }
 
   const handleRemoveItem = (productId, variant) => {
     setRemovingItem(`${productId}-${variant}`)
-    setTimeout(() => {
-      removeFromCart(productId, variant)
-      setRemovingItem(null)
-    }, 300)
+    setTimeout(() => { removeFromCart(productId, variant); setRemovingItem(null) }, 300)
   }
 
   const handleCheckout = () => {
     if (cartItems.length === 0) return
     onClose()
-    // Navigate to checkout page - use pushState and trigger hashchange to sync with App.jsx
     window.history.pushState({ page: "/checkout" }, "", "/checkout")
-    // Trigger App.jsx route handler via hashchange event (which App.jsx listens to)
     window.dispatchEvent(new Event("hashchange"))
   }
 
@@ -41,168 +46,205 @@ export default function Cart({ isOpen, onClose }) {
   return (
     <>
       {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-black/50 z-1998 animate-fadeIn backdrop-blur-sm" 
-        onClick={onClose} 
+      <div
+        onClick={onClose}
+        style={{
+          position: "fixed", inset: 0, zIndex: 1998,
+          background: "rgba(15,10,4,0.45)",
+          backdropFilter: "blur(4px)",
+          animation: "fadeIn 0.2s ease",
+        }}
       />
 
-      {/* Cart Panel */}
-      <div className="fixed top-0 right-0 w-full sm:max-w-[450px] h-screen bg-white z-1999 flex flex-col shadow-[-4px_0_30px_rgba(0,0,0,0.2)] animate-slideInRight">
+      {/* Panel */}
+      <div style={{
+        position: "fixed", top: 0, right: 0,
+        width: "100%", maxWidth: "420px", height: "100vh",
+        background: S.cream,
+        zIndex: 1999,
+        display: "flex", flexDirection: "column",
+        boxShadow: "-8px 0 48px rgba(15,10,4,0.16)",
+        animation: "slideInRight 0.3s cubic-bezier(0.22,1,0.36,1)",
+      }}>
+
         {/* Header */}
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 bg-white">
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "24px 28px",
+          borderBottom: `1px solid ${S.border}`,
+          background: S.cream,
+        }}>
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 m-0">{getTranslation(language, 'cart.title')}</h2>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
+              <div style={{ height: "1px", width: "16px", background: "rgba(200,90,8,0.4)" }} />
+              <span style={{ fontFamily: S.sans, fontSize: "0.55rem", fontWeight: 500, letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(200,90,8,0.6)" }}>
+                Pure Peel Co.
+              </span>
+            </div>
+            <h2 style={{
+              fontFamily: S.serif, fontSize: "1.8rem", fontWeight: 300, fontStyle: "italic",
+              color: S.dark, margin: 0, lineHeight: 1,
+            }}>
+              {getTranslation(language, "cart.title")}
+            </h2>
             {cartItems.length > 0 && (
-              <p className="text-xs sm:text-sm text-gray-500 m-0 mt-1">
-                {cartItems.length} {cartItems.length === 1 ? getTranslation(language, 'cart.item') : getTranslation(language, 'cart.items')}
+              <p style={{ fontFamily: S.sans, fontSize: "0.68rem", fontWeight: 300, color: S.textLight, margin: "6px 0 0" }}>
+                {cartItems.length} {cartItems.length === 1 ? getTranslation(language, "cart.item") : getTranslation(language, "cart.items")}
               </p>
             )}
           </div>
-          <button 
-            className="w-10 h-10 flex items-center justify-center bg-transparent border-0 cursor-pointer rounded-lg text-gray-600 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900 active:scale-95 min-w-[44px] min-h-[44px] focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2" 
-            onClick={onClose} 
-            aria-label="Close cart"
+          <button onClick={onClose} style={{
+            width: "36px", height: "36px", borderRadius: "50%",
+            border: `1px solid ${S.border}`, background: "transparent",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            cursor: "pointer", transition: "background 0.15s",
+          }}
+            onMouseEnter={e => e.currentTarget.style.background = "rgba(15,10,4,0.06)"}
+            onMouseLeave={e => e.currentTarget.style.background = "transparent"}
           >
-            <svg
-              className="w-5 h-5"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(15,10,4,0.5)" strokeWidth="2" strokeLinecap="round">
+              <path d="M18 6L6 18M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        {/* Cart Content */}
-        <div className="flex-1 overflow-y-auto flex flex-col bg-gray-50">
+        {/* Body */}
+        <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column" }}>
           {cartItems.length === 0 ? (
-            <div className="flex-1 flex flex-col items-center justify-center py-16 px-6 text-center">
-              <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-6">
-                <svg
-                  className="w-12 h-12 text-gray-300"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="9" cy="21" r="1"></circle>
-                  <circle cx="20" cy="21" r="1"></circle>
-                  <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"></path>
+
+            /* ── EMPTY STATE ── */
+            <div style={{
+              flex: 1, display: "flex", flexDirection: "column",
+              alignItems: "center", justifyContent: "center",
+              padding: "48px 32px", textAlign: "center",
+            }}>
+              <div style={{
+                width: "72px", height: "72px", borderRadius: "50%",
+                border: `1px solid ${S.border}`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                marginBottom: "24px",
+              }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+                  stroke="rgba(15,10,4,0.2)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6z" />
+                  <path d="M3 6h18" />
+                  <path d="M16 10a4 4 0 01-8 0" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">{getTranslation(language, 'cart.emptyCart')}</h3>
-              <p className="text-gray-500 mb-8 max-w-sm">
-                {getTranslation(language, 'cart.emptyCartDescription')}
+              <h3 style={{ fontFamily: S.serif, fontSize: "1.5rem", fontWeight: 300, fontStyle: "italic", color: S.dark, marginBottom: "10px" }}>
+                {getTranslation(language, "cart.emptyCart")}
+              </h3>
+              <p style={{ fontFamily: S.sans, fontSize: "0.78rem", fontWeight: 300, color: S.textLight, lineHeight: 1.7, marginBottom: "32px", maxWidth: "240px" }}>
+                {getTranslation(language, "cart.emptyCartDescription")}
               </p>
-              <button 
-                className="px-8 py-3 text-sm font-semibold rounded-lg border-2 border-gray-300 cursor-pointer bg-white text-gray-700 transition-all duration-200 hover:border-amber-500 hover:text-amber-600 hover:bg-amber-50 active:scale-95 min-h-[44px] focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2" 
-                onClick={onClose}
+              <button onClick={onClose} style={{
+                padding: "12px 28px", borderRadius: "100px",
+                border: `1.5px solid ${S.border}`, background: "transparent",
+                fontFamily: S.sans, fontSize: "0.68rem", fontWeight: 300,
+                letterSpacing: "0.14em", textTransform: "uppercase",
+                color: S.textMid, cursor: "pointer",
+                transition: "border-color 0.2s, background 0.2s",
+              }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(15,10,4,0.2)"; e.currentTarget.style.background = S.creamDark }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = S.border; e.currentTarget.style.background = "transparent" }}
               >
-                {getTranslation(language, 'cart.continueShopping')}
+                {getTranslation(language, "cart.continueShopping")}
               </button>
             </div>
+
           ) : (
+
+            /* ── ITEMS ── */
             <>
-              {/* Cart Items */}
-              <div className="flex-1 p-5 flex flex-col gap-4">
-                {cartItems.map((item) => {
+              <div style={{ flex: 1, padding: "20px 24px", display: "flex", flexDirection: "column", gap: "12px" }}>
+                {cartItems.map(item => {
                   const itemKey = `${item.id}-${item.variant}`
                   const isRemoving = removingItem === itemKey
-                  
+                  const productId = item.id?.split("-").slice(0, -1).join("-") || item.id?.replace(/-mini|-small|-medium|-large|-clearbox/, "") || ""
+                  const translatedName = getTranslation(language, `products.${productId}.name`)
+                  const displayName = translatedName !== `products.${productId}.name` ? translatedName : item.name
+
                   return (
-                    <div 
-                      key={itemKey}
-                      className={`bg-white rounded-xl border border-gray-200 p-4 transition-all duration-300 ${
-                        isRemoving ? 'opacity-0 scale-95 translate-x-4' : 'opacity-100 scale-100'
-                      }`}
-                    >
-                      <div className="flex gap-4">
-                        {/* Product Image */}
-                        <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
-                          <img 
-                            src={item.image} 
-                            alt={item.name} 
-                            className="w-full h-full object-cover" 
-                          />
+                    <div key={itemKey} style={{
+                      background: "#fff", borderRadius: "12px",
+                      border: `1px solid ${S.border}`,
+                      padding: "16px",
+                      opacity: isRemoving ? 0 : 1,
+                      transform: isRemoving ? "translateX(12px) scale(0.97)" : "none",
+                      transition: "opacity 0.3s ease, transform 0.3s ease",
+                    }}>
+                      <div style={{ display: "flex", gap: "14px" }}>
+
+                        {/* Image */}
+                        <div style={{
+                          width: "72px", height: "72px", borderRadius: "8px",
+                          overflow: "hidden", background: S.creamDark,
+                          border: `1px solid ${S.border}`, flexShrink: 0,
+                        }}>
+                          <img src={item.image} alt={displayName}
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                         </div>
 
-                        {/* Product Info */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-2 mb-2">
-                            <div className="flex-1 min-w-0">
-                              <h3 className="text-base font-semibold text-gray-900 m-0 truncate">
-                                {(() => {
-                                  // Extract product ID from variant ID (e.g., "orange-mini" -> "orange")
-                                  const productId = item.id?.split('-').slice(0, -1).join('-') || item.id?.replace(/-mini|-small|-medium|-large|-clearbox/, '') || ''
-                                  // Try to get translated name, fallback to stored name
-                                  const translatedName = getTranslation(language, `products.${productId}.name`)
-                                  return translatedName !== `products.${productId}.name` ? translatedName : item.name
-                                })()}
-                              </h3>
-                              <p className="text-sm text-gray-600 m-0 mt-0.5">{translateVariantLabel(language, item.variant)}</p>
+                        {/* Info */}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "8px", marginBottom: "4px" }}>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <h3 style={{
+                                fontFamily: S.serif, fontSize: "1rem", fontWeight: 400, fontStyle: "italic",
+                                color: S.dark, margin: 0,
+                                overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                              }}>{displayName}</h3>
+                              <p style={{ fontFamily: S.sans, fontSize: "0.68rem", fontWeight: 300, color: S.textLight, margin: "3px 0 0" }}>
+                                {translateVariantLabel(language, item.variant)}
+                              </p>
                             </div>
-                            <button
-                              className="w-10 h-10 flex items-center justify-center bg-transparent border-0 cursor-pointer rounded-md text-gray-400 transition-all duration-200 hover:bg-red-50 hover:text-red-600 shrink-0 touch-manipulation active:scale-95 min-w-[44px] min-h-[44px]"
-                              onClick={() => handleRemoveItem(item.id, item.variant)}
-                              aria-label={getTranslation(language, 'cart.removeItem')}
+                            <button onClick={() => handleRemoveItem(item.id, item.variant)}
+                              style={{
+                                width: "28px", height: "28px", borderRadius: "50%",
+                                border: "none", background: "transparent",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                cursor: "pointer", flexShrink: 0, transition: "background 0.15s",
+                              }}
+                              onMouseEnter={e => e.currentTarget.style.background = "rgba(200,40,40,0.07)"}
+                              onMouseLeave={e => e.currentTarget.style.background = "transparent"}
                             >
-                              <svg
-                                className="w-4 h-4"
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(15,10,4,0.3)" strokeWidth="2" strokeLinecap="round">
+                                <path d="M18 6L6 18M6 6l12 12" />
                               </svg>
                             </button>
                           </div>
 
-                          {/* Price and Quantity Controls */}
-                          <div className="flex items-center justify-between mt-3">
-                            <div className="flex items-center gap-3">
-                              <div className="flex items-center gap-2 border border-gray-300 rounded-lg bg-white">
-                                <button
-                                  className="w-10 h-10 flex items-center justify-center bg-transparent border-0 cursor-pointer rounded-l-lg text-gray-600 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900 touch-manipulation active:scale-95 min-w-[44px] min-h-[44px]"
-                              onClick={() => handleQuantityChange(item.id, item.variant, item.quantity - 1)}
-                              aria-label={getTranslation(language, 'cart.decreaseQuantity')}
-                                >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
-                                  </svg>
-                                </button>
-                                <span className="min-w-[32px] text-center font-semibold text-sm text-gray-900">
-                                  {item.quantity}
-                                </span>
-                                <button
-                                  className="w-10 h-10 flex items-center justify-center bg-transparent border-0 cursor-pointer rounded-r-lg text-gray-600 transition-all duration-200 hover:bg-gray-100 hover:text-gray-900 touch-manipulation active:scale-95 min-w-[44px] min-h-[44px]"
-                              onClick={() => handleQuantityChange(item.id, item.variant, item.quantity + 1)}
-                              aria-label={getTranslation(language, 'cart.increaseQuantity')}
-                                >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                                  </svg>
-                                </button>
-                              </div>
+                          {/* Qty + Price */}
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "10px" }}>
+                            <div style={{
+                              display: "inline-flex", alignItems: "center",
+                              border: `1px solid ${S.border}`, borderRadius: "100px",
+                              overflow: "hidden", background: S.cream,
+                            }}>
+                              {[{ label: "−", delta: -1 }, null, { label: "+", delta: 1 }].map((btn, i) =>
+                                btn === null ? (
+                                  <span key="n" style={{
+                                    width: "32px", height: "32px",
+                                    display: "flex", alignItems: "center", justifyContent: "center",
+                                    fontFamily: S.sans, fontSize: "0.82rem", fontWeight: 400, color: S.dark,
+                                  }}>{item.quantity}</span>
+                                ) : (
+                                  <button key={btn.label}
+                                    onClick={() => handleQuantityChange(item.id, item.variant, item.quantity + btn.delta)}
+                                    style={{
+                                      width: "32px", height: "32px", border: "none",
+                                      background: "transparent", fontSize: "1rem", fontWeight: 300,
+                                      color: S.textMid, cursor: "pointer", transition: "background 0.15s",
+                                    }}
+                                    onMouseEnter={e => e.currentTarget.style.background = "rgba(15,10,4,0.05)"}
+                                    onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+                                  >{btn.label}</button>
+                                )
+                              )}
                             </div>
-                            <div className="text-right">
-                              <p className="text-lg font-bold text-gray-900 m-0">
-                                {formatPrice(item.price * item.quantity)}
-                              </p>
-                            </div>
+                            <span style={{ fontFamily: S.serif, fontSize: "1.1rem", fontWeight: 400, color: S.dark }}>
+                              {formatPrice(item.price * item.quantity)}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -211,36 +253,59 @@ export default function Cart({ isOpen, onClose }) {
                 })}
               </div>
 
-              {/* Cart Footer */}
-              <div className="p-6 border-t-2 border-gray-200 bg-white shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+              {/* Footer */}
+              <div style={{
+                padding: "20px 24px 28px",
+                borderTop: `1px solid ${S.border}`,
+                background: S.cream,
+              }}>
                 {/* Subtotal */}
-                <div className="mb-6 pb-4 border-b border-gray-200">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-base text-gray-600">{getTranslation(language, 'cart.subtotal')}</span>
-                    <span className="text-2xl font-bold text-gray-900">
-                      {formatPrice(getCartTotal())} {currency}
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-500 m-0 text-center mt-2">
-                    {getTranslation(language, 'cart.shippingTaxesNote')}
-                  </p>
+                <div style={{
+                  display: "flex", alignItems: "baseline", justifyContent: "space-between",
+                  marginBottom: "6px",
+                }}>
+                  <span style={{ fontFamily: S.sans, fontSize: "0.68rem", fontWeight: 300, letterSpacing: "0.1em", textTransform: "uppercase", color: S.textMid }}>
+                    {getTranslation(language, "cart.subtotal")}
+                  </span>
+                  <span style={{ fontFamily: S.serif, fontSize: "1.6rem", fontWeight: 300, color: S.dark }}>
+                    {formatPrice(getCartTotal())} <span style={{ fontSize: "0.75rem", fontFamily: S.sans, fontWeight: 300, color: S.textLight }}>{currency}</span>
+                  </span>
                 </div>
+                <p style={{ fontFamily: S.sans, fontSize: "0.62rem", fontWeight: 300, color: S.textLight, textAlign: "right", marginBottom: "20px" }}>
+                  {getTranslation(language, "cart.shippingTaxesNote")}
+                </p>
 
-                {/* Action Buttons */}
-                <div className="flex flex-col gap-3">
-                  <button 
-                    className="w-full py-4 px-6 text-base font-bold rounded-xl border-0 cursor-pointer transition-all duration-300 uppercase tracking-wide font-sans bg-linear-to-br from-amber-500 to-amber-600 text-black shadow-[0_4px_20px_rgba(245,158,11,0.4)] hover:from-amber-400 hover:to-amber-500 hover:-translate-y-0.5 hover:shadow-[0_6px_25px_rgba(245,158,11,0.5)] active:translate-y-0 active:scale-[0.98] min-h-[52px] focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2"
-                    onClick={handleCheckout}
-                  >
-                    {getTranslation(language, 'cart.proceedToCheckout')}
-                  </button>
-                  <button 
-                    className="w-full py-3 px-6 text-sm font-medium rounded-lg border-2 border-gray-300 cursor-pointer bg-white text-gray-700 transition-all duration-200 hover:border-gray-400 hover:bg-gray-50 active:scale-95 min-h-[44px] focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
-                    onClick={onClose}
-                  >
-                    {getTranslation(language, 'cart.continueShopping')}
-                  </button>
-                </div>
+                {/* Checkout */}
+                <button onClick={handleCheckout} style={{
+                  width: "100%", padding: "16px",
+                  borderRadius: "12px", border: "none",
+                  background: "linear-gradient(135deg,#f5e6a3 0%,#e8c84a 55%,#d4a832 100%)",
+                  fontFamily: S.sans, fontSize: "0.74rem", fontWeight: 500,
+                  letterSpacing: "0.18em", textTransform: "uppercase",
+                  color: S.dark, cursor: "pointer", marginBottom: "10px",
+                  boxShadow: "0 4px 20px rgba(232,200,74,0.28)",
+                  transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 8px 28px rgba(232,200,74,0.38)" }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(232,200,74,0.28)" }}
+                >
+                  {getTranslation(language, "cart.proceedToCheckout")}
+                </button>
+
+                <button onClick={onClose} style={{
+                  width: "100%", padding: "13px",
+                  borderRadius: "12px", border: `1.5px solid ${S.border}`,
+                  background: "transparent",
+                  fontFamily: S.sans, fontSize: "0.68rem", fontWeight: 300,
+                  letterSpacing: "0.14em", textTransform: "uppercase",
+                  color: S.textMid, cursor: "pointer",
+                  transition: "border-color 0.2s, background 0.2s",
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(15,10,4,0.18)"; e.currentTarget.style.background = S.creamDark }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = S.border; e.currentTarget.style.background = "transparent" }}
+                >
+                  {getTranslation(language, "cart.continueShopping")}
+                </button>
               </div>
             </>
           )}
@@ -249,4 +314,3 @@ export default function Cart({ isOpen, onClose }) {
     </>
   )
 }
-

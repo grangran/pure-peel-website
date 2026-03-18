@@ -85,17 +85,17 @@ function ProductCard({ product, index, onProductClick }) {
         <div className="absolute inset-0 bg-linear-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
       </div>
       <div className="p-5 md:p-6 pt-4 md:pt-5 flex flex-col flex-grow">
-        <h3 className="text-xl md:text-2xl font-bold mb-2 md:mb-2.5 text-stone-900 tracking-tight">
+      <h3 className="text-xl md:text-2xl font-serif font-normal italic mb-2 md:mb-2.5 text-brand-text tracking-tight">
           {getTranslation(language, `products.${product.id}.name`)}
         </h3>
         <p className="text-sm md:text-base text-stone-600 mb-4 md:mb-5 leading-relaxed flex-grow">
           {getTranslation(language, `products.${product.id}.description`)}
         </p>
-        <span className="flex items-center justify-center gap-2 mt-auto font-semibold text-amber-600 no-underline text-sm transition-all duration-300 group-hover:text-amber-700 group-hover:gap-3">
-          {getTranslation(language, 'products.viewProduct')}
-          <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-          </svg>
+        <span className="flex items-center justify-center gap-2 mt-auto font-light tracking-[0.12em] uppercase text-[0.65rem] text-brand-text-mid no-underline transition-all duration-300 group-hover:text-brand-orange group-hover:gap-3">
+        {getTranslation(language, 'products.viewProduct')}
+<svg className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+</svg>
         </span>
       </div>
     </a>
@@ -120,12 +120,6 @@ export default function Products() {
       <div className="max-w-7xl mx-auto">
         {/* Citrus Collection Section */}
         <div className="mb-20">
-          {/* Hide collection tag on mobile for cleaner look */}
-          <div className="text-center mb-4 hidden md:block">
-            <span className="inline-block px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-amber-700 bg-amber-50 rounded-full mb-4">
-              Collection
-            </span>
-          </div>
           <h2 
             ref={citrusTitleRef}
             className={`products-section-title text-center mb-12 md:mb-16 transition-all duration-800 ease-out ${
@@ -158,19 +152,7 @@ export default function Products() {
 
         {/* Fruit Collection Section */}
         <div>
-          {/* Hide collection tag on mobile for cleaner look */}
-          <div className="text-center mb-4 hidden md:block">
-            <span className="inline-block px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-amber-700 bg-amber-50 rounded-full mb-4">
-              Collection
-            </span>
-          </div>
-          <h2 
-            ref={fruitTitleRef}
-            className={`text-center text-[clamp(1.75rem,5vw,3.5rem)] font-bold mb-12 md:mb-16 text-stone-900 tracking-tight transition-all duration-800 ease-out ${
-              isFruitTitleVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-            }`}
-          >
-            {getTranslation(language, 'products.fruitCollection')}
+          <h2  ref={fruitTitleRef} className={`products-section-title text-center mb-12 md:mb-16 transition-all duration-800 ease-out ${ isFruitTitleVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8' }`} style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 300, fontStyle: 'italic', color: '#1c1008', letterSpacing: '-0.01em', }}> {getTranslation(language, 'products.fruitCollection')}
           </h2>
           
           <div className="flex justify-center">

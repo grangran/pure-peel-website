@@ -19,6 +19,16 @@ export const translations = {
       quantity: "Quantity:",
       addToCart: "Add to Cart",
       adding: "Adding...",
+      selectSize: "Select Size",
+      selected: "selected",
+      mostPopular: "Most Popular",
+      giftReady: "Gift Ready",
+      from: "From",
+      view: "View",
+      youMayAlsoLike: "You May Also Like",
+      moreFromOurCollection: "More from our collection.",
+      photoComingSoon: "Photo coming soon",
+      addedToCart: "Added to Cart",
       inquireBulk: "Inquire About Larger Quantities",
       inquireBulkSubject: "Bulk Order Inquiry",
       inquireBulkMessage: "I'm interested in ordering larger quantities of {product} slices. Please contact me with pricing and availability.",
@@ -39,7 +49,7 @@ export const translations = {
     products: {
       citrusCollection: "Citrus Collection",
       fruitCollection: "Fruit Collection",
-      viewProduct: "View Product →",
+      viewProduct: "View Product",
       orange: {
         name: "Orange",
         description: "Sweet and zesty. Ideal for cocktails, tea, and charcuterie boards."
@@ -853,7 +863,8 @@ export const translations = {
       confirmationEmailNoEmail: "We've sent a confirmation email with your order details. You'll receive another email when your order ships.",
       confirmationEmailSuffix: "with your order details. You'll receive another email when your order ships.",
       paymentVerificationFailed: "Payment verification failed. Please contact support.",
-      continueShopping: "Continue Shopping"
+      continueShopping: "Continue Shopping",
+      devCompleteFreeOrder: "Complete free test order (no payment, dev only)"
     },
     toast: {
       addedToCart: "Added to cart!",
@@ -873,7 +884,7 @@ export const translations = {
     products: {
       citrusCollection: "Collection d'Agrumes",
       fruitCollection: "Collection de Fruits",
-      viewProduct: "Voir le Produit →"
+      viewProduct: "Voir le Produit"
     },
     productPage: {
       brand: "Pure Peel Co.",
@@ -881,6 +892,16 @@ export const translations = {
       quantity: "Quantité :",
       addToCart: "Ajouter au Panier",
       adding: "Ajout en cours...",
+      selectSize: "Choisir la taille",
+      selected: "selectionne",
+      mostPopular: "Le plus populaire",
+      giftReady: "Pret a offrir",
+      from: "A partir de",
+      view: "Voir",
+      youMayAlsoLike: "Vous aimerez aussi",
+      moreFromOurCollection: "Encore plus de notre collection.",
+      photoComingSoon: "Photo a venir",
+      addedToCart: "Ajoute au panier",
       inquireBulk: "Demander des quantités plus importantes",
       inquireBulkSubject: "Demande de commande en gros",
       inquireBulkMessage: "Je suis intéressé(e) à commander de plus grandes quantités de tranches de {product}. Veuillez me contacter pour les prix et la disponibilité.",
@@ -1778,7 +1799,8 @@ export const translations = {
       paymentVerificationFailed: "La vérification du paiement a échoué. Veuillez contacter le support.",
       subtotal: "Sous-total",
       shipping: "Expédition",
-      continueShopping: "Continuer les Achats"
+      continueShopping: "Continuer les Achats",
+      devCompleteFreeOrder: "Terminer une commande d'essai gratuite (sans paiement, uniquement dev)"
     },
     toast: {
       addedToCart: "Ajouté au panier !",

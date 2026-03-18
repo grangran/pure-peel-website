@@ -2,129 +2,145 @@ import { useEffect, useState } from "react"
 import { useLanguage } from "../context/LanguageContext"
 import { getTranslation, translateVariantLabel } from "../utils/translations"
 
-const Toast = ({ 
+const S = {
+  serif:     "'Cormorant Garamond', Georgia, serif",
+  sans:      "'Jost', sans-serif",
+  dark:      "#0f0a04",
+  cream:     "#faf7f2",
+  orange:    "#c85a08",
+  border:    "rgba(15,10,4,0.08)",
+  textMid:   "rgba(15,10,4,0.5)",
+  textLight: "rgba(15,10,4,0.35)",
+}
+
+const Toast = ({
   id,
-  type = 'success',
+  type = "success",
   message,
   product,
   duration = 5000,
   onClose,
-  onViewCart
+  onViewCart,
 }) => {
   const { language } = useLanguage()
   const [isVisible, setIsVisible] = useState(false)
   const [isExiting, setIsExiting] = useState(false)
 
   useEffect(() => {
-    // Trigger slide-in animation
     setTimeout(() => setIsVisible(true), 10)
-    
-    // Auto-dismiss after duration
-    const timer = setTimeout(() => {
-      handleClose()
-    }, duration)
-
+    const timer = setTimeout(() => handleClose(), duration)
     return () => clearTimeout(timer)
   }, [duration])
 
   const handleClose = () => {
     setIsExiting(true)
-    setTimeout(() => {
-      onClose(id)
-    }, 300) // Match animation duration
+    setTimeout(() => onClose(id), 300)
   }
 
   const handleViewCart = () => {
-    if (onViewCart) {
-      onViewCart()
-    }
+    if (onViewCart) onViewCart()
     handleClose()
   }
 
-  const typeStyles = {
-    success: 'bg-white border-l-4 border-amber-500',
-    error: 'bg-white border-l-4 border-red-500',
-    info: 'bg-white border-l-4 border-blue-500'
-  }
+  const accentColor = type === "error" ? "#c84a4a" : type === "info" ? "#4a7ac8" : S.orange
 
   return (
     <div
-      className={`min-w-[320px] max-w-md rounded-lg shadow-lg mb-4 transition-all duration-300 ${
-        typeStyles[type]
-      } ${
-        isVisible && !isExiting
-          ? 'translate-x-0 opacity-100'
-          : 'translate-x-full opacity-0'
-      }`}
       role="alert"
       aria-live="polite"
+      style={{
+        minWidth: "300px", maxWidth: "360px",
+        marginBottom: "12px",
+        background: S.cream,
+        borderRadius: "14px",
+        border: `1px solid ${S.border}`,
+        borderLeft: `3px solid ${accentColor}`,
+        boxShadow: "0 8px 32px rgba(15,10,4,0.12), 0 2px 8px rgba(15,10,4,0.06)",
+        transition: "transform 0.3s cubic-bezier(0.22,1,0.36,1), opacity 0.3s ease",
+        transform: isVisible && !isExiting ? "translateX(0)" : "translateX(calc(100% + 24px))",
+        opacity: isVisible && !isExiting ? 1 : 0,
+      }}
     >
-      <div className="p-4">
-        <div className="flex items-start gap-3">
-          {/* Product Image */}
+      <div style={{ padding: "16px" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", gap: "12px" }}>
+
+          {/* Product image */}
           {product?.image && (
-            <div className="flex-shrink-0">
-              <img
-                src={product.image}
-                alt={product.name || 'Product'}
-                className="w-16 h-16 object-cover rounded-lg"
-              />
+            <div style={{
+              flexShrink: 0, width: "52px", height: "52px",
+              borderRadius: "8px", overflow: "hidden",
+              background: "#f2ece0",
+              border: `1px solid ${S.border}`,
+            }}>
+              <img src={product.image} alt={product.name || "Product"}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             </div>
           )}
 
           {/* Content */}
-          <div className="flex-1 min-w-0">
-            {/* Message */}
-            <p className="text-sm font-semibold text-gray-900 mb-1">
-              {message || getTranslation(language, 'toast.addedToCart')}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            {/* "Added to cart!" */}
+            <p style={{
+              fontFamily: S.serif, fontSize: "1rem", fontWeight: 300, fontStyle: "italic",
+              color: S.dark, margin: "0 0 4px",
+            }}>
+              {message || getTranslation(language, "toast.addedToCart")}
             </p>
 
-            {/* Product Details */}
+            {/* Product name + variant */}
             {product && (
-              <div className="text-sm text-gray-600 mb-3">
-                <p className="font-medium text-gray-900">
+              <div style={{ marginBottom: "10px" }}>
+                <p style={{
+                  fontFamily: S.sans, fontSize: "0.72rem", fontWeight: 400,
+                  color: S.dark, margin: 0,
+                  overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                }}>
                   {product.name}
-                  {product.variant && ` - ${translateVariantLabel(language, product.variant)}`}
+                  {product.variant && (
+                    <span style={{ fontWeight: 300, color: S.textMid }}>
+                      {" — "}{translateVariantLabel(language, product.variant)}
+                    </span>
+                  )}
                 </p>
                 {product.quantity > 1 && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    {getTranslation(language, 'toast.quantity')} {product.quantity}
+                  <p style={{ fontFamily: S.sans, fontSize: "0.65rem", fontWeight: 300, color: S.textLight, margin: "3px 0 0" }}>
+                    {getTranslation(language, "toast.quantity")} {product.quantity}
                   </p>
                 )}
               </div>
             )}
 
-            {/* Actions */}
-            <div className="flex items-center gap-2 mt-2">
-              <button
-                onClick={handleViewCart}
-                className="text-xs font-semibold text-amber-600 hover:text-amber-700 transition-colors"
-              >
-                {getTranslation(language, 'toast.viewCart')}
-              </button>
-            </div>
+            {/* View Cart link */}
+            <button onClick={handleViewCart} style={{
+              fontFamily: S.sans, fontSize: "0.62rem", fontWeight: 500,
+              letterSpacing: "0.12em", textTransform: "uppercase",
+              color: accentColor, background: "none", border: "none",
+              cursor: "pointer", padding: 0,
+              transition: "opacity 0.15s",
+            }}
+              onMouseEnter={e => e.currentTarget.style.opacity = "0.7"}
+              onMouseLeave={e => e.currentTarget.style.opacity = "1"}
+            >
+              {getTranslation(language, "toast.viewCart")} →
+            </button>
           </div>
 
-          {/* Close Button */}
-          <button
-            onClick={handleClose}
-            className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
-            aria-label="Close notification"
+          {/* Close */}
+          <button onClick={handleClose} style={{
+            flexShrink: 0, width: "24px", height: "24px",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            background: "none", border: "none", cursor: "pointer",
+            color: S.textLight, transition: "color 0.15s",
+            padding: 0,
+          }}
+            onMouseEnter={e => e.currentTarget.style.color = S.dark}
+            onMouseLeave={e => e.currentTarget.style.color = S.textLight}
           >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M18 6L6 18M6 6l12 12" />
             </svg>
           </button>
+
         </div>
       </div>
     </div>

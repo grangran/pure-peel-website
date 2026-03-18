@@ -2,9 +2,12 @@ import { useState, useEffect, useRef } from "react"
 import { useCart } from "./context/CartContext"
 import Nav from "./components/Nav"
 import Hero from "./components/Hero"
-import About from "./components/About"
+import WhyPurePeel from "./components/WhyPurePeel"
+import EmailCapture from "./components/EmailCapture"
+import EmailPopup from "./components/EmailPopup"
+import AboutTeaser from "./components/AboutTeaser"
+import About from "./pages/About"
 import Products from "./components/Products"
-import Lifestyle from "./components/Lifestyle"
 import ContactPage from "./pages/Contact"
 import Footer from "./components/Footer"
 import Cart from "./components/Cart"
@@ -57,6 +60,8 @@ const getInitialPage = () => {
     return "contact"
   } else if (path === "/faq" || path === "/faq.html") {
     return "faq"
+  } else if (path === "/about" || path === "/about.html") {
+    return "about"
   } else {
     return "not-found"
   }
@@ -128,6 +133,8 @@ export default function App() {
         setCurrentPage("contact")
       } else if (normalizedPath === "/faq" || normalizedPath === "/faq.html") {
         setCurrentPage("faq")
+      } else if (normalizedPath === "/about" || normalizedPath === "/about.html") {
+        setCurrentPage("about")
       } else {
         // Invalid route - show 404
         setCurrentPage("not-found")
@@ -402,6 +409,16 @@ export default function App() {
       </>
     )
   }
+  if (currentPage === "about") {
+    return (
+      <>
+        <SEO {...currentSEO} />
+        <Nav key={`nav-${currentPage}-${navigationKey}`} />
+        <About key={`about-${currentPage}-${navigationKey}`} />
+        <Footer key={`footer-${currentPage}-${navigationKey}`} />
+      </>
+    )
+  }
 
   if (currentPage === "not-found") {
     return (
@@ -423,8 +440,10 @@ export default function App() {
       <Nav key={`nav-${currentPage}-${navigationKey}`} />
       <Hero key={`hero-${currentPage}-${navigationKey}`} />
       <Products key={`products-${currentPage}-${navigationKey}`} />
-      <Lifestyle key={`lifestyle-${currentPage}-${navigationKey}`} />
-      <About key={`about-${currentPage}-${navigationKey}`} />
+      <WhyPurePeel key={`Why Pure Peel-${currentPage}-${navigationKey}`} />
+      <AboutTeaser key={`about-teaser-${currentPage}-${navigationKey}`} />
+      <EmailCapture key={`email-capture-${currentPage}-${navigationKey}`} />
+      <EmailPopup key={`email-popup-${currentPage}-${navigationKey}`} />
       <Footer key={`footer-${currentPage}-${navigationKey}`} />
       {CartComponent}
     </>

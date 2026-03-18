@@ -2,327 +2,360 @@ import { useScrollReveal } from "../hooks/useScrollReveal"
 import { useLanguage } from "../context/LanguageContext"
 import { getTranslation } from "../utils/translations"
 
+const S = {
+  serif:     "'Cormorant Garamond', Georgia, serif",
+  sans:      "'Jost', sans-serif",
+  dark:      "#0f0a04",
+  cream:     "#faf7f2",
+  creamDark: "#f2ece0",
+  orange:    "#c85a08",
+  border:    "rgba(15,10,4,0.08)",
+  textMid:   "rgba(15,10,4,0.5)",
+  textLight: "rgba(15,10,4,0.35)",
+}
+
+function SectionTitle({ children }) {
+  return (
+    <h2 style={{
+      fontFamily: S.sans, fontSize: "0.65rem", fontWeight: 500,
+      letterSpacing: "0.18em", textTransform: "uppercase",
+      color: S.textMid, marginBottom: "12px", marginTop: "32px",
+    }}>{children}</h2>
+  )
+}
+
+function Body({ children, style = {} }) {
+  return (
+    <p style={{
+      fontFamily: S.sans, fontSize: "0.8rem", fontWeight: 300,
+      color: S.textMid, lineHeight: 1.85, marginBottom: "12px",
+      ...style,
+    }}>{children}</p>
+  )
+}
+
+function BulletList({ items }) {
+  return (
+    <ul style={{ listStyle: "none", padding: 0, margin: "0 0 12px", display: "flex", flexDirection: "column", gap: "8px" }}>
+      {items.map((item, i) => (
+        <li key={i} style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+          <span style={{ color: S.orange, fontFamily: S.sans, fontSize: "0.7rem", marginTop: "2px", flexShrink: 0 }}>—</span>
+          <span style={{ fontFamily: S.sans, fontSize: "0.78rem", fontWeight: 300, color: S.textMid, lineHeight: 1.75 }}>{item}</span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+function InfoBox({ children }) {
+  return (
+    <div style={{
+      background: S.creamDark, borderRadius: "10px",
+      border: `1px solid ${S.border}`,
+      padding: "18px 22px", marginBottom: "12px",
+    }}>{children}</div>
+  )
+}
+
+function Divider() {
+  return <div style={{ height: "1px", background: S.border, margin: "24px 0" }} />
+}
+
+function ExtLink({ href, children }) {
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer"
+      style={{ color: S.orange, fontWeight: 300, textDecoration: "none" }}
+      onMouseEnter={e => e.target.style.textDecoration = "underline"}
+      onMouseLeave={e => e.target.style.textDecoration = "none"}
+    >{children}</a>
+  )
+}
+
+function IntLink({ href, children }) {
+  return (
+    <a href={href}
+      style={{ color: S.orange, fontWeight: 300, textDecoration: "none" }}
+      onMouseEnter={e => e.target.style.textDecoration = "underline"}
+      onMouseLeave={e => e.target.style.textDecoration = "none"}
+    >{children}</a>
+  )
+}
+
 export default function PrivacyPolicy() {
-  const [sectionRef, isSectionVisible] = useScrollReveal({ threshold: 0.05 })
-  const { language } = useLanguage()
+  const [sectionRef] = useScrollReveal({ threshold: 0.05 })
+  const { language }  = useLanguage()
 
   return (
-    <section 
-      ref={sectionRef} 
-      className={`py-8 md:py-12 px-4 sm:px-5 bg-gray-50 min-h-screen transition-all duration-500 ${
-        isSectionVisible ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-0 md:opacity-0 md:translate-y-8'
-      }`}
-    >
-      <div className="max-w-4xl mx-auto">
+    <section ref={sectionRef} style={{ background: S.cream, minHeight: "100vh", padding: "80px 20px 96px" }}>
+      <div style={{ maxWidth: "720px", margin: "0 auto" }}>
+
         {/* Header */}
-        <div className="text-center mb-6 md:mb-8">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.title')}</h1>
-          <p className="text-sm md:text-base text-gray-600">{getTranslation(language, 'privacy.lastUpdated')} {new Date().toLocaleDateString(language === 'fr' ? 'fr-CA' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        <div style={{ textAlign: "center", marginBottom: "56px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", marginBottom: "16px" }}>
+            <div style={{ height: "1px", width: "20px", background: "rgba(200,90,8,0.4)" }} />
+            <span style={{ fontFamily: S.sans, fontSize: "0.58rem", fontWeight: 500, letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(200,90,8,0.6)" }}>Pure Peel Co.</span>
+            <div style={{ height: "1px", width: "20px", background: "rgba(200,90,8,0.4)" }} />
+          </div>
+          <h1 style={{ fontFamily: S.serif, fontSize: "clamp(2rem,4vw,3rem)", fontWeight: 300, fontStyle: "italic", color: S.dark, letterSpacing: "-0.01em", marginBottom: "10px" }}>
+            {getTranslation(language, 'privacy.title')}
+          </h1>
+          <p style={{ fontFamily: S.sans, fontSize: "0.68rem", fontWeight: 300, color: S.textLight }}>
+            {getTranslation(language, 'privacy.lastUpdated')}{' '}
+            {new Date().toLocaleDateString(language === 'fr' ? 'fr-CA' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+          </p>
         </div>
 
-        {/* Content */}
-        <div className="bg-white rounded-xl md:rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-6 md:p-8 space-y-6 md:space-y-8">
+        {/* Content card */}
+        <div style={{ background: "#fff", borderRadius: "14px", border: `1px solid ${S.border}`, padding: "40px 40px 48px" }}>
+
           {/* Introduction */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.introduction.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 leading-relaxed">
-              {getTranslation(language, 'privacy.introduction.text')}
-            </p>
-          </div>
+          <SectionTitle>{getTranslation(language, 'privacy.introduction.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.introduction.text')}</Body>
+
+          <Divider />
 
           {/* Information We Collect */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.informationWeCollect.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 mb-3">{getTranslation(language, 'privacy.informationWeCollect.text')}</p>
-            <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 ml-2 md:ml-4">
-              <li><strong>{getTranslation(language, 'privacy.informationWeCollect.placeOrder')}</strong></li>
-              <li><strong>{getTranslation(language, 'privacy.informationWeCollect.makePayment')}</strong></li>
-              <li><strong>{getTranslation(language, 'privacy.informationWeCollect.contactUs')}</strong></li>
-              <li><strong>{getTranslation(language, 'privacy.informationWeCollect.trackOrder')}</strong></li>
-            </ul>
-            <p className="text-sm md:text-base text-gray-700 mt-4">
-              {getTranslation(language, 'privacy.informationWeCollect.automatic')}
-            </p>
-          </div>
+          <SectionTitle>{getTranslation(language, 'privacy.informationWeCollect.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.informationWeCollect.text')}</Body>
+          <BulletList items={[
+            getTranslation(language, 'privacy.informationWeCollect.placeOrder'),
+            getTranslation(language, 'privacy.informationWeCollect.makePayment'),
+            getTranslation(language, 'privacy.informationWeCollect.contactUs'),
+            getTranslation(language, 'privacy.informationWeCollect.trackOrder'),
+          ]} />
+          <Body>{getTranslation(language, 'privacy.informationWeCollect.automatic')}</Body>
 
-          {/* How We Use Your Information */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.howWeUse.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 mb-3">{getTranslation(language, 'privacy.howWeUse.text')}</p>
-            <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 ml-2 md:ml-4">
-              {getTranslation(language, 'privacy.howWeUse.items').map((item, index) => (
-                <li key={index}>{item}</li>
-              ))}
-            </ul>
-          </div>
+          <Divider />
+
+          {/* How We Use */}
+          <SectionTitle>{getTranslation(language, 'privacy.howWeUse.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.howWeUse.text')}</Body>
+          <BulletList items={getTranslation(language, 'privacy.howWeUse.items')} />
+
+          <Divider />
 
           {/* Limiting Collection */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.limitingCollection.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 mb-3">{getTranslation(language, 'privacy.limitingCollection.text1')}</p>
-            <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 ml-2 md:ml-4">
-              <li>{getTranslation(language, 'privacy.limitingCollection.item1')}</li>
-              <li>{getTranslation(language, 'privacy.limitingCollection.item2')}</li>
-              <li>{getTranslation(language, 'privacy.limitingCollection.item3')}</li>
-              <li>{getTranslation(language, 'privacy.limitingCollection.item4')}</li>
-            </ul>
-            <p className="text-sm md:text-base text-gray-700 mt-4">
-              {getTranslation(language, 'privacy.limitingCollection.text2')}
-            </p>
-          </div>
+          <SectionTitle>{getTranslation(language, 'privacy.limitingCollection.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.limitingCollection.text1')}</Body>
+          <BulletList items={[
+            getTranslation(language, 'privacy.limitingCollection.item1'),
+            getTranslation(language, 'privacy.limitingCollection.item2'),
+            getTranslation(language, 'privacy.limitingCollection.item3'),
+            getTranslation(language, 'privacy.limitingCollection.item4'),
+          ]} />
+          <Body>{getTranslation(language, 'privacy.limitingCollection.text2')}</Body>
+
+          <Divider />
 
           {/* Consent */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.consent.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 mb-3">{getTranslation(language, 'privacy.consent.text1')}</p>
-            <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 ml-2 md:ml-4">
-              <li>{getTranslation(language, 'privacy.consent.explicit')}</li>
-              <li>{getTranslation(language, 'privacy.consent.implied')}</li>
-              <li>{getTranslation(language, 'privacy.consent.withdrawal')}</li>
-            </ul>
-            <p className="text-sm md:text-base text-gray-700 mt-4">
-              {getTranslation(language, 'privacy.consent.text2')}
-            </p>
-          </div>
+          <SectionTitle>{getTranslation(language, 'privacy.consent.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.consent.text1')}</Body>
+          <BulletList items={[
+            getTranslation(language, 'privacy.consent.explicit'),
+            getTranslation(language, 'privacy.consent.implied'),
+            getTranslation(language, 'privacy.consent.withdrawal'),
+          ]} />
+          <Body>{getTranslation(language, 'privacy.consent.text2')}</Body>
+
+          <Divider />
 
           {/* Third-Party Services */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.thirdPartyServices.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 mb-3">{getTranslation(language, 'privacy.thirdPartyServices.text')}</p>
-            <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 ml-2 md:ml-4">
-              <li><strong>{getTranslation(language, 'privacy.thirdPartyServices.stripe')}</strong> <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:text-amber-700">stripe.com/privacy</a></li>
-              <li><strong>{getTranslation(language, 'privacy.thirdPartyServices.canadaPost')}</strong> <a href="https://www.canadapost.ca/cpc/en/privacypolicy.page" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:text-amber-700">canadapost.ca</a></li>
-              <li><strong>{getTranslation(language, 'privacy.thirdPartyServices.resend')}</strong> <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:text-amber-700">resend.com</a></li>
-            </ul>
-          </div>
+          <SectionTitle>{getTranslation(language, 'privacy.thirdPartyServices.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.thirdPartyServices.text')}</Body>
+          <BulletList items={[
+            <>{getTranslation(language, 'privacy.thirdPartyServices.stripe')} <ExtLink href="https://stripe.com/privacy">stripe.com/privacy</ExtLink></>,
+            <>{getTranslation(language, 'privacy.thirdPartyServices.canadaPost')} <ExtLink href="https://www.canadapost.ca/cpc/en/privacypolicy.page">canadapost.ca</ExtLink></>,
+            <>{getTranslation(language, 'privacy.thirdPartyServices.resend')} <ExtLink href="https://resend.com/legal/privacy-policy">resend.com</ExtLink></>,
+          ]} />
 
-          {/* Cookies and Tracking */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.cookiesAndTracking.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 mb-3">
-              {getTranslation(language, 'privacy.cookiesAndTracking.text1')}
-            </p>
-            <p className="text-sm md:text-base text-gray-700 mb-3">{getTranslation(language, 'privacy.cookiesAndTracking.text2')}</p>
-            <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 ml-2 md:ml-4">
-              <li><strong>{getTranslation(language, 'privacy.cookiesAndTracking.essential')}</strong></li>
-              <li><strong>{getTranslation(language, 'privacy.cookiesAndTracking.analytics')}</strong></li>
-              <li><strong>{getTranslation(language, 'privacy.cookiesAndTracking.preference')}</strong></li>
-            </ul>
-            <p className="text-sm md:text-base text-gray-700 mt-4">
-              {getTranslation(language, 'privacy.cookiesAndTracking.text3')}
-            </p>
-          </div>
+          <Divider />
+
+          {/* Cookies */}
+          <SectionTitle>{getTranslation(language, 'privacy.cookiesAndTracking.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.cookiesAndTracking.text1')}</Body>
+          <Body>{getTranslation(language, 'privacy.cookiesAndTracking.text2')}</Body>
+          <BulletList items={[
+            getTranslation(language, 'privacy.cookiesAndTracking.essential'),
+            getTranslation(language, 'privacy.cookiesAndTracking.analytics'),
+            getTranslation(language, 'privacy.cookiesAndTracking.preference'),
+          ]} />
+          <Body>{getTranslation(language, 'privacy.cookiesAndTracking.text3')}</Body>
+
+          <Divider />
 
           {/* Data Retention */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.dataRetention.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 mb-3">
-              {getTranslation(language, 'privacy.dataRetention.text1')}
-            </p>
-            <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 ml-2 md:ml-4">
-              <li><strong>{getTranslation(language, 'privacy.dataRetention.orderInfo')}</strong></li>
-              <li><strong>{getTranslation(language, 'privacy.dataRetention.customerContact')}</strong></li>
-              <li><strong>{getTranslation(language, 'privacy.dataRetention.marketing')}</strong></li>
-            </ul>
-            <p className="text-sm md:text-base text-gray-700 mt-4">
-              {getTranslation(language, 'privacy.dataRetention.text2')}
-            </p>
-          </div>
+          <SectionTitle>{getTranslation(language, 'privacy.dataRetention.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.dataRetention.text1')}</Body>
+          <BulletList items={[
+            getTranslation(language, 'privacy.dataRetention.orderInfo'),
+            getTranslation(language, 'privacy.dataRetention.customerContact'),
+            getTranslation(language, 'privacy.dataRetention.marketing'),
+          ]} />
+          <Body>{getTranslation(language, 'privacy.dataRetention.text2')}</Body>
+
+          <Divider />
 
           {/* Children's Privacy */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.childrensPrivacy.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 leading-relaxed">
-              {getTranslation(language, 'privacy.childrensPrivacy.text')}
-            </p>
-          </div>
+          <SectionTitle>{getTranslation(language, 'privacy.childrensPrivacy.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.childrensPrivacy.text')}</Body>
+
+          <Divider />
 
           {/* Canadian Privacy Laws */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.canadianPrivacyLaws.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 mb-3">
-              {getTranslation(language, 'privacy.canadianPrivacyLaws.text1')}
-            </p>
-            <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 ml-2 md:ml-4">
-              <li>{getTranslation(language, 'privacy.canadianPrivacyLaws.right1')}</li>
-              <li>{getTranslation(language, 'privacy.canadianPrivacyLaws.right2')}</li>
-              <li>{getTranslation(language, 'privacy.canadianPrivacyLaws.right3')}</li>
-              <li>{getTranslation(language, 'privacy.canadianPrivacyLaws.right4')}</li>
-              <li>{getTranslation(language, 'privacy.canadianPrivacyLaws.right5')}</li>
-              <li>{getTranslation(language, 'privacy.canadianPrivacyLaws.right6')}</li>
-            </ul>
-            <p className="text-sm md:text-base text-gray-700 mt-4">
-              {getTranslation(language, 'privacy.canadianPrivacyLaws.text2')}
-            </p>
-          </div>
+          <SectionTitle>{getTranslation(language, 'privacy.canadianPrivacyLaws.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.canadianPrivacyLaws.text1')}</Body>
+          <BulletList items={[
+            getTranslation(language, 'privacy.canadianPrivacyLaws.right1'),
+            getTranslation(language, 'privacy.canadianPrivacyLaws.right2'),
+            getTranslation(language, 'privacy.canadianPrivacyLaws.right3'),
+            getTranslation(language, 'privacy.canadianPrivacyLaws.right4'),
+            getTranslation(language, 'privacy.canadianPrivacyLaws.right5'),
+            getTranslation(language, 'privacy.canadianPrivacyLaws.right6'),
+          ]} />
+          <Body>{getTranslation(language, 'privacy.canadianPrivacyLaws.text2')}</Body>
+
+          <Divider />
 
           {/* Privacy Officer */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.privacyOfficer.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 mb-3">{getTranslation(language, 'privacy.privacyOfficer.text1')}</p>
-            <div className="bg-gray-50 rounded-lg p-3 md:p-4 space-y-2 mb-3">
-              <p className="text-sm md:text-base text-gray-700">
-                <strong>{getTranslation(language, 'privacy.privacyOfficer.email')}</strong> <a href="/contact?inquiryType=general" className="text-amber-600 hover:text-amber-700">privacy@purepeelco.com</a>
-              </p>
-              <p className="text-sm md:text-base text-gray-700">
-                <strong>{getTranslation(language, 'privacy.privacyOfficer.address')}</strong> {getTranslation(language, 'privacy.privacyOfficer.addressText')}
-              </p>
-            </div>
-            <p className="text-sm md:text-base text-gray-700">
-              {getTranslation(language, 'privacy.privacyOfficer.text2')}
+          <SectionTitle>{getTranslation(language, 'privacy.privacyOfficer.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.privacyOfficer.text1')}</Body>
+          <InfoBox>
+            <p style={{ fontFamily: S.sans, fontSize: "0.78rem", fontWeight: 300, color: S.textMid, marginBottom: "6px" }}>
+              <strong style={{ fontWeight: 500, color: S.dark }}>{getTranslation(language, 'privacy.privacyOfficer.email')}</strong>{' '}
+              <IntLink href="/contact?inquiryType=general">privacy@purepeelco.com</IntLink>
             </p>
-          </div>
+            <p style={{ fontFamily: S.sans, fontSize: "0.78rem", fontWeight: 300, color: S.textMid }}>
+              <strong style={{ fontWeight: 500, color: S.dark }}>{getTranslation(language, 'privacy.privacyOfficer.address')}</strong>{' '}
+              {getTranslation(language, 'privacy.privacyOfficer.addressText')}
+            </p>
+          </InfoBox>
+          <Body>{getTranslation(language, 'privacy.privacyOfficer.text2')}</Body>
 
-          {/* Data Breach Notification */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.dataBreach.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 mb-3">{getTranslation(language, 'privacy.dataBreach.text1')}</p>
-            <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 ml-2 md:ml-4">
-              <li>{getTranslation(language, 'privacy.dataBreach.step1')}</li>
-              <li>{getTranslation(language, 'privacy.dataBreach.step2')}</li>
-              <li>{getTranslation(language, 'privacy.dataBreach.step3')}</li>
-            </ul>
-            <p className="text-sm md:text-base text-gray-700 mt-4">
-              {getTranslation(language, 'privacy.dataBreach.text2')}
-            </p>
-          </div>
+          <Divider />
+
+          {/* Data Breach */}
+          <SectionTitle>{getTranslation(language, 'privacy.dataBreach.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.dataBreach.text1')}</Body>
+          <BulletList items={[
+            getTranslation(language, 'privacy.dataBreach.step1'),
+            getTranslation(language, 'privacy.dataBreach.step2'),
+            getTranslation(language, 'privacy.dataBreach.step3'),
+          ]} />
+          <Body>{getTranslation(language, 'privacy.dataBreach.text2')}</Body>
+
+          <Divider />
 
           {/* Data Portability */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.dataPortability.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 leading-relaxed">
-              {getTranslation(language, 'privacy.dataPortability.text')}
-            </p>
-          </div>
+          <SectionTitle>{getTranslation(language, 'privacy.dataPortability.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.dataPortability.text')}</Body>
+
+          <Divider />
 
           {/* Automated Decision-Making */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.automatedDecisionMaking.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 leading-relaxed">
-              {getTranslation(language, 'privacy.automatedDecisionMaking.text')}
-            </p>
-          </div>
+          <SectionTitle>{getTranslation(language, 'privacy.automatedDecisionMaking.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.automatedDecisionMaking.text')}</Body>
 
-          {/* Cross-Border Data Transfers */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.crossBorderTransfers.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 leading-relaxed">
-              {getTranslation(language, 'privacy.crossBorderTransfers.text')}
-            </p>
-          </div>
+          <Divider />
 
-          {/* United States Privacy Rights */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.usPrivacyRights.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 mb-3">{getTranslation(language, 'privacy.usPrivacyRights.text')}</p>
-            <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 ml-2 md:ml-4">
-              {getTranslation(language, 'privacy.usPrivacyRights.rights').map((right, index) => (
-                <li key={index}>{right}</li>
-              ))}
-            </ul>
-            <p className="text-sm md:text-base text-gray-700 mt-4">
-              {getTranslation(language, 'privacy.usPrivacyRights.california')}
-            </p>
-            <p className="text-sm md:text-base text-gray-700 mt-4">
-              {getTranslation(language, 'privacy.usPrivacyRights.text2')}
-            </p>
-          </div>
+          {/* Cross-Border Transfers */}
+          <SectionTitle>{getTranslation(language, 'privacy.crossBorderTransfers.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.crossBorderTransfers.text')}</Body>
+
+          <Divider />
+
+          {/* US Privacy Rights */}
+          <SectionTitle>{getTranslation(language, 'privacy.usPrivacyRights.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.usPrivacyRights.text')}</Body>
+          <BulletList items={getTranslation(language, 'privacy.usPrivacyRights.rights')} />
+          <Body>{getTranslation(language, 'privacy.usPrivacyRights.california')}</Body>
+          <Body>{getTranslation(language, 'privacy.usPrivacyRights.text2')}</Body>
+
+          <Divider />
 
           {/* Marketing Communications */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.marketingCommunications.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 mb-3">
-              {getTranslation(language, 'privacy.marketingCommunications.text1')}
-            </p>
-            <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 ml-2 md:ml-4">
-              <li>{getTranslation(language, 'privacy.marketingCommunications.item1')}</li>
-              <li>{getTranslation(language, 'privacy.marketingCommunications.item2')} <a href="/contact?inquiryType=general" className="text-amber-600 hover:text-amber-700">privacy@purepeelco.com</a></li>
-            </ul>
-            <p className="text-sm md:text-base text-gray-700 mt-4">
-              {getTranslation(language, 'privacy.marketingCommunications.text2')}
-            </p>
-          </div>
+          <SectionTitle>{getTranslation(language, 'privacy.marketingCommunications.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.marketingCommunications.text1')}</Body>
+          <BulletList items={[
+            getTranslation(language, 'privacy.marketingCommunications.item1'),
+            <>{getTranslation(language, 'privacy.marketingCommunications.item2')} <IntLink href="/contact?inquiryType=general">privacy@purepeelco.com</IntLink></>,
+          ]} />
+          <Body>{getTranslation(language, 'privacy.marketingCommunications.text2')}</Body>
+
+          <Divider />
 
           {/* Data Security */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.dataSecurity.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 leading-relaxed">
-              {getTranslation(language, 'privacy.dataSecurity.text')}
-            </p>
-          </div>
+          <SectionTitle>{getTranslation(language, 'privacy.dataSecurity.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.dataSecurity.text')}</Body>
+
+          <Divider />
 
           {/* Your Rights */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.yourRights.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 mb-3">{getTranslation(language, 'privacy.yourRights.text1')}</p>
-            <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 ml-2 md:ml-4">
-              <li>{getTranslation(language, 'privacy.yourRights.right1')}</li>
-              <li>{getTranslation(language, 'privacy.yourRights.right2')}</li>
-              <li>{getTranslation(language, 'privacy.yourRights.right3')}</li>
-              <li>{getTranslation(language, 'privacy.yourRights.right4')}</li>
-              <li>{getTranslation(language, 'privacy.yourRights.right5')}</li>
-              <li>{getTranslation(language, 'privacy.yourRights.right6')}</li>
-            </ul>
-            <p className="text-sm md:text-base text-gray-700 mt-4">
-              {getTranslation(language, 'privacy.yourRights.text2')}
+          <SectionTitle>{getTranslation(language, 'privacy.yourRights.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.yourRights.text1')}</Body>
+          <BulletList items={[
+            getTranslation(language, 'privacy.yourRights.right1'),
+            getTranslation(language, 'privacy.yourRights.right2'),
+            getTranslation(language, 'privacy.yourRights.right3'),
+            getTranslation(language, 'privacy.yourRights.right4'),
+            getTranslation(language, 'privacy.yourRights.right5'),
+            getTranslation(language, 'privacy.yourRights.right6'),
+          ]} />
+          <Body>{getTranslation(language, 'privacy.yourRights.text2')}</Body>
+          <Body>{getTranslation(language, 'privacy.yourRights.text3')}</Body>
+          <InfoBox>
+            <p style={{ fontFamily: S.sans, fontSize: "0.78rem", fontWeight: 300, color: S.textMid, marginBottom: "6px" }}>
+              <strong style={{ fontWeight: 500, color: S.dark }}>{getTranslation(language, 'privacy.yourRights.commissionerWebsite')}</strong>{' '}
+              <ExtLink href="https://www.priv.gc.ca">www.priv.gc.ca</ExtLink>
             </p>
-            <p className="text-sm md:text-base text-gray-700 mt-3">
-              {getTranslation(language, 'privacy.yourRights.text3')}
+            <p style={{ fontFamily: S.sans, fontSize: "0.78rem", fontWeight: 300, color: S.textMid, marginBottom: "6px" }}>
+              <strong style={{ fontWeight: 500, color: S.dark }}>{getTranslation(language, 'privacy.yourRights.commissionerPhone')}</strong>
             </p>
-            <div className="bg-gray-50 rounded-lg p-3 md:p-4 space-y-2 mt-3">
-              <p className="text-sm md:text-base text-gray-700">
-                <strong>{getTranslation(language, 'privacy.yourRights.commissionerWebsite')}</strong> <a href="https://www.priv.gc.ca" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:text-amber-700">www.priv.gc.ca</a>
-              </p>
-              <p className="text-sm md:text-base text-gray-700">
-                <strong>{getTranslation(language, 'privacy.yourRights.commissionerPhone')}</strong>
-              </p>
-              <p className="text-sm md:text-base text-gray-700">
-                <strong>{getTranslation(language, 'privacy.yourRights.commissionerAddress')}</strong>
-              </p>
-            </div>
-          </div>
+            <p style={{ fontFamily: S.sans, fontSize: "0.78rem", fontWeight: 300, color: S.textMid }}>
+              <strong style={{ fontWeight: 500, color: S.dark }}>{getTranslation(language, 'privacy.yourRights.commissionerAddress')}</strong>
+            </p>
+          </InfoBox>
 
-          {/* Changes to Privacy Policy */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.changesToPolicy.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 leading-relaxed">
-              {getTranslation(language, 'privacy.changesToPolicy.text')}
-            </p>
-          </div>
+          <Divider />
 
-          {/* Data Storage and Location */}
-          <div>
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.dataStorage.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 leading-relaxed">
-              {getTranslation(language, 'privacy.dataStorage.text')}
-            </p>
-          </div>
+          {/* Changes to Policy */}
+          <SectionTitle>{getTranslation(language, 'privacy.changesToPolicy.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.changesToPolicy.text')}</Body>
 
-          {/* Contact Information */}
-          <div className="border-t border-gray-200 pt-4 md:pt-6">
-            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-3 md:mb-4">{getTranslation(language, 'privacy.contact.title')}</h2>
-            <p className="text-sm md:text-base text-gray-700 mb-3">{getTranslation(language, 'privacy.contact.text')}</p>
-            <div className="bg-gray-50 rounded-lg p-3 md:p-4 space-y-2">
-              <p className="text-sm md:text-base text-gray-700">
-                <strong>{getTranslation(language, 'privacy.contact.privacyEmail')}</strong> <a href="/contact?inquiryType=general" className="text-amber-600 hover:text-amber-700">privacy@purepeelco.com</a>
-              </p>
-              <p className="text-sm md:text-base text-gray-700">
-                <strong>{getTranslation(language, 'privacy.contact.generalEmail')}</strong> <a href="/contact?inquiryType=general" className="text-amber-600 hover:text-amber-700">info@purepeelco.com</a>
-              </p>
-              <p className="text-sm md:text-base text-gray-700">
-                <strong>{getTranslation(language, 'privacy.contact.address')}</strong> {getTranslation(language, 'privacy.contact.addressText')}
-              </p>
-              <p className="text-xs md:text-sm text-gray-700 mt-3">
-                <strong>{getTranslation(language, 'privacy.contact.responseTime')}</strong>
-              </p>
-            </div>
-            <p className="text-sm md:text-base text-gray-700 mt-4">
-              {getTranslation(language, 'privacy.contact.text2')}
+          <Divider />
+
+          {/* Data Storage */}
+          <SectionTitle>{getTranslation(language, 'privacy.dataStorage.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.dataStorage.text')}</Body>
+
+          <Divider />
+
+          {/* Contact */}
+          <SectionTitle>{getTranslation(language, 'privacy.contact.title')}</SectionTitle>
+          <Body>{getTranslation(language, 'privacy.contact.text')}</Body>
+          <InfoBox>
+            <p style={{ fontFamily: S.sans, fontSize: "0.78rem", fontWeight: 300, color: S.textMid, marginBottom: "6px" }}>
+              <strong style={{ fontWeight: 500, color: S.dark }}>{getTranslation(language, 'privacy.contact.privacyEmail')}</strong>{' '}
+              <IntLink href="/contact?inquiryType=general">privacy@purepeelco.com</IntLink>
             </p>
-          </div>
+            <p style={{ fontFamily: S.sans, fontSize: "0.78rem", fontWeight: 300, color: S.textMid, marginBottom: "6px" }}>
+              <strong style={{ fontWeight: 500, color: S.dark }}>{getTranslation(language, 'privacy.contact.generalEmail')}</strong>{' '}
+              <IntLink href="/contact?inquiryType=general">info@purepeelco.com</IntLink>
+            </p>
+            <p style={{ fontFamily: S.sans, fontSize: "0.78rem", fontWeight: 300, color: S.textMid, marginBottom: "6px" }}>
+              <strong style={{ fontWeight: 500, color: S.dark }}>{getTranslation(language, 'privacy.contact.address')}</strong>{' '}
+              {getTranslation(language, 'privacy.contact.addressText')}
+            </p>
+            <p style={{ fontFamily: S.sans, fontSize: "0.7rem", fontWeight: 300, color: S.textLight, marginTop: "10px" }}>
+              <strong style={{ fontWeight: 500, color: S.dark }}>{getTranslation(language, 'privacy.contact.responseTime')}</strong>
+            </p>
+          </InfoBox>
+          <Body>{getTranslation(language, 'privacy.contact.text2')}</Body>
+
         </div>
+
+    
+
       </div>
     </section>
   )
 }
-

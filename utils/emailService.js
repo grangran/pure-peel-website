@@ -53,13 +53,26 @@ const getTransporter = () => {
   return createTransporter()
 }
 
-// Email templates - English
+// Shared theme tokens (matches site: cream, dark, gold, Cormorant/Jost)
+const emailTheme = {
+  cream: '#faf7f2',
+  creamDark: '#f2ece0',
+  dark: '#0f0a04',
+  gold: '#c85a08',
+  goldLight: '#e8c84a',
+  border: 'rgba(15,10,4,0.08)',
+  textMid: 'rgba(15,10,4,0.5)',
+  textLight: 'rgba(15,10,4,0.35)',
+  serif: "'Cormorant Garamond', Georgia, serif",
+  sans: "'Jost', 'Segoe UI', Arial, sans-serif"
+}
+
+// Email templates - English (Order confirmation + thank you)
 const orderConfirmationTemplateEN = (order, trackingUrl) => {
   const customerName = order.customer?.name || 'Customer'
   const customerEmail = order.customer?.email || ''
   const shippingName = order.shipping?.name || customerName
   const shippingAddress = order.shipping?.address || {}
-  // Use customer's timezone if available, otherwise default to America/Toronto
   const customerTimezone = order.timezone || order.metadata?.timezone || 'America/Toronto'
 
   return `
@@ -68,28 +81,30 @@ const orderConfirmationTemplateEN = (order, trackingUrl) => {
 <head>
   <meta charset="utf-8">
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-    .content { background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; }
-    .order-info { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #f59e0b; }
-    .items { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; }
-    .total { background: #fef3c7; padding: 20px; margin: 20px 0; border-radius: 8px; text-align: right; }
-    .button { display: inline-block; padding: 12px 24px; background: #f59e0b; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; }
-    .footer { text-align: center; padding: 20px; color: #6b7280; font-size: 12px; }
+    body { font-family: ${emailTheme.sans}; line-height: 1.6; color: ${emailTheme.dark}; margin: 0; }
+    .container { max-width: 600px; margin: 0 auto; }
+    .header { background: linear-gradient(135deg, #1a1208 0%, #2a1e08 100%); color: #f5f0e8; padding: 36px 32px; text-align: center; border-radius: 14px 14px 0 0; }
+    .header h1 { font-family: ${emailTheme.serif}; font-size: 28px; font-weight: 300; font-style: italic; margin: 0 0 8px; }
+    .header p { font-family: ${emailTheme.sans}; font-size: 14px; opacity: 0.85; margin: 0; }
+    .content { background: ${emailTheme.cream}; padding: 32px; border: 1px solid ${emailTheme.border}; border-top: none; border-radius: 0 0 14px 14px; }
+    .order-info { background: #fff; padding: 20px; margin: 20px 0; border-radius: 10px; border-left: 4px solid ${emailTheme.gold}; }
+    .items { background: #fff; padding: 20px; margin: 20px 0; border-radius: 10px; border: 1px solid ${emailTheme.border}; }
+    .total { background: ${emailTheme.creamDark}; padding: 20px; margin: 20px 0; border-radius: 10px; text-align: right; }
+    .button { display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #f5e6a3 0%, #e8c84a 55%, #d4a832 100%); color: ${emailTheme.dark}; text-decoration: none; border-radius: 12px; font-family: ${emailTheme.sans}; font-size: 12px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; margin: 20px 0; }
+    .footer { text-align: center; padding: 24px; color: ${emailTheme.textLight}; font-size: 12px; font-family: ${emailTheme.sans}; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>🍁 Order Confirmed!</h1>
-      <p>Thank you for your order with Pure Peel Co.</p>
+      <h1>Order Confirmed</h1>
+      <p>Thank you for your order — we're so glad you're here.</p>
     </div>
     
     <div class="content">
       <p>Hi ${customerName},</p>
       
-      <p>We're excited to let you know that we've received your order and payment has been confirmed!</p>
+      <p>Thank you for your order. We've received it and payment is confirmed. Here are the details:</p>
       
       <div class="order-info">
         <h2 style="margin-top: 0;">Order Details</h2>
@@ -103,7 +118,7 @@ const orderConfirmationTemplateEN = (order, trackingUrl) => {
           minute: '2-digit',
           hour12: true
         }) : new Date().toLocaleString('en-CA', { timeZone: customerTimezone })}</p>
-        <p><strong>Status:</strong> <span style="color: #f59e0b; font-weight: bold;">${(order.status || 'pending').charAt(0).toUpperCase() + (order.status || 'pending').slice(1)}</span></p>
+        <p><strong>Status:</strong> <span style="color: ${emailTheme.gold}; font-weight: bold;">${(order.status || 'pending').charAt(0).toUpperCase() + (order.status || 'pending').slice(1)}</span></p>
       </div>
 
       <div class="items">
@@ -156,13 +171,13 @@ const orderConfirmationTemplateEN = (order, trackingUrl) => {
 
       <p>We'll send you another email when your order ships with tracking information.</p>
       
-      <p>If you have any questions, please don't hesitate to reach out to us.</p>
+      <p>If you have any questions, reach out anytime.</p>
       
-      <p>Thank you for choosing Pure Peel Co. 🍁</p>
+      <p>Thank you for choosing Pure Peel Co.</p>
     </div>
 
     <div class="footer">
-      <p>Pure Peel Co. | Made in Canada</p>
+      <p>Pure Peel Co. · Made in Canada</p>
       <p>This is an automated email. Please do not reply directly to this message.</p>
     </div>
   </div>
@@ -171,12 +186,13 @@ const orderConfirmationTemplateEN = (order, trackingUrl) => {
   `
 }
 
-// Email templates - French
+// Email templates - French (Order confirmation)
 const orderConfirmationTemplateFR = (order, trackingUrl) => {
   const customerName = order.customer?.name || 'Client'
   const customerEmail = order.customer?.email || ''
   const shippingName = order.shipping?.name || customerName
   const shippingAddress = order.shipping?.address || {}
+  const customerTimezone = order.timezone || order.metadata?.timezone || 'America/Toronto'
 
   return `
 <!DOCTYPE html>
@@ -184,28 +200,30 @@ const orderConfirmationTemplateFR = (order, trackingUrl) => {
 <head>
   <meta charset="utf-8">
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-    .content { background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; }
-    .order-info { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #f59e0b; }
-    .items { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; }
-    .total { background: #fef3c7; padding: 20px; margin: 20px 0; border-radius: 8px; text-align: right; }
-    .button { display: inline-block; padding: 12px 24px; background: #f59e0b; color: white; text-decoration: none; border-radius: 6px; margin: 20px 0; }
-    .footer { text-align: center; padding: 20px; color: #6b7280; font-size: 12px; }
+    body { font-family: ${emailTheme.sans}; line-height: 1.6; color: ${emailTheme.dark}; margin: 0; }
+    .container { max-width: 600px; margin: 0 auto; }
+    .header { background: linear-gradient(135deg, #1a1208 0%, #2a1e08 100%); color: #f5f0e8; padding: 36px 32px; text-align: center; border-radius: 14px 14px 0 0; }
+    .header h1 { font-family: ${emailTheme.serif}; font-size: 28px; font-weight: 300; font-style: italic; margin: 0 0 8px; }
+    .header p { font-family: ${emailTheme.sans}; font-size: 14px; opacity: 0.85; margin: 0; }
+    .content { background: ${emailTheme.cream}; padding: 32px; border: 1px solid ${emailTheme.border}; border-top: none; border-radius: 0 0 14px 14px; }
+    .order-info { background: #fff; padding: 20px; margin: 20px 0; border-radius: 10px; border-left: 4px solid ${emailTheme.gold}; }
+    .items { background: #fff; padding: 20px; margin: 20px 0; border-radius: 10px; border: 1px solid ${emailTheme.border}; }
+    .total { background: ${emailTheme.creamDark}; padding: 20px; margin: 20px 0; border-radius: 10px; text-align: right; }
+    .button { display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #f5e6a3 0%, #e8c84a 55%, #d4a832 100%); color: ${emailTheme.dark}; text-decoration: none; border-radius: 12px; font-family: ${emailTheme.sans}; font-size: 12px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; margin: 20px 0; }
+    .footer { text-align: center; padding: 24px; color: ${emailTheme.textLight}; font-size: 12px; font-family: ${emailTheme.sans}; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>🍁 Commande Confirmée !</h1>
-      <p>Merci pour votre commande chez Pure Peel Co.</p>
+      <h1>Commande confirmée</h1>
+      <p>Merci pour votre commande — nous sommes ravis de vous compter parmi nous.</p>
     </div>
     
     <div class="content">
       <p>Bonjour ${customerName},</p>
       
-      <p>Nous sommes ravis de vous informer que nous avons reçu votre commande et que le paiement a été confirmé !</p>
+      <p>Merci pour votre commande. Nous l'avons bien reçue et le paiement est confirmé. Voici les détails :</p>
       
       <div class="order-info">
         <h2 style="margin-top: 0;">Détails de la Commande</h2>
@@ -219,7 +237,7 @@ const orderConfirmationTemplateFR = (order, trackingUrl) => {
           minute: '2-digit',
           hour12: true
         }) : new Date().toLocaleString('fr-CA', { timeZone: customerTimezone })}</p>
-        <p><strong>Statut :</strong> <span style="color: #f59e0b; font-weight: bold;">${(order.status || 'en attente').charAt(0).toUpperCase() + (order.status || 'en attente').slice(1)}</span></p>
+        <p><strong>Statut :</strong> <span style="color: ${emailTheme.gold}; font-weight: bold;">${(order.status || 'en attente').charAt(0).toUpperCase() + (order.status || 'en attente').slice(1)}</span></p>
       </div>
 
       <div class="items">
@@ -278,7 +296,7 @@ const orderConfirmationTemplateFR = (order, trackingUrl) => {
     </div>
 
     <div class="footer">
-      <p>Pure Peel Co. | Fabriqué au Canada</p>
+      <p>Pure Peel Co. · Fabriqué au Canada</p>
       <p>Ceci est un e-mail automatisé. Veuillez ne pas répondre directement à ce message.</p>
     </div>
   </div>
@@ -292,6 +310,104 @@ const orderConfirmationTemplate = (order, trackingUrl, language = 'en') => {
   return language === 'fr' 
     ? orderConfirmationTemplateFR(order, trackingUrl)
     : orderConfirmationTemplateEN(order, trackingUrl)
+}
+
+// Welcome email (10% off) - English
+const welcomeEmailTemplateEN = (promoCode = 'WELCOME10') => {
+  const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: ${emailTheme.sans}; line-height: 1.6; color: ${emailTheme.dark}; margin: 0; }
+    .container { max-width: 560px; margin: 0 auto; }
+    .header { background: ${emailTheme.cream}; padding: 48px 40px 32px; text-align: left; }
+    .eyebrow { font-family: ${emailTheme.sans}; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(200,90,8,0.7); margin-bottom: 20px; }
+    h1 { font-family: ${emailTheme.serif}; font-size: 32px; font-weight: 300; font-style: italic; color: ${emailTheme.dark}; margin: 0 0 16px; line-height: 1.3; }
+    .content { background: ${emailTheme.cream}; padding: 0 40px 48px; }
+    .lead { font-size: 16px; color: ${emailTheme.dark}; margin: 0 0 28px; line-height: 1.7; font-weight: 300; }
+    .code-box { background: #fff; border: 1px solid rgba(232,200,74,0.4); border-radius: 12px; padding: 24px 32px; text-align: center; margin: 0 0 32px; }
+    .code-label { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: ${emailTheme.textMid}; margin: 0 0 8px; }
+    .code { font-family: 'Courier New', monospace; font-size: 26px; font-weight: 700; color: ${emailTheme.dark}; letter-spacing: 0.12em; margin: 0 0 8px; }
+    .code-desc { font-size: 13px; color: ${emailTheme.gold}; margin: 0; }
+    .cta { display: inline-block; background: linear-gradient(135deg, #f5e6a3 0%, #e8c84a 55%, #d4a832 100%); color: ${emailTheme.dark}; text-align: center; padding: 16px 32px; border-radius: 100px; font-family: ${emailTheme.sans}; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; margin: 0 0 40px; }
+    .footer { border-top: 1px solid ${emailTheme.border}; padding: 24px 40px; font-size: 12px; color: ${emailTheme.textLight}; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <p class="eyebrow">Welcome to Pure Peel Co.</p>
+      <h1>A little something<br/>for joining us.</h1>
+    </div>
+    <div class="content">
+      <p class="lead">Thanks for signing up. Here's your welcome discount — use it on your first order:</p>
+      <div class="code-box">
+        <p class="code-label">Your discount code</p>
+        <p class="code">${promoCode}</p>
+        <p class="code-desc">10% off your first order</p>
+      </div>
+      <a href="${shopUrl}" class="cta">Shop Now</a>
+    </div>
+    <div class="footer">
+      <p style="margin: 0;">You're receiving this because you signed up at purepeelco.com.</p>
+      <p style="margin: 8px 0 0 0;">Pure Peel Co. — Premium dehydrated citrus, made in Canada.</p>
+    </div>
+  </div>
+</body>
+</html>
+  `
+}
+
+// Welcome email (10% off) - French
+const welcomeEmailTemplateFR = (promoCode = 'WELCOME10') => {
+  const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: ${emailTheme.sans}; line-height: 1.6; color: ${emailTheme.dark}; margin: 0; }
+    .container { max-width: 560px; margin: 0 auto; }
+    .header { background: ${emailTheme.cream}; padding: 48px 40px 32px; text-align: left; }
+    .eyebrow { font-family: ${emailTheme.sans}; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(200,90,8,0.7); margin-bottom: 20px; }
+    h1 { font-family: ${emailTheme.serif}; font-size: 32px; font-weight: 300; font-style: italic; color: ${emailTheme.dark}; margin: 0 0 16px; line-height: 1.3; }
+    .content { background: ${emailTheme.cream}; padding: 0 40px 48px; }
+    .lead { font-size: 16px; color: ${emailTheme.dark}; margin: 0 0 28px; line-height: 1.7; font-weight: 300; }
+    .code-box { background: #fff; border: 1px solid rgba(232,200,74,0.4); border-radius: 12px; padding: 24px 32px; text-align: center; margin: 0 0 32px; }
+    .code-label { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: ${emailTheme.textMid}; margin: 0 0 8px; }
+    .code { font-family: 'Courier New', monospace; font-size: 26px; font-weight: 700; color: ${emailTheme.dark}; letter-spacing: 0.12em; margin: 0 0 8px; }
+    .code-desc { font-size: 13px; color: ${emailTheme.gold}; margin: 0; }
+    .cta { display: inline-block; background: linear-gradient(135deg, #f5e6a3 0%, #e8c84a 55%, #d4a832 100%); color: ${emailTheme.dark}; text-align: center; padding: 16px 32px; border-radius: 100px; font-family: ${emailTheme.sans}; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; margin: 0 0 40px; }
+    .footer { border-top: 1px solid ${emailTheme.border}; padding: 24px 40px; font-size: 12px; color: ${emailTheme.textLight}; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <p class="eyebrow">Bienvenue chez Pure Peel Co.</p>
+      <h1>Un petit quelque chose<br/>pour vous remercier.</h1>
+    </div>
+    <div class="content">
+      <p class="lead">Merci de vous être inscrit. Voici votre réduction de bienvenue — à utiliser sur votre première commande :</p>
+      <div class="code-box">
+        <p class="code-label">Votre code promo</p>
+        <p class="code">${promoCode}</p>
+        <p class="code-desc">10 % de réduction sur votre première commande</p>
+      </div>
+      <a href="${shopUrl}" class="cta">Magasiner</a>
+    </div>
+    <div class="footer">
+      <p style="margin: 0;">Vous recevez ceci car vous vous êtes inscrit sur purepeelco.com.</p>
+      <p style="margin: 8px 0 0 0;">Pure Peel Co. — Agrumes déshydratés, fabriqués au Canada.</p>
+    </div>
+  </div>
+</body>
+</html>
+  `
 }
 
 const shippingNotificationTemplate = (order, trackingNumber) => {
@@ -835,6 +951,86 @@ export const sendContactForm = async (name, email, inquiryType, message) => {
     return { success: true, messageId: info.messageId }
   } catch (error) {
     console.error('Error sending contact form email:', error)
+    return { success: false, error: error.message }
+  }
+}
+
+// Preview helpers (for viewing templates in browser)
+const mockOrder = {
+  id: 'PP-12345678',
+  status: 'pending',
+  createdAt: new Date().toISOString(),
+  customer: { name: 'Jordan Smith', email: 'jordan@example.com' },
+  shipping: {
+    name: 'Jordan Smith',
+    method: 'Regular Parcel',
+    address: { line1: '123 Main St', city: 'Toronto', province: 'ON', postalCode: 'M5V 1A1', country: 'CA' }
+  },
+  items: [
+    { name: 'Pure Peel Orange', variant: 'Small Bag - 20 pcs', quantity: 1, total: 9, price: 9 },
+    { name: 'Pure Peel Lemon', variant: 'Large Bag - 40 pcs', quantity: 1, total: 14, price: 14 }
+  ],
+  subtotal: 23,
+  shippingCost: 12,
+  tax: 0,
+  total: 35,
+  currency: 'CAD',
+  metadata: { language: 'en' }
+}
+
+export const getOrderConfirmationPreview = (language = 'en') => {
+  const trackingUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/order-tracking?orderId=PP-12345678&email=jordan%40example.com`
+  return orderConfirmationTemplate(mockOrder, trackingUrl, language)
+}
+
+export const getWelcomeEmailPreview = (language = 'en') => {
+  const promoCode = process.env.WELCOME_PROMO_CODE || 'WELCOME10'
+  return language === 'fr' ? welcomeEmailTemplateFR(promoCode) : welcomeEmailTemplateEN(promoCode)
+}
+
+// Send welcome email (10% off code) to new subscribers
+export const sendWelcomeEmail = async (email, options = {}) => {
+  const { language = 'en', promoCode = process.env.WELCOME_PROMO_CODE || 'WELCOME10' } = options
+  try {
+    const htmlContent = language === 'fr' ? welcomeEmailTemplateFR(promoCode) : welcomeEmailTemplateEN(promoCode)
+    const subject = language === 'fr'
+      ? 'Votre code 10 % de réduction vous attend | Pure Peel Co.'
+      : 'Your 10% off code is inside | Pure Peel Co.'
+
+    if (resend && process.env.RESEND_FROM_EMAIL) {
+      const fromDisplay = process.env.RESEND_FROM_EMAIL.includes('<') ? process.env.RESEND_FROM_EMAIL : `Pure Peel Co. <${process.env.RESEND_FROM_EMAIL}>`
+      const { data, error } = await resend.emails.send({
+        from: fromDisplay,
+        to: email,
+        subject,
+        html: htmlContent,
+        headers: { 'X-Entity-Ref-ID': `welcome-${Date.now()}` },
+        tags: [{ name: 'welcome', value: '10-off' }]
+      })
+      if (error) {
+        console.error('❌ Welcome email Resend error:', error.message || JSON.stringify(error))
+        return { success: false, error: error.message }
+      }
+      console.log('✅ Welcome email sent via Resend to:', email, '| Message ID:', data?.id)
+      return { success: true, messageId: data?.id }
+    }
+
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+      console.log('⚠️ Email not configured. Welcome email would be sent to:', email)
+      return { success: false, reason: 'Email not configured' }
+    }
+
+    const transporter = getTransporter()
+    const info = await transporter.sendMail({
+      from: `"Pure Peel Co." <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
+      to: email,
+      subject,
+      html: htmlContent
+    })
+    console.log('✅ Welcome email sent to:', email)
+    return { success: true, messageId: info.messageId }
+  } catch (error) {
+    console.error('Error sending welcome email:', error)
     return { success: false, error: error.message }
   }
 }

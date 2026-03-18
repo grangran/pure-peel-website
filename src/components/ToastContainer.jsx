@@ -47,7 +47,7 @@ export function ToastProvider({ children }) {
     <ToastContext.Provider value={{ addToast }}>
       {children}
       <div
-        className="fixed top-4 right-4 z-[2000] pointer-events-none"
+       className="fixed top-[88px] right-4 z-[2000] pointer-events-none"
         style={{ maxWidth: 'calc(100vw - 2rem)' }}
       >
         <div className="pointer-events-auto">

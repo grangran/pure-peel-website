@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:8080": "vite --port 8080",
     "build": "vite build",
+    "start": "vite build && vite preview",
+    "preview:4173": "vite preview --port 4173",
     "lint": "eslint .",
     "preview": "vite preview",
     "server": "node server.js",

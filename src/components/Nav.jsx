@@ -5,477 +5,442 @@ import { useCurrency } from "../context/CurrencyContext"
 import { getTranslation } from "../utils/translations"
 import OptimizedImage from "./OptimizedImage"
 
+const S = {
+  serif: "'Cormorant Garamond', Georgia, serif",
+  sans:  "'Jost', sans-serif",
+  dark:  "#0f0a04",
+  gold:  "#e8c84a",
+  orange:"#c85a08",
+}
+
 export default function Nav() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [navHeight, setNavHeight] = useState(72)
-  const { cartCount, isCartOpen, setIsCartOpen, getCartTotal } = useCart()
-  const [badgeUpdated, setBadgeUpdated] = useState(false)
-  const { language, setLanguage } = useLanguage()
-  const { currency, setCurrency } = useCurrency()
-  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false)
-  const [isCurrencyDropdownOpen, setIsCurrencyDropdownOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
+  const [isMenuOpen, setIsMenuOpen]         = useState(false)
+  const [isScrolled, setIsScrolled]         = useState(true)
+  const [isShopOpen, setIsShopOpen]         = useState(false)
+  const [isLangOpen, setIsLangOpen]         = useState(false)
+  const [isCurrencyOpen, setIsCurrencyOpen] = useState(false)
+  const [badgeUpdated, setBadgeUpdated]     = useState(false)
+  const [navHeight, setNavHeight]           = useState(72)
+  const [currentPath, setCurrentPath]       = useState(window.location.pathname)
 
-  // Reset menu state when component mounts or when route changes
-  useEffect(() => {
-    setIsMenuOpen(false)
-    setIsLangDropdownOpen(false)
-    setIsCurrencyDropdownOpen(false)
-  }, []) // Reset on mount - component will remount with key prop from App.jsx
+  const { cartCount, setIsCartOpen }        = useCart()
+  const { language, setLanguage }           = useLanguage()
+  const { currency, setCurrency }           = useCurrency()
 
+  // Nav height
   useEffect(() => {
     const nav = document.querySelector("nav")
-    if (nav) {
-      const updateNavHeight = () => {
-        const height = nav.offsetHeight
-        setNavHeight(height)
-        document.documentElement.style.setProperty("--nav-height", `${height}px`)
-      }
-      updateNavHeight()
-      window.addEventListener("resize", updateNavHeight)
-      return () => window.removeEventListener("resize", updateNavHeight)
+    if (!nav) return
+    const update = () => {
+      const h = nav.offsetHeight
+      setNavHeight(h)
+      document.documentElement.style.setProperty("--nav-height", `${h}px`)
     }
+    update()
+    window.addEventListener("resize", update)
+    return () => window.removeEventListener("resize", update)
   }, [])
 
+  // Scroll state
   useEffect(() => {
-    if (isMenuOpen || isCartOpen) {
-      document.body.classList.add("menu-open")
-    } else {
-      document.body.classList.remove("menu-open")
-    }
-    return () => {
-      document.body.classList.remove("menu-open")
-    }
-  }, [isMenuOpen, isCartOpen])
+    const onScroll = () => setIsScrolled(window.scrollY > 8)
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
 
+  // Body lock when mobile menu open
+  useEffect(() => {
+    document.body.classList.toggle("menu-open", isMenuOpen)
+    return () => document.body.classList.remove("menu-open")
+  }, [isMenuOpen])
+
+  // Cart badge bounce
   useEffect(() => {
     if (cartCount > 0) {
       setBadgeUpdated(true)
-      const timer = setTimeout(() => setBadgeUpdated(false), 300)
-      return () => clearTimeout(timer)
+      const t = setTimeout(() => setBadgeUpdated(false), 300)
+      return () => clearTimeout(t)
     }
   }, [cartCount])
 
-  // Add scroll effect for nav
+  // Reset on mount
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    setIsMenuOpen(false)
+    setIsLangOpen(false)
+    setIsCurrencyOpen(false)
+    setIsShopOpen(false)
   }, [])
 
-  const handleLanguageChange = (lang) => {
-    setLanguage(lang)
-    setIsLangDropdownOpen(false)
-  }
+  // Track current path reactively
+  useEffect(() => {
+    const update = () => setCurrentPath(window.location.pathname)
+    window.addEventListener("popstate", update)
+    window.addEventListener("hashchange", update)
+    return () => {
+      window.removeEventListener("popstate", update)
+      window.removeEventListener("hashchange", update)
+    }
+  }, [])
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
   const closeMenu = () => setIsMenuOpen(false)
+  const closeAll  = () => { setIsShopOpen(false); setIsLangOpen(false); setIsCurrencyOpen(false) }
 
   const handleLinkClick = (e, targetId) => {
     e.preventDefault()
-    closeMenu()
-    
-    // Navigate to home page first if not already there
-    const currentPath = window.location.pathname.replace(/\/$/, '')
-    if (currentPath !== '/' && currentPath !== '') {
-      window.history.pushState({ page: '/' }, '', '/')
-      window.dispatchEvent(new Event('hashchange'))
+    closeMenu(); closeAll()
+    const path = window.location.pathname.replace(/\/$/, "")
+    if (path !== "/" && path !== "") {
+      window.history.pushState({ page: "/" }, "", "/")
+      window.dispatchEvent(new Event("hashchange"))
     }
-    
-    // Wait for page to render, then scroll to section
     setTimeout(() => {
-      const element = document.getElementById(targetId)
-      if (element) {
-        const offset = navHeight + 20
-        const elementPosition = element.getBoundingClientRect().top
-        const offsetPosition = elementPosition + window.pageYOffset - offset
-        window.scrollTo({ top: offsetPosition, behavior: "smooth" })
-      }
+      const el = document.getElementById(targetId)
+      if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.pageYOffset - navHeight - 20, behavior: "smooth" })
     }, 100)
   }
 
-  const handleShopLink = (e, product) => {
-    // Let App.jsx handle navigation via its click interceptor
-    // No need to call pushState here - App.jsx will do it
-    // Just prevent default and close menu
-    e.preventDefault()
-    closeMenu()
-  }
+  const transparent = false
+
+  const navBg    = "bg-[#faf8f5]/96 backdrop-blur-md border-black/6 shadow-sm"
+  const linkColor = "rgba(15,10,4,0.65)"
+  const linkHover = S.dark
+
+  const linkStyle = (extra = {}) => ({
+    fontFamily: S.sans, fontSize: "0.68rem", fontWeight: 300,
+    letterSpacing: "0.16em", textTransform: "uppercase",
+    color: linkColor, textDecoration: "none",
+    transition: "color 0.2s",
+    background: "none", border: "none", cursor: "pointer", padding: 0,
+    ...extra,
+  })
 
   return (
-    <nav className={`sticky top-0 left-0 right-0 z-50 h-[72px] bg-[#faf8f5] border-b transition-all duration-300 ${
-      isScrolled 
-        ? 'border-gray-200/80 shadow-md backdrop-blur-sm bg-[#faf8f5]/95' 
-        : 'border-gray-200/50 shadow-sm'
-    }`}>
-      <div className="h-full max-w-7xl mx-auto px-2 sm:px-3 md:px-5 flex items-center justify-between relative">
-        {/* Left: Hamburger Menu */}
-        <button 
-          className="w-10 h-10 sm:w-11 sm:h-11 p-1.5 sm:p-2 flex items-center justify-center bg-transparent border-0 cursor-pointer rounded-lg transition-all duration-150 hover:bg-black/5 active:scale-95 touch-manipulation min-w-[40px] sm:min-w-[44px] min-h-[40px] sm:min-h-[44px]"
-          onClick={toggleMenu}
-          aria-label="Toggle menu"
-          aria-expanded={isMenuOpen}
-        >
-          {isMenuOpen ? (
-            <svg
-              className="w-5 h-5"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+    <>
+      <nav className={`sticky top-0 left-0 right-0 z-50 h-[72px] border-b transition-all duration-300 overflow-visible ${navBg}`}>
+        <div className="h-full max-w-[1400px] mx-auto px-8 flex items-center justify-between relative">
+
+          {/* ── LEFT: desktop links ── */}
+          <div className="hidden md:flex items-center gap-8">
+
+            {/* Shop dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => { setIsShopOpen(true); setIsLangOpen(false); setIsCurrencyOpen(false) }}
+              onMouseLeave={() => setIsShopOpen(false)}
             >
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          ) : (
-            <div className="flex flex-col justify-center gap-1.5 w-[22px]">
-              <span className="block w-full h-0.5 bg-gray-900 rounded-sm"></span>
-              <span className="block w-full h-0.5 bg-gray-900 rounded-sm"></span>
-              <span className="block w-full h-0.5 bg-gray-900 rounded-sm"></span>
+              <button style={linkStyle({ display: "flex", alignItems: "center", gap: "5px" })}
+                onMouseEnter={e => e.currentTarget.style.color = linkHover}
+                onMouseLeave={e => e.currentTarget.style.color = linkColor}
+              >
+                {getTranslation(language, "nav.shop")}
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+                  style={{ stroke: linkColor, transition: "transform 0.2s", transform: isShopOpen ? "rotate(180deg)" : "none" }}>
+                  <path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+
+              {/* Outer div = invisible bridge that keeps hover alive */}
+              <div style={{
+                position: "absolute", top: "100%", left: "0%",
+                transform: isShopOpen ? "translateY(0)" : "translateY(-8px)",
+                paddingTop: "12px",
+                opacity: isShopOpen ? 1 : 0,
+                pointerEvents: isShopOpen ? "auto" : "none",
+                transition: "opacity 0.2s ease, transform 0.2s ease",
+                zIndex: 100,
+              }}>
+                {/* Inner div = visible card */}
+                <div style={{
+                  background: "#faf8f5", borderRadius: "14px",
+                  border: "1px solid rgba(15,10,4,0.08)",
+                  boxShadow: "0 16px 48px rgba(15,10,4,0.12)",
+                  padding: "20px 24px", minWidth: "220px",
+                }}>
+                  <div style={{ fontFamily: S.sans, fontSize: "0.55rem", fontWeight: 500, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(200,90,8,0.55)", marginBottom: "10px" }}>
+                    Citrus Collection
+                  </div>
+                  {[
+                    { href: "/orange",      label: getTranslation(language, "products.orange.name") },
+                    { href: "/pink-orange", label: getTranslation(language, "products.pinkOrange.name") },
+                    { href: "/lime",        label: getTranslation(language, "products.lime.name") },
+                    { href: "/lemon",       label: getTranslation(language, "products.lemon.name") },
+                  ].map(item => (
+                    <a key={item.href} href={item.href} style={{
+                      display: "block", padding: "7px 0",
+                      fontFamily: S.sans, fontSize: "0.8rem", fontWeight: 300,
+                      color: "rgba(15,10,4,0.65)", textDecoration: "none",
+                      transition: "color 0.15s",
+                    }}
+                      onMouseEnter={e => e.currentTarget.style.color = S.dark}
+                      onMouseLeave={e => e.currentTarget.style.color = "rgba(15,10,4,0.65)"}
+                    >{item.label}</a>
+                  ))}
+
+                  <div style={{ height: "1px", background: "rgba(15,10,4,0.07)", margin: "12px 0" }} />
+
+                  <div style={{ fontFamily: S.sans, fontSize: "0.55rem", fontWeight: 500, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(200,90,8,0.55)", marginBottom: "10px" }}>
+                    Fruit Collection
+                  </div>
+                  <a href="/apple" style={{
+                    display: "block", padding: "7px 0",
+                    fontFamily: S.sans, fontSize: "0.8rem", fontWeight: 300,
+                    color: "rgba(15,10,4,0.65)", textDecoration: "none",
+                    transition: "color 0.15s",
+                  }}
+                    onMouseEnter={e => e.currentTarget.style.color = S.dark}
+                    onMouseLeave={e => e.currentTarget.style.color = "rgba(15,10,4,0.65)"}
+                  >{getTranslation(language, "products.apple.name")}</a>
+                </div>
+              </div>
             </div>
-          )}
-        </button>
 
-        {/* Center: Logo - Bigger and higher resolution */}
-        <a 
-          href="/" 
-          className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center no-underline transition-all duration-200 hover:opacity-85 hover:scale-105 z-10 pointer-events-auto touch-manipulation"
-          style={{ 
-            minWidth: '100px' // Minimum width to prevent too small on very small screens
-          }}
-          onClick={(e) => {
-            // Let App.jsx handle navigation via its click interceptor
-            e.preventDefault()
-          }}
-        >
-          <OptimizedImage
-            src="/logo.png"
-            alt="Pure Peel Co."
-            className="h-[48px] sm:h-[56px] md:h-[72px] w-auto max-w-[100px] sm:max-w-[150px] md:max-w-[360px] block object-contain pointer-events-none"
-            width="176"
-            height="181"
-            sizes="(max-width: 640px) 100px, (max-width: 768px) 150px, 360px"
-            loading="eager"
-            fetchPriority="high"
-            onError={(e) => {
-              console.error('Logo failed to load:', e.target?.src)
-            }}
-          />
-        </a>
-
-        {/* Right: Currency, Language & Cart */}
-        <div className="flex items-center gap-1 sm:gap-1.5 md:gap-4 ml-auto">
-          {/* Currency Selector */}
-          <div className="relative ml-1 md:ml-0">
-            <button
-              onClick={() => {
-                setIsCurrencyDropdownOpen(!isCurrencyDropdownOpen)
-                setIsLangDropdownOpen(false) // Close language dropdown if open
-              }}
-              className="flex items-center gap-1 px-2 md:px-3 py-1.5 md:py-2 text-xs sm:text-sm font-medium text-gray-700 hover:text-gray-900 rounded-lg hover:bg-white/50 transition-all duration-200 active:scale-95 min-w-[36px] sm:min-w-[44px] min-h-[36px] sm:min-h-[44px]"
-              aria-label="Select currency"
+            {/* About */}
+            <a href="/about" style={linkStyle()}
+              onMouseEnter={e => e.currentTarget.style.color = linkHover}
+              onMouseLeave={e => e.currentTarget.style.color = linkColor}
             >
-              <span className="text-xs uppercase">{currency}</span>
-              <svg 
-                className={`w-3.5 h-3.5 md:w-4 md:h-4 transition-transform hidden md:block ${isCurrencyDropdownOpen ? 'rotate-180' : ''}`}
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            
-            {isCurrencyDropdownOpen && (
-              <>
-                <div 
-                  className="fixed inset-0 z-40"
-                  onClick={() => setIsCurrencyDropdownOpen(false)}
-                />
-                <div className="absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 z-50 backdrop-blur-sm">
-                  <button
-                    onClick={() => {
-                      setCurrency('CAD')
-                      setIsCurrencyDropdownOpen(false)
-                    }}
-                    className={`w-full text-left px-4 py-2.5 text-sm transition-all rounded-lg mx-1 active:scale-95 min-h-[44px] ${
-                      currency === 'CAD' 
-                        ? 'bg-amber-50 text-amber-600 font-semibold' 
-                        : 'text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    CAD - Canadian Dollar
-                  </button>
-                  <button
-                    onClick={() => {
-                      setCurrency('USD')
-                      setIsCurrencyDropdownOpen(false)
-                    }}
-                    className={`w-full text-left px-4 py-2.5 text-sm transition-all rounded-lg mx-1 active:scale-95 min-h-[44px] ${
-                      currency === 'USD' 
-                        ? 'bg-amber-50 text-amber-600 font-semibold' 
-                        : 'text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    USD - US Dollar
-                  </button>
-                </div>
-              </>
-            )}
+              {getTranslation(language, "nav.about")}
+            </a>
+
           </div>
 
-          {/* Language Selector - Simplified on mobile */}
-          <div className="relative">
-            <button
-              onClick={() => {
-                setIsLangDropdownOpen(!isLangDropdownOpen)
-                setIsCurrencyDropdownOpen(false) // Close currency dropdown if open
-              }}
-              className="flex items-center gap-1 px-2 md:px-3 py-1.5 md:py-2 text-xs sm:text-sm font-medium text-gray-700 hover:text-gray-900 rounded-lg hover:bg-white/50 transition-all duration-200 active:scale-95 min-w-[36px] sm:min-w-[44px] min-h-[36px] sm:min-h-[44px]"
-              aria-label="Select language"
-            >
-              <span className="text-xs uppercase">{language === 'en' ? 'EN' : 'FR'}</span>
-              <svg 
-                className={`w-3.5 h-3.5 md:w-4 md:h-4 transition-transform hidden md:block ${isLangDropdownOpen ? 'rotate-180' : ''}`}
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            
-            {isLangDropdownOpen && (
-              <>
-                <div 
-                  className="fixed inset-0 z-40"
-                  onClick={() => setIsLangDropdownOpen(false)}
-                />
-                <div className="absolute right-0 mt-2 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 z-50 backdrop-blur-sm">
-                  <button
-                    onClick={() => handleLanguageChange('en')}
-                    className={`w-full text-left px-4 py-2.5 text-sm transition-all rounded-lg mx-1 active:scale-95 min-h-[44px] ${
-                      language === 'en' 
-                        ? 'bg-amber-50 text-amber-600 font-semibold' 
-                        : 'text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    <span className="flex items-center gap-2">
-                      <span className="text-xs">🇬🇧</span>
-                      English
-                    </span>
-                  </button>
-                  <button
-                    onClick={() => handleLanguageChange('fr')}
-                    className={`w-full text-left px-4 py-2.5 text-sm transition-all rounded-lg mx-1 active:scale-95 min-h-[44px] ${
-                      language === 'fr' 
-                        ? 'bg-amber-50 text-amber-600 font-semibold' 
-                        : 'text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    <span className="flex items-center gap-2">
-                      <span className="text-xs">🇫🇷</span>
-                      Français
-                    </span>
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* Cart Button */}
-          <button 
-            className="relative w-10 h-10 sm:w-11 sm:h-11 md:w-14 md:h-14 flex items-center justify-center bg-transparent border-0 cursor-pointer rounded-lg transition-all duration-200 hover:bg-white/50 active:scale-95 touch-manipulation group" 
-            aria-label={`Open cart${cartCount > 0 ? ` (${cartCount} items)` : ""}`}
-            onClick={() => {
-              setIsCartOpen(true)
-              closeMenu()
-            }}
+          {/* ── CENTER: Logo ── */}
+          <a href="/"
+            className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center no-underline z-10"
+            style={{ transition: "opacity 0.2s" }}
+            onMouseEnter={e => e.currentTarget.style.opacity = "0.8"}
+            onMouseLeave={e => e.currentTarget.style.opacity = "1"}
+            onClick={e => e.preventDefault()}
           >
-            <svg
-              className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-gray-800 transition-all duration-300 group-hover:text-amber-600 group-hover:scale-110"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+            <img
+              src="/images/logov2.png"
+              alt="Pure Peel Co."
+              className="h-[48px] md:h-[56px] w-auto block object-contain pointer-events-none"
+              width="176" height="181"
+              loading="eager"
+            />
+          </a>
+
+          {/* ── RIGHT: utilities ── */}
+          <div className="flex items-center gap-2 md:gap-4">
+
+            {/* Currency — desktop only */}
+            <div className="relative hidden md:block">
+              <button
+                onClick={() => { setIsCurrencyOpen(p => !p); setIsLangOpen(false); setIsShopOpen(false) }}
+                style={linkStyle({ display: "flex", alignItems: "center", gap: "4px" })}
+                onMouseEnter={e => e.currentTarget.style.color = linkHover}
+                onMouseLeave={e => e.currentTarget.style.color = linkColor}
+              >
+                {currency}
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+                  style={{ stroke: linkColor, transition: "transform 0.2s", transform: isCurrencyOpen ? "rotate(180deg)" : "none" }}>
+                  <path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+              {isCurrencyOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setIsCurrencyOpen(false)} />
+                  <div style={{
+                    position: "absolute", right: 0, top: "calc(100% + 12px)",
+                    background: "#faf8f5", borderRadius: "12px",
+                    border: "1px solid rgba(15,10,4,0.08)",
+                    boxShadow: "0 12px 36px rgba(15,10,4,0.1)",
+                    padding: "8px", minWidth: "160px", zIndex: 100,
+                  }}>
+                    {[{ val: "CAD", label: "CAD — Canadian Dollar" }, { val: "USD", label: "USD — US Dollar" }].map(c => (
+                      <button key={c.val} onClick={() => { setCurrency(c.val); setIsCurrencyOpen(false) }}
+                        style={{
+                          display: "block", width: "100%", textAlign: "left",
+                          padding: "9px 14px", borderRadius: "8px", border: "none",
+                          background: currency === c.val ? "rgba(200,90,8,0.06)" : "transparent",
+                          fontFamily: S.sans, fontSize: "0.76rem", fontWeight: currency === c.val ? 500 : 300,
+                          color: currency === c.val ? S.orange : "rgba(15,10,4,0.65)",
+                          cursor: "pointer", transition: "background 0.15s",
+                        }}
+                        onMouseEnter={e => { if (currency !== c.val) e.currentTarget.style.background = "rgba(15,10,4,0.04)" }}
+                        onMouseLeave={e => { if (currency !== c.val) e.currentTarget.style.background = "transparent" }}
+                      >{c.label}</button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Language — desktop only */}
+            <div className="relative hidden md:block">
+              <button
+                onClick={() => { setIsLangOpen(p => !p); setIsCurrencyOpen(false); setIsShopOpen(false) }}
+                style={linkStyle({ display: "flex", alignItems: "center", gap: "4px" })}
+                onMouseEnter={e => e.currentTarget.style.color = linkHover}
+                onMouseLeave={e => e.currentTarget.style.color = linkColor}
+              >
+                {language === "en" ? "EN" : "FR"}
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+                  style={{ stroke: linkColor, transition: "transform 0.2s", transform: isLangOpen ? "rotate(180deg)" : "none" }}>
+                  <path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+              {isLangOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setIsLangOpen(false)} />
+                  <div style={{
+                    position: "absolute", right: 0, top: "calc(100% + 12px)",
+                    background: "#faf8f5", borderRadius: "12px",
+                    border: "1px solid rgba(15,10,4,0.08)",
+                    boxShadow: "0 12px 36px rgba(15,10,4,0.1)",
+                    padding: "8px", minWidth: "140px", zIndex: 100,
+                  }}>
+                    {[{ val: "en", label: "English" }, { val: "fr", label: "Français" }].map(l => (
+                      <button key={l.val} onClick={() => { setLanguage(l.val); setIsLangOpen(false) }}
+                        style={{
+                          display: "block", width: "100%", textAlign: "left",
+                          padding: "9px 14px", borderRadius: "8px", border: "none",
+                          background: language === l.val ? "rgba(200,90,8,0.06)" : "transparent",
+                          fontFamily: S.sans, fontSize: "0.76rem", fontWeight: language === l.val ? 500 : 300,
+                          color: language === l.val ? S.orange : "rgba(15,10,4,0.65)",
+                          cursor: "pointer", transition: "background 0.15s",
+                        }}
+                        onMouseEnter={e => { if (language !== l.val) e.currentTarget.style.background = "rgba(15,10,4,0.04)" }}
+                        onMouseLeave={e => { if (language !== l.val) e.currentTarget.style.background = "transparent" }}
+                      >{l.label}</button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Cart */}
+            <button
+              onClick={() => { setIsCartOpen(true); closeMenu() }}
+              aria-label={`Open cart${cartCount > 0 ? ` (${cartCount} items)` : ""}`}
+              style={{
+                position: "relative", width: "36px", height: "36px",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                background: "transparent", border: "none", cursor: "pointer",
+                borderRadius: "50%", transition: "background 0.15s",
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = "rgba(15,10,4,0.06)"}
+              onMouseLeave={e => e.currentTarget.style.background = "transparent"}
             >
-              {/* Sleek modern shopping bag */}
-              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4H6z" />
-              <path d="M3 6h18" />
-              <path d="M16 10a4 4 0 0 1-8 0" />
-            </svg>
-            {cartCount > 0 && (
-              <span className={`absolute -top-1 -right-1 min-w-[20px] h-[20px] px-1.5 bg-amber-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center pointer-events-none transition-all duration-300 shadow-md ${
-                badgeUpdated ? "animate-badgeBounce scale-110" : ""
-              }`}>
-                {cartCount > 99 ? '99+' : cartCount}
-              </span>
-            )}
-          </button>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                style={{ stroke: "rgba(15,10,4,0.7)", strokeWidth: 1.5 }}
+                strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6z" />
+                <path d="M3 6h18" />
+                <path d="M16 10a4 4 0 01-8 0" />
+              </svg>
+              {cartCount > 0 && (
+                <span style={{
+                  position: "absolute", top: "-2px", right: "-2px",
+                  minWidth: "18px", height: "18px", padding: "0 4px",
+                  background: S.orange, color: "#fff",
+                  fontSize: "10px", fontFamily: S.sans, fontWeight: 500,
+                  borderRadius: "100px",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  pointerEvents: "none",
+                  transition: "transform 0.3s",
+                  transform: badgeUpdated ? "scale(1.2)" : "scale(1)",
+                }}>
+                  {cartCount > 99 ? "99+" : cartCount}
+                </span>
+              )}
+            </button>
+
+            {/* Mobile hamburger — only on small screens */}
+            <button
+              className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg"
+              onClick={() => setIsMenuOpen(p => !p)}
+              aria-label="Toggle menu"
+              style={{ background: "transparent", border: "none", cursor: "pointer", color: "rgba(15,10,4,0.7)" }}
+            >
+              {isMenuOpen ? (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <path d="M3 12h18M3 6h18M3 18h18" />
+                </svg>
+              )}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* ── MOBILE MENU ── */}
+      {isMenuOpen && <div className="fixed inset-0 bg-black/40 z-40" onClick={closeMenu} />}
+      <div style={{
+        position: "fixed", top: "72px", left: 0, right: 0,
+        background: "#faf8f5",
+        maxHeight: isMenuOpen ? "calc(100vh - 72px)" : "0",
+        overflow: "hidden",
+        transition: "max-height 0.35s cubic-bezier(0.22,1,0.36,1)",
+        zIndex: 50,
+        boxShadow: isMenuOpen ? "0 16px 48px rgba(15,10,4,0.12)" : "none",
+      }}>
+        <div style={{ padding: "28px 32px 40px" }}>
+
+          {/* Currency + language toggles */}
+          <div style={{ display: "flex", gap: "12px", marginBottom: "28px" }}>
+            {[
+              { options: [{ val: "CAD", label: "CAD" }, { val: "USD", label: "USD" }], current: currency, onChange: setCurrency },
+              { options: [{ val: "en",  label: "EN"  }, { val: "fr",  label: "FR"  }], current: language, onChange: setLanguage },
+            ].map((sel, si) => (
+              <div key={si} style={{ display: "flex", gap: "6px" }}>
+                {sel.options.map(o => (
+                  <button key={o.val} onClick={() => sel.onChange(o.val)} style={{
+                    padding: "6px 12px", borderRadius: "100px",
+                    border: `1px solid ${sel.current === o.val ? "rgba(200,90,8,0.4)" : "rgba(15,10,4,0.1)"}`,
+                    background: sel.current === o.val ? "rgba(200,90,8,0.06)" : "transparent",
+                    fontFamily: S.sans, fontSize: "0.65rem", fontWeight: sel.current === o.val ? 500 : 300,
+                    letterSpacing: "0.1em", color: sel.current === o.val ? S.orange : "rgba(15,10,4,0.5)",
+                    cursor: "pointer",
+                  }}>{o.label}</button>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          <div style={{ height: "1px", background: "rgba(15,10,4,0.07)", marginBottom: "24px" }} />
+
+          {/* Citrus */}
+          <div style={{ fontFamily: S.sans, fontSize: "0.55rem", fontWeight: 500, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(200,90,8,0.55)", marginBottom: "14px" }}>
+            Citrus Collection
+          </div>
+          {[
+            { href: "/orange",      label: getTranslation(language, "products.orange.name") },
+            { href: "/pink-orange", label: getTranslation(language, "products.pinkOrange.name") },
+            { href: "/lime",        label: getTranslation(language, "products.lime.name") },
+            { href: "/lemon",       label: getTranslation(language, "products.lemon.name") },
+          ].map(item => (
+            <a key={item.href} href={item.href}
+              onClick={e => { e.preventDefault(); closeMenu() }}
+              style={{ display: "block", padding: "10px 0", fontFamily: S.sans, fontSize: "1rem", fontWeight: 300, color: S.dark, textDecoration: "none", borderBottom: "1px solid rgba(15,10,4,0.05)" }}
+            >{item.label}</a>
+          ))}
+
+          <div style={{ fontFamily: S.sans, fontSize: "0.55rem", fontWeight: 500, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(200,90,8,0.55)", margin: "20px 0 14px" }}>
+            Fruit Collection
+          </div>
+          <a href="/apple"
+            onClick={e => { e.preventDefault(); closeMenu() }}
+            style={{ display: "block", padding: "10px 0", fontFamily: S.sans, fontSize: "1rem", fontWeight: 300, color: S.dark, textDecoration: "none", borderBottom: "1px solid rgba(15,10,4,0.05)" }}
+          >{getTranslation(language, "products.apple.name")}</a>
+
+          <div style={{ height: "1px", background: "rgba(15,10,4,0.07)", margin: "24px 0" }} />
+
+          {[
+            { href: "/about",     label: getTranslation(language, "nav.about") },
+            { href: "/contact",   label: getTranslation(language, "nav.contact") },
+          ].map(item => (
+            <a key={item.href} href={item.href}
+              onClick={e => { e.preventDefault(); closeMenu() }}
+              style={{ display: "block", padding: "12px 0", fontFamily: S.sans, fontSize: "1rem", fontWeight: 300, color: S.dark, textDecoration: "none", borderBottom: "1px solid rgba(15,10,4,0.05)" }}
+            >{item.label}</a>
+          ))}
         </div>
       </div>
-
-      {/* Mobile Menu Overlay */}
-      {isMenuOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 transition-opacity duration-250"
-          onClick={closeMenu}
-        />
-      )}
-      <div 
-        className={`fixed top-[72px] left-0 sm:left-5 w-full sm:w-[380px] max-h-[calc(100vh-72px)] sm:max-h-[calc(100vh-72px-24px)] bg-[#faf8f5] sm:rounded-2xl shadow-2xl overflow-y-auto z-50 transition-all duration-300 ease-out backdrop-blur-xl ${
-          isMenuOpen 
-            ? "opacity-100 pointer-events-auto translate-x-0" 
-            : "opacity-0 pointer-events-none -translate-x-full sm:-translate-x-4"
-        }`}
-        onClick={(e) => {
-          if (e.target === e.currentTarget) {
-            closeMenu()
-          }
-        }}
-      >
-        <div className="p-7">
-          <a 
-            href="#products" 
-            className="block relative py-3 text-gray-900 text-base font-semibold no-underline transition-all hover:text-amber-500 active:scale-95 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100 mb-6"
-            onClick={(e) => handleLinkClick(e, "products")}
-          >
-            {getTranslation(language, 'nav.shop')}
-          </a>
-
-          <div className="mb-6">
-            <span className="text-xs uppercase tracking-widest text-gray-400 mb-3.5 block">{getTranslation(language, 'nav.citrusCollection')}</span>
-            <a 
-              href="/orange" 
-              className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 active:scale-95 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
-              onClick={(e) => handleShopLink(e, "orange")}
-            >
-              {getTranslation(language, 'products.orange.name')}
-            </a>
-            <a 
-              href="/pink-orange" 
-              className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 active:scale-95 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
-              onClick={(e) => handleShopLink(e, "pink-orange")}
-            >
-              {getTranslation(language, 'products.pinkOrange.name')}
-            </a>
-            <a 
-              href="/lime" 
-              className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 active:scale-95 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
-              onClick={(e) => handleShopLink(e, "lime")}
-            >
-              {getTranslation(language, 'products.lime.name')}
-            </a>
-            <a 
-              href="/lemon" 
-              className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 active:scale-95 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
-              onClick={(e) => handleShopLink(e, "lemon")}
-            >
-              {getTranslation(language, 'products.lemon.name')}
-            </a>
-          </div>
-
-          <div className="mb-6">
-            <span className="text-xs uppercase tracking-widest text-gray-400 mb-3.5 block">{getTranslation(language, 'nav.fruitCollection')}</span>
-            <a 
-              href="/apple" 
-              className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 active:scale-95 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
-              onClick={(e) => handleShopLink(e, "apple")}
-            >
-              {getTranslation(language, 'products.apple.name')}
-            </a>
-          </div>
-
-          <div className="h-px bg-gray-200 my-7"></div>
-
-          <a 
-            href="#about" 
-            className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 active:scale-95 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
-            onClick={(e) => handleLinkClick(e, "about")}
-          >
-            {getTranslation(language, 'nav.about')}
-          </a>
-
-          <div className="h-px bg-gray-200 my-7"></div>
-
-          <div className="mb-6">
-            <span className="text-xs uppercase tracking-widest text-gray-400 mb-3.5 block">{getTranslation(language, 'footer.support')}</span>
-            <a 
-              href="/faq" 
-              className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 active:scale-95 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
-              onClick={(e) => {
-                // Let App.jsx handle navigation via its click interceptor
-                e.preventDefault()
-                closeMenu()
-                window.history.pushState({ page: '/faq' }, '', '/faq')
-                window.dispatchEvent(new Event('hashchange'))
-              }}
-            >
-              {getTranslation(language, 'footer.faq')}
-            </a>
-            <a 
-              href="/contact" 
-              className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 active:scale-95 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
-              onClick={(e) => {
-                // Let App.jsx handle navigation via its click interceptor
-                e.preventDefault()
-                closeMenu()
-              }}
-            >
-              {getTranslation(language, 'nav.contact')}
-            </a>
-          </div>
-
-          <div className="h-px bg-gray-200 my-7"></div>
-
-          <div className="mb-6">
-            <span className="text-xs uppercase tracking-widest text-gray-400 mb-3.5 block">{getTranslation(language, 'footer.legal')}</span>
-            <a 
-              href="/privacy" 
-              className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 active:scale-95 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
-              onClick={(e) => {
-                // Let App.jsx handle navigation via its click interceptor
-                e.preventDefault()
-                closeMenu()
-              }}
-            >
-              {getTranslation(language, 'footer.privacyPolicy')}
-            </a>
-            <a 
-              href="/terms" 
-              className="block relative py-3 text-gray-900 text-base font-medium no-underline transition-all hover:text-amber-500 active:scale-95 after:content-[''] after:absolute after:left-0 after:bottom-1 after:w-full after:h-0.5 after:bg-amber-500 after:scale-x-0 after:origin-left after:transition-transform after:duration-250 hover:after:scale-x-100"
-              onClick={(e) => {
-                // Let App.jsx handle navigation via its click interceptor
-                e.preventDefault()
-                closeMenu()
-              }}
-            >
-              {getTranslation(language, 'footer.termsOfService')}
-            </a>
-          </div>
-
-          <a 
-            href="#" 
-            className="mt-6 py-3.5 px-4 rounded-lg bg-amber-500 text-white font-semibold text-center block no-underline transition-all duration-200 hover:bg-amber-600 active:scale-95 after:hidden min-h-[44px] flex items-center justify-center"
-            onClick={(e) => {
-              e.preventDefault()
-              closeMenu()
-              setIsCartOpen(true)
-            }}
-          >
-            {getTranslation(language, 'nav.viewCart')}
-          </a>
-        </div>
-      </div>
-    </nav>
+    </>
   )
 }
-

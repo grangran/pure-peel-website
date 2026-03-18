@@ -26,18 +26,15 @@ export default defineConfig({
     react()
   ],
   server: {
-    //Listen on all network interfaces (0.0.0.0)- allows access from other devices on network 
-    //Useful for testing on mobile devices during development 
-    host: true, 
-
-    //Development server port- default Vite port
-    port: 5173,
-
-    //If port 5173 is already in use, automatically try the next evailable port
-    //Set to ture to fail if port is taken already 
-    
-    
-    strictPort: false, // Allow other ports if 5173 is taken
+    // Bind explicitly to loopback (often more reliable than host: true/false)
+    host: '127.0.0.1',
+    port: 5178,
+    strictPort: false,
+  },
+  preview: {
+    host: '127.0.0.1',
+    port: 4173,
+    strictPort: false,
   },
 })
 
