@@ -36,7 +36,8 @@ export default function EmailCapture() {
     if (!email || !email.includes("@")) return
     setStatus("loading")
     try {
-      const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:3001").replace(/\/$/, "")
+      // Default to production backend if `VITE_API_URL` isn't injected in the build.
+      const API_URL = (import.meta.env.VITE_API_URL || "https://pure-peel-website.onrender.com").replace(/\/$/, "")
       const res = await fetch(`${API_URL}/api/subscribe`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

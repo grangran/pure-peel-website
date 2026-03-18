@@ -128,6 +128,7 @@ export default function EmailPopup() {
   const [isMobile, setIsMobile]     = useState(false)
   const [email, setEmail]           = useState("")
   const [status, setStatus]         = useState("idle") // idle | loading | success | error
+  const [errorDetail, setErrorDetail] = useState("")
   const { language }                = useLanguage()
   const copy                        = COPY[language] || COPY.en
   const triggerTimerRef             = useRef(null)
@@ -232,10 +233,13 @@ export default function EmailPopup() {
     if (!trimmed || !trimmed.includes("@") || !trimmed.includes(".")) return
 
     setStatus("loading")
+    setErrorDetail("")
     track(CONFIG.analytics.submitted, { language })
 
     try {
-      const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:3001").replace(/\/$/, "")
+      // IMPORTANT: on production, the backend is hosted separately (Render).
+      // If `VITE_API_URL` isn't configured in the deployment, we must still hit the right backend.
+      const API_URL = (import.meta.env.VITE_API_URL || "https://pure-peel-website.onrender.com").replace(/\/$/, "")
       const res = await fetch(`${API_URL}/api/subscribe`, {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
@@ -252,6 +256,16 @@ export default function EmailPopup() {
       } else {
         setStatus("error")
         track(CONFIG.analytics.error, { language, httpStatus: res.status })
+        // Try to surface backend error message for easier debugging.
+        // Only show details in dev to avoid leaking internal reasons to end users.
+        if (import.meta.env.DEV) {
+          try {
+            const data = await res.json()
+            setErrorDetail(data?.error || data?.message || `Request failed (${res.status})`)
+          } catch {
+            setErrorDetail(await res.text().catch(() => `Request failed (${res.status})`))
+          }
+        }
       }
     } catch (err) {
       setStatus("error")
@@ -336,9 +350,16 @@ export default function EmailPopup() {
 
           {/* Error */}
           {status === "error" && (
-            <p style={{ fontFamily: C.sans, fontSize: "0.65rem", color: "rgba(200,60,60,0.75)", margin: "0 0 8px 4px" }}>
-              {copy.error}
-            </p>
+            <>
+              <p style={{ fontFamily: C.sans, fontSize: "0.65rem", color: "rgba(200,60,60,0.75)", margin: "0 0 4px 4px" }}>
+                {copy.error}
+              </p>
+              {import.meta.env.DEV && errorDetail && (
+                <p style={{ fontFamily: C.sans, fontSize: "0.58rem", color: "rgba(200,60,60,0.9)", margin: "0 0 8px 4px" }}>
+                  {errorDetail}
+                </p>
+              )}
+            </>
           )}
 
           {/* CASL / GDPR consent line */}
