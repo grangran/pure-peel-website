@@ -256,15 +256,12 @@ export default function EmailPopup() {
       } else {
         setStatus("error")
         track(CONFIG.analytics.error, { language, httpStatus: res.status })
-        // Try to surface backend error message for easier debugging.
-        // Only show details in dev to avoid leaking internal reasons to end users.
-        if (import.meta.env.DEV) {
-          try {
-            const data = await res.json()
-            setErrorDetail(data?.error || data?.message || `Request failed (${res.status})`)
-          } catch {
-            setErrorDetail(await res.text().catch(() => `Request failed (${res.status})`))
-          }
+        // Surface backend error message for easier debugging.
+        try {
+          const data = await res.json().catch(() => null)
+          setErrorDetail(data?.error || data?.message || `Request failed (${res.status})`)
+        } catch {
+          setErrorDetail(`Request failed (${res.status})`)
         }
       }
     } catch (err) {
@@ -354,7 +351,7 @@ export default function EmailPopup() {
               <p style={{ fontFamily: C.sans, fontSize: "0.65rem", color: "rgba(200,60,60,0.75)", margin: "0 0 4px 4px" }}>
                 {copy.error}
               </p>
-              {import.meta.env.DEV && errorDetail && (
+              {errorDetail && (
                 <p style={{ fontFamily: C.sans, fontSize: "0.58rem", color: "rgba(200,60,60,0.9)", margin: "0 0 8px 4px" }}>
                   {errorDetail}
                 </p>

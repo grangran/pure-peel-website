@@ -2973,7 +2973,7 @@ app.post('/api/subscribe', apiLimiter, async (req, res) => {
 
   if (!apiKey || !listId) {
     console.error('❌ Klaviyo API key or list ID not configured')
-    return res.status(500).json({ error: 'Email service not configured' })
+    return res.status(500).json({ error: 'Klaviyo not configured (missing KLAVIYO_API_KEY / KLAVIYO_LIST_ID)' })
   }
 
   try {
@@ -2994,17 +2994,22 @@ app.post('/api/subscribe', apiLimiter, async (req, res) => {
     })
 
     // 201 = created, 409 = already exists - both are fine
-    const profileData = await profileRes.json()
+    const profileData = await profileRes.json().catch(() => ({}))
     const profileId = profileData?.data?.id
 
     if (!profileId) {
       // If 409 conflict, extract existing profile ID from error meta
-      const existingId = profileData?.errors?.[0]?.meta?.duplicate_profile_id
-      if (!existingId) {
-        console.error('❌ Klaviyo profile error:', JSON.stringify(profileData))
-        return res.status(500).json({ error: 'Failed to create profile' })
+      if (profileRes.status === 409) {
+        const existingId = profileData?.errors?.[0]?.meta?.duplicate_profile_id
+        if (!existingId) {
+          console.error('❌ Klaviyo duplicate profile but missing duplicate_profile_id:', JSON.stringify(profileData))
+          return res.status(500).json({ error: 'Klaviyo: duplicate profile returned but no profile id found' })
+        }
+        await subscribeToList(existingId, listId, apiKey)
+      } else {
+        console.error('❌ Klaviyo profile request failed:', { status: profileRes.status, body: profileData })
+        return res.status(500).json({ error: `Klaviyo profile request failed (${profileRes.status})` })
       }
-      await subscribeToList(existingId, listId, apiKey)
     } else {
       await subscribeToList(profileId, listId, apiKey)
     }
