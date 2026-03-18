@@ -17,7 +17,7 @@ export default function AboutTeaser() {
     : {
         eyebrow: "About Pure Peel Co.",
         headline: "Made for the ones who care about the details.",
-        body1: "We created Pure Peel because fresh citrus is beautiful - but not always practical. Our dehydrated citrus slices preserve the natural colour, aroma, and character of fresh fruit, giving you a long-lasting garnish that's always ready when the moment calls for it.",
+        body1: "We created Pure Peel because fresh citrus is beautiful - but not always practical. Our dehydrated citrus slices preserve the natural colour, aroma, and character of fresh fruit, giving you a long-lasting garnish that's always ready.",
         body2: "No slicing. No waste. Just effortless presentation.",
         cta: "Our Story",
         imageAlt: "Pure Peel Co."

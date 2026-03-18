@@ -35,7 +35,7 @@ export default function Footer() {
         <div>
         <div className="mb-5">
             <img 
-            src="/images/logov2.png"
+            src="/images/logo.png"
             alt="Pure Peel Co."
             className="w-[100px] h-auto"
             width="100"

@@ -213,7 +213,7 @@ export default function Nav() {
             onClick={e => e.preventDefault()}
           >
             <img
-              src="/images/logov2.png"
+              src="/images/logo.png"
               alt="Pure Peel Co."
               className="h-[48px] md:h-[56px] w-auto block object-contain pointer-events-none"
               width="176" height="181"
