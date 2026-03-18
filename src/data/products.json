@@ -1,0 +1,170 @@
+{
+  "orange": {
+    "id": "orange",
+    "name": "Orange",
+    "description": "Sweet, zesty, and aromatic. Ideal for classic cocktails like Old Fashioneds and mimosas, adds natural sweetness to hot or iced tea, and pairs beautifully with cheeses and cured meats on charcuterie boards.",
+    "showBulkInquiry": true,
+    "variants": [
+      {
+        "id": "orange-small",
+        "label": "Small Bag — 20 pcs",
+        "option": "Small Bag (20 pcs)",
+        "price": 9,
+        "image": "/images/orange-product.jpg"
+      },
+      {
+        "id": "orange-medium",
+        "label": "Medium Bag — 40 pcs",
+        "option": "Medium Bag (40 pcs)",
+        "price": 17,
+        "image": "/images/orange-product.jpg"
+      },
+      {
+        "id": "orange-large",
+        "label": "Large Bag — 75 pcs",
+        "option": "Large Bag (75 pcs)",
+        "price": 32,
+        "image": "/images/orange-product.jpg"
+      },
+      {
+        "id": "orange-clearbox",
+        "label": "Clear Box — 40 pcs",
+        "option": "Clear Box (40 pcs)",
+        "price": 17,
+        "image": "/images/orange-box.jpg"
+      }
+    ]
+  },
+  "pink-orange": {
+    "id": "pink-orange",
+    "name": "Pink Orange",
+    "description": "Floral, vibrant, and uniquely beautiful. Perfect for premium cocktails and spritzes, elevates tea presentations with stunning color, and creates eye-catching gourmet displays on charcuterie boards.",
+    "showBulkInquiry": true,
+    "galleryImages": ["/images/pinkorange-fresh.jpg"],
+    "variants": [
+      {
+        "id": "pink-orange-small",
+        "label": "Small Bag — 20 pcs",
+        "option": "Small Bag (20 pcs)",
+        "price": 12,
+        "image": "/images/pink-orange-product.jpg"
+      },
+      {
+        "id": "pink-orange-medium",
+        "label": "Medium Bag — 40 pcs",
+        "option": "Medium Bag (40 pcs)",
+        "price": 23,
+        "image": "/images/pink-orange-product.jpg"
+      },
+      {
+        "id": "pink-orange-large",
+        "label": "Large Bag — 75 pcs",
+        "option": "Large Bag (75 pcs)",
+        "price": 44,
+        "image": "/images/pink-orange-product.jpg"
+      },
+      {
+        "id": "pink-orange-clearbox",
+        "label": "Clear Box — 40 pcs",
+        "option": "Clear Box (40 pcs)",
+        "price": 23,
+        "image": "/images/pink-orange-box.jpg"
+      }
+    ]
+  },
+  "lime": {
+    "id": "lime",
+    "name": "Lime",
+    "description": "Bright, crisp, and refreshing. Essential for margaritas, mojitos, and gin & tonics. Adds a zesty kick to iced tea and cuts through rich flavors on charcuterie boards.",
+    "showBulkInquiry": true,
+    "galleryImages": ["/images/freshlimes.jpg"],
+    "variants": [
+      {
+        "id": "lime-small",
+        "label": "Small Bag — 50 pcs",
+        "option": "Small Bag (50 pcs)",
+        "price": 12,
+        "image": "/images/lime-product.jpg"
+      },
+      {
+        "id": "lime-medium",
+        "label": "Medium Bag — 100 pcs",
+        "option": "Medium Bag (100 pcs)",
+        "price": 23,
+        "image": "/images/lime-product.jpg"
+      },
+      {
+        "id": "lime-large",
+        "label": "Large Bag — 250 pcs",
+        "option": "Large Bag (250 pcs)",
+        "price": 58,
+        "image": "/images/lime-product.jpg"
+      },
+      {
+        "id": "lime-clearbox",
+        "label": "Clear Box — 100 pcs",
+        "option": "Clear Box (100 pcs)",
+        "price": 23,
+        "image": "/images/lime-box.jpg"
+      }
+    ]
+  },
+  "lemon": {
+    "id": "lemon",
+    "name": "Lemon",
+    "description": "Tart, zesty, and refreshing. Perfect for lemon drops, whiskey sours, and classic tea pairings. Brightens charcuterie boards and complements creamy cheeses.",
+    "showBulkInquiry": true,
+    "variants": [
+      {
+        "id": "lemon-small",
+        "label": "Small Bag — 35 pcs",
+        "option": "Small Bag (35 pcs)",
+        "price": 16,
+        "image": "/images/lemon-product.jpg"
+      },
+      {
+        "id": "lemon-medium",
+        "label": "Medium Bag — 50 pcs",
+        "option": "Medium Bag (50 pcs)",
+        "price": 20,
+        "image": "/images/lemon-product.jpg"
+      },
+      {
+        "id": "lemon-large",
+        "label": "Large Bag — 85 pcs",
+        "option": "Large Bag (85 pcs)",
+        "price": 32,
+        "image": "/images/lemon-product.jpg"
+      },
+      {
+        "id": "lemon-clearbox",
+        "label": "Clear Box — 50 pcs",
+        "option": "Clear Box (50 pcs)",
+        "price": 20,
+        "image": "/images/lemon-box.jpg"
+      }
+    ]
+  },
+  "apple": {
+    "id": "apple",
+    "name": "Apple",
+    "description": "Crisp, sweet, and aromatic. Perfect for snacks and charcuterie boards.",
+    "showBulkInquiry": true,
+    "variants": [
+      {
+        "id": "apple-small",
+        "label": "Small Bag — 18 pcs",
+        "option": "Small Bag (18 pcs)",
+        "price": 7,
+        "image": "/images/apple-product.png"
+      },
+      {
+        "id": "apple-medium",
+        "label": "Medium Bag — 30 pcs",
+        "option": "Medium Bag (30 pcs)",
+        "price": 12,
+        "image": "/images/apple-product.png"
+      }
+    ]
+  }
+}
