@@ -8,6 +8,7 @@ import fs from 'fs'
 import path from 'path'
 import { Resend } from 'resend'
 import { saveOrder, getAllOrders, getOrderById, updateOrderStatus, getOrderStats, markEmailSent, hasEmailBeenSent, updateOrderTracking } from './utils/orderStorage.js'
+import { hasSubscriber, addSubscriber } from './utils/subscriberStorage.js'
 import { sendOrderConfirmation, sendShippingNotification, sendAdminNotification, sendContactForm, sendWelcomeEmail, getOrderConfirmationPreview, getWelcomeEmailPreview } from './utils/emailService.js'
 import { createCanadaPostLabel } from './utils/canadaPostShipping.js'
 import { getAllProducts, getProductById, saveProduct, updateProduct, deleteProduct, bulkSaveProducts } from './utils/productStorage.js'
@@ -2283,8 +2284,10 @@ app.get('/api/preview-email', (req, res) => {
   const lang = (req.query.lang || 'en').toLowerCase()
   const language = lang === 'fr' ? 'fr' : 'en'
   let html
-  if (template === 'welcome') {
-    html = getWelcomeEmailPreview(language)
+  if (template === 'welcome' || template === 'welcome-popup') {
+    html = getWelcomeEmailPreview(language, 'popup')
+  } else if (template === 'welcome-list') {
+    html = getWelcomeEmailPreview(language, 'inline')
   } else {
     html = getOrderConfirmationPreview(language)
   }
@@ -2958,101 +2961,33 @@ app.post('/api/products/bulk', authenticateProductAPI, apiLimiter, (req, res) =>
   }
 })
 
-// Klaviyo email subscription
+// Email list subscription (Resend + in-code templates; subscribers stored locally)
 app.post('/api/subscribe', apiLimiter, async (req, res) => {
-  const { email, language } = req.body
+  const { email, language, source } = req.body
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return res.status(400).json({ error: 'Invalid email address' })
   }
 
-  // Normalize language value for template selection
   const normalizedLanguage = language === 'fr' ? 'fr' : 'en'
+  const subscribeSource = source === 'popup' ? 'popup' : 'inline'
 
-  const apiKey = process.env.KLAVIYO_API_KEY
-  const listId = process.env.KLAVIYO_LIST_ID
-
-  // If Klaviyo isn't configured, don't hard-fail the whole request.
-  // We still want to send the welcome email if email delivery is configured.
-  let klaviyoSubscribed = false
-  const klaviyoAvailable = !!apiKey && !!listId
-
-  if (klaviyoAvailable) {
-    try {
-      // Create or update profile
-      const profileRes = await fetch('https://a.klaviyo.com/api/profiles/', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Klaviyo-API-Key ${apiKey}`,
-          'Content-Type': 'application/json',
-          'revision': '2024-02-15'
-        },
-        body: JSON.stringify({
-          data: {
-            type: 'profile',
-            attributes: { email }
-          }
-        })
-      })
-
-      // 201 = created, 409 = already exists - both are fine
-      const profileData = await profileRes.json().catch(() => ({}))
-      const profileId = profileData?.data?.id
-
-      if (!profileId) {
-        // If 409 conflict, extract existing profile ID from error meta
-        if (profileRes.status === 409) {
-          const existingId = profileData?.errors?.[0]?.meta?.duplicate_profile_id
-          if (!existingId) {
-            console.error('❌ Klaviyo duplicate profile but missing duplicate_profile_id:', JSON.stringify(profileData))
-          } else {
-            await subscribeToList(existingId, listId, apiKey)
-            klaviyoSubscribed = true
-          }
-        } else {
-          console.error('❌ Klaviyo profile request failed:', { status: profileRes.status, body: profileData })
-        }
-      } else {
-        await subscribeToList(profileId, listId, apiKey)
-        klaviyoSubscribed = true
-      }
-
-      console.log('✅ Klaviyo subscription processed:', { email, klaviyoSubscribed })
-    } catch (klaviyoErr) {
-      console.error('❌ Klaviyo error:', klaviyoErr.message)
-    }
-  } else {
-    console.warn('⚠️ Klaviyo not configured (missing KLAVIYO_API_KEY / KLAVIYO_LIST_ID). Skipping Klaviyo list subscription.')
+  // Skip sending if already subscribed (prevents duplicate emails)
+  if (hasSubscriber(email)) {
+    return res.json({ success: true })
   }
 
-  // Send welcome email (10% off code) via emailService template
   try {
-    const welcomeResult = await sendWelcomeEmail(email, { language: normalizedLanguage })
+    const welcomeResult = await sendWelcomeEmail(email, { language: normalizedLanguage, source: subscribeSource })
     if (!welcomeResult.success) {
       return res.status(500).json({ error: welcomeResult.error || welcomeResult.reason || 'Email not configured' })
     }
-
-    return res.json({ success: true, klaviyoSubscribed })
+    addSubscriber(email, { language: normalizedLanguage, source: subscribeSource })
+    return res.json({ success: true })
   } catch (err) {
     console.error('❌ Welcome email error:', err.message)
     return res.status(500).json({ error: 'Subscription failed' })
   }
 })
-
-
-
-async function subscribeToList(profileId, listId, apiKey) {
-  await fetch(`https://a.klaviyo.com/api/lists/${listId}/relationships/profiles/`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Klaviyo-API-Key ${apiKey}`,
-      'Content-Type': 'application/json',
-      'revision': '2024-02-15'
-    }, 
-    body: JSON.stringify({ 
-      data: [{ type: 'profile', id: profileId }]
-    })
-  })
-}
 
 app.listen(PORT, () => {
   console.log(`\n🚀 Server running on http://localhost:${PORT}`)
