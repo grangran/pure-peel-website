@@ -414,7 +414,7 @@ const welcomeEmailTemplateFR = (promoCode = 'WELCOME10') => {
   `
 }
 
-// "THE LIST" / inline capture — no promo code; you're on the list
+// "THE LIST" / inline capture — relationship-building, one idea per email. Not transactional.
 const welcomeListEmailTemplateEN = () => {
   const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
   return `
@@ -423,32 +423,33 @@ const welcomeListEmailTemplateEN = () => {
 <head>
   <meta charset="utf-8">
   <style>
-    body { font-family: ${emailTheme.sans}; line-height: 1.6; color: ${emailTheme.dark}; margin: 0; }
+    body { font-family: ${emailTheme.sans}; line-height: 1.7; color: ${emailTheme.dark}; margin: 0; }
     .container { max-width: 560px; margin: 0 auto; }
-    .header { background: ${emailTheme.cream}; padding: 48px 40px 32px; text-align: left; }
-    .eyebrow { font-family: ${emailTheme.sans}; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(200,90,8,0.7); margin-bottom: 20px; }
-    h1 { font-family: ${emailTheme.serif}; font-size: 32px; font-weight: 300; font-style: italic; color: ${emailTheme.dark}; margin: 0 0 16px; line-height: 1.3; }
+    .header { background: ${emailTheme.cream}; padding: 40px 40px 24px; text-align: left; }
     .content { background: ${emailTheme.cream}; padding: 0 40px 48px; }
-    .lead { font-size: 16px; color: ${emailTheme.dark}; margin: 0 0 28px; line-height: 1.7; font-weight: 300; }
-    .cta { display: inline-block; background: linear-gradient(135deg, #f5e6a3 0%, #e8c84a 55%, #d4a832 100%); color: ${emailTheme.dark}; text-align: center; padding: 16px 32px; border-radius: 100px; font-family: ${emailTheme.sans}; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; margin: 0 0 40px; }
+    .p { font-size: 16px; color: ${emailTheme.dark}; margin: 0 0 20px; font-weight: 300; }
+    .tip { background: #fff; border-left: 3px solid ${emailTheme.gold}; padding: 20px 24px; margin: 28px 0; border-radius: 0 8px 8px 0; font-size: 15px; color: ${emailTheme.dark}; }
+    .tip strong { font-weight: 600; }
+    .soft-cta { font-size: 15px; color: ${emailTheme.dark}; margin: 28px 0 0; font-weight: 300; }
+    .soft-cta a { color: ${emailTheme.gold}; text-decoration: none; font-weight: 500; }
+    .soft-cta a:hover { text-decoration: underline; }
     .footer { border-top: 1px solid ${emailTheme.border}; padding: 24px 40px; font-size: 12px; color: ${emailTheme.textLight}; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <p class="eyebrow">You're on THE LIST</p>
-      <h1>Thanks for joining us.</h1>
+      <p class="p" style="margin: 0;">Last weekend I was making cocktails for eight people and realized I'd forgotten to buy limes. Turns out a few dehydrated lime slices in the shaker — and one on the rim — worked even better. No last-minute run to the store, and everyone asked where they came from.</p>
     </div>
     <div class="content">
-      <p class="lead">We'll send you updates, early access to new flavours, and a little love from the kitchen. No spam — just the good stuff.</p>
-      <div style="text-align: center;">
-        <a href="${shopUrl}" class="cta">Browse our collection</a>
+      <p class="p">So here's the one thing I'd tell you first: keep a small jar of dehydrated citrus by the bar. Orange for old fashioneds, lime for g&t's and margaritas, grapefruit if you're feeling fancy. They rehydrate in the drink in seconds and look (and taste) like you actually planned ahead.</p>
+      <div class="tip">
+        <strong>This week's move:</strong> Drop 2–3 dried lime slices into your next gin and tonic. Let them sit for 30 seconds. Then taste. You'll get why we keep a bag in the cupboard.
       </div>
+      <p class="soft-cta">We use our lime slices for exactly this — <a href="${shopUrl}">grab a bag if you're running low</a>.</p>
     </div>
     <div class="footer">
-      <p style="margin: 0;">You're receiving this because you signed up at purepeelco.com.</p>
-      <p style="margin: 8px 0 0 0;">Pure Peel Co. — Premium dehydrated citrus, made in Canada.</p>
+      <p style="margin: 0;">You're on THE LIST — seasonal ideas, one at a time. Pure Peel Co.</p>
     </div>
   </div>
 </body>
@@ -464,32 +465,33 @@ const welcomeListEmailTemplateFR = () => {
 <head>
   <meta charset="utf-8">
   <style>
-    body { font-family: ${emailTheme.sans}; line-height: 1.6; color: ${emailTheme.dark}; margin: 0; }
+    body { font-family: ${emailTheme.sans}; line-height: 1.7; color: ${emailTheme.dark}; margin: 0; }
     .container { max-width: 560px; margin: 0 auto; }
-    .header { background: ${emailTheme.cream}; padding: 48px 40px 32px; text-align: left; }
-    .eyebrow { font-family: ${emailTheme.sans}; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(200,90,8,0.7); margin-bottom: 20px; }
-    h1 { font-family: ${emailTheme.serif}; font-size: 32px; font-weight: 300; font-style: italic; color: ${emailTheme.dark}; margin: 0 0 16px; line-height: 1.3; }
+    .header { background: ${emailTheme.cream}; padding: 40px 40px 24px; text-align: left; }
     .content { background: ${emailTheme.cream}; padding: 0 40px 48px; }
-    .lead { font-size: 16px; color: ${emailTheme.dark}; margin: 0 0 28px; line-height: 1.7; font-weight: 300; }
-    .cta { display: inline-block; background: linear-gradient(135deg, #f5e6a3 0%, #e8c84a 55%, #d4a832 100%); color: ${emailTheme.dark}; text-align: center; padding: 16px 32px; border-radius: 100px; font-family: ${emailTheme.sans}; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; margin: 0 0 40px; }
+    .p { font-size: 16px; color: ${emailTheme.dark}; margin: 0 0 20px; font-weight: 300; }
+    .tip { background: #fff; border-left: 3px solid ${emailTheme.gold}; padding: 20px 24px; margin: 28px 0; border-radius: 0 8px 8px 0; font-size: 15px; color: ${emailTheme.dark}; }
+    .tip strong { font-weight: 600; }
+    .soft-cta { font-size: 15px; color: ${emailTheme.dark}; margin: 28px 0 0; font-weight: 300; }
+    .soft-cta a { color: ${emailTheme.gold}; text-decoration: none; font-weight: 500; }
+    .soft-cta a:hover { text-decoration: underline; }
     .footer { border-top: 1px solid ${emailTheme.border}; padding: 24px 40px; font-size: 12px; color: ${emailTheme.textLight}; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <p class="eyebrow">Vous êtes sur LA LISTE</p>
-      <h1>Merci de nous avoir rejoints.</h1>
+      <p class="p" style="margin: 0;">La fin de semaine dernière, je préparais des cocktails pour huit et je me suis rendu compte qu'il n'y avait plus de citrons verts. Quelques tranches de lime déshydratées dans le shaker — et une sur le bord du verre — ont fait encore mieux. Pas de course au magasin, et tout le monde a demandé d'où ça venait.</p>
     </div>
     <div class="content">
-      <p class="lead">Nous vous enverrons des nouvelles, un accès anticipé aux nouveaux parfums et un peu d'amour de la cuisine. Pas de spam — que du bon.</p>
-      <div style="text-align: center;">
-        <a href="${shopUrl}" class="cta">Voir la boutique</a>
+      <p class="p">Donc le premier conseil que je vous donne : gardez un petit pot d'agrumes déshydratés près du bar. Orange pour les old fashioneds, lime pour g&t et margaritas, pamplemousse si vous voulez faire les choses en grand. Ils se réhydratent en quelques secondes dans le verre et donnent l'impression que vous aviez tout prévu.</p>
+      <div class="tip">
+        <strong>L'astuce de la semaine :</strong> Mettez 2–3 tranches de lime séchées dans votre prochain gin tonic. Laissez reposer 30 secondes. Puis goûtez. Vous comprendrez pourquoi on garde toujours un sachet dans le placard.
       </div>
+      <p class="soft-cta">On utilise nos tranches de lime exactement pour ça — <a href="${shopUrl}">prenez un sachet si vous en manquez</a>.</p>
     </div>
     <div class="footer">
-      <p style="margin: 0;">Vous recevez ceci car vous vous êtes inscrit sur purepeelco.com.</p>
-      <p style="margin: 8px 0 0 0;">Pure Peel Co. — Agrumes déshydratés, fabriqués au Canada.</p>
+      <p style="margin: 0;">Vous êtes sur LA LISTE — une idée à la fois. Pure Peel Co.</p>
     </div>
   </div>
 </body>
@@ -1089,7 +1091,9 @@ export const sendWelcomeEmail = async (email, options = {}) => {
       : (language === 'fr' ? welcomeListEmailTemplateFR() : welcomeListEmailTemplateEN())
     const subject = isPopup
       ? (language === 'fr' ? 'Votre code 10 % de réduction vous attend | Pure Peel Co.' : 'Your 10% off code is inside | Pure Peel Co.')
-      : (language === 'fr' ? 'Vous êtes sur la liste | Pure Peel Co.' : "You're on the list | Pure Peel Co.")
+      : (language === 'fr'
+          ? (process.env.LIST_WELCOME_SUBJECT_FR || 'La garniture qui a sauvé mon souper')
+          : (process.env.LIST_WELCOME_SUBJECT_EN || 'The garnish that saved my dinner party'))
 
     if (resend && process.env.RESEND_FROM_EMAIL) {
       const fromDisplay = process.env.RESEND_FROM_EMAIL.includes('<') ? process.env.RESEND_FROM_EMAIL : `Pure Peel Co. <${process.env.RESEND_FROM_EMAIL}>`

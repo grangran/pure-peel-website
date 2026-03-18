@@ -18,6 +18,9 @@ export default function Admin() {
   const [refundingOrder, setRefundingOrder] = useState(null)
   const [refundAmount, setRefundAmount] = useState("")
   const [refundReason, setRefundReason] = useState("requested_by_customer")
+  const [adminTab, setAdminTab] = useState("orders")
+  const [subscribers, setSubscribers] = useState([])
+  const [loadingSubscribers, setLoadingSubscribers] = useState(false)
 
   const [sectionRef, isSectionVisible] = useScrollReveal({ threshold: 0.1 })
 
@@ -90,6 +93,23 @@ export default function Admin() {
       console.error('Error fetching stats:', error)
     } finally {
       setLoadingStats(false)
+    }
+  }
+
+  const fetchSubscribers = async () => {
+    setLoadingSubscribers(true)
+    try {
+      const response = await fetch(`${API_URL}/api/admin/subscribers`, {
+        headers: { 'x-admin-password': password }
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setSubscribers(data.subscribers || [])
+      }
+    } catch (error) {
+      console.error('Error fetching subscribers:', error)
+    } finally {
+      setLoadingSubscribers(false)
     }
   }
 
@@ -191,6 +211,12 @@ export default function Admin() {
   }
 
   useEffect(() => {
+    if (isAuthenticated && adminTab === 'subscribers') {
+      fetchSubscribers()
+    }
+  }, [isAuthenticated, adminTab])
+
+  useEffect(() => {
     if (isAuthenticated) {
       fetchOrders()
       const interval = setInterval(fetchOrders, 30000) // Refresh every 30 seconds
@@ -251,19 +277,39 @@ export default function Admin() {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Order Management</h1>
-              <p className="text-gray-600">View and manage customer orders</p>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin</h1>
+              <p className="text-gray-600">
+                {adminTab === 'orders' ? 'View and manage customer orders' : 'Email list subscribers'}
+              </p>
             </div>
-            <button
-              onClick={() => setIsAuthenticated(false)}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-            >
-              Logout
-            </button>
+            <div className="flex items-center gap-3">
+              <div className="flex rounded-lg border border-gray-200 p-0.5 bg-gray-50">
+                <button
+                  type="button"
+                  onClick={() => setAdminTab('orders')}
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${adminTab === 'orders' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
+                >
+                  Orders
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAdminTab('subscribers')}
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${adminTab === 'subscribers' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
+                >
+                  Subscribers
+                </button>
+              </div>
+              <button
+                onClick={() => setIsAuthenticated(false)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Logout
+              </button>
+            </div>
           </div>
 
-          {/* Statistics */}
-          {loadingStats ? (
+          {/* Statistics (orders only) */}
+          {adminTab === 'orders' && (loadingStats ? (
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               {[1, 2, 3, 4, 5].map((i) => (
                 <div key={i} className="bg-gray-50 rounded-lg p-4">
@@ -295,10 +341,65 @@ export default function Admin() {
                 <p className="text-2xl font-bold text-green-700">${stats.totalRevenue.toFixed(2)}</p>
               </div>
             </div>
-          ) : null}
+          ) : null)}
         </div>
 
-        {/* Filters */}
+        {adminTab === 'subscribers' && (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-6">
+            <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900">Email list</h2>
+              <button
+                type="button"
+                onClick={fetchSubscribers}
+                disabled={loadingSubscribers}
+                className="text-sm text-amber-600 hover:text-amber-700 font-medium"
+              >
+                {loadingSubscribers ? 'Loading...' : 'Refresh'}
+              </button>
+            </div>
+            {loadingSubscribers ? (
+              <div className="p-8 flex justify-center">
+                <LoadingSpinner size="md" text="Loading subscribers..." />
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Email</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Language</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Source</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Subscribed</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {subscribers.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                          No subscribers yet.
+                        </td>
+                      </tr>
+                    ) : (
+                      subscribers.map((s) => (
+                        <tr key={s.email} className="hover:bg-gray-50">
+                          <td className="px-6 py-4 whitespace-nowrap text-gray-900">{s.email}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-gray-600">{s.language || 'en'}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-gray-600">{s.source || 'inline'}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-gray-600">
+                            {s.subscribedAt ? new Date(s.subscribedAt).toLocaleDateString(undefined, { dateStyle: 'medium' }) : '—'}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Filters (orders only) */}
+        {adminTab === 'orders' && (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-6">
           <div className="flex items-center gap-4">
             <label className="text-sm font-medium text-gray-700">Filter by Status:</label>
@@ -462,6 +563,7 @@ export default function Admin() {
             </div>
           )}
         </div>
+        )}
 
         {/* Order Details Modal */}
         {selectedOrder && (

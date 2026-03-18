@@ -8,7 +8,7 @@ import fs from 'fs'
 import path from 'path'
 import { Resend } from 'resend'
 import { saveOrder, getAllOrders, getOrderById, updateOrderStatus, getOrderStats, markEmailSent, hasEmailBeenSent, updateOrderTracking } from './utils/orderStorage.js'
-import { hasSubscriber, addSubscriber } from './utils/subscriberStorage.js'
+import { hasSubscriber, addSubscriber, getSubscribers } from './utils/subscriberStorage.js'
 import { sendOrderConfirmation, sendShippingNotification, sendAdminNotification, sendContactForm, sendWelcomeEmail, getOrderConfirmationPreview, getWelcomeEmailPreview } from './utils/emailService.js'
 import { createCanadaPostLabel } from './utils/canadaPostShipping.js'
 import { getAllProducts, getProductById, saveProduct, updateProduct, deleteProduct, bulkSaveProducts } from './utils/productStorage.js'
@@ -2503,6 +2503,17 @@ const authenticateAdmin = (req, res, next) => {
     res.status(401).json({ error: 'Unauthorized. Invalid admin password.' })
   }
 }
+
+// Get email list subscribers (admin only)
+app.get('/api/admin/subscribers', authenticateAdmin, (req, res) => {
+  try {
+    const subscribers = getSubscribers()
+    res.json({ subscribers })
+  } catch (error) {
+    console.error('Error fetching subscribers:', error)
+    res.status(500).json({ error: error.message })
+  }
+})
 
 // Get all orders (admin only)
 app.get('/api/admin/orders', authenticateAdmin, (req, res) => {
