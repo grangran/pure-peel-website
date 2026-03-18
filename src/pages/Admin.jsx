@@ -398,8 +398,9 @@ export default function Admin() {
           </div>
         )}
 
-        {/* Filters (orders only) */}
+        {/* Filters + Orders List (orders tab only) */}
         {adminTab === 'orders' && (
+        <>
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-6">
           <div className="flex items-center gap-4">
             <label className="text-sm font-medium text-gray-700">Filter by Status:</label>
@@ -418,7 +419,6 @@ export default function Admin() {
           </div>
         </div>
 
-        {/* Orders List */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
           {loadingOrders ? (
             <div className="p-8">
@@ -563,6 +563,7 @@ export default function Admin() {
             </div>
           )}
         </div>
+        </>
         )}
 
         {/* Order Details Modal */}
