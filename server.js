@@ -2507,8 +2507,12 @@ const authenticateAdmin = (req, res, next) => {
 // Get email list subscribers (admin only)
 app.get('/api/admin/subscribers', authenticateAdmin, (req, res) => {
   try {
-    const subscribers = getSubscribers()
-    res.json({ subscribers })
+    Promise.resolve(getSubscribers())
+      .then((subscribers) => res.json({ subscribers }))
+      .catch((error) => {
+        console.error('Error fetching subscribers:', error)
+        res.status(500).json({ error: error.message })
+      })
   } catch (error) {
     console.error('Error fetching subscribers:', error)
     res.status(500).json({ error: error.message })
@@ -2983,7 +2987,8 @@ app.post('/api/subscribe', apiLimiter, async (req, res) => {
   const subscribeSource = source === 'popup' ? 'popup' : 'inline'
 
   // Skip sending if already subscribed (prevents duplicate emails)
-  if (hasSubscriber(email)) {
+  const alreadySubscribed = await hasSubscriber(email)
+  if (alreadySubscribed) {
     return res.json({ success: true })
   }
 
@@ -2992,7 +2997,7 @@ app.post('/api/subscribe', apiLimiter, async (req, res) => {
     if (!welcomeResult.success) {
       return res.status(500).json({ error: welcomeResult.error || welcomeResult.reason || 'Email not configured' })
     }
-    addSubscriber(email, { language: normalizedLanguage, source: subscribeSource })
+    await addSubscriber(email, { language: normalizedLanguage, source: subscribeSource })
     return res.json({ success: true })
   } catch (err) {
     console.error('❌ Welcome email error:', err.message)

@@ -1,86 +1,131 @@
 /**
- * Subscriber list storage (file-based).
- * Used by POST /api/subscribe to record signups when not using Klaviyo.
- * Data is stored in data/subscribers.json (gitignored via /data/).
+ * Subscriber storage backed by Resend Audiences (Render free tier safe).
+ *
+ * Requires:
+ * - RESEND_API_KEY
+ * - RESEND_AUDIENCE_ID
+ *
+ * Notes:
+ * - Uses the Audiences API (stable today, but Resend may migrate toward Contacts/Segments).
+ * - We store `language` and `source` in contact fields so Admin can display them.
  */
 
-import fs from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'
+const RESEND_API_BASE = 'https://api.resend.com'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-
-const SUBSCRIBERS_FILE = path.join(process.cwd(), 'data', 'subscribers.json')
-
-const ensureDataDir = () => {
-  const dataDir = path.join(process.cwd(), 'data')
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true })
+function getAuthHeaders() {
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) throw new Error('RESEND_API_KEY not configured')
+  return {
+    Authorization: `Bearer ${apiKey}`,
+    'Content-Type': 'application/json',
   }
 }
 
-const readSubscribers = () => {
-  ensureDataDir()
-  if (!fs.existsSync(SUBSCRIBERS_FILE)) {
-    return []
-  }
-  try {
-    const raw = fs.readFileSync(SUBSCRIBERS_FILE, 'utf8')
-    const data = JSON.parse(raw)
-    return Array.isArray(data) ? data : []
-  } catch {
-    return []
-  }
+function getAudienceId() {
+  const audienceId = process.env.RESEND_AUDIENCE_ID
+  if (!audienceId) throw new Error('RESEND_AUDIENCE_ID not configured')
+  return audienceId
 }
 
-const writeSubscribers = (list) => {
-  ensureDataDir()
-  fs.writeFileSync(SUBSCRIBERS_FILE, JSON.stringify(list, null, 2), 'utf8')
+function normalizeEmail(email) {
+  return (email || '').toLowerCase().trim()
+}
+
+async function resendJson(url, options = {}) {
+  const res = await fetch(url, options)
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) {
+    const message =
+      data?.message ||
+      data?.error?.message ||
+      data?.error ||
+      `Resend request failed (${res.status})`
+    const err = new Error(message)
+    err.status = res.status
+    err.data = data
+    throw err
+  }
+  return data
 }
 
 /**
- * Check if email is already in the subscriber list (no side effects).
+ * Check if email is already subscribed in Resend Audience.
  * @param {string} email
- * @returns {boolean}
+ * @returns {Promise<boolean>}
  */
-export function hasSubscriber(email) {
-  const normalized = (email || '').toLowerCase().trim()
+export async function hasSubscriber(email) {
+  const normalized = normalizeEmail(email)
   if (!normalized) return false
-  const list = readSubscribers()
-  return list.some((s) => (s.email || '').toLowerCase() === normalized)
+
+  const audienceId = getAudienceId()
+  try {
+    // GET contact by email (Audiences API)
+    await resendJson(
+      `${RESEND_API_BASE}/audiences/${audienceId}/contacts/${encodeURIComponent(normalized)}`,
+      { method: 'GET', headers: getAuthHeaders() }
+    )
+    return true
+  } catch (err) {
+    if (err?.status === 404) return false
+    throw err
+  }
 }
 
 /**
- * Add a subscriber (email + optional language/source). Idempotent by email.
+ * Add a subscriber to Resend Audience (idempotent).
  * @param {string} email
  * @param {{ language?: string, source?: string }} meta
- * @returns {{ added: boolean, subscriber: object }}
+ * @returns {Promise<{ added: boolean, subscriber: object }>}
  */
-export function addSubscriber(email, meta = {}) {
-  const normalized = (email || '').toLowerCase().trim()
+export async function addSubscriber(email, meta = {}) {
+  const normalized = normalizeEmail(email)
   if (!normalized) return { added: false, subscriber: null }
 
-  const list = readSubscribers()
-  const existing = list.find((s) => (s.email || '').toLowerCase() === normalized)
-  if (existing) {
-    return { added: false, subscriber: existing }
-  }
+  const audienceId = getAudienceId()
+  const language = meta.language === 'fr' ? 'fr' : 'en'
+  const source = meta.source === 'popup' ? 'popup' : 'inline'
 
-  const subscriber = {
-    email: normalized,
-    language: meta.language === 'fr' ? 'fr' : 'en',
-    source: meta.source || 'inline',
-    subscribedAt: new Date().toISOString(),
+  try {
+    const created = await resendJson(`${RESEND_API_BASE}/audiences/${audienceId}/contacts`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({
+        email: normalized,
+        first_name: '',
+        last_name: '',
+        unsubscribed: false,
+        // Keep these for Admin display; safe to ignore if Resend changes shape.
+        // (Resend currently supports arbitrary fields on contacts in audiences.)
+        // If Resend rejects these, the error will surface in logs.
+        language,
+        source,
+      }),
+    })
+    return { added: true, subscriber: created?.data || created }
+  } catch (err) {
+    // If contact already exists, treat as not added
+    if (err?.status === 409) {
+      return { added: false, subscriber: { email: normalized, language, source } }
+    }
+    throw err
   }
-  list.push(subscriber)
-  writeSubscribers(list)
-  return { added: true, subscriber }
 }
 
 /**
- * @returns {Array<{ email: string, language: string, source: string, subscribedAt: string }>}
+ * List subscribers from Resend Audience.
+ * @returns {Promise<Array<{ email: string, language?: string, source?: string, subscribedAt?: string }>>}
  */
-export function getSubscribers() {
-  return readSubscribers()
+export async function getSubscribers() {
+  const audienceId = getAudienceId()
+  const data = await resendJson(`${RESEND_API_BASE}/audiences/${audienceId}/contacts`, {
+    method: 'GET',
+    headers: getAuthHeaders(),
+  })
+  const list = Array.isArray(data?.data) ? data.data : []
+  return list.map((c) => ({
+    email: c.email,
+    language: c.language,
+    source: c.source,
+    subscribedAt: c.created_at || c.createdAt,
+  }))
 }
