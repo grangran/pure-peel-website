@@ -74,6 +74,8 @@ const orderConfirmationTemplateEN = (order, trackingUrl) => {
   const shippingName = order.shipping?.name || customerName
   const shippingAddress = order.shipping?.address || {}
   const customerTimezone = order.timezone || order.metadata?.timezone || 'America/Toronto'
+  const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const unsubUrl = `${shopUrl}/unsubscribe`
 
   return `
 <!DOCTYPE html>
@@ -179,6 +181,11 @@ const orderConfirmationTemplateEN = (order, trackingUrl) => {
     <div class="footer">
       <p>Pure Peel Co. · Made in Canada</p>
       <p>This is an automated email. Please do not reply directly to this message.</p>
+      <p style="margin: 10px 0 0 0;">
+        <a href="${unsubUrl}" style="color: ${emailTheme.textLight}; text-decoration: underline;">Unsubscribe</a>
+        &nbsp;&middot;&nbsp;
+        <a href="${shopUrl}/privacy" style="color: ${emailTheme.textLight}; text-decoration: underline;">Privacy Policy</a>
+      </p>
     </div>
   </div>
 </body>
@@ -193,6 +200,8 @@ const orderConfirmationTemplateFR = (order, trackingUrl) => {
   const shippingName = order.shipping?.name || customerName
   const shippingAddress = order.shipping?.address || {}
   const customerTimezone = order.timezone || order.metadata?.timezone || 'America/Toronto'
+  const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const unsubUrl = `${shopUrl}/unsubscribe`
 
   return `
 <!DOCTYPE html>
@@ -298,6 +307,11 @@ const orderConfirmationTemplateFR = (order, trackingUrl) => {
     <div class="footer">
       <p>Pure Peel Co. · Fabriqué au Canada</p>
       <p>Ceci est un e-mail automatisé. Veuillez ne pas répondre directement à ce message.</p>
+      <p style="margin: 10px 0 0 0;">
+        <a href="${unsubUrl}" style="color: ${emailTheme.textLight}; text-decoration: underline;">Se désabonner</a>
+        &nbsp;&middot;&nbsp;
+        <a href="${shopUrl}/privacy" style="color: ${emailTheme.textLight}; text-decoration: underline;">Politique de confidentialité</a>
+      </p>
     </div>
   </div>
 </body>
@@ -315,6 +329,7 @@ const orderConfirmationTemplate = (order, trackingUrl, language = 'en') => {
 // Welcome email (10% off) - English
 const welcomeEmailTemplateEN = (promoCode = 'WELCOME10') => {
   const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const unsubUrl = `${shopUrl}/unsubscribe`
   return `
 <!DOCTYPE html>
 <html>
@@ -356,6 +371,11 @@ const welcomeEmailTemplateEN = (promoCode = 'WELCOME10') => {
     <div class="footer">
       <p style="margin: 0;">You're receiving this because you signed up at purepeelco.com.</p>
       <p style="margin: 8px 0 0 0;">Pure Peel Co. — Premium dehydrated citrus, made in Canada.</p>
+      <p style="margin: 10px 0 0 0;">
+        <a href="${unsubUrl}" style="color: ${emailTheme.textLight}; text-decoration: underline;">Unsubscribe</a>
+        &nbsp;&middot;&nbsp;
+        <a href="${shopUrl}/privacy" style="color: ${emailTheme.textLight}; text-decoration: underline;">Privacy Policy</a>
+      </p>
     </div>
   </div>
 </body>
@@ -366,6 +386,7 @@ const welcomeEmailTemplateEN = (promoCode = 'WELCOME10') => {
 // Welcome email (10% off) - French
 const welcomeEmailTemplateFR = (promoCode = 'WELCOME10') => {
   const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const unsubUrl = `${shopUrl}/unsubscribe`
   return `
 <!DOCTYPE html>
 <html>
@@ -407,6 +428,11 @@ const welcomeEmailTemplateFR = (promoCode = 'WELCOME10') => {
     <div class="footer">
       <p style="margin: 0;">Vous recevez ceci car vous vous êtes inscrit sur purepeelco.com.</p>
       <p style="margin: 8px 0 0 0;">Pure Peel Co. — Agrumes déshydratés, fabriqués au Canada.</p>
+      <p style="margin: 10px 0 0 0;">
+        <a href="${unsubUrl}" style="color: ${emailTheme.textLight}; text-decoration: underline;">Se désabonner</a>
+        &nbsp;&middot;&nbsp;
+        <a href="${shopUrl}/privacy" style="color: ${emailTheme.textLight}; text-decoration: underline;">Politique de confidentialité</a>
+      </p>
     </div>
   </div>
 </body>
@@ -697,6 +723,8 @@ const welcomeListEmailTemplateFR = () => {
 const shippingNotificationTemplate = (order, trackingNumber) => {
   const customerName = order.customer?.name || 'Customer'
   const customerEmail = order.customer?.email || ''
+  const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const unsubUrl = `${shopUrl}/unsubscribe`
   return `
 <!DOCTYPE html>
 <html>
@@ -741,6 +769,11 @@ const shippingNotificationTemplate = (order, trackingNumber) => {
 
     <div class="footer">
       <p>Pure Peel Co. | Made in Canada</p>
+      <p style="margin: 10px 0 0 0;">
+        <a href="${unsubUrl}" style="color:#6b7280; text-decoration: underline;">Unsubscribe</a>
+        &nbsp;&middot;&nbsp;
+        <a href="${shopUrl}/privacy" style="color:#6b7280; text-decoration: underline;">Privacy Policy</a>
+      </p>
     </div>
   </div>
 </body>
@@ -754,6 +787,8 @@ const adminNotificationTemplate = (order) => {
   const customerPhone = order.customer?.phone || 'N/A'
   const shippingName = order.shipping?.name || customerName
   const shippingAddress = order.shipping?.address || {}
+  const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const unsubUrl = `${shopUrl}/unsubscribe`
 
   return `
 <!DOCTYPE html>
@@ -816,6 +851,14 @@ const adminNotificationTemplate = (order) => {
         </p>
         <p style="margin: 8px 0;"><strong>Shipping Method:</strong> ${order.shipping?.method || 'Standard Shipping'}</p>
       </div>
+    </div>
+    <div style="text-align:center; padding: 16px 0; color:#6b7280; font-size:12px;">
+      <p style="margin:0 0 10px 0;">Pure Peel Co. Admin Notification</p>
+      <p style="margin:0;">
+        <a href="${unsubUrl}" style="color:#6b7280; text-decoration: underline;">Unsubscribe</a>
+        &nbsp;&middot;&nbsp;
+        <a href="${shopUrl}/privacy" style="color:#6b7280; text-decoration: underline;">Privacy Policy</a>
+      </p>
     </div>
   </div>
 </body>
@@ -1072,6 +1115,8 @@ export const sendAdminNotification = async (order) => {
 
 // Contact form email template
 const contactFormTemplate = (name, email, inquiryType, message) => {
+  const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const unsubUrl = `${shopUrl}/unsubscribe`
   const inquiryTypeLabels = {
     'general': 'General Inquiry',
     'support': 'Product Issue & Support',
@@ -1123,6 +1168,11 @@ const contactFormTemplate = (name, email, inquiryType, message) => {
         <div class="footer">
           <p>This email was sent from the contact form on purepeelco.com</p>
           <p>Reply directly to this email to respond to ${name}</p>
+          <p style="margin: 10px 0 0 0;">
+            <a href="${unsubUrl}" style="color:#6b7280; text-decoration: underline;">Unsubscribe</a>
+            &nbsp;&middot;&nbsp;
+            <a href="${shopUrl}/privacy" style="color:#6b7280; text-decoration: underline;">Privacy Policy</a>
+          </p>
         </div>
       </div>
     </body>

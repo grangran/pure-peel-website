@@ -41,7 +41,7 @@ export default function EmailCapture() {
       const res = await fetch(`${API_URL}/api/subscribe`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, language })
+        body: JSON.stringify({ email, language, source: "inline" })
       })
       if (res.ok) {
         setStatus("success")
