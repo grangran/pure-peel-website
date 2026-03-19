@@ -414,89 +414,284 @@ const welcomeEmailTemplateFR = (promoCode = 'WELCOME10') => {
   `
 }
 
-// "THE LIST" / inline capture — relationship-building, one idea per email. Not transactional.
 const welcomeListEmailTemplateEN = () => {
-  const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const shopUrl     = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const unsubUrl    = `${shopUrl}/unsubscribe`
+
+  // Design tokens — kept inline so this function is self-contained
+  const cream     = '#faf7f2'
+  const dark      = '#0f0a04'
+  const orange    = '#c85a08'
+  const border    = 'rgba(15,10,4,0.08)'
+  const textLight = 'rgba(15,10,4,0.35)'
+  const textMid   = 'rgba(15,10,4,0.5)'
+  const sans      = "'Jost', 'Segoe UI', Arial, sans-serif"
+  const serif     = "'Cormorant Garamond', Georgia, serif"
+
   return `
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The List — Pure Peel Co.</title>
+  <!--[if mso]>
+  <noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+  <![endif]-->
   <style>
-    body { font-family: ${emailTheme.sans}; line-height: 1.7; color: ${emailTheme.dark}; margin: 0; }
-    .container { max-width: 560px; margin: 0 auto; }
-    .header { background: ${emailTheme.cream}; padding: 40px 40px 24px; text-align: left; }
-    .content { background: ${emailTheme.cream}; padding: 0 40px 48px; }
-    .p { font-size: 16px; color: ${emailTheme.dark}; margin: 0 0 20px; font-weight: 300; }
-    .tip { background: #fff; border-left: 3px solid ${emailTheme.gold}; padding: 20px 24px; margin: 28px 0; border-radius: 0 8px 8px 0; font-size: 15px; color: ${emailTheme.dark}; }
-    .tip strong { font-weight: 600; }
-    .soft-cta { font-size: 15px; color: ${emailTheme.dark}; margin: 28px 0 0; font-weight: 300; }
-    .soft-cta a { color: ${emailTheme.gold}; text-decoration: none; font-weight: 500; }
-    .soft-cta a:hover { text-decoration: underline; }
-    .footer { border-top: 1px solid ${emailTheme.border}; padding: 24px 40px; font-size: 12px; color: ${emailTheme.textLight}; }
+    body, html { margin: 0; padding: 0; background: #f0ebe0; }
+    body { font-family: ${sans}; line-height: 1.7; color: ${dark}; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; }
+    a { color: ${orange}; }
+    @media only screen and (max-width: 600px) {
+      .container { width: 100% !important; }
+      .padded    { padding: 28px 24px !important; }
+      .footer    { padding: 20px 24px !important; }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <p class="p" style="margin: 0;">Last weekend I was making cocktails for eight people and realized I'd forgotten to buy limes. Turns out a few dehydrated lime slices in the shaker — and one on the rim — worked even better. No last-minute run to the store, and everyone asked where they came from.</p>
-    </div>
-    <div class="content">
-      <p class="p">So here's the one thing I'd tell you first: keep a small jar of dehydrated citrus by the bar. Orange for old fashioneds, lime for g&t's and margaritas, grapefruit if you're feeling fancy. They rehydrate in the drink in seconds and look (and taste) like you actually planned ahead.</p>
-      <div class="tip">
-        <strong>This week's move:</strong> Drop 2–3 dried lime slices into your next gin and tonic. Let them sit for 30 seconds. Then taste. You'll get why we keep a bag in the cupboard.
-      </div>
-      <p class="soft-cta">We use our lime slices for exactly this — <a href="${shopUrl}">grab a bag if you're running low</a>.</p>
-    </div>
-    <div class="footer">
-      <p style="margin: 0;">You're on THE LIST — seasonal ideas, one at a time. Pure Peel Co.</p>
-    </div>
+  <!-- Preheader (hidden preview text) -->
+  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">
+    The garnish that saved my dinner party — one idea from Pure Peel Co.
+    &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
   </div>
+
+  <!-- Outer wrapper -->
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0ebe0;padding:32px 0;">
+    <tr>
+      <td align="center">
+        <table class="container" width="560" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;width:100%;">
+
+          <!-- ── LOGO HEADER ── -->
+          <tr>
+            <td align="center" style="padding:0 0 16px;">
+              <img
+                src="${shopUrl}/images/logo-dark.png"
+                alt="Pure Peel Co."
+                width="80"
+                style="width:80px;height:auto;display:block;"
+              />
+            </td>
+          </tr>
+
+          <!-- ── MAIN CARD ── -->
+          <tr>
+            <td style="background:${cream};border-radius:16px;overflow:hidden;">
+
+              <!-- Opening story -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td class="padded" style="padding:40px 40px 24px;">
+                    <p style="font-family:${sans};font-size:16px;font-weight:300;color:${dark};line-height:1.75;margin:0;">
+                      Last weekend I was making cocktails for eight people and realized I'd forgotten to buy limes.
+                      Turns out a few dehydrated lime slices in the shaker — and one on the rim — worked even better.
+                      No last-minute run to the store, and everyone asked where they came from.
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- Body -->
+                <tr>
+                  <td class="padded" style="padding:0 40px 40px;">
+
+                    <p style="font-family:${sans};font-size:16px;font-weight:300;color:${dark};line-height:1.75;margin:0 0 24px;">
+                      So here's the one thing I'd tell you first: keep a small jar of dehydrated citrus by the bar.
+                      Orange for old fashioneds, lime for G&amp;T's and margaritas, grapefruit if you're feeling fancy.
+                      They rehydrate in the drink in seconds and look (and taste) like you actually planned ahead.
+                    </p>
+
+                    <!-- Tip block -->
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 28px;">
+                      <tr>
+                        <td style="background:#fff;border-left:3px solid ${orange};border-radius:0 8px 8px 0;padding:20px 24px;">
+                          <p style="font-family:${sans};font-size:15px;color:${dark};line-height:1.65;margin:0;">
+                            <strong style="font-weight:600;">This week's move:</strong>
+                            Drop 2–3 dried lime slices into your next gin and tonic. Let them sit for 30 seconds.
+                            Then taste. You'll get why we keep a bag in the cupboard.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Soft CTA -->
+                    <p style="font-family:${sans};font-size:15px;font-weight:300;color:${dark};line-height:1.7;margin:0;">
+                      We use our lime slices for exactly this —
+                      <a href="${shopUrl}/lime" style="color:${orange};text-decoration:none;font-weight:500;">grab a bag if you're running low</a>.
+                    </p>
+
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- ── FOOTER ── -->
+          <tr>
+            <td class="footer" style="padding:24px 40px;text-align:center;">
+              <p style="font-family:${sans};font-size:12px;color:${textLight};line-height:1.6;margin:0 0 8px;">
+                You're on <strong style="color:${textMid};">THE LIST</strong> — seasonal ideas, one at a time.
+              </p>
+              <p style="font-family:${sans};font-size:12px;color:${textLight};line-height:1.6;margin:0 0 8px;">
+                Pure Peel Co. &mdash; Premium dehydrated citrus, made in Canada.
+              </p>
+              <p style="font-family:${sans};font-size:11px;color:${textLight};margin:0;">
+                <a href="${unsubUrl}" style="color:${textLight};text-decoration:underline;">Unsubscribe</a>
+                &nbsp;&middot;&nbsp;
+                <a href="${shopUrl}/privacy" style="color:${textLight};text-decoration:underline;">Privacy Policy</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+
 </body>
 </html>
-  `
+  `.trim()
 }
 
 const welcomeListEmailTemplateFR = () => {
-  const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const shopUrl     = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const unsubUrl    = `${shopUrl}/unsubscribe`
+
+  // Design tokens — kept inline so this function is self-contained
+  const cream     = '#faf7f2'
+  const dark      = '#0f0a04'
+  const orange    = '#c85a08'
+  const border    = 'rgba(15,10,4,0.08)'
+  const textLight = 'rgba(15,10,4,0.35)'
+  const textMid   = 'rgba(15,10,4,0.5)'
+  const sans      = "'Jost', 'Segoe UI', Arial, sans-serif"
+  const serif     = "'Cormorant Garamond', Georgia, serif"
+
   return `
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La liste — Pure Peel Co.</title>
+  <!--[if mso]>
+  <noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+  <![endif]-->
   <style>
-    body { font-family: ${emailTheme.sans}; line-height: 1.7; color: ${emailTheme.dark}; margin: 0; }
-    .container { max-width: 560px; margin: 0 auto; }
-    .header { background: ${emailTheme.cream}; padding: 40px 40px 24px; text-align: left; }
-    .content { background: ${emailTheme.cream}; padding: 0 40px 48px; }
-    .p { font-size: 16px; color: ${emailTheme.dark}; margin: 0 0 20px; font-weight: 300; }
-    .tip { background: #fff; border-left: 3px solid ${emailTheme.gold}; padding: 20px 24px; margin: 28px 0; border-radius: 0 8px 8px 0; font-size: 15px; color: ${emailTheme.dark}; }
-    .tip strong { font-weight: 600; }
-    .soft-cta { font-size: 15px; color: ${emailTheme.dark}; margin: 28px 0 0; font-weight: 300; }
-    .soft-cta a { color: ${emailTheme.gold}; text-decoration: none; font-weight: 500; }
-    .soft-cta a:hover { text-decoration: underline; }
-    .footer { border-top: 1px solid ${emailTheme.border}; padding: 24px 40px; font-size: 12px; color: ${emailTheme.textLight}; }
+    body, html { margin: 0; padding: 0; background: #f0ebe0; }
+    body { font-family: ${sans}; line-height: 1.7; color: ${dark}; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; }
+    a { color: ${orange}; }
+    @media only screen and (max-width: 600px) {
+      .container { width: 100% !important; }
+      .padded    { padding: 28px 24px !important; }
+      .footer    { padding: 20px 24px !important; }
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <p class="p" style="margin: 0;">La fin de semaine dernière, je préparais des cocktails pour huit et je me suis rendu compte qu'il n'y avait plus de citrons verts. Quelques tranches de lime déshydratées dans le shaker — et une sur le bord du verre — ont fait encore mieux. Pas de course au magasin, et tout le monde a demandé d'où ça venait.</p>
-    </div>
-    <div class="content">
-      <p class="p">Donc le premier conseil que je vous donne : gardez un petit pot d'agrumes déshydratés près du bar. Orange pour les old fashioneds, lime pour g&t et margaritas, pamplemousse si vous voulez faire les choses en grand. Ils se réhydratent en quelques secondes dans le verre et donnent l'impression que vous aviez tout prévu.</p>
-      <div class="tip">
-        <strong>L'astuce de la semaine :</strong> Mettez 2–3 tranches de lime séchées dans votre prochain gin tonic. Laissez reposer 30 secondes. Puis goûtez. Vous comprendrez pourquoi on garde toujours un sachet dans le placard.
-      </div>
-      <p class="soft-cta">On utilise nos tranches de lime exactement pour ça — <a href="${shopUrl}">prenez un sachet si vous en manquez</a>.</p>
-    </div>
-    <div class="footer">
-      <p style="margin: 0;">Vous êtes sur LA LISTE — une idée à la fois. Pure Peel Co.</p>
-    </div>
+  <!-- Preheader (hidden preview text) -->
+  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">
+    La garniture qui a sauvé mon souper — une idée de Pure Peel Co.
+    &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
   </div>
+
+  <!-- Outer wrapper -->
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0ebe0;padding:32px 0;">
+    <tr>
+      <td align="center">
+        <table class="container" width="560" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;width:100%;">
+
+          <!-- ── LOGO HEADER ── -->
+          <tr>
+            <td align="center" style="padding:0 0 16px;">
+              <img
+                src="${shopUrl}/images/logo-dark.png"
+                alt="Pure Peel Co."
+                width="80"
+                style="width:80px;height:auto;display:block;"
+              />
+            </td>
+          </tr>
+
+          <!-- ── MAIN CARD ── -->
+          <tr>
+            <td style="background:${cream};border-radius:16px;overflow:hidden;">
+
+              <!-- Opening story -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td class="padded" style="padding:40px 40px 24px;">
+                    <p style="font-family:${sans};font-size:16px;font-weight:300;color:${dark};line-height:1.75;margin:0;">
+                      La fin de semaine dernière, je préparais des cocktails pour huit et je me suis rendu compte qu'il n'y avait plus de citrons verts.
+                      Quelques tranches de lime déshydratées dans le shaker — et une sur le bord du verre — ont fait encore mieux.
+                      Pas de course au magasin, et tout le monde a demandé d'où ça venait.
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- Body -->
+                <tr>
+                  <td class="padded" style="padding:0 40px 40px;">
+
+                    <p style="font-family:${sans};font-size:16px;font-weight:300;color:${dark};line-height:1.75;margin:0 0 24px;">
+                      Donc le premier conseil que je vous donne : gardez un petit pot d'agrumes déshydratés près du bar.
+                      Orange pour les old fashioneds, lime pour les gin-tonics et les margaritas, pamplemousse si vous voulez faire les choses en grand.
+                      Ils se réhydratent en quelques secondes dans le verre et donnent l'impression que vous aviez tout prévu.
+                    </p>
+
+                    <!-- Tip block -->
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 28px;">
+                      <tr>
+                        <td style="background:#fff;border-left:3px solid ${orange};border-radius:0 8px 8px 0;padding:20px 24px;">
+                          <p style="font-family:${sans};font-size:15px;color:${dark};line-height:1.65;margin:0;">
+                            <strong style="font-weight:600;">L'astuce de la semaine :</strong>
+                            Mettez 2–3 tranches de lime séchées dans votre prochain gin tonic. Laissez reposer 30 secondes.
+                            Puis goûtez. Vous comprendrez pourquoi on garde toujours un sachet dans le placard.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Soft CTA -->
+                    <p style="font-family:${sans};font-size:15px;font-weight:300;color:${dark};line-height:1.7;margin:0;">
+                      On utilise nos tranches de lime exactement pour ça —
+                      <a href="${shopUrl}/lime" style="color:${orange};text-decoration:none;font-weight:500;">prenez un sachet si vous en manquez</a>.
+                    </p>
+
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- ── FOOTER ── -->
+          <tr>
+            <td class="footer" style="padding:24px 40px;text-align:center;">
+              <p style="font-family:${sans};font-size:12px;color:${textLight};line-height:1.6;margin:0 0 8px;">
+                Vous êtes sur <strong style="color:${textMid};">LA LISTE</strong> — une idée à la fois.
+              </p>
+              <p style="font-family:${sans};font-size:12px;color:${textLight};line-height:1.6;margin:0 0 8px;">
+                Pure Peel Co. &mdash; Agrumes déshydratés, fabriqués au Canada.
+              </p>
+              <p style="font-family:${sans};font-size:11px;color:${textLight};margin:0;">
+                <a href="${unsubUrl}" style="color:${textLight};text-decoration:underline;">Se désabonner</a>
+                &nbsp;&middot;&nbsp;
+                <a href="${shopUrl}/privacy" style="color:${textLight};text-decoration:underline;">Politique de confidentialité</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+
 </body>
 </html>
-  `
+  `.trim()
 }
 
 const shippingNotificationTemplate = (order, trackingNumber) => {
