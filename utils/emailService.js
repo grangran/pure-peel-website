@@ -372,9 +372,9 @@ const welcomeEmailTemplateEN = (promoCode = 'WELCOME10') => {
       <p style="margin: 0;">You're receiving this because you signed up at purepeelco.com.</p>
       <p style="margin: 8px 0 0 0;">Pure Peel Co. — Premium dehydrated citrus, made in Canada.</p>
       <p style="margin: 10px 0 0 0;">
-        <a href="${unsubUrl}" style="color: ${emailTheme.textLight}; text-decoration: underline;">Unsubscribe</a>
+        <a href="${unsubUrl}" style="color: ${emailTheme.gold}; text-decoration: underline;">Unsubscribe</a>
         &nbsp;&middot;&nbsp;
-        <a href="${shopUrl}/privacy" style="color: ${emailTheme.textLight}; text-decoration: underline;">Privacy Policy</a>
+        <a href="${shopUrl}/privacy" style="color: ${emailTheme.gold}; text-decoration: underline;">Privacy Policy</a>
       </p>
     </div>
   </div>
@@ -429,9 +429,9 @@ const welcomeEmailTemplateFR = (promoCode = 'WELCOME10') => {
       <p style="margin: 0;">Vous recevez ceci car vous vous êtes inscrit sur purepeelco.com.</p>
       <p style="margin: 8px 0 0 0;">Pure Peel Co. — Agrumes déshydratés, fabriqués au Canada.</p>
       <p style="margin: 10px 0 0 0;">
-        <a href="${unsubUrl}" style="color: ${emailTheme.textLight}; text-decoration: underline;">Se désabonner</a>
+        <a href="${unsubUrl}" style="color: ${emailTheme.gold}; text-decoration: underline;">Se désabonner</a>
         &nbsp;&middot;&nbsp;
-        <a href="${shopUrl}/privacy" style="color: ${emailTheme.textLight}; text-decoration: underline;">Politique de confidentialité</a>
+        <a href="${shopUrl}/privacy" style="color: ${emailTheme.gold}; text-decoration: underline;">Politique de confidentialité</a>
       </p>
     </div>
   </div>

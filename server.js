@@ -2993,6 +2993,7 @@ app.post('/api/subscribe', apiLimiter, async (req, res) => {
   }
 
   try {
+    console.log('Subscribe: sending welcome email to', email, '| template:', subscribeSource === 'popup' ? 'popup (10% off)' : 'list')
     const welcomeResult = await sendWelcomeEmail(email, { language: normalizedLanguage, source: subscribeSource })
     if (!welcomeResult.success) {
       return res.status(500).json({ error: welcomeResult.error || welcomeResult.reason || 'Email not configured' })
