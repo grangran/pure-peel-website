@@ -1,0 +1,456 @@
+/**
+ * Chit Chats Shipping Integration
+ *
+ * Replaces canadaPostShipping.js
+ *
+ * Required env vars:
+ *   CHITCHATS_ACCESS_TOKEN  — from Settings → Developer → API Access Tokens
+ *   CHITCHATS_CLIENT_ID     — your numeric client ID (e.g. 566022)
+ *
+ * Optional env vars:
+ *   CHITCHATS_USE_STAGING   — set to "true" to use staging.chitchats.com for testing
+ *   SHIPPING_ORIGIN_POSTAL_CODE — your postal code (default: set below)
+ *   SHIPPING_ORIGIN_PROVINCE    — your province code (default: ON)
+ *   SHIPPING_ORIGIN_CITY        — your city (default: Toronto)
+ *
+ * API docs: https://chitchats.com/docs/api/v1
+ */
+
+import dotenv from 'dotenv'
+dotenv.config()
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CONFIG
+// ─────────────────────────────────────────────────────────────────────────────
+
+const CLIENT_ID    = process.env.CHITCHATS_CLIENT_ID
+const ACCESS_TOKEN = process.env.CHITCHATS_ACCESS_TOKEN
+const BASE_URL     = process.env.CHITCHATS_USE_STAGING === 'true'
+  ? 'https://staging.chitchats.com/api/v1'
+  : 'https://chitchats.com/api/v1'
+
+// Your ship-from address
+const ORIGIN = {
+  name:       'Pure Peel Co.',
+  address1:   process.env.SHIPPING_ORIGIN_ADDRESS  || '',
+  city:       process.env.SHIPPING_ORIGIN_CITY     || 'Toronto',
+  province:   process.env.SHIPPING_ORIGIN_PROVINCE || 'ON',
+  postalCode: process.env.SHIPPING_ORIGIN_POSTAL_CODE || 'M5V 1A1',
+  country:    'CA',
+  phone:      process.env.SHIPPING_ORIGIN_PHONE    || '',
+}
+
+// HTS code for dehydrated citrus slices (used for US customs declarations)
+const CITRUS_HTS_CODE = '0813.40.00'
+
+// Package dimensions by box size (cm / kg — same values as canadaPostShipping.js)
+const BOX_SIZES = {
+  small: { length: 23, width: 15, height: 13, packagingWeight: 0.1, maxItems: 5 },
+  large: { length: 27, width: 25, height: 15, packagingWeight: 0.2, maxItems: 999 },
+}
+
+const PRODUCT_WEIGHTS = {
+  small:    0.075,
+  medium:   0.14,
+  large:    0.34,
+  clearbox: 0.165,
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────────────────────────────────────
+
+function getHeaders() {
+  return {
+    'Authorization': ACCESS_TOKEN,
+    'Content-Type':  'application/json; charset=utf-8',
+    'Accept':        'application/json',
+  }
+}
+
+function isConfigured() {
+  return !!(CLIENT_ID && ACCESS_TOKEN)
+}
+
+/**
+ * Calculate package weight from order items.
+ * Mirrors the logic in canadaPostShipping.js so weights are consistent.
+ */
+function calculateWeight(items = []) {
+  let productWeight = 0
+
+  items.forEach(item => {
+    const v = (item.variant || '').toLowerCase()
+    let w = 0.1
+    if (v.includes('small'))  w = PRODUCT_WEIGHTS.small
+    else if (v.includes('medium')) w = PRODUCT_WEIGHTS.medium
+    else if (v.includes('large'))  w = PRODUCT_WEIGHTS.large
+    else if (v.includes('clear'))  w = PRODUCT_WEIGHTS.clearbox
+    productWeight += w * (item.quantity || 1)
+  })
+
+  const itemsCount = items.reduce((s, i) => s + (i.quantity || 1), 0)
+  const box = itemsCount <= BOX_SIZES.small.maxItems ? BOX_SIZES.small : BOX_SIZES.large
+
+  return { weight: Math.max(productWeight + box.packagingWeight, 0.1), box }
+}
+
+/**
+ * Normalize province/state to 2-letter code.
+ */
+function normalizeProvince(province = '') {
+  const map = {
+    'ontario': 'ON', 'quebec': 'QC', 'alberta': 'AB', 'british columbia': 'BC',
+    'manitoba': 'MB', 'new brunswick': 'NB', 'newfoundland': 'NL',
+    'newfoundland and labrador': 'NL', 'nova scotia': 'NS', 'nunavut': 'NU',
+    'northwest territories': 'NT', 'prince edward island': 'PE', 'pei': 'PE',
+    'saskatchewan': 'SK', 'yukon': 'YT',
+    // US states (abbreviated already, just uppercase)
+  }
+  const lower = province.toLowerCase().trim()
+  return map[lower] || province.toUpperCase().trim().substring(0, 2)
+}
+
+/**
+ * Map country name to 2-letter ISO code.
+ */
+function normalizeCountry(country = '') {
+  const lower = country.toLowerCase().trim()
+  if (lower === 'united states' || lower === 'us' || lower === 'usa') return 'US'
+  if (lower === 'canada' || lower === 'ca') return 'CA'
+  return country.toUpperCase().trim().substring(0, 2)
+}
+
+/**
+ * Determine Chit Chats postage type based on destination country.
+ *
+ * Domestic Canada options:
+ *   chit_chats_canada_tracked  — tracked parcel within Canada
+ *
+ * US options:
+ *   chit_chats_us_tracked      — standard tracked to US via USPS
+ *   chit_chats_us_edge         — cheapest US option (USPS First Class equivalent)
+ *
+ * Use 'unknown' + cheapest_postage_type_requested=yes to let Chit Chats
+ * auto-select the cheapest available rate for US shipments.
+ */
+function getPostageType(countryCode) {
+  if (countryCode === 'CA') return 'chit_chats_canada_tracked'
+  if (countryCode === 'US') return 'unknown' // paired with cheapest_postage_type_requested
+  return 'chit_chats_international_tracked'
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RATE ESTIMATION
+// Returns flat estimated rates for checkout display.
+// These are conservative estimates — actual postage is purchased at label time.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Get estimated shipping rates for checkout.
+ * Uses flat rates based on Chit Chats average pricing rather than live API
+ * (live rate lookup requires creating a shipment first, which is wasteful at checkout).
+ *
+ * @param {{ postalCode: string, province: string, country: string }} destination
+ * @param {Array} cartItems
+ * @returns {{ options: Array }}
+ */
+export function getShippingRates(destination, cartItems = []) {
+  const country = normalizeCountry(destination.country || 'Canada')
+  const { weight } = calculateWeight(cartItems)
+
+  if (country === 'US') {
+    // Chit Chats US rates are dramatically cheaper than Canada Post
+    // Base ~$6-9 USD converted to CAD, plus weight
+    const base = weight <= 0.5 ? 9.00 : weight <= 1.0 ? 11.00 : 14.00
+
+    return {
+      options: [
+        {
+          id:           'chitchats-us-standard',
+          name:         'Standard (USPS)',
+          price:        base,
+          estimatedDays: 7,
+          description:  'Tracked delivery to the US via USPS (5–10 business days)',
+        },
+        {
+          id:           'chitchats-us-expedited',
+          name:         'Expedited (USPS Priority)',
+          price:        Math.round((base + 6) * 100) / 100,
+          estimatedDays: 4,
+          description:  'Faster tracked delivery to the US (3–5 business days)',
+        },
+      ],
+    }
+  }
+
+  // Canadian domestic
+  const base = weight <= 0.5 ? 8.00 : weight <= 1.0 ? 10.00 : 13.00
+
+  return {
+    options: [
+      {
+        id:           'chitchats-canada-tracked',
+        name:         'Tracked Parcel',
+        price:        base,
+        estimatedDays: 4,
+        description:  'Tracked delivery within Canada (3–6 business days)',
+      },
+      {
+        id:           'chitchats-canada-expedited',
+        name:         'Expedited Tracked',
+        price:        Math.round((base + 5) * 100) / 100,
+        estimatedDays: 2,
+        description:  'Faster tracked delivery within Canada (2–3 business days)',
+      },
+    ],
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CREATE SHIPMENT + BUY POSTAGE
+// Called after a successful order — replaces createCanadaPostLabel()
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Create a Chit Chats shipment and purchase postage.
+ *
+ * @param {object} order  — your internal order object (same shape as before)
+ * @returns {{ success: boolean, trackingNumber?, labelUrl?, shipmentId?, error? }}
+ */
+export async function createChitChatsLabel(order) {
+  if (!isConfigured()) {
+    console.log('⚠️  Chit Chats not configured — set CHITCHATS_ACCESS_TOKEN and CHITCHATS_CLIENT_ID')
+    return { success: false, error: 'Chit Chats not configured' }
+  }
+
+  try {
+    const addr    = order.shipping?.address || {}
+    const country = normalizeCountry(addr.country || 'Canada')
+    const province = normalizeProvince(addr.state || addr.province || '')
+
+    const { weight, box } = calculateWeight(order.items || [])
+
+    // ── Step 1: Create the shipment ──────────────────────────────────────────
+    const postageType = getPostageType(country)
+    const isUS        = country === 'US'
+
+    const shipmentPayload = {
+      // Sender (your address)
+      from_name:         ORIGIN.name,
+      from_address1:     ORIGIN.address1,
+      from_city:         ORIGIN.city,
+      from_province_code: ORIGIN.province,
+      from_postal_code:  ORIGIN.postalCode.replace(/\s/g, ''),
+      from_country_code: ORIGIN.country,
+      from_phone:        ORIGIN.phone,
+
+      // Recipient
+      to_name:         order.shipping?.name || order.customer?.name || '',
+      to_address1:     addr.line1 || addr.address1 || '',
+      to_address2:     addr.line2 || addr.address2 || '',
+      to_city:         addr.city  || '',
+      to_province_code: province,
+      to_postal_code:  (addr.postal_code || addr.postalCode || '').replace(/\s/g, ''),
+      to_country_code: country,
+      to_phone:        order.customer?.phone || '',
+      to_email:        order.customer?.email || '',
+
+      // Package
+      weight_unit:    'kg',
+      weight:         weight.toFixed(3),
+      size_unit:      'cm',
+      size_x:         box.length,
+      size_y:         box.width,
+      size_z:         box.height,
+      package_contents: 'merchandise',
+      description:    'Dehydrated citrus slices',
+
+      // Postage
+      postage_type:   postageType,
+      ...(isUS && { cheapest_postage_type_requested: 'yes' }),
+
+      // Reference — links back to your order
+      reference:      order.id || '',
+
+      // Customs for US shipments
+      ...(isUS && {
+        customs_signer:       order.shipping?.name || 'Pure Peel Co.',
+        customs_certify:      true,
+        customs_contents_type: 'merchandise',
+        line_items: (order.items || []).map(item => ({
+          description:    `Dehydrated ${item.name || 'citrus'} slices`,
+          quantity:        item.quantity || 1,
+          value:          ((item.price || 0) * (item.quantity || 1)).toFixed(2),
+          weight:          '0.1',
+          weight_unit:     'kg',
+          hs_tariff_number: CITRUS_HTS_CODE,
+          country_of_origin: 'CA',
+        })),
+      }),
+    }
+
+    console.log(`📦 Creating Chit Chats shipment for order ${order.id}...`)
+    console.log(`   Destination: ${addr.city}, ${province} ${addr.postal_code || addr.postalCode} (${country})`)
+    console.log(`   Weight: ${weight.toFixed(3)} kg | Box: ${box.length}×${box.width}×${box.height} cm`)
+    console.log(`   Postage type: ${postageType}`)
+
+    const createRes = await fetch(`${BASE_URL}/clients/${CLIENT_ID}/shipments`, {
+      method:  'POST',
+      headers: getHeaders(),
+      body:    JSON.stringify(shipmentPayload),
+    })
+
+    if (!createRes.ok) {
+      const errText = await createRes.text()
+      console.error(`❌ Chit Chats create shipment error ${createRes.status}:`, errText)
+      return { success: false, error: `Chit Chats API error ${createRes.status}: ${errText.substring(0, 200)}` }
+    }
+
+    const { shipment } = await createRes.json()
+    const shipmentId = shipment.id
+
+    console.log(`✅ Shipment created: ${shipmentId}`)
+    console.log(`   Available rates:`, shipment.postage_rates?.map(r => `${r.postage_type}: $${r.rate}`).join(', ') || 'pending')
+
+    // ── Step 2: Buy postage ──────────────────────────────────────────────────
+    console.log(`💳 Purchasing postage for shipment ${shipmentId}...`)
+
+    const buyRes = await fetch(`${BASE_URL}/clients/${CLIENT_ID}/shipments/${shipmentId}/buy_postage`, {
+      method:  'PATCH',
+      headers: getHeaders(),
+      body:    JSON.stringify({}),
+    })
+
+    if (!buyRes.ok) {
+      const errText = await buyRes.text()
+      console.error(`❌ Chit Chats buy postage error ${buyRes.status}:`, errText)
+      return { success: false, error: `Failed to purchase postage: ${errText.substring(0, 200)}`, shipmentId }
+    }
+
+    let updatedShipment = (await buyRes.json()).shipment
+
+    // ── Step 3: Poll until ready (postage purchase can take a few seconds) ───
+    if (updatedShipment.status === 'postage_requested') {
+      console.log(`⏳ Postage purchase in progress, polling...`)
+      let attempts = 0
+      while (updatedShipment.status === 'postage_requested' && attempts < 10) {
+        await new Promise(r => setTimeout(r, 2000)) // wait 2s
+        const pollRes = await fetch(`${BASE_URL}/clients/${CLIENT_ID}/shipments/${shipmentId}`, {
+          headers: getHeaders(),
+        })
+        if (pollRes.ok) {
+          updatedShipment = (await pollRes.json()).shipment
+        }
+        attempts++
+      }
+    }
+
+    if (updatedShipment.status === 'postage_purchase_failed') {
+      console.error('❌ Chit Chats postage purchase failed')
+      return { success: false, error: 'Postage purchase failed', shipmentId }
+    }
+
+    const trackingNumber = updatedShipment.tracking_code || updatedShipment.carrier_tracking_code
+    const trackingUrl    = updatedShipment.tracking_url || `https://chitchats.com/tracking/${shipmentId.toLowerCase()}`
+    const labelUrl       = updatedShipment.label_url || null
+    const postageType_   = updatedShipment.postage_type || postageType
+    const rate           = updatedShipment.postage_rate || null
+
+    console.log(`✅ Postage purchased successfully!`)
+    console.log(`   Tracking: ${trackingNumber}`)
+    console.log(`   Service: ${postageType_}`)
+    if (rate) console.log(`   Cost: $${rate}`)
+    if (labelUrl) console.log(`   Label: ${labelUrl}`)
+
+    return {
+      success:        true,
+      shipmentId,
+      trackingNumber,
+      trackingUrl,
+      labelUrl,
+      postageType:    postageType_,
+      rate,
+      carrier:        updatedShipment.carrier || 'chitchats',
+    }
+
+  } catch (err) {
+    console.error('❌ Chit Chats error:', err.message)
+    return { success: false, error: err.message }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// GET SHIPMENT STATUS
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Look up a shipment by ID and return current status + tracking events.
+ *
+ * @param {string} shipmentId
+ * @returns {{ success: boolean, shipment?, error? }}
+ */
+export async function getShipmentStatus(shipmentId) {
+  if (!isConfigured()) return { success: false, error: 'Chit Chats not configured' }
+
+  try {
+    const res = await fetch(`${BASE_URL}/clients/${CLIENT_ID}/shipments/${shipmentId}`, {
+      headers: getHeaders(),
+    })
+
+    if (!res.ok) {
+      const errText = await res.text()
+      return { success: false, error: `Chit Chats API error ${res.status}: ${errText.substring(0, 200)}` }
+    }
+
+    const { shipment } = await res.json()
+    return {
+      success: true,
+      shipment: {
+        id:              shipment.id,
+        status:          shipment.status,
+        trackingNumber:  shipment.tracking_code || shipment.carrier_tracking_code,
+        trackingUrl:     shipment.tracking_url,
+        labelUrl:        shipment.label_url,
+        carrier:         shipment.carrier,
+        estimatedDelivery: shipment.estimated_delivery_at,
+        trackingEvents:  shipment.tracking_events || [],
+      },
+    }
+  } catch (err) {
+    return { success: false, error: err.message }
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// VOID / REFUND SHIPMENT
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Void a shipment that has already had postage purchased.
+ * Chit Chats will refund the postage cost to your account balance.
+ *
+ * @param {string} shipmentId
+ * @returns {{ success: boolean, error? }}
+ */
+export async function voidShipment(shipmentId) {
+  if (!isConfigured()) return { success: false, error: 'Chit Chats not configured' }
+
+  try {
+    const res = await fetch(`${BASE_URL}/clients/${CLIENT_ID}/shipments/${shipmentId}/refund`, {
+      method:  'PATCH',
+      headers: getHeaders(),
+      body:    JSON.stringify({}),
+    })
+
+    if (!res.ok) {
+      const errText = await res.text()
+      return { success: false, error: `Void error ${res.status}: ${errText.substring(0, 200)}` }
+    }
+
+    console.log(`✅ Shipment ${shipmentId} voided — postage refunded to Chit Chats balance`)
+    return { success: true }
+  } catch (err) {
+    return { success: false, error: err.message }
+  }
+}

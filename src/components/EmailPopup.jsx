@@ -243,7 +243,7 @@ export default function EmailPopup() {
       const res = await fetch(`${API_URL}/api/subscribe`, {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
-        // language tells your backend which Klaviyo list / welcome flow to use
+        // language selects which welcome email template (EN/FR) to send
         body: JSON.stringify({ email: trimmed, language, source: "popup" }),
       })
 

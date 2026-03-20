@@ -48,10 +48,9 @@ Your website uses **dynamic shipping rate calculation** based on the customer's 
 - ✅ Valid postal code entered
 - ✅ Rates successfully fetched
 
-**Three shipping options appear (for Canada):**
-1. **Regular Parcel** - Starting at $12 CAD (2-5 business days)
-2. **Expedited Parcel** - Starting at $18 CAD (1-3 business days)
-3. **Xpresspost** - Starting at $22 CAD (Next business day)
+**Two shipping options appear (Canada and US each have two tiers):**
+- **Canada:** Tracked Parcel and Expedited Tracked (estimates from `utils/chitchatsShipping.js`)
+- **United States:** Standard (USPS) and Expedited (USPS Priority) — fulfilled via Chit Chats, delivered by USPS
 
 ### 6. Customer Selects Shipping Method
 - Customer clicks on preferred shipping option
@@ -96,35 +95,18 @@ Your website uses **dynamic shipping rate calculation** based on the customer's 
 3. **Service:** Regular Parcel
 4. **Cost:** ($12.00 + $3.00) × 1.25 = **$18.75 CAD**
 
-## Shipping Rate Sources
+## Shipping rate source
 
-### Option 1: Real-Time Canada Post API (If Configured)
+Checkout rates come from **`getShippingRates()`** in `utils/chitchatsShipping.js`: flat **estimates** by destination country and cart weight (not live API quotes). Adjust those numbers there if your Chit Chats costs change.
 
-**When Canada Post credentials are set:**
-- ✅ Uses **real-time rates** from Canada Post API
-- ✅ Most accurate pricing
-- ✅ Includes all available services
-- ✅ Accounts for exact destination
+**Labels after payment:** `createChitChatsLabel()` in the same file (Stripe webhooks in `server.js`) when `AUTO_CREATE_SHIPPING_LABELS` is not `false`.
 
-**Environment variables needed:**
+**Environment variables (Chit Chats):**
 ```env
-CANADA_POST_USERNAME=your-username
-CANADA_POST_PASSWORD=your-password
-CANADA_POST_CUSTOMER_NUMBER=your-customer-number
-CANADA_POST_USE_PRODUCTION=true
-SHIPPING_ORIGIN_POSTAL_CODE=M5H 2N2
-SHIPPING_ORIGIN_CITY=Toronto
-SHIPPING_ORIGIN_PROVINCE=ON
+CHITCHATS_ACCESS_TOKEN=...
+CHITCHATS_CLIENT_ID=...
+# Optional: SHIPPING_ORIGIN_* — see file header in chitchatsShipping.js
 ```
-
-### Option 2: Estimated Rates (Fallback)
-
-**When Canada Post API is not configured:**
-- ✅ Uses **estimated rates** based on:
-  - Base rates ($12/$18/$22)
-  - Weight calculations
-  - Remote area surcharges
-- ✅ Still functional and accurate enough for most cases
 
 ## Shipping Options by Destination
 
@@ -211,13 +193,9 @@ SHIPPING_ORIGIN_PROVINCE=ON
 - Rate limiting: 20 requests per 15 minutes per IP
 
 **Calculation process:**
-1. Validates destination address
-2. Calculates package weight from cart items
-3. Estimates package dimensions
-4. Calls Canada Post API (if configured) OR uses estimated rates
-5. Applies weight-based pricing
-6. Applies remote area surcharges
-7. Returns shipping options
+1. Validates destination address (middleware)
+2. Calls `getShippingRates(destination, cartItems)` in `utils/chitchatsShipping.js`
+3. Returns the option list (flat estimates by country + weight)
 
 ### Weight Calculation
 

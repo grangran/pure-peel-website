@@ -328,11 +328,15 @@ export default function Checkout() {
         return
       }
       if (error.message.includes('fetch') || error.message.includes('connect') || error.message.includes('Failed to fetch')) {
-        const defaultOptions = [
-          { id: 'regular',     name: 'Regular Parcel',    description: 'Standard delivery with tracking',          price: 12.00, estimatedDays: 3 },
-          { id: 'expedited',   name: 'Expedited Parcel',  description: 'Faster delivery with tracking',            price: 18.00, estimatedDays: 2 },
-          { id: 'xpresspost',  name: 'Xpresspost',        description: 'Express delivery with priority handling',  price: 22.00, estimatedDays: 1 },
-        ]
+        const defaultOptions = formData.country === 'United States'
+          ? [
+              { id: 'chitchats-us-standard', name: 'Standard (USPS)', description: 'Tracked delivery to the US via USPS (5–10 business days)', price: 9.00, estimatedDays: 7 },
+              { id: 'chitchats-us-expedited', name: 'Expedited (USPS Priority)', description: 'Faster tracked delivery to the US (3–5 business days)', price: 15.00, estimatedDays: 4 },
+            ]
+          : [
+              { id: 'chitchats-canada-tracked', name: 'Tracked Parcel', description: 'Tracked delivery within Canada (3–6 business days)', price: 8.00, estimatedDays: 4 },
+              { id: 'chitchats-canada-expedited', name: 'Expedited Tracked', description: 'Faster tracked delivery within Canada (2–3 business days)', price: 13.00, estimatedDays: 2 },
+            ]
         setShippingOptions(defaultOptions); setSelectedShipping(defaultOptions[0])
       } else {
         setShippingError(error.message || 'Unable to calculate shipping. Please try again.')

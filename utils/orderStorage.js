@@ -25,7 +25,7 @@
  * Related Files: 
  * -productStorage.js (similar pattern for products)
  * -emailService.js (reads emailsSent tracking to prevent duplicates)
- * -canadaPostShipping.js (updates orders with tracking info)
+ * -chitchatsShipping.js (updates orders with tracking info)
  * -server.js (uses all these functions) 
  * 
  */
@@ -247,6 +247,8 @@ export const updateOrderTracking = (orderId, trackingData) => {
       throw new Error('Order not found')
     }
     orders[orderIndex].trackingNumber = trackingData.trackingNumber
+    orders[orderIndex].trackingUrl = trackingData.trackingUrl
+    orders[orderIndex].shippingCarrier = trackingData.carrier
     orders[orderIndex].labelUrl = trackingData.labelUrl
     orders[orderIndex].shipmentId = trackingData.shipmentId
     orders[orderIndex].pin = trackingData.pin

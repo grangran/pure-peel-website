@@ -8,8 +8,9 @@ import fs from 'fs'
 import path from 'path'
 import { Resend } from 'resend'
 import { saveOrder, getAllOrders, getOrderById, updateOrderStatus, getOrderStats, markEmailSent, hasEmailBeenSent, updateOrderTracking } from './utils/orderStorage.js'
+import { hasSubscriber, addSubscriber, getSubscribers } from './utils/subscriberStorage.js'
 import { sendOrderConfirmation, sendShippingNotification, sendAdminNotification, sendContactForm, sendWelcomeEmail, getOrderConfirmationPreview, getWelcomeEmailPreview } from './utils/emailService.js'
-import { createCanadaPostLabel } from './utils/canadaPostShipping.js'
+import { createChitChatsLabel, getShippingRates } from './utils/chitchatsShipping.js'
 import { getAllProducts, getProductById, saveProduct, updateProduct, deleteProduct, bulkSaveProducts } from './utils/productStorage.js'
 
 dotenv.config()
@@ -330,21 +331,23 @@ app.post('/api/webhook', webhookLimiter, express.raw({ type: 'application/json' 
           const savedOrder = saveOrder(orderData)
           console.log('Order saved:', savedOrder.id)
           
-          // Automatically create Canada Post shipping label (if enabled)
+          // Automatically create Chit Chats shipping label (if enabled)
           const autoCreateLabels = process.env.AUTO_CREATE_SHIPPING_LABELS !== 'false' // Default to true
           if (autoCreateLabels) {
-            console.log('📦 Attempting to create Canada Post shipping label for order:', savedOrder.id)
+            console.log('📦 Attempting to create Chit Chats label for order:', savedOrder.id)
             try {
-              const labelResult = await createCanadaPostLabel(savedOrder)
+              const labelResult = await createChitChatsLabel(savedOrder)
               if (labelResult.success && labelResult.trackingNumber) {
                 // Update order with tracking information
                 updateOrderTracking(savedOrder.id, {
                   trackingNumber: labelResult.trackingNumber,
+                  trackingUrl: labelResult.trackingUrl,
                   labelUrl: labelResult.labelUrl,
                   shipmentId: labelResult.shipmentId,
+                  carrier: labelResult.carrier,
                   pin: labelResult.pin
                 })
-                console.log('✅ Canada Post label created successfully:', labelResult.trackingNumber)
+                console.log('✅ Chit Chats label created:', labelResult.trackingNumber)
                 
                 // Reload order to get updated tracking info
                 const updatedOrder = getOrderById(savedOrder.id)
@@ -365,12 +368,12 @@ app.post('/api/webhook', webhookLimiter, express.raw({ type: 'application/json' 
                   }
                 }
               } else {
-                console.log('⚠️  Canada Post label creation failed:', labelResult.error || 'Unknown error')
+                console.log('⚠️  Chit Chats label creation failed:', labelResult.error || 'Unknown error')
                 console.log('   Order will be saved without tracking number. Label can be created manually later.')
                 console.log('   To disable automatic label creation, set AUTO_CREATE_SHIPPING_LABELS=false')
               }
             } catch (labelError) {
-              console.error('❌ Error creating Canada Post label:', labelError.message)
+              console.error('❌ Error creating Chit Chats label:', labelError.message)
               console.log('   Order will be saved without tracking number. Label can be created manually later.')
               console.log('   To disable automatic label creation, set AUTO_CREATE_SHIPPING_LABELS=false')
             }
@@ -498,20 +501,22 @@ app.post('/api/webhook', webhookLimiter, express.raw({ type: 'application/json' 
           const savedOrder = saveOrder(orderData)
           console.log('Order saved from Payment Intent:', savedOrder.id)
           
-          // Automatically create Canada Post shipping label (if enabled)
+          // Automatically create Chit Chats shipping label (if enabled)
           const autoCreateLabels = process.env.AUTO_CREATE_SHIPPING_LABELS !== 'false'
           if (autoCreateLabels) {
-            console.log('📦 Attempting to create Canada Post shipping label for order:', savedOrder.id)
+            console.log('📦 Attempting to create Chit Chats label for order:', savedOrder.id)
             try {
-              const labelResult = await createCanadaPostLabel(savedOrder)
+              const labelResult = await createChitChatsLabel(savedOrder)
               if (labelResult.success && labelResult.trackingNumber) {
                 updateOrderTracking(savedOrder.id, {
                   trackingNumber: labelResult.trackingNumber,
+                  trackingUrl: labelResult.trackingUrl,
                   labelUrl: labelResult.labelUrl,
                   shipmentId: labelResult.shipmentId,
+                  carrier: labelResult.carrier,
                   pin: labelResult.pin
                 })
-                console.log('✅ Canada Post label created successfully:', labelResult.trackingNumber)
+                console.log('✅ Chit Chats label created:', labelResult.trackingNumber)
                 
                 const updatedOrder = getOrderById(savedOrder.id)
                 const shippingSent = hasEmailBeenSent(savedOrder.id, 'shipping')
@@ -527,10 +532,10 @@ app.post('/api/webhook', webhookLimiter, express.raw({ type: 'application/json' 
                   }
                 }
               } else {
-                console.log('⚠️  Canada Post label creation failed:', labelResult.error || 'Unknown error')
+                console.log('⚠️  Chit Chats label creation failed:', labelResult.error || 'Unknown error')
               }
             } catch (labelError) {
-              console.error('❌ Error creating Canada Post label:', labelError.message)
+              console.error('❌ Error creating Chit Chats label:', labelError.message)
             }
           }
           
@@ -1150,7 +1155,7 @@ app.post('/api/create-checkout-session', checkoutLimiter, validateCheckoutSessio
         }
       },
       customer_email: shippingInfo.email,
-      // Always collect shipping address - required for Canada Post label creation
+      // Always collect shipping address - required for shipping label creation (Chit Chats)
       shipping_address_collection: {
         allowed_countries: ['CA', 'US'],
       },
@@ -1663,601 +1668,23 @@ app.get('/api/checkout-session/:sessionId', apiLimiter, validateCheckoutSessionI
 
 // Old webhook endpoint removed - now handled above before express.json()
 
-// Get Canada Post Shipping Rates
+// Chit Chats shipping rate estimates (see utils/chitchatsShipping.js)
 // Following OWASP best practices: rate limiting + schema-based validation
 app.post('/api/get-shipping-rates', shippingLimiter, validateShippingRates, async (req, res) => {
   try {
     const { destination, cartItems } = req.body
-
-    // Input validation is now handled by validateShippingRates middleware
-    // All fields are validated, sanitized, and type-checked above
-    
     const country = destination.country || 'Canada'
-    
-    // Normalize province to 2-letter code for Canada Post API (e.g., "Ontario" -> "ON")
-    // Handle various province formats from frontend
-    let province = (destination.province || '').trim().toUpperCase()
-    const provinceMap = {
-      'ONTARIO': 'ON', 'QUEBEC': 'QC', 'QUEBÉC': 'QC', 'NOVA SCOTIA': 'NS',
-      'NEW BRUNSWICK': 'NB', 'MANITOBA': 'MB', 'BRITISH COLUMBIA': 'BC',
-      'PRINCE EDWARD ISLAND': 'PE', 'SASKATCHEWAN': 'SK', 'ALBERTA': 'AB',
-      'NEWFOUNDLAND AND LABRADOR': 'NL', 'NEWFOUNDLAND': 'NL',
-      'NORTHWEST TERRITORIES': 'NT', 'YUKON': 'YT', 'NUNAVUT': 'NU'
+    console.log('🌍 Shipping rate request (Chit Chats estimates):', country, destination.postalCode || '')
+    const result = getShippingRates(destination, cartItems || [])
+    if (!result.options?.length) {
+      return res.status(500).json({ error: 'No shipping options available' })
     }
-    if (province.length > 2 && provinceMap[province]) {
-      province = provinceMap[province]
-    } else if (province.length > 2) {
-      // Try to extract 2-letter code if it's embedded (e.g., "ON - Ontario")
-      const match = province.match(/\b([A-Z]{2})\b/)
-      if (match) province = match[1]
-    }
-    
-    console.log('🌍 Shipping rate request - Country:', country, 'Postal Code:', destination.postalCode, 'Province:', province)
-
-    // Your origin address (where you ship from)
-    const origin = {
-      postalCode: process.env.SHIPPING_ORIGIN_POSTAL_CODE || 'M5H 2N2', // Default to Toronto
-      city: process.env.SHIPPING_ORIGIN_CITY || 'Toronto',
-      province: process.env.SHIPPING_ORIGIN_PROVINCE || 'ON'
-    }
-
-    // Calculate package weight
-    // Product weights (measured weights in kg)
-    // These are product-only weights - packaging is added separately
-    const PRODUCT_WEIGHTS = {
-      'small': 0.075,   // kg - Small Bag (measured: max 75g across all products)
-      'medium': 0.14,   // kg - Medium Bag (measured: max 140g across all products)
-      'large': 0.34,    // kg - Large Bag (calculated: max 340g based on proportional scaling)
-      'clearbox': 0.165 // kg - Clear Box (measured: max 165g across all products)
-    }
-
-    // Box sizes with dimensions and packaging weights
-    const BOX_SIZES = {
-      small: {
-        length: 23,   // cm - Measured box size
-        width: 15,    // cm - Measured box size
-        height: 13,   // cm - Measured box size
-        packagingWeight: 0.1, // kg - Estimated (measure when available)
-        maxItems: 5
-      },
-      large: {
-        length: 27,   // cm - Measured box size
-        width: 25,    // cm - Measured box size
-        height: 15,   // cm - Measured box size
-        packagingWeight: 0.2, // kg - Estimated (measure when available)
-        maxItems: 999
-      }
-    }
-
-    const calculateWeight = (items) => {
-      // Calculate product weight
-      let productWeight = 0
-      items.forEach(item => {
-        const variantLower = (item.variant || '').toLowerCase()
-        let itemWeight = 0.1 // Default weight
-        
-        if (variantLower.includes('small')) itemWeight = PRODUCT_WEIGHTS.small
-        else if (variantLower.includes('medium')) itemWeight = PRODUCT_WEIGHTS.medium
-        else if (variantLower.includes('large')) itemWeight = PRODUCT_WEIGHTS.large
-        else if (variantLower.includes('clear')) itemWeight = PRODUCT_WEIGHTS.clearbox
-        
-        productWeight += itemWeight * (item.quantity || 1)
-      })
-
-      // Select appropriate box size based on item count
-      const itemsCount = items.reduce((sum, item) => sum + (item.quantity || 1), 0)
-      let boxSize
-      if (itemsCount <= BOX_SIZES.small.maxItems) {
-        boxSize = BOX_SIZES.small
-      } else {
-        boxSize = BOX_SIZES.large
-      }
-
-      // Total weight = Product weight + Packaging weight
-      const totalWeight = productWeight + boxSize.packagingWeight
-
-      return Math.max(totalWeight, 0.1)
-    }
-
-    const weight = calculateWeight(cartItems)
-    const itemsCount = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0)
-    
-    // Package dimensions (in cm) - uses BOX_SIZES defined above
-    let dimensions
-    if (itemsCount <= BOX_SIZES.small.maxItems) {
-      dimensions = { length: BOX_SIZES.small.length, width: BOX_SIZES.small.width, height: BOX_SIZES.small.height }
-    } else {
-      dimensions = { length: BOX_SIZES.large.length, width: BOX_SIZES.large.width, height: BOX_SIZES.large.height }
-    }
-
-    // Log package calculation details
-    console.log('📦 Shipping Rate Calculation Details:')
-    console.log('   Cart Items:', cartItems.map(item => `${item.quantity}x ${item.variant || item.name}`).join(', '))
-    console.log('   Total Items:', itemsCount)
-    console.log('   Box Selected:', itemsCount <= BOX_SIZES.small.maxItems ? 'Small' : 'Large')
-    console.log('   Package Weight:', `${weight.toFixed(3)} kg`)
-    console.log('   Package Dimensions:', `${dimensions.length}×${dimensions.width}×${dimensions.height} cm`)
-    console.log('   Origin:', `${origin.city}, ${origin.province} ${origin.postalCode}`)
-    console.log('   Destination:', `${destination.city}, ${destination.province} ${destination.postalCode} (${country})`)
-
-    // Helper functions for estimated rates - Updated for 2024 Canada Post rates
-    const calculateEstimatedRate = (postalCode, weight, serviceType, country = 'Canada') => {
-      if (country === 'United States') {
-        // USPS rates (converted to CAD, approximate)
-        // Base rates for packages under 1lb (0.45kg)
-        const baseRates = {
-          'first-class': 18.00,      // First-Class Package - 5-7 business days
-          'priority': 25.00,          // Priority Mail - 2-3 business days
-          'priority-express': 45.00  // Priority Mail Express - 1-2 business days
-        }
-        
-        let rate = baseRates[serviceType] || 18.00
-        
-        // Weight-based pricing (convert kg to lbs: 1kg = 2.2lbs)
-        const weightLbs = weight * 2.2
-        if (weightLbs > 1 && weightLbs <= 2) {
-          rate += 3.00
-        } else if (weightLbs > 2 && weightLbs <= 4) {
-          rate += 6.00
-        } else if (weightLbs > 4) {
-          rate += 6.00 + ((weightLbs - 4) / 1) * 2.00
-        }
-        
-        return Math.round(rate * 100) / 100
-      } else {
-        // Canada Post rates
-        const baseRates = {
-          'regular': 12.00,      // Regular Parcel - standard delivery
-          'expedited': 18.00,    // Expedited Parcel - faster delivery (50% more than regular)
-          'xpresspost': 22.00    // Xpresspost - express delivery (83% more than regular)
-        }
-        
-        let rate = baseRates[serviceType] || 10.00
-        
-        // Weight-based pricing (more accurate tier system)
-        // Under 0.5kg: base rate
-        // 0.5kg - 1kg: +$1.50
-        // 1kg - 2kg: +$3.00
-        // 2kg+: +$2 per additional 0.5kg
-        if (weight > 0.5 && weight <= 1.0) {
-          rate += 1.50
-        } else if (weight > 1.0 && weight <= 2.0) {
-          rate += 3.00
-        } else if (weight > 2.0) {
-          rate += 3.00 + ((weight - 2.0) / 0.5) * 2.00
-        }
-        
-        // Remote area surcharge (Yukon, Northwest Territories, Nunavut)
-        const firstChar = postalCode.charAt(0).toUpperCase()
-        if (['Y', 'X'].includes(firstChar)) {
-          rate *= 1.25  // 25% surcharge for remote areas
-        }
-        
-        return Math.round(rate * 100) / 100
-      }
-    }
-
-    const getEstimatedDays = (serviceName, country = 'Canada') => {
-      if (country === 'United States') {
-        // Canada Post US services
-        const days = {
-          'Tracked Packet - USA': 5.5,         // 4-7 business days
-          'Xpresspost - USA': 3,              // 2-3 business days
-          'Priority Worldwide - USA': 2       // 1-2 business days
-        }
-        return days[serviceName] || 7
-      } else {
-        const days = { 
-          'Regular Parcel': 3,      // Updated from 5 - Ontario is typically 2-5 days
-          'Expedited Parcel': 2,    // Updated from 3
-          'Xpresspost': 1           // Updated from 2
-        }
-        return days[serviceName] || 3
-      }
-    }
-
-    const getServiceDescription = (serviceName, country = 'Canada') => {
-      if (country === 'United States') {
-        // Canada Post US services
-        const descriptions = {
-          'Tracked Packet - USA': 'Standard delivery to US with tracking (4-7 business days)',
-          'Xpresspost - USA': 'Faster delivery to US with tracking and insurance (2-3 business days)',
-          'Priority Worldwide - USA': 'Express delivery to US with signature (1-2 business days)'
-        }
-        return descriptions[serviceName] || 'Standard delivery to US'
-      } else {
-        const descriptions = {
-          'Regular Parcel': 'Standard delivery within Canada',
-          'Expedited Parcel': 'Faster delivery with tracking',
-          'Xpresspost': 'Express delivery with signature'
-        }
-        return descriptions[serviceName] || 'Standard delivery'
-      }
-    }
-
-    // Helper function for estimated US rates (Canada Post services)
-    const calculateEstimatedUSRate = (postalCode, weight, serviceType) => {
-      // Base rates for Canada Post US services (in CAD)
-      const baseRates = {
-        'tracked-packet': 18.00,      // Tracked Packet - USA
-        'xpresspost-usa': 28.00,      // Xpresspost - USA
-        'priority-worldwide': 45.00  // Priority Worldwide - USA
-      }
-      
-      let rate = baseRates[serviceType] || 18.00
-      
-      // Weight-based pricing (convert kg to lbs: 1kg = 2.2lbs)
-      const weightLbs = weight * 2.2
-      if (weightLbs > 1 && weightLbs <= 2) {
-        rate += 3.00
-      } else if (weightLbs > 2 && weightLbs <= 4) {
-        rate += 6.00
-      } else if (weightLbs > 4) {
-        rate += 6.00 + ((weightLbs - 4) / 1) * 2.00
-      }
-      
-      return Math.round(rate * 100) / 100
-    }
-
-    // Check if Canada Post credentials are configured
-    const canadaPostUsername = process.env.CANADA_POST_USERNAME
-    const canadaPostPassword = process.env.CANADA_POST_PASSWORD
-    const canadaPostCustomerNumber = process.env.CANADA_POST_CUSTOMER_NUMBER || '0001238590' // Your customer number from the portal
-
-    // If credentials not set, use estimated rates
-    if (!canadaPostUsername || !canadaPostPassword) {
-      console.log('Canada Post credentials not configured, using estimated rates')
-      
-      if (country === 'United States') {
-        // Estimated rates for US (Canada Post services)
-        const baseRates = {
-          'Tracked Packet - USA': calculateEstimatedUSRate(destination.postalCode, weight, 'tracked-packet'),
-          'Xpresspost - USA': calculateEstimatedUSRate(destination.postalCode, weight, 'xpresspost-usa'),
-          'Priority Worldwide - USA': calculateEstimatedUSRate(destination.postalCode, weight, 'priority-worldwide')
-        }
-
-        const shippingOptions = Object.entries(baseRates).map(([name, price]) => ({
-          id: name.toLowerCase().replace(/\s+/g, '-'),
-          name: name,
-          price: price,
-          estimatedDays: getEstimatedDays(name, country),
-          description: getServiceDescription(name, country)
-        }))
-
-        return res.json({ options: shippingOptions })
-      } else {
-        // Estimated rates for Canada
-        const baseRates = {
-          'Regular Parcel': calculateEstimatedRate(destination.postalCode, weight, 'regular', country),
-          'Expedited Parcel': calculateEstimatedRate(destination.postalCode, weight, 'expedited', country),
-          'Xpresspost': calculateEstimatedRate(destination.postalCode, weight, 'xpresspost', country)
-        }
-
-        const shippingOptions = Object.entries(baseRates).map(([name, price]) => ({
-          id: name.toLowerCase().replace(/\s+/g, '-'),
-          name: name,
-          price: price,
-          estimatedDays: getEstimatedDays(name, country),
-          description: getServiceDescription(name, country)
-        }))
-
-        return res.json({ options: shippingOptions })
-      }
-    }
-
-    // Real Canada Post API integration (supports both Canada and US)
-    try {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'server.js:1308',message:'Canada Post API request - credentials check',data:{usernameSet:!!canadaPostUsername,usernamePrefix:canadaPostUsername?.substring(0,4)||'NONE',passwordSet:!!canadaPostPassword,passwordLength:canadaPostPassword?.length||0,customerNumber:canadaPostCustomerNumber,useProduction:process.env.CANADA_POST_USE_PRODUCTION,envUsername:process.env.CANADA_POST_USERNAME?.substring(0,4)||'NONE',envPasswordSet:!!process.env.CANADA_POST_PASSWORD},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
-      
-      const auth = Buffer.from(`${canadaPostUsername}:${canadaPostPassword}`).toString('base64')
-      
-      // Use development/sandbox endpoint for testing
-      const apiUrl = process.env.CANADA_POST_USE_PRODUCTION === 'true'
-        ? 'https://soa-gw.canadapost.ca/rs/ship/price'
-        : 'https://ct.soa-gw.canadapost.ca/rs/ship/price'
-      
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'server.js:1315',message:'Canada Post API request - endpoint and auth',data:{apiUrl,useProduction:process.env.CANADA_POST_USE_PRODUCTION==='true',authHeaderPrefix:auth.substring(0,10)||'NONE',authLength:auth.length,customerNumberInXml:canadaPostCustomerNumber},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-      // #endregion
-
-      // Build XML based on destination country
-      let destinationXml
-      if (country === 'United States') {
-        // US destination - use united-states element
-        destinationXml = `<united-states>
-      <postal-code>${destination.postalCode.replace(/\s+/g, '').replace(/-/g, '').substring(0, 5)}</postal-code>
-    </united-states>`
-      } else {
-        // Canadian destination - use domestic element
-        destinationXml = `<domestic>
-      <postal-code>${destination.postalCode.replace(/\s+/g, '')}</postal-code>
-    </domestic>`
-      }
-
-      const xmlBody = `<?xml version="1.0" encoding="UTF-8"?>
-<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v4">
-  <customer-number>${canadaPostCustomerNumber}</customer-number>
-  <parcel-characteristics>
-    <weight>${weight.toFixed(3)}</weight>
-    <dimensions>
-      <length>${dimensions.length}</length>
-      <width>${dimensions.width}</width>
-      <height>${dimensions.height}</height>
-    </dimensions>
-  </parcel-characteristics>
-  <origin-postal-code>${origin.postalCode.replace(/\s+/g, '')}</origin-postal-code>
-  <destination>
-    ${destinationXml}
-  </destination>
-</mailing-scenario>`
-      
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'server.js:1345',message:'Canada Post API request - XML body',data:{xmlBodyLength:xmlBody.length,xmlContainsCustomerNumber:xmlBody.includes(canadaPostCustomerNumber),customerNumberInXml:canadaPostCustomerNumber,originPostalCode:origin.postalCode.replace(/\s+/g,''),destinationPostalCode:destination.postalCode.replace(/\s+/g,''),country},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-      // #endregion
-
-      // Add timeout to Canada Post API call (20 seconds)
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 20000)
-      
-      try {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'server.js:1352',message:'Canada Post API request - before fetch',data:{apiUrl,method:'POST',hasAuthHeader:true,authHeaderPrefix:auth.substring(0,10)||'NONE',contentType:'application/vnd.cpc.ship.rate-v4+xml',xmlBodyLength:xmlBody.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
-        // #endregion
-        
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Basic ${auth}`,
-            'Content-Type': 'application/vnd.cpc.ship.rate-v4+xml',
-            'Accept': 'application/vnd.cpc.ship.rate-v4+xml'
-          },
-          body: xmlBody,
-          signal: controller.signal
-        })
-        
-        clearTimeout(timeoutId)
-        
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'server.js:1365',message:'Canada Post API response received',data:{status:response.status,statusText:response.statusText,ok:response.ok,headers:Object.fromEntries(response.headers.entries())},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
-        // #endregion
-
-        if (!response.ok) {
-          const errorText = await response.text()
-          
-          // #region agent log
-          fetch('http://127.0.0.1:7242/ingest/c1668a55-62c8-4506-a366-af5063785917',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'server.js:1368',message:'Canada Post API error response',data:{status:response.status,errorText:errorText.substring(0,500),errorTextLength:errorText.length,is401:response.status===401,is403:response.status===403,usernamePrefix:canadaPostUsername?.substring(0,4)||'NONE',customerNumber:canadaPostCustomerNumber,apiUrl},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-          // #endregion
-          
-          console.error('❌ Canada Post API error:', response.status, errorText)
-          
-          // Enhanced error logging for 403 errors
-          if (response.status === 403) {
-            console.error('🚫 Authorization failed (403). Possible causes:')
-            console.error('   1. Account not activated for production API access')
-            console.error('   2. Account does not have permission for this endpoint')
-            console.error('   3. Customer number does not have shipping API access')
-            console.error('   4. Wrong endpoint URL or missing required path parameters')
-            console.error('   5. Service code or options not enabled in your contract')
-            console.error('   Full error:', errorText)
-            console.error('   Contact Canada Post support: 1-866-511-0546')
-          }
-          
-          // Enhanced error logging for 401 errors
-          if (response.status === 401) {
-            console.error('🔐 Authentication failed. Check:')
-            console.error('   - Username:', canadaPostUsername ? `${canadaPostUsername.substring(0, 4)}...` : 'NOT SET')
-            console.error('   - Password:', canadaPostPassword ? 'SET' : 'NOT SET')
-            console.error('   - Customer Number:', canadaPostCustomerNumber)
-            console.error('   - Use Production:', process.env.CANADA_POST_USE_PRODUCTION)
-            console.error('   - Endpoint:', apiUrl)
-            console.error('   - Possible causes:')
-            console.error('     1. Credentials expired or rotated')
-            console.error('     2. Account not activated (contact Canada Post support: 1-866-511-0546)')
-            console.error('     3. Wrong credentials for environment (production vs development)')
-          }
-          
-          throw new Error(`Canada Post API error: ${response.status} - ${errorText.substring(0, 200)}`)
-        }
-
-        const xmlData = await response.text()
-        const packageDetails = {
-          weight: weight,
-          dimensions: dimensions,
-          origin: origin,
-          destination: destination,
-          itemsCount: itemsCount,
-          boxSize: itemsCount <= BOX_SIZES.small.maxItems ? 'Small' : 'Large'
-        }
-        let rates = parseCanadaPostResponse(xmlData, country, packageDetails)
-        
-        // Sort by service type priority (but keep exact prices from Canada Post)
-        if (rates && rates.length > 0) {
-          // Sort by service type priority
-          const servicePriority = {
-            'Regular Parcel': 1,
-            'Expedited Parcel': 2,
-            'Xpresspost': 3
-          }
-          
-          rates.sort((a, b) => {
-            const priorityA = servicePriority[a.name] || 999
-            const priorityB = servicePriority[b.name] || 999
-            return priorityA - priorityB
-          })
-          
-          // Log the exact rates and package details for debugging
-          console.log(`✅ Canada Post API returned ${rates.length} rates for ${country}`)
-          console.log(`📦 Package details:`, {
-            weight: `${weight.toFixed(3)} kg`,
-            dimensions: `${dimensions.length}×${dimensions.width}×${dimensions.height} cm`,
-            boxSize: packageDetails.boxSize,
-            itemsCount: itemsCount,
-            origin: `${origin.city}, ${origin.province} ${origin.postalCode}`,
-            destination: `${destination.city}, ${destination.province} ${destination.postalCode}`,
-            country: country
-          })
-          console.log(`💰 Exact Canada Post rates:`, rates.map(r => `${r.name}: $${r.price.toFixed(2)}`).join(', '))
-          
-          return res.json({ 
-            options: rates,
-            packageDetails: packageDetails // Include package details in response
-          })
-        }
-        
-        // Fall through to estimated rates if parsing failed
-        console.log(`⚠️ Failed to parse Canada Post response for ${country}, using estimated rates`)
-      } catch (fetchError) {
-        clearTimeout(timeoutId)
-        if (fetchError.name === 'AbortError') {
-          console.error('Canada Post API request timed out after 20 seconds')
-          throw new Error('Canada Post API request timed out')
-        }
-        throw fetchError
-      }
-    } catch (apiError) {
-      console.error('Canada Post API error:', apiError.message || apiError)
-      console.error('Error details:', {
-        username: canadaPostUsername ? 'set' : 'missing',
-        password: canadaPostPassword ? 'set' : 'missing',
-        customerNumber: canadaPostCustomerNumber,
-        useProduction: process.env.CANADA_POST_USE_PRODUCTION
-      })
-      // Fall through to estimated rates
-    }
-
-    // Fallback to estimated rates if API call fails
-    let baseRates
-    if (country === 'United States') {
-      baseRates = {
-        'Tracked Packet - USA': calculateEstimatedUSRate(destination.postalCode, weight, 'tracked-packet'),
-        'Xpresspost - USA': calculateEstimatedUSRate(destination.postalCode, weight, 'xpresspost-usa'),
-        'Priority Worldwide - USA': calculateEstimatedUSRate(destination.postalCode, weight, 'priority-worldwide')
-      }
-    } else {
-      baseRates = {
-        'Regular Parcel': calculateEstimatedRate(destination.postalCode, weight, 'regular', country),
-        'Expedited Parcel': calculateEstimatedRate(destination.postalCode, weight, 'expedited', country),
-        'Xpresspost': calculateEstimatedRate(destination.postalCode, weight, 'xpresspost', country)
-      }
-    }
-
-    const shippingOptions = Object.entries(baseRates).map(([name, price]) => ({
-      id: name.toLowerCase().replace(/\s+/g, '-'),
-      name: name,
-      price: price,
-      estimatedDays: getEstimatedDays(name, country),
-      description: getServiceDescription(name, country)
-    }))
-
-    res.json({ options: shippingOptions })
+    return res.json(result)
   } catch (error) {
     console.error('Error getting shipping rates:', error)
     res.status(500).json({ error: error.message })
   }
 })
-
-// Parse Canada Post XML response
-function parseCanadaPostResponse(xml, country = 'Canada', packageDetails = null) {
-  const rates = []
-  
-  try {
-    // Service code mappings for Canada
-    const canadaServiceMap = {
-      'DOM.RP': { name: 'Regular Parcel', days: 3 },
-      'DOM.EP': { name: 'Expedited Parcel', days: 2 },
-      'DOM.XP': { name: 'Xpresspost', days: 1 },
-      'DOM.PC': { name: 'Priority', days: 1 }
-    }
-    
-    // Service code mappings for US
-    const usServiceMap = {
-      'USA.TP': { name: 'Tracked Packet - USA', days: 7 },
-      'USA.EP': { name: 'Xpresspost - USA', days: 3 },
-      'USA.PW': { name: 'Priority Worldwide - USA', days: 2 },
-      'USA.PW.ENV': { name: 'Priority Worldwide - USA', days: 2 }
-    }
-    
-    const serviceMap = country === 'United States' ? usServiceMap : canadaServiceMap
-    
-    // Extract price quotes from XML
-    const priceQuoteRegex = /<price-quote>([\s\S]*?)<\/price-quote>/g
-    let match
-    
-    while ((match = priceQuoteRegex.exec(xml)) !== null) {
-      const quoteXml = match[1]
-      
-      // Extract service code
-      const serviceCodeMatch = quoteXml.match(/<service-code>([^<]+)<\/service-code>/)
-      if (!serviceCodeMatch) continue
-      
-      const serviceCode = serviceCodeMatch[1]
-      
-      // Skip Priority (DOM.PC) - only show original 3 options: Regular, Expedited, Xpresspost
-      if (serviceCode === 'DOM.PC') {
-        continue
-      }
-      
-      const serviceInfo = serviceMap[serviceCode]
-      if (!serviceInfo) {
-        // Log unmapped service codes for debugging
-        console.log(`Unmapped service code: ${serviceCode} for country: ${country}`)
-        continue
-      }
-      
-      // Extract price
-      const priceMatch = quoteXml.match(/<base>([^<]+)<\/base>/)
-      if (!priceMatch) continue
-      
-      const price = parseFloat(priceMatch[1])
-      
-      // Build description based on service name and country
-      let description = 'Standard delivery'
-      if (country === 'United States') {
-        if (serviceInfo.name.includes('Tracked Packet')) {
-          description = 'Standard delivery to US with tracking (4-7 business days)'
-        } else if (serviceInfo.name.includes('Xpresspost')) {
-          description = 'Faster delivery to US with tracking and insurance (2-3 business days)'
-        } else if (serviceInfo.name.includes('Priority Worldwide')) {
-          description = 'Express delivery to US with signature (1-2 business days)'
-        }
-      } else {
-        if (serviceInfo.name.includes('Regular Parcel')) {
-          description = 'Standard delivery within Canada'
-        } else if (serviceInfo.name.includes('Expedited Parcel')) {
-          description = 'Faster delivery with tracking'
-        } else if (serviceInfo.name.includes('Xpresspost')) {
-          description = 'Express delivery with signature'
-        }
-      }
-      
-      const rateObj = {
-        id: serviceInfo.name.toLowerCase().replace(/\s+/g, '-'),
-        name: serviceInfo.name,
-        price: price,
-        estimatedDays: serviceInfo.days,
-        description: description,
-        serviceCode: serviceCode
-      }
-      
-      // Include package details if provided (for debugging/transparency)
-      if (packageDetails) {
-        rateObj._packageDetails = packageDetails
-      }
-      
-      rates.push(rateObj)
-    }
-    
-    // Sort by price (cheapest first)
-    rates.sort((a, b) => a.price - b.price)
-    
-  } catch (error) {
-    console.error('Error parsing Canada Post XML:', error)
-  }
-  
-  return rates
-}
 
 // Health check endpoint
 // Health check endpoint
@@ -2267,7 +1694,7 @@ app.get('/api/health', healthLimiter, (req, res) => {
     status: 'ok', 
     timestamp: new Date().toISOString(),
     stripeConfigured: !!stripe,
-    canadaPostConfigured: !!(process.env.CANADA_POST_USERNAME && process.env.CANADA_POST_PASSWORD),
+    chitchatsConfigured: !!(process.env.CHITCHATS_ACCESS_TOKEN && process.env.CHITCHATS_CLIENT_ID),
     resendConfigured: !!(process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL)
   })
 })
@@ -2283,8 +1710,10 @@ app.get('/api/preview-email', (req, res) => {
   const lang = (req.query.lang || 'en').toLowerCase()
   const language = lang === 'fr' ? 'fr' : 'en'
   let html
-  if (template === 'welcome') {
-    html = getWelcomeEmailPreview(language)
+  if (template === 'welcome' || template === 'welcome-popup') {
+    html = getWelcomeEmailPreview(language, 'popup')
+  } else if (template === 'welcome-list') {
+    html = getWelcomeEmailPreview(language, 'inline')
   } else {
     html = getOrderConfirmationPreview(language)
   }
@@ -2500,6 +1929,21 @@ const authenticateAdmin = (req, res, next) => {
     res.status(401).json({ error: 'Unauthorized. Invalid admin password.' })
   }
 }
+
+// Get email list subscribers (admin only)
+app.get('/api/admin/subscribers', authenticateAdmin, (req, res) => {
+  try {
+    Promise.resolve(getSubscribers())
+      .then((subscribers) => res.json({ subscribers }))
+      .catch((error) => {
+        console.error('Error fetching subscribers:', error)
+        res.status(500).json({ error: error.message })
+      })
+  } catch (error) {
+    console.error('Error fetching subscribers:', error)
+    res.status(500).json({ error: error.message })
+  }
+})
 
 // Get all orders (admin only)
 app.get('/api/admin/orders', authenticateAdmin, (req, res) => {
@@ -2958,101 +2402,36 @@ app.post('/api/products/bulk', authenticateProductAPI, apiLimiter, (req, res) =>
   }
 })
 
-// Klaviyo email subscription
+// Email list subscription (Resend + in-code templates; subscribers stored locally)
 app.post('/api/subscribe', apiLimiter, async (req, res) => {
-  const { email, language } = req.body
+  const { email, language, source } = req.body
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return res.status(400).json({ error: 'Invalid email address' })
   }
 
-  // Normalize language value for template selection
   const normalizedLanguage = language === 'fr' ? 'fr' : 'en'
+  const subscribeSource = source === 'popup' ? 'popup' : 'inline'
 
-  const apiKey = process.env.KLAVIYO_API_KEY
-  const listId = process.env.KLAVIYO_LIST_ID
-
-  // If Klaviyo isn't configured, don't hard-fail the whole request.
-  // We still want to send the welcome email if email delivery is configured.
-  let klaviyoSubscribed = false
-  const klaviyoAvailable = !!apiKey && !!listId
-
-  if (klaviyoAvailable) {
-    try {
-      // Create or update profile
-      const profileRes = await fetch('https://a.klaviyo.com/api/profiles/', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Klaviyo-API-Key ${apiKey}`,
-          'Content-Type': 'application/json',
-          'revision': '2024-02-15'
-        },
-        body: JSON.stringify({
-          data: {
-            type: 'profile',
-            attributes: { email }
-          }
-        })
-      })
-
-      // 201 = created, 409 = already exists - both are fine
-      const profileData = await profileRes.json().catch(() => ({}))
-      const profileId = profileData?.data?.id
-
-      if (!profileId) {
-        // If 409 conflict, extract existing profile ID from error meta
-        if (profileRes.status === 409) {
-          const existingId = profileData?.errors?.[0]?.meta?.duplicate_profile_id
-          if (!existingId) {
-            console.error('❌ Klaviyo duplicate profile but missing duplicate_profile_id:', JSON.stringify(profileData))
-          } else {
-            await subscribeToList(existingId, listId, apiKey)
-            klaviyoSubscribed = true
-          }
-        } else {
-          console.error('❌ Klaviyo profile request failed:', { status: profileRes.status, body: profileData })
-        }
-      } else {
-        await subscribeToList(profileId, listId, apiKey)
-        klaviyoSubscribed = true
-      }
-
-      console.log('✅ Klaviyo subscription processed:', { email, klaviyoSubscribed })
-    } catch (klaviyoErr) {
-      console.error('❌ Klaviyo error:', klaviyoErr.message)
-    }
-  } else {
-    console.warn('⚠️ Klaviyo not configured (missing KLAVIYO_API_KEY / KLAVIYO_LIST_ID). Skipping Klaviyo list subscription.')
+  // Skip sending if already subscribed (prevents duplicate emails)
+  const alreadySubscribed = await hasSubscriber(email)
+  if (alreadySubscribed) {
+    return res.json({ success: true })
   }
 
-  // Send welcome email (10% off code) via emailService template
   try {
-    const welcomeResult = await sendWelcomeEmail(email, { language: normalizedLanguage })
+
+    console.log('Subscribe: sending welcome email to', email, '| template:', subscribeSource === 'popup' ? 'popup (10% off)' : 'list')
+    const welcomeResult = await sendWelcomeEmail(email, { language: normalizedLanguage, source: subscribeSource })
     if (!welcomeResult.success) {
       return res.status(500).json({ error: welcomeResult.error || welcomeResult.reason || 'Email not configured' })
     }
-
-    return res.json({ success: true, klaviyoSubscribed })
+    await addSubscriber(email, { language: normalizedLanguage, source: subscribeSource })
+    return res.json({ success: true })
   } catch (err) {
     console.error('❌ Welcome email error:', err.message)
     return res.status(500).json({ error: 'Subscription failed' })
   }
 })
-
-
-
-async function subscribeToList(profileId, listId, apiKey) {
-  await fetch(`https://a.klaviyo.com/api/lists/${listId}/relationships/profiles/`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Klaviyo-API-Key ${apiKey}`,
-      'Content-Type': 'application/json',
-      'revision': '2024-02-15'
-    }, 
-    body: JSON.stringify({ 
-      data: [{ type: 'profile', id: profileId }]
-    })
-  })
-}
 
 app.listen(PORT, () => {
   console.log(`\n🚀 Server running on http://localhost:${PORT}`)
@@ -3064,10 +2443,10 @@ app.listen(PORT, () => {
     console.log('⚠ Stripe not configured - set STRIPE_SECRET_KEY in .env for payment processing')
   }
   
-  if (process.env.CANADA_POST_USERNAME) {
-    console.log('✓ Canada Post API credentials detected - real-time rates enabled')
+  if (process.env.CHITCHATS_ACCESS_TOKEN && process.env.CHITCHATS_CLIENT_ID) {
+    console.log('✓ Chit Chats API configured — automatic labels enabled when AUTO_CREATE_SHIPPING_LABELS is on')
   } else {
-    console.log('⚠ Canada Post API credentials not set - using estimated rates')
+    console.log('⚠ Chit Chats not configured — set CHITCHATS_ACCESS_TOKEN and CHITCHATS_CLIENT_ID for labels')
   }
   
   // Check email configuration

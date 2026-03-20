@@ -67,6 +67,8 @@ const emailTheme = {
   sans: "'Jost', 'Segoe UI', Arial, sans-serif"
 }
 
+const carrierTrackHref = (order) => order?.trackingUrl || null
+
 // Email templates - English (Order confirmation + thank you)
 const orderConfirmationTemplateEN = (order, trackingUrl) => {
   const customerName = order.customer?.name || 'Customer'
@@ -74,6 +76,8 @@ const orderConfirmationTemplateEN = (order, trackingUrl) => {
   const shippingName = order.shipping?.name || customerName
   const shippingAddress = order.shipping?.address || {}
   const customerTimezone = order.timezone || order.metadata?.timezone || 'America/Toronto'
+  const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const unsubUrl = `${shopUrl}/unsubscribe`
 
   return `
 <!DOCTYPE html>
@@ -160,7 +164,7 @@ const orderConfirmationTemplateEN = (order, trackingUrl) => {
       <div style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #10b981;">
         <h3 style="margin-top: 0;">Tracking Information</h3>
         <p><strong>Tracking Number:</strong> ${order.trackingNumber}</p>
-        <p style="margin-top: 10px;"><a href="https://www.canadapost.ca/trackweb/en#/search?searchFor=${order.trackingNumber}" target="_blank" style="color: #10b981; text-decoration: none;">Track with Canada Post →</a></p>
+        ${carrierTrackHref(order) ? `<p style="margin-top: 10px;"><a href="${carrierTrackHref(order)}" target="_blank" rel="noopener noreferrer" style="color: #10b981; text-decoration: none;">Track your shipment →</a></p>` : ''}
       </div>
       ` : ''}
       ${trackingUrl ? `
@@ -179,6 +183,11 @@ const orderConfirmationTemplateEN = (order, trackingUrl) => {
     <div class="footer">
       <p>Pure Peel Co. · Made in Canada</p>
       <p>This is an automated email. Please do not reply directly to this message.</p>
+      <p style="margin: 10px 0 0 0;">
+        <a href="${unsubUrl}" style="color: ${emailTheme.textLight}; text-decoration: underline;">Unsubscribe</a>
+        &nbsp;&middot;&nbsp;
+        <a href="${shopUrl}/privacy" style="color: ${emailTheme.textLight}; text-decoration: underline;">Privacy Policy</a>
+      </p>
     </div>
   </div>
 </body>
@@ -193,6 +202,8 @@ const orderConfirmationTemplateFR = (order, trackingUrl) => {
   const shippingName = order.shipping?.name || customerName
   const shippingAddress = order.shipping?.address || {}
   const customerTimezone = order.timezone || order.metadata?.timezone || 'America/Toronto'
+  const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const unsubUrl = `${shopUrl}/unsubscribe`
 
   return `
 <!DOCTYPE html>
@@ -279,7 +290,7 @@ const orderConfirmationTemplateFR = (order, trackingUrl) => {
       <div style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #10b981;">
         <h3 style="margin-top: 0;">Informations de Suivi</h3>
         <p><strong>Numéro de Suivi :</strong> ${order.trackingNumber}</p>
-        <p style="margin-top: 10px;"><a href="https://www.canadapost.ca/trackweb/fr#/search?searchFor=${order.trackingNumber}" target="_blank" style="color: #10b981; text-decoration: none;">Suivre avec Postes Canada →</a></p>
+        ${carrierTrackHref(order) ? `<p style="margin-top: 10px;"><a href="${carrierTrackHref(order)}" target="_blank" rel="noopener noreferrer" style="color: #10b981; text-decoration: none;">Suivre l'envoi →</a></p>` : ''}
       </div>
       ` : ''}
       ${trackingUrl ? `
@@ -298,6 +309,11 @@ const orderConfirmationTemplateFR = (order, trackingUrl) => {
     <div class="footer">
       <p>Pure Peel Co. · Fabriqué au Canada</p>
       <p>Ceci est un e-mail automatisé. Veuillez ne pas répondre directement à ce message.</p>
+      <p style="margin: 10px 0 0 0;">
+        <a href="${unsubUrl}" style="color: ${emailTheme.textLight}; text-decoration: underline;">Se désabonner</a>
+        &nbsp;&middot;&nbsp;
+        <a href="${shopUrl}/privacy" style="color: ${emailTheme.textLight}; text-decoration: underline;">Politique de confidentialité</a>
+      </p>
     </div>
   </div>
 </body>
@@ -315,6 +331,7 @@ const orderConfirmationTemplate = (order, trackingUrl, language = 'en') => {
 // Welcome email (10% off) - English
 const welcomeEmailTemplateEN = (promoCode = 'WELCOME10') => {
   const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const unsubUrl = `${shopUrl}/unsubscribe`
   return `
 <!DOCTYPE html>
 <html>
@@ -356,6 +373,11 @@ const welcomeEmailTemplateEN = (promoCode = 'WELCOME10') => {
     <div class="footer">
       <p style="margin: 0;">You're receiving this because you signed up at purepeelco.com.</p>
       <p style="margin: 8px 0 0 0;">Pure Peel Co. — Premium dehydrated citrus, made in Canada.</p>
+      <p style="margin: 10px 0 0 0;">
+        <a href="${unsubUrl}" style="color: ${emailTheme.gold}; text-decoration: underline;">Unsubscribe</a>
+        &nbsp;&middot;&nbsp;
+        <a href="${shopUrl}/privacy" style="color: ${emailTheme.gold}; text-decoration: underline;">Privacy Policy</a>
+      </p>
     </div>
   </div>
 </body>
@@ -366,6 +388,7 @@ const welcomeEmailTemplateEN = (promoCode = 'WELCOME10') => {
 // Welcome email (10% off) - French
 const welcomeEmailTemplateFR = (promoCode = 'WELCOME10') => {
   const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const unsubUrl = `${shopUrl}/unsubscribe`
   return `
 <!DOCTYPE html>
 <html>
@@ -407,6 +430,11 @@ const welcomeEmailTemplateFR = (promoCode = 'WELCOME10') => {
     <div class="footer">
       <p style="margin: 0;">Vous recevez ceci car vous vous êtes inscrit sur purepeelco.com.</p>
       <p style="margin: 8px 0 0 0;">Pure Peel Co. — Agrumes déshydratés, fabriqués au Canada.</p>
+      <p style="margin: 10px 0 0 0;">
+        <a href="${unsubUrl}" style="color: ${emailTheme.gold}; text-decoration: underline;">Se désabonner</a>
+        &nbsp;&middot;&nbsp;
+        <a href="${shopUrl}/privacy" style="color: ${emailTheme.gold}; text-decoration: underline;">Politique de confidentialité</a>
+      </p>
     </div>
   </div>
 </body>
@@ -414,9 +442,291 @@ const welcomeEmailTemplateFR = (promoCode = 'WELCOME10') => {
   `
 }
 
+const welcomeListEmailTemplateEN = () => {
+  const shopUrl     = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const unsubUrl    = `${shopUrl}/unsubscribe`
+
+  // Design tokens — kept inline so this function is self-contained
+  const cream     = '#faf7f2'
+  const dark      = '#0f0a04'
+  const orange    = '#c85a08'
+  const border    = 'rgba(15,10,4,0.08)'
+  const textLight = 'rgba(15,10,4,0.35)'
+  const textMid   = 'rgba(15,10,4,0.5)'
+  const sans      = "'Jost', 'Segoe UI', Arial, sans-serif"
+  const serif     = "'Cormorant Garamond', Georgia, serif"
+
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The List — Pure Peel Co.</title>
+  <!--[if mso]>
+  <noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+  <![endif]-->
+  <style>
+    body, html { margin: 0; padding: 0; background: #f0ebe0; }
+    body { font-family: ${sans}; line-height: 1.7; color: ${dark}; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; }
+    a { color: ${orange}; }
+    @media only screen and (max-width: 600px) {
+      .container { width: 100% !important; }
+      .padded    { padding: 28px 24px !important; }
+      .footer    { padding: 20px 24px !important; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Preheader (hidden preview text) -->
+  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">
+    The garnish that saved my dinner party — one idea from Pure Peel Co.
+    &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+  </div>
+
+  <!-- Outer wrapper -->
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0ebe0;padding:32px 0;">
+    <tr>
+      <td align="center">
+        <table class="container" width="560" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;width:100%;">
+
+          <!-- ── LOGO HEADER ── -->
+          <tr>
+            <td align="center" style="padding:0 0 16px;">
+              <img
+                src="${shopUrl}/images/logo-dark.png"
+                alt="Pure Peel Co."
+                width="80"
+                style="width:80px;height:auto;display:block;"
+              />
+            </td>
+          </tr>
+
+          <!-- ── MAIN CARD ── -->
+          <tr>
+            <td style="background:${cream};border-radius:16px;overflow:hidden;">
+
+              <!-- Opening story -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td class="padded" style="padding:40px 40px 24px;">
+                    <p style="font-family:${sans};font-size:16px;font-weight:300;color:${dark};line-height:1.75;margin:0;">
+                      Last weekend I was making cocktails for eight people and realized I'd forgotten to buy limes.
+                      Turns out a few dehydrated lime slices in the shaker — and one on the rim — worked even better.
+                      No last-minute run to the store, and everyone asked where they came from.
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- Body -->
+                <tr>
+                  <td class="padded" style="padding:0 40px 40px;">
+
+                    <p style="font-family:${sans};font-size:16px;font-weight:300;color:${dark};line-height:1.75;margin:0 0 24px;">
+                      So here's the one thing I'd tell you first: keep a small jar of dehydrated citrus by the bar.
+                      Orange for old fashioneds, lime for G&amp;T's and margaritas, grapefruit if you're feeling fancy.
+                      They rehydrate in the drink in seconds and look (and taste) like you actually planned ahead.
+                    </p>
+
+                    <!-- Tip block -->
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 28px;">
+                      <tr>
+                        <td style="background:#fff;border-left:3px solid ${orange};border-radius:0 8px 8px 0;padding:20px 24px;">
+                          <p style="font-family:${sans};font-size:15px;color:${dark};line-height:1.65;margin:0;">
+                            <strong style="font-weight:600;">This week's move:</strong>
+                            Drop 2–3 dried lime slices into your next gin and tonic. Let them sit for 30 seconds.
+                            Then taste. You'll get why we keep a bag in the cupboard.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Soft CTA -->
+                    <p style="font-family:${sans};font-size:15px;font-weight:300;color:${dark};line-height:1.7;margin:0;">
+                      We use our lime slices for exactly this —
+                      <a href="${shopUrl}/lime" style="color:${orange};text-decoration:none;font-weight:500;">grab a bag if you're running low</a>.
+                    </p>
+
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- ── FOOTER ── -->
+          <tr>
+            <td class="footer" style="padding:24px 40px;text-align:center;">
+              <p style="font-family:${sans};font-size:12px;color:${textLight};line-height:1.6;margin:0 0 8px;">
+                You're on <strong style="color:${textMid};">THE LIST</strong> — seasonal ideas, one at a time.
+              </p>
+              <p style="font-family:${sans};font-size:12px;color:${textLight};line-height:1.6;margin:0 0 8px;">
+                Pure Peel Co. &mdash; Premium dehydrated citrus, made in Canada.
+              </p>
+              <p style="font-family:${sans};font-size:11px;color:${textLight};margin:0;">
+                <a href="${unsubUrl}" style="color:${textLight};text-decoration:underline;">Unsubscribe</a>
+                &nbsp;&middot;&nbsp;
+                <a href="${shopUrl}/privacy" style="color:${textLight};text-decoration:underline;">Privacy Policy</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
+  `.trim()
+}
+
+const welcomeListEmailTemplateFR = () => {
+  const shopUrl     = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const unsubUrl    = `${shopUrl}/unsubscribe`
+
+  // Design tokens — kept inline so this function is self-contained
+  const cream     = '#faf7f2'
+  const dark      = '#0f0a04'
+  const orange    = '#c85a08'
+  const border    = 'rgba(15,10,4,0.08)'
+  const textLight = 'rgba(15,10,4,0.35)'
+  const textMid   = 'rgba(15,10,4,0.5)'
+  const sans      = "'Jost', 'Segoe UI', Arial, sans-serif"
+  const serif     = "'Cormorant Garamond', Georgia, serif"
+
+  return `
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La liste — Pure Peel Co.</title>
+  <!--[if mso]>
+  <noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+  <![endif]-->
+  <style>
+    body, html { margin: 0; padding: 0; background: #f0ebe0; }
+    body { font-family: ${sans}; line-height: 1.7; color: ${dark}; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; }
+    a { color: ${orange}; }
+    @media only screen and (max-width: 600px) {
+      .container { width: 100% !important; }
+      .padded    { padding: 28px 24px !important; }
+      .footer    { padding: 20px 24px !important; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Preheader (hidden preview text) -->
+  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">
+    La garniture qui a sauvé mon souper — une idée de Pure Peel Co.
+    &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+  </div>
+
+  <!-- Outer wrapper -->
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0ebe0;padding:32px 0;">
+    <tr>
+      <td align="center">
+        <table class="container" width="560" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;width:100%;">
+
+          <!-- ── LOGO HEADER ── -->
+          <tr>
+            <td align="center" style="padding:0 0 16px;">
+              <img
+                src="${shopUrl}/images/logo-dark.png"
+                alt="Pure Peel Co."
+                width="80"
+                style="width:80px;height:auto;display:block;"
+              />
+            </td>
+          </tr>
+
+          <!-- ── MAIN CARD ── -->
+          <tr>
+            <td style="background:${cream};border-radius:16px;overflow:hidden;">
+
+              <!-- Opening story -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td class="padded" style="padding:40px 40px 24px;">
+                    <p style="font-family:${sans};font-size:16px;font-weight:300;color:${dark};line-height:1.75;margin:0;">
+                      La fin de semaine dernière, je préparais des cocktails pour huit et je me suis rendu compte qu'il n'y avait plus de citrons verts.
+                      Quelques tranches de lime déshydratées dans le shaker — et une sur le bord du verre — ont fait encore mieux.
+                      Pas de course au magasin, et tout le monde a demandé d'où ça venait.
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- Body -->
+                <tr>
+                  <td class="padded" style="padding:0 40px 40px;">
+
+                    <p style="font-family:${sans};font-size:16px;font-weight:300;color:${dark};line-height:1.75;margin:0 0 24px;">
+                      Donc le premier conseil que je vous donne : gardez un petit pot d'agrumes déshydratés près du bar.
+                      Orange pour les old fashioneds, lime pour les gin-tonics et les margaritas, pamplemousse si vous voulez faire les choses en grand.
+                      Ils se réhydratent en quelques secondes dans le verre et donnent l'impression que vous aviez tout prévu.
+                    </p>
+
+                    <!-- Tip block -->
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 28px;">
+                      <tr>
+                        <td style="background:#fff;border-left:3px solid ${orange};border-radius:0 8px 8px 0;padding:20px 24px;">
+                          <p style="font-family:${sans};font-size:15px;color:${dark};line-height:1.65;margin:0;">
+                            <strong style="font-weight:600;">L'astuce de la semaine :</strong>
+                            Mettez 2–3 tranches de lime séchées dans votre prochain gin tonic. Laissez reposer 30 secondes.
+                            Puis goûtez. Vous comprendrez pourquoi on garde toujours un sachet dans le placard.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Soft CTA -->
+                    <p style="font-family:${sans};font-size:15px;font-weight:300;color:${dark};line-height:1.7;margin:0;">
+                      On utilise nos tranches de lime exactement pour ça —
+                      <a href="${shopUrl}/lime" style="color:${orange};text-decoration:none;font-weight:500;">prenez un sachet si vous en manquez</a>.
+                    </p>
+
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- ── FOOTER ── -->
+          <tr>
+            <td class="footer" style="padding:24px 40px;text-align:center;">
+              <p style="font-family:${sans};font-size:12px;color:${textLight};line-height:1.6;margin:0 0 8px;">
+                Vous êtes sur <strong style="color:${textMid};">LA LISTE</strong> — une idée à la fois.
+              </p>
+              <p style="font-family:${sans};font-size:12px;color:${textLight};line-height:1.6;margin:0 0 8px;">
+                Pure Peel Co. &mdash; Agrumes déshydratés, fabriqués au Canada.
+              </p>
+              <p style="font-family:${sans};font-size:11px;color:${textLight};margin:0;">
+                <a href="${unsubUrl}" style="color:${textLight};text-decoration:underline;">Se désabonner</a>
+                &nbsp;&middot;&nbsp;
+                <a href="${shopUrl}/privacy" style="color:${textLight};text-decoration:underline;">Politique de confidentialité</a>
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>
+  `.trim()
+}
+
 const shippingNotificationTemplate = (order, trackingNumber) => {
   const customerName = order.customer?.name || 'Customer'
   const customerEmail = order.customer?.email || ''
+  const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const unsubUrl = `${shopUrl}/unsubscribe`
   return `
 <!DOCTYPE html>
 <html>
@@ -447,6 +757,7 @@ const shippingNotificationTemplate = (order, trackingNumber) => {
         <h2 style="margin-top: 0;">Shipping Information</h2>
         <p><strong>Order Number:</strong> ${order.id || 'N/A'}</p>
         ${trackingNumber ? `<p><strong>Tracking Number:</strong> ${trackingNumber}</p>` : ''}
+        ${order.trackingUrl ? `<p style="margin-top:12px;"><a href="${order.trackingUrl}" target="_blank" rel="noopener noreferrer" style="color:#10b981;">Track your shipment →</a></p>` : ''}
         <p><strong>Estimated Delivery:</strong> 3-5 business days</p>
       </div>
 
@@ -461,6 +772,11 @@ const shippingNotificationTemplate = (order, trackingNumber) => {
 
     <div class="footer">
       <p>Pure Peel Co. | Made in Canada</p>
+      <p style="margin: 10px 0 0 0;">
+        <a href="${unsubUrl}" style="color:#6b7280; text-decoration: underline;">Unsubscribe</a>
+        &nbsp;&middot;&nbsp;
+        <a href="${shopUrl}/privacy" style="color:#6b7280; text-decoration: underline;">Privacy Policy</a>
+      </p>
     </div>
   </div>
 </body>
@@ -474,6 +790,8 @@ const adminNotificationTemplate = (order) => {
   const customerPhone = order.customer?.phone || 'N/A'
   const shippingName = order.shipping?.name || customerName
   const shippingAddress = order.shipping?.address || {}
+  const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const unsubUrl = `${shopUrl}/unsubscribe`
 
   return `
 <!DOCTYPE html>
@@ -536,6 +854,14 @@ const adminNotificationTemplate = (order) => {
         </p>
         <p style="margin: 8px 0;"><strong>Shipping Method:</strong> ${order.shipping?.method || 'Standard Shipping'}</p>
       </div>
+    </div>
+    <div style="text-align:center; padding: 16px 0; color:#6b7280; font-size:12px;">
+      <p style="margin:0 0 10px 0;">Pure Peel Co. Admin Notification</p>
+      <p style="margin:0;">
+        <a href="${unsubUrl}" style="color:#6b7280; text-decoration: underline;">Unsubscribe</a>
+        &nbsp;&middot;&nbsp;
+        <a href="${shopUrl}/privacy" style="color:#6b7280; text-decoration: underline;">Privacy Policy</a>
+      </p>
     </div>
   </div>
 </body>
@@ -792,6 +1118,8 @@ export const sendAdminNotification = async (order) => {
 
 // Contact form email template
 const contactFormTemplate = (name, email, inquiryType, message) => {
+  const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const unsubUrl = `${shopUrl}/unsubscribe`
   const inquiryTypeLabels = {
     'general': 'General Inquiry',
     'support': 'Product Issue & Support',
@@ -843,6 +1171,11 @@ const contactFormTemplate = (name, email, inquiryType, message) => {
         <div class="footer">
           <p>This email was sent from the contact form on purepeelco.com</p>
           <p>Reply directly to this email to respond to ${name}</p>
+          <p style="margin: 10px 0 0 0;">
+            <a href="${unsubUrl}" style="color:#6b7280; text-decoration: underline;">Unsubscribe</a>
+            &nbsp;&middot;&nbsp;
+            <a href="${shopUrl}/privacy" style="color:#6b7280; text-decoration: underline;">Privacy Policy</a>
+          </p>
         </div>
       </div>
     </body>
@@ -987,19 +1320,28 @@ export const getOrderConfirmationPreview = (language = 'en') => {
   return orderConfirmationTemplate(mockOrder, trackingUrl, language)
 }
 
-export const getWelcomeEmailPreview = (language = 'en') => {
-  const promoCode = process.env.WELCOME_PROMO_CODE || 'WELCOME10'
-  return language === 'fr' ? welcomeEmailTemplateFR(promoCode) : welcomeEmailTemplateEN(promoCode)
+export const getWelcomeEmailPreview = (language = 'en', source = 'popup') => {
+  const isPopup = source === 'popup'
+  if (isPopup) {
+    const promoCode = process.env.WELCOME_PROMO_CODE || 'WELCOME10'
+    return language === 'fr' ? welcomeEmailTemplateFR(promoCode) : welcomeEmailTemplateEN(promoCode)
+  }
+  return language === 'fr' ? welcomeListEmailTemplateFR() : welcomeListEmailTemplateEN()
 }
 
-// Send welcome email (10% off code) to new subscribers
+// Send welcome email to new subscribers (template depends on source: popup = 10% off, inline = list confirmation)
 export const sendWelcomeEmail = async (email, options = {}) => {
-  const { language = 'en', promoCode = process.env.WELCOME_PROMO_CODE || 'WELCOME10' } = options
+  const { language = 'en', source = 'inline', promoCode = process.env.WELCOME_PROMO_CODE || 'WELCOME10' } = options
+  const isPopup = source === 'popup'
   try {
-    const htmlContent = language === 'fr' ? welcomeEmailTemplateFR(promoCode) : welcomeEmailTemplateEN(promoCode)
-    const subject = language === 'fr'
-      ? 'Votre code 10 % de réduction vous attend | Pure Peel Co.'
-      : 'Your 10% off code is inside | Pure Peel Co.'
+    const htmlContent = isPopup
+      ? (language === 'fr' ? welcomeEmailTemplateFR(promoCode) : welcomeEmailTemplateEN(promoCode))
+      : (language === 'fr' ? welcomeListEmailTemplateFR() : welcomeListEmailTemplateEN())
+    const subject = isPopup
+      ? (language === 'fr' ? 'Votre code 10 % de réduction vous attend | Pure Peel Co.' : 'Your 10% off code is inside | Pure Peel Co.')
+      : (language === 'fr'
+          ? (process.env.LIST_WELCOME_SUBJECT_FR || 'La garniture qui a sauvé mon souper')
+          : (process.env.LIST_WELCOME_SUBJECT_EN || 'The garnish that saved my dinner party'))
 
     if (resend && process.env.RESEND_FROM_EMAIL) {
       const fromDisplay = process.env.RESEND_FROM_EMAIL.includes('<') ? process.env.RESEND_FROM_EMAIL : `Pure Peel Co. <${process.env.RESEND_FROM_EMAIL}>`
@@ -1009,7 +1351,7 @@ export const sendWelcomeEmail = async (email, options = {}) => {
         subject,
         html: htmlContent,
         headers: { 'X-Entity-Ref-ID': `welcome-${Date.now()}` },
-        tags: [{ name: 'welcome', value: '10-off' }]
+        tags: [{ name: 'welcome', value: isPopup ? '10-off-popup' : 'list' }]
       })
       if (error) {
         console.error('❌ Welcome email Resend error:', error.message || JSON.stringify(error))
@@ -1023,6 +1365,19 @@ export const sendWelcomeEmail = async (email, options = {}) => {
       console.log('⚠️ Email not configured. Welcome email would be sent to:', email)
       return { success: false, reason: 'Email not configured' }
     }
+   
+    const { data, error } = await resend.emails.send({
+      from: fromDisplay,
+      to: email,
+      subject,
+      html: htmlContent,
+      headers: {
+        'X-Entity-Ref-ID': `welcome-${Date.now()}`,
+        'List-Unsubscribe': `<${process.env.FRONTEND_URL || 'https://purepeelco.com'}/unsubscribe>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      },
+      tags: [{ name: 'welcome', value: isPopup ? '10-off-popup' : 'list' }]
+    })
 
     const transporter = getTransporter()
     const info = await transporter.sendMail({

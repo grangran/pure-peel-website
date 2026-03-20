@@ -250,7 +250,7 @@ export default function ShippingReturns() {
             highlight
           />
           <BodyText style={{ marginTop: "12px", fontSize: "0.72rem", fontStyle: "italic" }}>
-            Prices shown in <strong style={{ fontWeight: 500, color: S.dark }}>{currency}</strong>. Delivery times are estimates. Shipped via Canada Post, delivered by USPS within the US.
+            Prices shown in <strong style={{ fontWeight: 500, color: S.dark }}>{currency}</strong>. Delivery times are estimates. Fulfilled through Chit Chats; US orders are delivered by USPS.
           </BodyText>
 
           <Divider />
