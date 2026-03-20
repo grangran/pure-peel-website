@@ -1233,6 +1233,12 @@ app.post('/api/create-checkout-session', checkoutLimiter, validateCheckoutSessio
       console.log('🎁 Free shipping code applied - no discount coupon needed (shipping is already $0)')
     }
 
+    // In Stripe test mode only: let you enter a Dashboard promotion code on the hosted checkout page
+    // (e.g. 100% off) for $0 totals. Cannot combine with session discounts — Stripe API rule.
+    if (process.env.STRIPE_SECRET_KEY?.startsWith('sk_test_') && !sessionConfig.discounts) {
+      sessionConfig.allow_promotion_codes = true
+    }
+
     try {
     const session = await stripe.checkout.sessions.create(sessionConfig)
 

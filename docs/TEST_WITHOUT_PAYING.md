@@ -58,6 +58,32 @@
 
 ---
 
+### Optional: True $0 checkout (test mode only)
+
+With **`sk_test_`** on Render, checkout sessions **allow promotion codes** on Stripe’s hosted page **only when** your site did not attach its own discount coupon (e.g. you skip percentage promos; `PEEL26FS` is OK—it does not use `session.discounts`).
+
+1. In [Stripe Dashboard](https://dashboard.stripe.com) → **Test mode** → **Product catalog** → **Coupons** → create a coupon (e.g. **100% off**, once or repeating).
+2. Add a **Promotion code** customers can type (e.g. `TESTFREE100`).
+3. Run checkout as usual; on the **Stripe** payment page, click **Add promotion code** and enter that code. If the total is **$0**, Stripe completes with **no card** (or **no payment required**).
+4. Your **`checkout.session.completed`** webhook still runs: order is saved, **confirmation + admin emails** fire, and **Chit Chats** runs if configured (see below).
+
+---
+
+### Test order confirmation email + Chit Chats tracking
+
+These only run after a **real checkout** completes and the **webhook** processes the session (not the dev-only “Complete free test order” link in local Vite—that never hits Stripe or Render).
+
+| What you want | What to do |
+|----------------|------------|
+| **Confirmation email** | `RESEND_API_KEY` + `RESEND_FROM_EMAIL` on Render; complete checkout; check inbox/spam. |
+| **Chit Chats label + tracking** | `CHITCHATS_ACCESS_TOKEN`, `CHITCHATS_CLIENT_ID`, ship-from env vars; **`AUTO_CREATE_SHIPPING_LABELS`** not set to `false` (default is on). Use a **real CA/US-style address** at checkout. |
+| **Shipping notification email** | Sent **after** a label is created successfully (separate from confirmation). |
+| **Debug** | Render **Logs** for `Chit Chats label`, `Order saved`, `email sent`. Chit Chats staging: optional `CHITCHATS_USE_STAGING=true` if you use their staging API. |
+
+If label creation fails, the order is still saved; confirmation email can still send; check logs for the Chit Chats error message.
+
+---
+
 ### Step 3: Switch Back to Live Keys
 
 **Important:** After testing, switch back to LIVE keys for production!
