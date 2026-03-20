@@ -41,7 +41,7 @@ const ORIGIN = {
 }
 
 // HTS code for dehydrated citrus slices (used for US customs declarations)
-const CITRUS_HTS_CODE = '0813.40.00'
+const CITRUS_HTS_CODE = '0805500040'
 
 // Package dimensions by box size (cm / kg — same values as canadaPostShipping.js)
 const BOX_SIZES = {
