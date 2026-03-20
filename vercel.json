@@ -45,11 +45,15 @@
   ],
   "rewrites": [
     {
-      "source": "/",
+      "source": "/unsubscribe",
       "destination": "/index.html"
     },
     {
-      "source": "/((?!api|_next|.*\\..*).*)",
+      "source": "/unsubscribe/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ],
