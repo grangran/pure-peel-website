@@ -1668,14 +1668,42 @@ app.get('/api/checkout-session/:sessionId', apiLimiter, validateCheckoutSessionI
 
 // Old webhook endpoint removed - now handled above before express.json()
 
-// Address autocomplete for checkout (best-effort; used to auto-fill city/state/postal)
-// Uses OpenStreetMap Nominatim to avoid requiring an extra API key.
+// Address autocomplete for checkout (best-effort; used to auto-fill city/province/postal)
+// Uses Google Places if `GOOGLE_PLACES_API_KEY` is set. Falls back to Nominatim otherwise.
 app.get('/api/address-autocomplete', apiLimiter, async (req, res) => {
   try {
     const q = String(req.query.q || '').trim()
     if (!q || q.length < 3) return res.json({ suggestions: [] })
 
     const country = String(req.query.country || '').trim()
+    const googleKey = process.env.GOOGLE_PLACES_API_KEY || process.env.GOOGLE_MAPS_API_KEY
+
+    // Prefer Google Places Autocomplete (needs a place_id to fetch address components).
+    if (googleKey) {
+      const countryComponent = country === 'United States' ? 'us' : 'ca'
+      const url =
+        `https://maps.googleapis.com/maps/api/place/autocomplete/json` +
+        `?input=${encodeURIComponent(q)}` +
+        `&types=address` +
+        `&components=country:${countryComponent}` +
+        `&key=${googleKey}`
+
+      const resp = await fetch(url)
+      if (!resp.ok) return res.json({ suggestions: [] })
+
+      const data = await resp.json().catch(() => ({}))
+      const predictions = Array.isArray(data.predictions) ? data.predictions : []
+
+      const suggestions = predictions.slice(0, 5).map(p => ({
+        id: String(p.place_id || ''),
+        placeId: p.place_id,
+        label: p.description || p.structured_formatting?.main_text || '',
+      }))
+
+      return res.json({ suggestions })
+    }
+
+    // Fallback: Nominatim search (best-effort, no API key).
     let countryCodes = 'ca,us'
     if (country === 'Canada') countryCodes = 'ca'
     if (country === 'United States') countryCodes = 'us'
@@ -1686,17 +1714,11 @@ app.get('/api/address-autocomplete', apiLimiter, async (req, res) => {
       `&q=${encodeURIComponent(q)}`
 
     const resp = await fetch(url, {
-      headers: {
-        'User-Agent': userAgent,
-        'Accept': 'application/json',
-      },
+      headers: { 'User-Agent': userAgent, 'Accept': 'application/json' },
     })
+    if (!resp.ok) return res.json({ suggestions: [] })
 
-    if (!resp.ok) {
-      return res.json({ suggestions: [] })
-    }
-
-    const results = await resp.json()
+    const results = await resp.json().catch(() => ({}))
     const suggestions = (results || []).slice(0, 5).map(r => {
       const addr = r.address || {}
       const street = [addr.house_number, addr.road].filter(Boolean).join(' ').trim() ||
@@ -1716,10 +1738,67 @@ app.get('/api/address-autocomplete', apiLimiter, async (req, res) => {
       }
     })
 
-    res.json({ suggestions })
+    return res.json({ suggestions })
   } catch (error) {
-    // Autocomplete is best-effort; never block checkout on this.
     res.json({ suggestions: [] })
+  }
+})
+
+// Details lookup for autocomplete selection (used to extract street/city/province/postal from place_id).
+app.get('/api/address-autocomplete-details', apiLimiter, async (req, res) => {
+  try {
+    const placeId = String(req.query.place_id || req.query.placeId || '').trim()
+    if (!placeId) return res.json({ suggestion: null })
+
+    const googleKey = process.env.GOOGLE_PLACES_API_KEY || process.env.GOOGLE_MAPS_API_KEY
+    if (!googleKey) return res.json({ suggestion: null })
+
+    const url =
+      `https://maps.googleapis.com/maps/api/place/details/json` +
+      `?place_id=${encodeURIComponent(placeId)}` +
+      `&fields=address_component&key=${googleKey}`
+
+    const resp = await fetch(url)
+    if (!resp.ok) return res.json({ suggestion: null })
+
+    const data = await resp.json().catch(() => ({}))
+    const components = data?.result?.address_components || []
+    const byType = (type) => {
+      const c = components.find(x => Array.isArray(x.types) && x.types.includes(type))
+      return c?.long_name || c?.short_name || ''
+    }
+
+    const streetNumber = byType('street_number')
+    const route = byType('route')
+    const street = [streetNumber, route].filter(Boolean).join(' ').trim() || route || ''
+
+    const city =
+      byType('locality') ||
+      byType('postal_town') ||
+      byType('sublocality') ||
+      byType('administrative_area_level_2') ||
+      ''
+
+    const province =
+      byType('administrative_area_level_1') || ''
+
+    const postalCode =
+      byType('postal_code') || ''
+
+    const country =
+      byType('country') || ''
+
+    return res.json({
+      suggestion: {
+        street,
+        city,
+        province,
+        postalCode,
+        country,
+      },
+    })
+  } catch (error) {
+    res.json({ suggestion: null })
   }
 })
 

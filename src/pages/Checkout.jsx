@@ -319,17 +319,40 @@ export default function Checkout() {
     }
   }
 
-  const applyAddressSuggestion = (suggestion) => {
+  const applyAddressSuggestion = async (suggestion) => {
     if (!suggestion) return
     setShowAddressSuggestions(false)
 
-    const nextProvince = normalizeProvinceSelection(suggestion.province, formData.country)
-    const nextCity = String(suggestion.city || '').trim()
-    const nextPostal = suggestion.postalCode ? formatPostalCode(String(suggestion.postalCode), formData.country) : ''
+    const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
+
+    // When suggestions come from Google Places we only have placeId + label;
+    // details lookup is needed to extract street/city/province/postal code.
+    let details = suggestion
+    const needsDetails = (!details.street || !details.postalCode) && details.placeId
+
+    if (needsDetails) {
+      setIsLookingUpAddress(true)
+      try {
+        const resp = await fetch(
+          `${API_URL}/api/address-autocomplete-details?place_id=${encodeURIComponent(details.placeId)}`,
+          { headers: { 'Content-Type': 'application/json' } }
+        )
+        const data = await resp.json().catch(() => ({}))
+        if (data?.suggestion) details = data.suggestion
+      } catch {
+        // Best-effort; fall back to whatever fields we already have.
+      } finally {
+        setIsLookingUpAddress(false)
+      }
+    }
+
+    const nextProvince = normalizeProvinceSelection(details.province, formData.country)
+    const nextCity = String(details.city || '').trim()
+    const nextPostal = details.postalCode ? formatPostalCode(String(details.postalCode), formData.country) : ''
 
     setFormData(prev => ({
       ...prev,
-      address: suggestion.street || prev.address,
+      address: details.street || prev.address,
       city: nextCity || prev.city,
       province: nextProvince || prev.province,
       postalCode: nextPostal || prev.postalCode,
