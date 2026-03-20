@@ -67,6 +67,8 @@ const emailTheme = {
   sans: "'Jost', 'Segoe UI', Arial, sans-serif"
 }
 
+const carrierTrackHref = (order) => order?.trackingUrl || null
+
 // Email templates - English (Order confirmation + thank you)
 const orderConfirmationTemplateEN = (order, trackingUrl) => {
   const customerName = order.customer?.name || 'Customer'
@@ -162,7 +164,7 @@ const orderConfirmationTemplateEN = (order, trackingUrl) => {
       <div style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #10b981;">
         <h3 style="margin-top: 0;">Tracking Information</h3>
         <p><strong>Tracking Number:</strong> ${order.trackingNumber}</p>
-        <p style="margin-top: 10px;"><a href="https://www.canadapost.ca/trackweb/en#/search?searchFor=${order.trackingNumber}" target="_blank" style="color: #10b981; text-decoration: none;">Track with Canada Post →</a></p>
+        ${carrierTrackHref(order) ? `<p style="margin-top: 10px;"><a href="${carrierTrackHref(order)}" target="_blank" rel="noopener noreferrer" style="color: #10b981; text-decoration: none;">Track your shipment →</a></p>` : ''}
       </div>
       ` : ''}
       ${trackingUrl ? `
@@ -288,7 +290,7 @@ const orderConfirmationTemplateFR = (order, trackingUrl) => {
       <div style="background: white; padding: 20px; margin: 20px 0; border-radius: 8px; border-left: 4px solid #10b981;">
         <h3 style="margin-top: 0;">Informations de Suivi</h3>
         <p><strong>Numéro de Suivi :</strong> ${order.trackingNumber}</p>
-        <p style="margin-top: 10px;"><a href="https://www.canadapost.ca/trackweb/fr#/search?searchFor=${order.trackingNumber}" target="_blank" style="color: #10b981; text-decoration: none;">Suivre avec Postes Canada →</a></p>
+        ${carrierTrackHref(order) ? `<p style="margin-top: 10px;"><a href="${carrierTrackHref(order)}" target="_blank" rel="noopener noreferrer" style="color: #10b981; text-decoration: none;">Suivre l'envoi →</a></p>` : ''}
       </div>
       ` : ''}
       ${trackingUrl ? `
@@ -755,6 +757,7 @@ const shippingNotificationTemplate = (order, trackingNumber) => {
         <h2 style="margin-top: 0;">Shipping Information</h2>
         <p><strong>Order Number:</strong> ${order.id || 'N/A'}</p>
         ${trackingNumber ? `<p><strong>Tracking Number:</strong> ${trackingNumber}</p>` : ''}
+        ${order.trackingUrl ? `<p style="margin-top:12px;"><a href="${order.trackingUrl}" target="_blank" rel="noopener noreferrer" style="color:#10b981;">Track your shipment →</a></p>` : ''}
         <p><strong>Estimated Delivery:</strong> 3-5 business days</p>
       </div>
 
@@ -1362,6 +1365,19 @@ export const sendWelcomeEmail = async (email, options = {}) => {
       console.log('⚠️ Email not configured. Welcome email would be sent to:', email)
       return { success: false, reason: 'Email not configured' }
     }
+   
+    const { data, error } = await resend.emails.send({
+      from: fromDisplay,
+      to: email,
+      subject,
+      html: htmlContent,
+      headers: {
+        'X-Entity-Ref-ID': `welcome-${Date.now()}`,
+        'List-Unsubscribe': `<${process.env.FRONTEND_URL || 'https://purepeelco.com'}/unsubscribe>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      },
+      tags: [{ name: 'welcome', value: isPopup ? '10-off-popup' : 'list' }]
+    })
 
     const transporter = getTransporter()
     const info = await transporter.sendMail({

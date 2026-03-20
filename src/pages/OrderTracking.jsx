@@ -300,14 +300,14 @@ export default function OrderTracking() {
                         {getTranslation(language, 'orderTracking.trackingNumber') || 'Tracking Number'}
                       </p>
                       <p style={{ fontFamily: "monospace", fontSize: "0.8rem", color: S.dark, marginBottom: "6px" }}>{order.trackingNumber}</p>
-                      {order.shipping.address?.country === 'CA' && (
-                        <a href={`https://www.canadapost.ca/trackweb/en#/search?searchFor=${order.trackingNumber}`}
+                      {order.trackingUrl && (
+                        <a href={order.trackingUrl}
                           target="_blank" rel="noopener noreferrer"
                           style={{ fontFamily: S.sans, fontSize: "0.68rem", fontWeight: 400, color: S.orange, textDecoration: "none" }}
-                          onMouseEnter={e => e.target.style.textDecoration = "underline"}
-                          onMouseLeave={e => e.target.style.textDecoration = "none"}
+                          onMouseEnter={e => { e.target.style.textDecoration = "underline" }}
+                          onMouseLeave={e => { e.target.style.textDecoration = "none" }}
                         >
-                          {getTranslation(language, 'orderTracking.trackOnCanadaPost') || 'Track on Canada Post →'}
+                          {getTranslation(language, 'orderTracking.trackShipment') || 'Track your shipment →'}
                         </a>
                       )}
                     </div>

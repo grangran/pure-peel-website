@@ -178,7 +178,7 @@ export const translations = {
             },
             {
               question: "Do you ship to the United States?",
-              answer: "Yes! We ship to all 50 US states. Select \"United States\" as your country during checkout to see available shipping options:\n\n• Tracked Packet - USA: 4-7 business days\n• Xpresspost - USA: 2-3 business days\n• Priority Worldwide - USA: 1-2 business days\n\nPackages are shipped via Canada Post and delivered by USPS within the United States. Prices are calculated at checkout based on your destination, package weight, and selected shipping method."
+              answer: "Yes! We ship to all 50 US states. Select \"United States\" as your country during checkout to see available shipping options (standard and expedited USPS-tracked services).\n\nOrders are fulfilled through Chit Chats and delivered in the US via USPS. Prices are estimated at checkout based on destination, package weight, and the option you select."
             },
             {
               question: "How much does shipping cost?",
@@ -190,7 +190,7 @@ export const translations = {
             },
             {
               question: "How can I track my order?",
-              answer: "Once your order ships, you'll receive a tracking number via email. You can track your package in two ways:\n\n• Use our order tracking page: Enter your order number and email address\n• Use the carrier's website: Enter your tracking number on Canada Post (for Canadian orders) or USPS (for US orders) to see real-time delivery updates"
+              answer: "Once your order ships, you'll receive a tracking number via email. You can track your package in two ways:\n\n• Use our order tracking page: Enter your order number and email address\n• Use the tracking link in your email when provided, or the carrier's site (e.g. USPS for many US shipments) with your tracking number"
             }
           ]
         },
@@ -360,7 +360,7 @@ export const translations = {
         title: "Third-Party Services",
         text: "We use the following third-party services that may collect or process your information:",
         stripe: "Stripe: Payment processing. Stripe handles all payment information securely. See Stripe's privacy policy at",
-        canadaPost: "Canada Post: Shipping services. We share your shipping address with Canada Post to fulfill orders. See Canada Post's privacy policy at",
+        chitchats: "Chit Chats: Shipping and label services. We share your shipping address with Chit Chats to fulfill orders. Learn more at",
         resend: "Resend: Email delivery service. We use Resend to send order confirmations and notifications. See Resend's privacy policy at"
       },
       cookiesAndTracking: {
@@ -531,7 +531,7 @@ export const translations = {
         schedule2: "Orders placed Saturday-Sunday: Processed the following Monday",
         schedule3: "Holiday orders: May experience additional processing delays",
         text2: "Shipping times are calculated from the date your order ships, not from the date you place your order. You will receive a shipping confirmation email with a tracking number once your order has been shipped. Delivery times vary by distance and destination - local deliveries are typically faster, while cross-country shipments may take longer.",
-        note: "Note: Shipping times may be longer during peak seasons (holidays, special promotions) or due to weather conditions, postal service delays, or remote locations. Regular Parcel delivery times (2-5 business days) vary by distance. Expedited Parcel (1-3 business days) and Xpresspost (next business day) offer guaranteed delivery. We will notify you via email if there are any significant delays."
+        note: "Note: Shipping times may be longer during peak seasons (holidays, special promotions) or due to weather, carrier delays, or remote locations. Tracked service delivery estimates vary by distance. We will notify you by email if there are significant delays."
       },
       shippingCosts: {
         title: "Shipping Costs",
@@ -542,7 +542,7 @@ export const translations = {
         title: "Order Tracking",
         text1: "Once your order ships, you will receive an email with a tracking number. You can track your package using:",
         item1: "The tracking link provided in your shipping confirmation email",
-        item2: "Canada Post's website:",
+        item2: "The carrier tracking link in your email (when provided):",
         item3: "Our order tracking page:",
         trackYourOrder: "Track Your Order",
         text2: "Tracking information is typically available within 24 hours of shipment. If you don't receive a tracking number within 3 business days, please contact us."
@@ -553,7 +553,7 @@ export const translations = {
         damagedItems: "Damaged Items: Take photos of the damaged package and items, then contact us within 48 hours of delivery",
         lostPackages: "Lost Packages: Contact us if your package hasn't arrived within 7-12 business days of the expected delivery date (depending on shipping method)",
         incorrectItems: "Incorrect Items: Contact us immediately if you received the wrong items",
-        text2: "We will work with Canada Post to resolve the issue and will replace or refund your order as appropriate. You can choose between a replacement or a full refund. We may require photos or additional information to process your claim."
+        text2: "We will work with our shipping partners to resolve the issue and will replace or refund your order as appropriate. You can choose between a replacement or a full refund. We may require photos or additional information to process your claim."
       },
       internationalShipping: {
         title: "International Shipping",
@@ -563,11 +563,11 @@ export const translations = {
       usShipping: {
         title: "Shipping to the United States",
         text1: "We now ship from Canada to the United States! Select 'United States' as your country during checkout to see available shipping options.",
-        text2: "US shipping options include:",
-        item1: "Tracked Packet - USA: Standard delivery (4-7 business days) - Price calculated at checkout",
-        item2: "Xpresspost - USA: Faster delivery (2-3 business days) - Price calculated at checkout",
-        item3: "Priority Worldwide - USA: Express delivery (1-2 business days) - Price calculated at checkout",
-        note: "All prices are in Canadian dollars (CAD). Delivery times are estimates and may vary based on destination and customs processing. Packages are shipped via Canada Post and delivered by USPS within the United States."
+        text2: "US shipping options typically include:",
+        item1: "Standard (USPS tracked): about 5–10 business days — price estimated at checkout",
+        item2: "Expedited (USPS Priority): faster tracked delivery — price estimated at checkout",
+        item3: "Rates reflect Chit Chats + USPS services; exact service may vary by shipment.",
+        note: "All prices are in Canadian dollars (CAD). Delivery times are estimates and may vary by destination and customs. US orders are fulfilled through Chit Chats and delivered by USPS."
       },
       returns: {
         title: "Issue Resolution & Product Replacement",
@@ -770,7 +770,7 @@ export const translations = {
         shippingMethod: "Shipping Method:",
         shippingAddressNotAvailable: "Shipping address not available",
         trackingNumber: "Tracking Number",
-        trackOnCanadaPost: "Track on Canada Post",
+        trackShipment: "Track your shipment",
         questions: "Questions about your order? Contact us at",
         placedOn: "Placed on",
         quantity: "Quantity:",
@@ -1051,7 +1051,7 @@ export const translations = {
             },
             {
               question: "Livrez-vous aux États-Unis?",
-              answer: "Oui! Nous livrons dans les 50 États américains. Sélectionnez \"États-Unis\" comme pays lors du paiement pour voir les options d'expédition disponibles:\n\n• Colis Suivi - USA: 4-7 jours ouvrables\n• Poste Xpress - USA: 2-3 jours ouvrables\n• Priorité Mondiale - USA: 1-2 jours ouvrables\n\nLes colis sont expédiés via Postes Canada et livrés par USPS aux États-Unis. Les prix sont calculés à la caisse en fonction de votre destination, du poids du colis et de la méthode d'expédition sélectionnée."
+              answer: "Oui! Nous livrons dans les 50 États américains. Sélectionnez « États-Unis » comme pays lors du paiement pour voir les options d'expédition (services suivis USPS, standard ou accéléré).\n\nLes commandes sont traitées via Chit Chats et livrées aux États-Unis par USPS. Les prix affichés à la caisse sont des estimations selon la destination, le poids et l'option choisie."
             },
             {
               question: "Combien coûte l'expédition?",
@@ -1063,7 +1063,7 @@ export const translations = {
             },
             {
               question: "Comment puis-je suivre ma commande?",
-              answer: "Une fois que votre commande est expédiée, vous recevrez un numéro de suivi par courriel. Vous pouvez suivre votre colis de deux façons :\n\n• Utilisez notre page de suivi de commande : Entrez votre numéro de commande et votre adresse e-mail\n• Utilisez le site Web du transporteur : Entrez votre numéro de suivi sur Postes Canada (pour les commandes canadiennes) ou USPS (pour les commandes américaines) pour voir les mises à jour de livraison en temps réel"
+              answer: "Une fois que votre commande est expédiée, vous recevrez un numéro de suivi par courriel. Vous pouvez suivre votre colis de deux façons :\n\n• Utilisez notre page de suivi : entrez votre numéro de commande et votre adresse courriel\n• Utilisez le lien de suivi dans votre courriel lorsqu'il est fourni, ou le site du transporteur (p. ex. USPS pour plusieurs envois vers les États-Unis) avec votre numéro"
             }
           ]
         },
@@ -1233,7 +1233,7 @@ export const translations = {
         title: "Services Tiers",
         text: "Nous utilisons les services tiers suivants qui peuvent collecter ou traiter vos informations :",
         stripe: "Stripe : Traitement des paiements. Stripe gère toutes les informations de paiement de manière sécurisée. Consultez la politique de confidentialité de Stripe à",
-        canadaPost: "Postes Canada : Services d'expédition. Nous partageons votre adresse de livraison avec Postes Canada pour exécuter les commandes. Consultez la politique de confidentialité de Postes Canada à",
+        chitchats: "Chit Chats : Services d'expédition et d'étiquettes. Nous partageons votre adresse de livraison avec Chit Chats pour exécuter les commandes. Pour en savoir plus :",
         resend: "Resend : Service de livraison d'e-mails. Nous utilisons Resend pour envoyer des confirmations de commande et des notifications. Consultez la politique de confidentialité de Resend à"
       },
       cookiesAndTracking: {
@@ -1466,7 +1466,7 @@ export const translations = {
         schedule2: "Commandes passées samedi-dimanche : Traitées le lundi suivant",
         schedule3: "Commandes de jours fériés : Peuvent subir des retards de traitement supplémentaires",
         text2: "Les délais d'expédition sont calculés à partir de la date d'expédition de votre commande, et non de la date à laquelle vous passez votre commande. Vous recevrez un e-mail de confirmation d'expédition avec un numéro de suivi une fois votre commande expédiée. Les délais de livraison varient selon la distance et la destination - les livraisons locales sont généralement plus rapides, tandis que les expéditions transcontinentales peuvent prendre plus de temps.",
-        note: "Note : Les délais d'expédition peuvent être plus longs pendant les périodes de pointe (jours fériés, promotions spéciales) ou en raison des conditions météorologiques, des retards du service postal ou des emplacements éloignés. Les délais de livraison du Colis Régulier (2-5 jours ouvrables) varient selon la distance. Le Colis Accéléré (1-3 jours ouvrables) et Xpresspost (prochain jour ouvrable) offrent une livraison garantie. Nous vous informerons par e-mail en cas de retards importants."
+        note: "Note : Les délais peuvent être plus longs en période de pointe (fêtes, promotions), par météo, retards des transporteurs ou emplacements éloignés. Les estimations varient selon la distance. Nous vous informerons par courriel en cas de retard important."
       },
       shippingCosts: {
         title: "Frais d'Expédition",
@@ -1477,7 +1477,7 @@ export const translations = {
         title: "Suivi de Commande",
         text1: "Une fois votre commande expédiée, vous recevrez un e-mail avec un numéro de suivi. Vous pouvez suivre votre colis en utilisant :",
         item1: "Le lien de suivi fourni dans votre e-mail de confirmation d'expédition",
-        item2: "Le site Web de Postes Canada :",
+        item2: "Le lien de suivi du transporteur dans votre courriel (lorsque fourni) :",
         item3: "Notre page de suivi de commande :",
         trackYourOrder: "Suivre Votre Commande",
         text2: "Les informations de suivi sont généralement disponibles dans les 24 heures suivant l'expédition. Si vous ne recevez pas de numéro de suivi dans les 3 jours ouvrables, veuillez nous contacter."
@@ -1488,7 +1488,7 @@ export const translations = {
         damagedItems: "Articles Endommagés : Prenez des photos du colis et des articles endommagés, puis contactez-nous dans les 48 heures suivant la livraison",
         lostPackages: "Colis Perdus : Contactez-nous si votre colis n'est pas arrivé dans les 7-12 jours ouvrables suivant la date de livraison prévue (selon la méthode d'expédition)",
         incorrectItems: "Articles Incorrects : Contactez-nous immédiatement si vous avez reçu les mauvais articles",
-        text2: "Nous travaillerons avec Postes Canada pour résoudre le problème et remplacer ou rembourser votre commande selon le cas. Vous pouvez choisir entre un remplacement ou un remboursement complet. Nous pouvons demander des photos ou des informations supplémentaires pour traiter votre réclamation."
+        text2: "Nous travaillerons avec nos partenaires d'expédition pour résoudre le problème et remplacer ou rembourser votre commande selon le cas. Vous pouvez choisir entre un remplacement ou un remboursement complet. Nous pouvons demander des photos ou des informations supplémentaires pour traiter votre réclamation."
       },
       internationalShipping: {
         title: "Expédition Internationale",
@@ -1498,11 +1498,11 @@ export const translations = {
       usShipping: {
         title: "Expédition aux États-Unis",
         text1: "Nous expédions maintenant du Canada vers les États-Unis ! Sélectionnez 'États-Unis' comme pays lors de la caisse pour voir les options d'expédition disponibles.",
-        text2: "Les options d'expédition vers les États-Unis incluent :",
-        item1: "Colis Suivi - É.-U. : Livraison standard (4-7 jours ouvrables) - À partir de 18 $ CAD",
-        item2: "Xpresspost - É.-U. : Livraison plus rapide (2-3 jours ouvrables) - À partir de 28 $ CAD",
-        item3: "Priority Worldwide - É.-U. : Livraison express (1-2 jours ouvrables) - À partir de 45 $ CAD",
-        note: "Tous les prix sont en dollars canadiens (CAD). Les délais de livraison sont des estimations et peuvent varier selon la destination et le traitement des douanes. Les colis sont expédiés via Postes Canada et livrés par USPS aux États-Unis."
+        text2: "Les options vers les États-Unis comprennent notamment :",
+        item1: "Standard (USPS suivi) : environ 5 à 10 jours ouvrables — prix estimé à la caisse",
+        item2: "Accéléré (USPS Priority) : livraison suivie plus rapide — prix estimé à la caisse",
+        item3: "Les tarifs reflètent les services Chit Chats + USPS ; le service exact peut varier.",
+        note: "Tous les prix sont en dollars canadiens (CAD). Les délais sont des estimations et peuvent varier selon la destination et les douanes. Les envois vers les États-Unis passent par Chit Chats et sont livrés par USPS."
       },
       returns: {
         title: "Résolution des Problèmes et Remplacement de Produit",
@@ -1705,7 +1705,7 @@ export const translations = {
         shippingMethod: "Méthode d'Expédition :",
         shippingAddressNotAvailable: "Adresse d'expédition non disponible",
         trackingNumber: "Numéro de Suivi",
-        trackOnCanadaPost: "Suivre sur Postes Canada",
+        trackShipment: "Suivre l'envoi",
         questions: "Des questions sur votre commande ? Contactez-nous à",
         placedOn: "Passée le",
         quantity: "Quantité :",

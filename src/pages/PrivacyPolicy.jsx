@@ -164,7 +164,7 @@ export default function PrivacyPolicy() {
           <Body>{getTranslation(language, 'privacy.thirdPartyServices.text')}</Body>
           <BulletList items={[
             <>{getTranslation(language, 'privacy.thirdPartyServices.stripe')} <ExtLink href="https://stripe.com/privacy">stripe.com/privacy</ExtLink></>,
-            <>{getTranslation(language, 'privacy.thirdPartyServices.canadaPost')} <ExtLink href="https://www.canadapost.ca/cpc/en/privacypolicy.page">canadapost.ca</ExtLink></>,
+            <>{getTranslation(language, 'privacy.thirdPartyServices.chitchats')} <ExtLink href="https://chitchats.com">chitchats.com</ExtLink></>,
             <>{getTranslation(language, 'privacy.thirdPartyServices.resend')} <ExtLink href="https://resend.com/legal/privacy-policy">resend.com</ExtLink></>,
           ]} />
 
