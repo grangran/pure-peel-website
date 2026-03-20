@@ -26,6 +26,7 @@ import ShippingReturns from "./pages/ShippingReturns"
 import TermsOfService from "./pages/TermsOfService"
 import FAQ from "./pages/FAQ"
 import NotFound from "./pages/NotFound"
+import Unsubscribe from "./pages/Unsubscribe"
 import { seoData, organizationData } from "./utils/seoData"
 import { trackPageView } from "./utils/analytics"
 
@@ -62,6 +63,8 @@ const getInitialPage = () => {
     return "faq"
   } else if (path === "/about" || path === "/about.html") {
     return "about"
+  } else if (path === "/unsubscribe" || path === "/unsubscribe.html") {
+    return "unsubscribe"
   } else {
     return "not-found"
   }
@@ -135,6 +138,8 @@ export default function App() {
         setCurrentPage("faq")
       } else if (normalizedPath === "/about" || normalizedPath === "/about.html") {
         setCurrentPage("about")
+      } else if (normalizedPath === "/unsubscribe" || normalizedPath === "/unsubscribe.html") {
+        setCurrentPage("unsubscribe")
       } else {
         // Invalid route - show 404
         setCurrentPage("not-found")
@@ -245,6 +250,8 @@ export default function App() {
         return seoData.faq
       case "not-found":
         return seoData.notFound
+      case "unsubscribe":
+        return seoData.unsubscribe
       default:
         return seoData.home
     }
@@ -416,6 +423,15 @@ export default function App() {
         <Nav key={`nav-${currentPage}-${navigationKey}`} />
         <About key={`about-${currentPage}-${navigationKey}`} />
         <Footer key={`footer-${currentPage}-${navigationKey}`} />
+      </>
+    )
+  }
+
+  if (currentPage === "unsubscribe") {
+    return (
+      <>
+        <SEO {...currentSEO} />
+        <Unsubscribe key={`unsubscribe-${currentPage}-${navigationKey}`} />
       </>
     )
   }

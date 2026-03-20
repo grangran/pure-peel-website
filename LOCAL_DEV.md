@@ -50,3 +50,14 @@ For automatic labels after checkout, set in `.env` (see `utils/chitchatsShipping
 - `CHITCHATS_CLIENT_ID` — numeric client ID  
 
 Optional: `SHIPPING_ORIGIN_ADDRESS`, `SHIPPING_ORIGIN_POSTAL_CODE`, `SHIPPING_ORIGIN_CITY`, `SHIPPING_ORIGIN_PROVINCE`, `SHIPPING_ORIGIN_PHONE`, and `CHITCHATS_USE_STAGING=true` for staging API.
+
+## Email list & unsubscribe (compliance)
+
+Welcome / list emails include `List-Unsubscribe` (mailto + HTTPS) and `List-Unsubscribe-Post` for one-click (RFC 8058). Users can also unsubscribe at `/unsubscribe` or via `GET/POST /api/unsubscribe`.
+
+- `RESEND_API_KEY` — Used to sign unsubscribe tokens (or set `UNSUBSCRIBE_SECRET` explicitly).  
+- `UNSUBSCRIBE_SECRET` — Optional; overrides signing key for tokens.  
+- `PUBLIC_API_URL` — Optional; base URL for API links in emails if the API host differs from `FRONTEND_URL` (e.g. API on Render, site on another domain).  
+- `COMPLIANCE_MAILING_ADDRESS` — Optional; physical mailing/postal line shown in list email footers (recommended for CAN-SPAM-style “valid postal address” for commercial email).  
+- `ADMIN_EMAIL` — Used in the `mailto:` `List-Unsubscribe` header (defaults to `support@purepeelco.com`).
+- `LIST_WELCOME_SUBJECT_EN` / `LIST_WELCOME_SUBJECT_FR` — Optional; override the welcome list email subject line. Defaults match the current templates (e.g. “You're on the list — Pure Peel Co.”).

@@ -8,7 +8,8 @@ import fs from 'fs'
 import path from 'path'
 import { Resend } from 'resend'
 import { saveOrder, getAllOrders, getOrderById, updateOrderStatus, getOrderStats, markEmailSent, hasEmailBeenSent, updateOrderTracking } from './utils/orderStorage.js'
-import { hasSubscriber, addSubscriber, getSubscribers } from './utils/subscriberStorage.js'
+import { hasSubscriber, addSubscriber, getSubscribers, removeSubscriber } from './utils/subscriberStorage.js'
+import { verifyUnsubscribeToken } from './utils/unsubscribeToken.js'
 import { sendOrderConfirmation, sendShippingNotification, sendAdminNotification, sendContactForm, sendWelcomeEmail, getOrderConfirmationPreview, getWelcomeEmailPreview } from './utils/emailService.js'
 import { createChitChatsLabel, getShippingRates } from './utils/chitchatsShipping.js'
 import { getAllProducts, getProductById, saveProduct, updateProduct, deleteProduct, bulkSaveProducts } from './utils/productStorage.js'
@@ -644,6 +645,7 @@ app.post('/api/webhook', webhookLimiter, express.raw({ type: 'application/json' 
 
 // Now apply JSON parsing for all other routes
 app.use(express.json({ limit: '10mb' })) // Limit request body size
+app.use(express.urlencoded({ extended: false })) // For List-Unsubscribe one-click (RFC 8058)
 
 // Apply rate limiting to API routes
 app.use('/api/', apiLimiter)
@@ -2399,6 +2401,59 @@ app.post('/api/products/bulk', authenticateProductAPI, apiLimiter, (req, res) =>
   } catch (error) {
     console.error('Error bulk saving products:', error)
     res.status(500).json({ error: error.message })
+  }
+})
+
+// Unsubscribe (marketing list) — GET: link from email; POST: form or RFC 8058 one-click
+const frontendBaseUrl = () => (process.env.FRONTEND_URL || 'https://purepeelco.com').replace(/\/$/, '')
+
+app.get('/api/unsubscribe', apiLimiter, async (req, res) => {
+  const { token } = req.query
+  const redirect = (query) => res.redirect(302, `${frontendBaseUrl()}/unsubscribe${query ? `?${query}` : ''}`)
+  if (!token || typeof token !== 'string') {
+    return redirect('')
+  }
+  const email = verifyUnsubscribeToken(token)
+  if (!email) {
+    return redirect('status=invalid')
+  }
+  try {
+    await removeSubscriber(email)
+  } catch (err) {
+    console.error('Unsubscribe (GET):', err.message || err)
+    return redirect('status=error')
+  }
+  return redirect('status=ok')
+})
+
+app.post('/api/unsubscribe', apiLimiter, async (req, res) => {
+  const token = req.query.token
+  const oneClick = req.body && req.body['List-Unsubscribe'] === 'One-Click'
+
+  if (oneClick && token && typeof token === 'string') {
+    const email = verifyUnsubscribeToken(token)
+    if (!email) {
+      return res.status(400).send('Invalid or expired unsubscribe link')
+    }
+    try {
+      await removeSubscriber(email)
+      return res.status(204).send()
+    } catch (err) {
+      console.error('Unsubscribe (POST one-click):', err.message || err)
+      return res.status(500).send('Unsubscribe failed')
+    }
+  }
+
+  const rawEmail = req.body?.email
+  if (!rawEmail || typeof rawEmail !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rawEmail.trim())) {
+    return res.status(400).json({ error: 'A valid email address is required' })
+  }
+  try {
+    await removeSubscriber(rawEmail.trim())
+    return res.json({ success: true })
+  } catch (err) {
+    console.error('Unsubscribe (POST email):', err.message || err)
+    return res.status(500).json({ error: 'Could not process unsubscribe. Try again later.' })
   }
 })
 

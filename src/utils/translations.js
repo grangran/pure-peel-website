@@ -8,6 +8,17 @@ export const translations = {
       contact: "Contact",
       viewCart: "View Cart"
     },
+    unsubscribePage: {
+      title: "Unsubscribe",
+      intro: "Enter the email you used for our list. We'll remove it from marketing emails.",
+      placeholder: "Email address",
+      submit: "Unsubscribe",
+      submitting: "Unsubscribing…",
+      success: "You're unsubscribed. You won't receive further marketing emails from this list.",
+      error: "We couldn't complete that. Please try again in a moment.",
+      invalid: "This link is invalid or has expired. Use the form below with your email.",
+      note: "Transactional emails about orders you place may still be sent.",
+    },
     products: {
       citrusCollection: "Citrus Collection",
       fruitCollection: "Fruit Collection",
@@ -880,6 +891,17 @@ export const translations = {
       about: "À Propos",
       contact: "Contact",
       viewCart: "Voir le Panier"
+    },
+    unsubscribePage: {
+      title: "Se désabonner",
+      intro: "Entrez l'adresse courriel utilisée pour la liste. Nous la retirerons des envois marketing.",
+      placeholder: "Adresse courriel",
+      submit: "Se désabonner",
+      submitting: "Désabonnement…",
+      success: "Vous êtes désabonné. Vous ne recevrez plus d'envois marketing de cette liste.",
+      error: "Impossible de terminer la demande. Réessayez dans un instant.",
+      invalid: "Ce lien est invalide ou expiré. Utilisez le formulaire ci-dessous avec votre courriel.",
+      note: "Les courriels transactionnels concernant vos commandes peuvent encore être envoyés.",
     },
     products: {
       citrusCollection: "Collection d'Agrumes",

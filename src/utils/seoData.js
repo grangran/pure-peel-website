@@ -133,6 +133,15 @@ export const seoData = {
     url: '/404',
     type: 'website',
     noindex: true // Don't index 404 pages
+  },
+  unsubscribe: {
+    title: 'Unsubscribe | Pure Peel Co.',
+    description: 'Remove your email address from our marketing list.',
+    keywords: 'unsubscribe, email list, marketing',
+    image: defaultImage,
+    url: '/unsubscribe',
+    type: 'website',
+    noindex: true
   }
 }
 

@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer'
 import { Resend } from 'resend'
 import dotenv from 'dotenv'
+import { createUnsubscribeToken } from './unsubscribeToken.js'
 
 dotenv.config()
 
@@ -334,133 +335,109 @@ const orderConfirmationTemplate = (order, trackingUrl, language = 'en') => {
     : orderConfirmationTemplateEN(order, trackingUrl)
 }
 
-const welcomeListEmailTemplateEN = () => {
-  const shopUrl     = process.env.FRONTEND_URL || 'https://purepeelco.com'
-  const unsubUrl    = `${shopUrl}/unsubscribe`
+const welcomeListEmailTemplateEN = (opts = {}) => {
+  const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const unsubUrl = opts.unsubscribeUrl || `${shopUrl}/unsubscribe`
+  const heroImg = `${shopUrl}/images/driedcitrusbanner.jpg`
 
-  // Design tokens — kept inline so this function is self-contained
-  const cream     = '#faf7f2'
-  const dark      = '#0f0a04'
-  const orange    = '#c85a08'
-  const border    = 'rgba(15,10,4,0.08)'
-  const textLight = 'rgba(15,10,4,0.35)'
-  const textMid   = 'rgba(15,10,4,0.5)'
-  const sans      = "'Jost', 'Segoe UI', Arial, sans-serif"
-  const serif     = "'Cormorant Garamond', Georgia, serif"
-
-  return `
-<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The List — Pure Peel Co.</title>
-  <!--[if mso]>
-  <noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
-  <![endif]-->
+  <title>You're on the list — Pure Peel Co.</title>
   <style>
-    body, html { margin: 0; padding: 0; background: #f0ebe0; }
-    body { font-family: ${sans}; line-height: 1.7; color: ${dark}; -webkit-font-smoothing: antialiased; }
-    * { box-sizing: border-box; }
-    a { color: ${orange}; }
     @media only screen and (max-width: 600px) {
-      .container { width: 100% !important; }
-      .padded    { padding: 28px 24px !important; }
-      .footer    { padding: 20px 24px !important; }
+      .wrap { padding: 40px 28px 44px !important; }
+      .h1   { font-size: 28px !important; }
     }
   </style>
 </head>
-<body>
-  <!-- Preheader (hidden preview text) -->
-  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">
-    The garnish that saved my dinner party — one idea from Pure Peel Co.
+<body style="margin:0;padding:0;background:#f0ebe0;">
+
+  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;color:#f0ebe0;">
+    One idea a month. Worth trying. — Pure Peel Co.
     &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
   </div>
 
-  <!-- Outer wrapper -->
-  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0ebe0;padding:32px 0;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0ebe0;">
     <tr>
-      <td align="center">
-        <table class="container" width="560" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;width:100%;">
+      <td align="center" style="padding:48px 24px 56px;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;width:100%;background:#faf7f2;border-radius:3px;overflow:hidden;">
 
-          <!-- ── LOGO HEADER ── -->
+          <!-- Hero image -->
           <tr>
-            <td align="center" style="padding:0 0 16px;">
-              <img
-                src="${shopUrl}/images/logo.png"
-                alt="Pure Peel Co."
-                width="80"
-                style="width:80px;height:auto;display:block;"
-              />
+            <td style="padding:0;line-height:0;">
+              <img src="${heroImg}"
+                   alt="Pure Peel Co."
+                   width="480"
+                   style="width:100%;max-width:480px;height:auto;display:block;" />
             </td>
           </tr>
 
-          <!-- ── MAIN CARD ── -->
+          <!-- Content -->
           <tr>
-            <td style="background:${cream};border-radius:16px;overflow:hidden;">
+            <td class="wrap" align="center" style="padding:52px 44px 48px;">
 
-              <!-- Opening story -->
-              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <!-- Eyebrow -->
+              <p style="font-family:'Jost','Segoe UI',Arial,sans-serif;font-size:10px;font-weight:400;
+                         letter-spacing:0.26em;text-transform:uppercase;
+                         color:rgba(200,90,8,0.6);margin:0 0 22px;">
+                Pure Peel Co. &nbsp;&mdash;&nbsp; The List
+              </p>
+
+              <!-- Headline -->
+              <h1 class="h1" style="font-family:'Cormorant Garamond',Georgia,serif;font-size:34px;
+                             font-weight:300;font-style:italic;line-height:1.2;
+                             letter-spacing:-0.01em;color:#0f0a04;margin:0 0 28px;">
+                You're on the list.
+              </h1>
+
+              <!-- Divider -->
+              <div style="width:24px;height:1px;background:rgba(200,90,8,0.35);margin:0 auto 28px;"></div>
+
+              <!-- Body -->
+              <p style="font-family:'Jost','Segoe UI',Arial,sans-serif;font-size:15px;font-weight:300;
+                         line-height:1.9;color:rgba(15,10,4,0.62);margin:0 0 40px;">
+                Once a month, one idea worth trying &mdash; a cocktail, a pairing,
+                something for your next gathering. No fluff.<br><br>
+                While you're here, the lime slices are a good place to start.
+              </p>
+
+              <!-- CTA -->
+              <table cellpadding="0" cellspacing="0" border="0" style="margin:0 auto 52px;">
                 <tr>
-                  <td class="padded" style="padding:40px 40px 24px;">
-                    <p style="font-family:${sans};font-size:16px;font-weight:300;color:${dark};line-height:1.75;margin:0;">
-                      Last weekend I was making cocktails for eight people and realized I'd forgotten to buy limes.
-                      Turns out a few dehydrated lime slices in the shaker — and one on the rim — worked even better.
-                      No last-minute run to the store, and everyone asked where they came from.
-                    </p>
-                  </td>
-                </tr>
-
-                <!-- Body -->
-                <tr>
-                  <td class="padded" style="padding:0 40px 40px;">
-
-                    <p style="font-family:${sans};font-size:16px;font-weight:300;color:${dark};line-height:1.75;margin:0 0 24px;">
-                      So here's the one thing I'd tell you first: keep a small jar of dehydrated citrus by the bar.
-                      Orange for old fashioneds, lime for G&amp;T's and margaritas, grapefruit if you're feeling fancy.
-                      They rehydrate in the drink in seconds and look (and taste) like you actually planned ahead.
-                    </p>
-
-                    <!-- Tip block -->
-                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 28px;">
-                      <tr>
-                        <td style="background:#fff;border-left:3px solid ${orange};border-radius:0 8px 8px 0;padding:20px 24px;">
-                          <p style="font-family:${sans};font-size:15px;color:${dark};line-height:1.65;margin:0;">
-                            <strong style="font-weight:600;">This week's move:</strong>
-                            Drop 2–3 dried lime slices into your next gin and tonic. Let them sit for 30 seconds.
-                            Then taste. You'll get why we keep a bag in the cupboard.
-                          </p>
-                        </td>
-                      </tr>
-                    </table>
-
-                    <!-- Soft CTA -->
-                    <p style="font-family:${sans};font-size:15px;font-weight:300;color:${dark};line-height:1.7;margin:0;">
-                      We use our lime slices for exactly this —
-                      <a href="${shopUrl}/lime" style="color:${orange};text-decoration:none;font-weight:500;">grab a bag if you're running low</a>.
-                    </p>
-
+                  <td align="center" style="background:#0f0a04;border-radius:2px;">
+                    <a href="${shopUrl}"
+                       style="display:inline-block;padding:15px 32px;
+                              font-family:'Jost','Segoe UI',Arial,sans-serif;
+                              font-size:11px;font-weight:400;letter-spacing:0.18em;
+                              text-transform:uppercase;color:#faf7f2;text-decoration:none;">
+                      Shop the Collection
+                    </a>
                   </td>
                 </tr>
               </table>
 
-            </td>
-          </tr>
+              <!-- Signature -->
+              <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:19px;
+                         font-weight:300;font-style:italic;
+                         color:rgba(15,10,4,0.25);margin:0 0 48px;">
+                &mdash; Pure Peel Co.
+              </p>
 
-          <!-- ── FOOTER ── -->
-          <tr>
-            <td class="footer" style="padding:24px 40px;text-align:center;">
-              <p style="font-family:${sans};font-size:12px;color:${textLight};line-height:1.6;margin:0 0 8px;">
-                You're on <strong style="color:${textMid};">THE LIST</strong> — seasonal ideas, one at a time.
-              </p>
-              <p style="font-family:${sans};font-size:12px;color:${textLight};line-height:1.6;margin:0 0 8px;">
-                Pure Peel Co. &mdash; Premium dehydrated citrus, made in Canada.
-              </p>
-              <p style="font-family:${sans};font-size:11px;color:${textLight};margin:0;">
-                <a href="${unsubUrl}" style="color:${textLight};text-decoration:underline;">Unsubscribe</a>
-                &nbsp;&middot;&nbsp;
-                <a href="${shopUrl}/privacy" style="color:${textLight};text-decoration:underline;">Privacy Policy</a>
-              </p>
+              <!-- Footer -->
+              <div style="border-top:1px solid rgba(15,10,4,0.07);padding-top:22px;">
+                <p style="font-family:'Jost','Segoe UI',Arial,sans-serif;font-size:11px;
+                           font-weight:300;line-height:1.9;color:rgba(15,10,4,0.26);margin:0;">
+                  The List &mdash; Pure Peel Co., made in Canada.<br>
+                  <a href="${unsubUrl}" style="color:rgba(15,10,4,0.26);text-decoration:underline;">Unsubscribe</a>
+                  &nbsp;&middot;&nbsp;
+                  <a href="${shopUrl}/privacy" style="color:rgba(15,10,4,0.26);text-decoration:underline;">Privacy Policy</a>
+                </p>
+                ${opts.mailingAddress ? `<p style="font-family:'Jost','Segoe UI',Arial,sans-serif;font-size:10px;font-weight:300;line-height:1.6;color:rgba(15,10,4,0.22);margin:12px 0 0;">${opts.mailingAddress}</p>` : ''}
+              </div>
+
             </td>
           </tr>
 
@@ -470,137 +447,112 @@ const welcomeListEmailTemplateEN = () => {
   </table>
 
 </body>
-</html>
-  `.trim()
+</html>`.trim()
 }
 
-const welcomeListEmailTemplateFR = () => {
-  const shopUrl     = process.env.FRONTEND_URL || 'https://purepeelco.com'
-  const unsubUrl    = `${shopUrl}/unsubscribe`
+const welcomeListEmailTemplateFR = (opts = {}) => {
+  const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
+  const unsubUrl = opts.unsubscribeUrl || `${shopUrl}/unsubscribe`
+  const heroImg = `${shopUrl}/images/driedcitrusbanner.jpg`
 
-  // Design tokens — kept inline so this function is self-contained
-  const cream     = '#faf7f2'
-  const dark      = '#0f0a04'
-  const orange    = '#c85a08'
-  const border    = 'rgba(15,10,4,0.08)'
-  const textLight = 'rgba(15,10,4,0.35)'
-  const textMid   = 'rgba(15,10,4,0.5)'
-  const sans      = "'Jost', 'Segoe UI', Arial, sans-serif"
-  const serif     = "'Cormorant Garamond', Georgia, serif"
-
-  return `
-<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>La liste — Pure Peel Co.</title>
-  <!--[if mso]>
-  <noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
-  <![endif]-->
+  <title>Vous êtes sur la liste — Pure Peel Co.</title>
   <style>
-    body, html { margin: 0; padding: 0; background: #f0ebe0; }
-    body { font-family: ${sans}; line-height: 1.7; color: ${dark}; -webkit-font-smoothing: antialiased; }
-    * { box-sizing: border-box; }
-    a { color: ${orange}; }
     @media only screen and (max-width: 600px) {
-      .container { width: 100% !important; }
-      .padded    { padding: 28px 24px !important; }
-      .footer    { padding: 20px 24px !important; }
+      .wrap { padding: 40px 28px 44px !important; }
+      .h1   { font-size: 28px !important; }
     }
   </style>
 </head>
-<body>
-  <!-- Preheader (hidden preview text) -->
-  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">
-    La garniture qui a sauvé mon souper — une idée de Pure Peel Co.
+<body style="margin:0;padding:0;background:#f0ebe0;">
+
+  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;color:#f0ebe0;">
+    Une idée par mois. Qui vaut la peine. — Pure Peel Co.
     &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
   </div>
 
-  <!-- Outer wrapper -->
-  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0ebe0;padding:32px 0;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0ebe0;">
     <tr>
-      <td align="center">
-        <table class="container" width="560" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;width:100%;">
+      <td align="center" style="padding:48px 24px 56px;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;width:100%;background:#faf7f2;border-radius:3px;overflow:hidden;">
 
-          <!-- ── LOGO HEADER ── -->
+          <!-- Hero image -->
           <tr>
-            <td align="center" style="padding:0 0 16px;">
-              <img
-                src="${shopUrl}/images/logo.png"
-                alt="Pure Peel Co."
-                width="80"
-                style="width:80px;height:auto;display:block;"
-              />
+            <td style="padding:0;line-height:0;">
+              <img src="${heroImg}"
+                   alt="Pure Peel Co."
+                   width="480"
+                   style="width:100%;max-width:480px;height:auto;display:block;" />
             </td>
           </tr>
 
-          <!-- ── MAIN CARD ── -->
+          <!-- Content -->
           <tr>
-            <td style="background:${cream};border-radius:16px;overflow:hidden;">
+            <td class="wrap" align="center" style="padding:52px 44px 48px;">
 
-              <!-- Opening story -->
-              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <!-- Eyebrow -->
+              <p style="font-family:'Jost','Segoe UI',Arial,sans-serif;font-size:10px;font-weight:400;
+                         letter-spacing:0.26em;text-transform:uppercase;
+                         color:rgba(200,90,8,0.6);margin:0 0 22px;">
+                Pure Peel Co. &nbsp;&mdash;&nbsp; La Liste
+              </p>
+
+              <!-- Headline -->
+              <h1 class="h1" style="font-family:'Cormorant Garamond',Georgia,serif;font-size:34px;
+                             font-weight:300;font-style:italic;line-height:1.2;
+                             letter-spacing:-0.01em;color:#0f0a04;margin:0 0 28px;">
+                Vous êtes sur la liste.
+              </h1>
+
+              <!-- Divider -->
+              <div style="width:24px;height:1px;background:rgba(200,90,8,0.35);margin:0 auto 28px;"></div>
+
+              <!-- Body -->
+              <p style="font-family:'Jost','Segoe UI',Arial,sans-serif;font-size:15px;font-weight:300;
+                         line-height:1.9;color:rgba(15,10,4,0.62);margin:0 0 40px;">
+                Une fois par mois, une idée qui vaut la peine &mdash; un cocktail, un accord,
+                quelque chose pour votre prochain souper. Pas de superflu.<br><br>
+                Pour commencer, les tranches de lime sont un bon point de départ.
+              </p>
+
+              <!-- CTA -->
+              <table cellpadding="0" cellspacing="0" border="0" style="margin:0 auto 52px;">
                 <tr>
-                  <td class="padded" style="padding:40px 40px 24px;">
-                    <p style="font-family:${sans};font-size:16px;font-weight:300;color:${dark};line-height:1.75;margin:0;">
-                      La fin de semaine dernière, je préparais des cocktails pour huit et je me suis rendu compte qu'il n'y avait plus de citrons verts.
-                      Quelques tranches de lime déshydratées dans le shaker — et une sur le bord du verre — ont fait encore mieux.
-                      Pas de course au magasin, et tout le monde a demandé d'où ça venait.
-                    </p>
-                  </td>
-                </tr>
-
-                <!-- Body -->
-                <tr>
-                  <td class="padded" style="padding:0 40px 40px;">
-
-                    <p style="font-family:${sans};font-size:16px;font-weight:300;color:${dark};line-height:1.75;margin:0 0 24px;">
-                      Donc le premier conseil que je vous donne : gardez un petit pot d'agrumes déshydratés près du bar.
-                      Orange pour les old fashioneds, lime pour les gin-tonics et les margaritas, pamplemousse si vous voulez faire les choses en grand.
-                      Ils se réhydratent en quelques secondes dans le verre et donnent l'impression que vous aviez tout prévu.
-                    </p>
-
-                    <!-- Tip block -->
-                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 28px;">
-                      <tr>
-                        <td style="background:#fff;border-left:3px solid ${orange};border-radius:0 8px 8px 0;padding:20px 24px;">
-                          <p style="font-family:${sans};font-size:15px;color:${dark};line-height:1.65;margin:0;">
-                            <strong style="font-weight:600;">L'astuce de la semaine :</strong>
-                            Mettez 2–3 tranches de lime séchées dans votre prochain gin tonic. Laissez reposer 30 secondes.
-                            Puis goûtez. Vous comprendrez pourquoi on garde toujours un sachet dans le placard.
-                          </p>
-                        </td>
-                      </tr>
-                    </table>
-
-                    <!-- Soft CTA -->
-                    <p style="font-family:${sans};font-size:15px;font-weight:300;color:${dark};line-height:1.7;margin:0;">
-                      On utilise nos tranches de lime exactement pour ça —
-                      <a href="${shopUrl}/lime" style="color:${orange};text-decoration:none;font-weight:500;">prenez un sachet si vous en manquez</a>.
-                    </p>
-
+                  <td align="center" style="background:#0f0a04;border-radius:2px;">
+                    <a href="${shopUrl}"
+                       style="display:inline-block;padding:15px 32px;
+                              font-family:'Jost','Segoe UI',Arial,sans-serif;
+                              font-size:11px;font-weight:400;letter-spacing:0.18em;
+                              text-transform:uppercase;color:#faf7f2;text-decoration:none;">
+                      Découvrir la collection
+                    </a>
                   </td>
                 </tr>
               </table>
 
-            </td>
-          </tr>
+              <!-- Signature -->
+              <p style="font-family:'Cormorant Garamond',Georgia,serif;font-size:19px;
+                         font-weight:300;font-style:italic;
+                         color:rgba(15,10,4,0.25);margin:0 0 48px;">
+                &mdash; Pure Peel Co.
+              </p>
 
-          <!-- ── FOOTER ── -->
-          <tr>
-            <td class="footer" style="padding:24px 40px;text-align:center;">
-              <p style="font-family:${sans};font-size:12px;color:${textLight};line-height:1.6;margin:0 0 8px;">
-                Vous êtes sur <strong style="color:${textMid};">LA LISTE</strong> — une idée à la fois.
-              </p>
-              <p style="font-family:${sans};font-size:12px;color:${textLight};line-height:1.6;margin:0 0 8px;">
-                Pure Peel Co. &mdash; Agrumes déshydratés, fabriqués au Canada.
-              </p>
-              <p style="font-family:${sans};font-size:11px;color:${textLight};margin:0;">
-                <a href="${unsubUrl}" style="color:${textLight};text-decoration:underline;">Se désabonner</a>
-                &nbsp;&middot;&nbsp;
-                <a href="${shopUrl}/privacy" style="color:${textLight};text-decoration:underline;">Politique de confidentialité</a>
-              </p>
+              <!-- Footer -->
+              <div style="border-top:1px solid rgba(15,10,4,0.07);padding-top:22px;">
+                <p style="font-family:'Jost','Segoe UI',Arial,sans-serif;font-size:11px;
+                           font-weight:300;line-height:1.9;color:rgba(15,10,4,0.26);margin:0;">
+                  La Liste &mdash; Pure Peel Co., fabriqué au Canada.<br>
+                  <a href="${unsubUrl}" style="color:rgba(15,10,4,0.26);text-decoration:underline;">Se désabonner</a>
+                  &nbsp;&middot;&nbsp;
+                  <a href="${shopUrl}/privacy" style="color:rgba(15,10,4,0.26);text-decoration:underline;">Politique de confidentialité</a>
+                </p>
+                ${opts.mailingAddress ? `<p style="font-family:'Jost','Segoe UI',Arial,sans-serif;font-size:10px;font-weight:300;line-height:1.6;color:rgba(15,10,4,0.22);margin:12px 0 0;">${opts.mailingAddress}</p>` : ''}
+              </div>
+
             </td>
           </tr>
 
@@ -610,8 +562,7 @@ const welcomeListEmailTemplateFR = () => {
   </table>
 
 </body>
-</html>
-  `.trim()
+</html>`.trim()
 }
 
 const shippingNotificationTemplate = (order, trackingNumber) => {
@@ -1222,17 +1173,40 @@ export const getOrderConfirmationPreview = (language = 'en') => {
 }
 
 export const getWelcomeEmailPreview = (language = 'en', source = 'inline') => {
-  return language === 'fr' ? welcomeListEmailTemplateFR() : welcomeListEmailTemplateEN()
+  const mailing = process.env.COMPLIANCE_MAILING_ADDRESS || ''
+  const opts = mailing ? { mailingAddress: mailing } : {}
+  return language === 'fr' ? welcomeListEmailTemplateFR(opts) : welcomeListEmailTemplateEN(opts)
 }
 
 // Send welcome email to new subscribers (single list-style template)
 export const sendWelcomeEmail = async (email, options = {}) => {
   const { language = 'en' } = options
   try {
-    const htmlContent = language === 'fr' ? welcomeListEmailTemplateFR() : welcomeListEmailTemplateEN()
+    const shopBase = (process.env.FRONTEND_URL || 'https://purepeelco.com').replace(/\/$/, '')
+    const publicBase = (process.env.PUBLIC_API_URL || process.env.FRONTEND_URL || 'https://purepeelco.com').replace(/\/$/, '')
+    let unsubscribeUrl
+    try {
+      const token = createUnsubscribeToken(email)
+      unsubscribeUrl = `${publicBase}/api/unsubscribe?token=${encodeURIComponent(token)}`
+    } catch {
+      console.warn('⚠️ Set RESEND_API_KEY or UNSUBSCRIBE_SECRET for signed unsubscribe links; using /unsubscribe page only.')
+      unsubscribeUrl = `${shopBase}/unsubscribe`
+    }
+    const mailing = process.env.COMPLIANCE_MAILING_ADDRESS || ''
+    const templateOpts = {
+      unsubscribeUrl,
+      ...(mailing ? { mailingAddress: mailing } : {}),
+    }
+    const htmlContent = language === 'fr' ? welcomeListEmailTemplateFR(templateOpts) : welcomeListEmailTemplateEN(templateOpts)
     const subject = language === 'fr'
-      ? (process.env.LIST_WELCOME_SUBJECT_FR || 'La garniture qui a sauvé mon souper')
-      : (process.env.LIST_WELCOME_SUBJECT_EN || 'The garnish that saved my dinner party')
+      ? (process.env.LIST_WELCOME_SUBJECT_FR || 'Vous êtes sur la liste — Pure Peel Co.')
+      : (process.env.LIST_WELCOME_SUBJECT_EN || 'You\'re on the list — Pure Peel Co.')
+
+    const mailtoUnsub = (process.env.ADMIN_EMAIL || 'support@purepeelco.com').replace(/^mailto:/i, '')
+    const listUnsubscribeHeaders = {
+      'List-Unsubscribe': `<mailto:${mailtoUnsub}?subject=unsubscribe>, <${unsubscribeUrl}>`,
+      'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+    }
 
     if (resend && process.env.RESEND_FROM_EMAIL) {
       const fromDisplay = process.env.RESEND_FROM_EMAIL.includes('<') ? process.env.RESEND_FROM_EMAIL : `Pure Peel Co. <${process.env.RESEND_FROM_EMAIL}>`
@@ -1241,7 +1215,10 @@ export const sendWelcomeEmail = async (email, options = {}) => {
         to: email,
         subject,
         html: htmlContent,
-        headers: { 'X-Entity-Ref-ID': `welcome-${Date.now()}` },
+        headers: {
+          'X-Entity-Ref-ID': `welcome-${Date.now()}`,
+          ...listUnsubscribeHeaders,
+        },
         tags: [{ name: 'welcome', value: 'list' }]
       })
       if (error) {
@@ -1256,26 +1233,16 @@ export const sendWelcomeEmail = async (email, options = {}) => {
       console.log('⚠️ Email not configured. Welcome email would be sent to:', email)
       return { success: false, reason: 'Email not configured' }
     }
-   
-    const { data, error } = await resend.emails.send({
-      from: fromDisplay,
-      to: email,
-      subject,
-      html: htmlContent,
-      headers: {
-        'X-Entity-Ref-ID': `welcome-${Date.now()}`,
-        'List-Unsubscribe': `<${process.env.FRONTEND_URL || 'https://purepeelco.com'}/unsubscribe>`,
-        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-      },
-      tags: [{ name: 'welcome', value: 'list' }]
-    })
 
     const transporter = getTransporter()
     const info = await transporter.sendMail({
       from: `"Pure Peel Co." <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
       to: email,
       subject,
-      html: htmlContent
+      html: htmlContent,
+      headers: {
+        ...listUnsubscribeHeaders,
+      },
     })
     console.log('✅ Welcome email sent to:', email)
     return { success: true, messageId: info.messageId }

@@ -129,3 +129,37 @@ export async function getSubscribers() {
     subscribedAt: c.created_at || c.createdAt,
   }))
 }
+
+/**
+ * Remove a contact from the Resend Audience (idempotent).
+ * @param {string} email
+ * @returns {Promise<{ removed: boolean }>}
+ */
+export async function removeSubscriber(email) {
+  const normalized = normalizeEmail(email)
+  if (!normalized) return { removed: false }
+
+  const audienceId = getAudienceId()
+  try {
+    await resendJson(
+      `${RESEND_API_BASE}/audiences/${audienceId}/contacts/${encodeURIComponent(normalized)}`,
+      { method: 'DELETE', headers: getAuthHeaders() }
+    )
+    return { removed: true }
+  } catch (err) {
+    if (err?.status === 404) {
+      // Newer Resend API: global contacts
+      try {
+        await resendJson(`${RESEND_API_BASE}/contacts/${encodeURIComponent(normalized)}`, {
+          method: 'DELETE',
+          headers: getAuthHeaders(),
+        })
+        return { removed: true }
+      } catch (err2) {
+        if (err2?.status === 404) return { removed: true }
+        throw err2
+      }
+    }
+    throw err
+  }
+}
