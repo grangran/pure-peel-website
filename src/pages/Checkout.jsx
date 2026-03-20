@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { useCart } from "../context/CartContext"
 import { useScrollReveal } from "../hooks/useScrollReveal"
 import { useLanguage } from "../context/LanguageContext"
@@ -41,101 +41,6 @@ const usStates = [
   "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington",
   "West Virginia", "Wisconsin", "Wyoming"
 ]
-
-const CANADA_PROVINCE_ALIASES = {
-  'AB': 'Alberta',
-  'BC': 'British Columbia',
-  'MB': 'Manitoba',
-  'NB': 'New Brunswick',
-  'NL': 'Newfoundland and Labrador',
-  'NS': 'Nova Scotia',
-  'NT': 'Northwest Territories',
-  'NU': 'Nunavut',
-  'ON': 'Ontario',
-  'PE': 'Prince Edward Island',
-  'QC': 'Quebec',
-  'SK': 'Saskatchewan',
-  'YT': 'Yukon',
-}
-
-const US_STATE_ALIASES = {
-  'AL': 'Alabama',
-  'AK': 'Alaska',
-  'AZ': 'Arizona',
-  'AR': 'Arkansas',
-  'CA': 'California',
-  'CO': 'Colorado',
-  'CT': 'Connecticut',
-  'DE': 'Delaware',
-  'FL': 'Florida',
-  'GA': 'Georgia',
-  'HI': 'Hawaii',
-  'ID': 'Idaho',
-  'IL': 'Illinois',
-  'IN': 'Indiana',
-  'IA': 'Iowa',
-  'KS': 'Kansas',
-  'KY': 'Kentucky',
-  'LA': 'Louisiana',
-  'ME': 'Maine',
-  'MD': 'Maryland',
-  'MA': 'Massachusetts',
-  'MI': 'Michigan',
-  'MN': 'Minnesota',
-  'MS': 'Mississippi',
-  'MO': 'Missouri',
-  'MT': 'Montana',
-  'NE': 'Nebraska',
-  'NV': 'Nevada',
-  'NH': 'New Hampshire',
-  'NJ': 'New Jersey',
-  'NM': 'New Mexico',
-  'NY': 'New York',
-  'NC': 'North Carolina',
-  'ND': 'North Dakota',
-  'OH': 'Ohio',
-  'OK': 'Oklahoma',
-  'OR': 'Oregon',
-  'PA': 'Pennsylvania',
-  'RI': 'Rhode Island',
-  'SC': 'South Carolina',
-  'SD': 'South Dakota',
-  'TN': 'Tennessee',
-  'TX': 'Texas',
-  'UT': 'Utah',
-  'VT': 'Vermont',
-  'VA': 'Virginia',
-  'WA': 'Washington',
-  'WV': 'West Virginia',
-  'WI': 'Wisconsin',
-  'WY': 'Wyoming',
-}
-
-const normalizeProvinceSelection = (raw, country) => {
-  const value = String(raw || '').trim()
-  if (!value) return ''
-
-  const normalized = value.toLowerCase().trim()
-  const normalizedNoSpaces = normalized.replace(/\s+/g, '')
-
-  if (country === 'Canada') {
-    const alias = CANADA_PROVINCE_ALIASES[value.toUpperCase().trim()]
-    if (alias) return alias
-    const match = canadianProvinces.find(p =>
-      p.toLowerCase().trim() === normalized ||
-      p.toLowerCase().replace(/\s+/g, '') === normalizedNoSpaces
-    )
-    return match || ''
-  }
-
-  const alias = US_STATE_ALIASES[value.toUpperCase().trim()]
-  if (alias) return alias
-  const match = usStates.find(s =>
-    s.toLowerCase().trim() === normalized ||
-    s.toLowerCase().replace(/\s+/g, '') === normalizedNoSpaces
-  )
-  return match || ''
-}
 
 const formatPhoneNumber = (value, country = 'Canada') => {
   const digits = value.replace(/\D/g, '')
@@ -247,11 +152,6 @@ export default function Checkout() {
   const [errors, setErrors]       = useState({})
   const [savedAddressKey, setSavedAddressKey] = useState(null)
 
-  const addressWrapRef = useRef(null)
-  const [addressSuggestions, setAddressSuggestions] = useState([])
-  const [isLookingUpAddress, setIsLookingUpAddress] = useState(false)
-  const [showAddressSuggestions, setShowAddressSuggestions] = useState(false)
-
   useEffect(() => {
     try {
       const savedFormData = localStorage.getItem('checkoutFormData')
@@ -318,113 +218,6 @@ export default function Checkout() {
       }
     }
   }
-
-  const applyAddressSuggestion = async (suggestion) => {
-    if (!suggestion) return
-    setShowAddressSuggestions(false)
-
-    const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
-
-    // When suggestions come from Google Places we only have placeId + label;
-    // details lookup is needed to extract street/city/province/postal code.
-    let details = suggestion
-    const needsDetails = (!details.street || !details.postalCode) && details.placeId
-
-    if (needsDetails) {
-      setIsLookingUpAddress(true)
-      try {
-        const resp = await fetch(
-          `${API_URL}/api/address-autocomplete-details?place_id=${encodeURIComponent(details.placeId)}`,
-          { headers: { 'Content-Type': 'application/json' } }
-        )
-        const data = await resp.json().catch(() => ({}))
-        if (data?.suggestion) details = data.suggestion
-      } catch {
-        // Best-effort; fall back to whatever fields we already have.
-      } finally {
-        setIsLookingUpAddress(false)
-      }
-    }
-
-    const nextProvince = normalizeProvinceSelection(details.province, formData.country)
-    const nextCity = String(details.city || '').trim()
-    const nextPostal = details.postalCode ? formatPostalCode(String(details.postalCode), formData.country) : ''
-
-    setFormData(prev => ({
-      ...prev,
-      address: details.street || prev.address,
-      city: nextCity || prev.city,
-      province: nextProvince || prev.province,
-      postalCode: nextPostal || prev.postalCode,
-    }))
-
-    setErrors(prev => {
-      const next = { ...prev }
-      delete next.address
-      delete next.city
-      delete next.province
-      delete next.postalCode
-      return next
-    })
-
-    setHasEnteredShippingDetails(true)
-    setShippingOptions([])
-    setSelectedShipping(null)
-    setSavedAddressKey(null)
-
-    try {
-      localStorage.removeItem('checkoutShippingOptions')
-      localStorage.removeItem('checkoutShippingOption')
-      localStorage.removeItem('checkoutAddressKey')
-    } catch {}
-  }
-
-  useEffect(() => {
-    const onMouseDown = (e) => {
-      if (!addressWrapRef.current) return
-      if (!addressWrapRef.current.contains(e.target)) setShowAddressSuggestions(false)
-    }
-    document.addEventListener('mousedown', onMouseDown)
-    return () => document.removeEventListener('mousedown', onMouseDown)
-  }, [])
-
-  useEffect(() => {
-    const query = formData.address.trim()
-    if (!query || query.length < 4) {
-      setAddressSuggestions([])
-      setShowAddressSuggestions(false)
-      return
-    }
-
-    const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
-    const controller = new AbortController()
-
-    setIsLookingUpAddress(true)
-    const t = setTimeout(async () => {
-      try {
-        const resp = await fetch(`${API_URL}/api/address-autocomplete?q=${encodeURIComponent(query)}&country=${encodeURIComponent(formData.country)}`, {
-          signal: controller.signal,
-          headers: { 'Content-Type': 'application/json' },
-        })
-        const data = await resp.json().catch(() => ({}))
-        const suggestions = data.suggestions || []
-        setAddressSuggestions(Array.isArray(suggestions) ? suggestions : [])
-        setShowAddressSuggestions((Array.isArray(suggestions) && suggestions.length > 0))
-      } catch {
-        // Best-effort UI; ignore errors.
-        setAddressSuggestions([])
-        setShowAddressSuggestions(false)
-      } finally {
-        setIsLookingUpAddress(false)
-      }
-    }, 450)
-
-    return () => {
-      clearTimeout(t)
-      controller.abort()
-      setIsLookingUpAddress(false)
-    }
-  }, [formData.address, formData.country])
 
   const handleBlur = (e) => {
     const { name, value } = e.target
@@ -1103,52 +896,13 @@ export default function Checkout() {
                       {language === 'fr' ? 'Où devons-nous envoyer votre commande?' : 'Where should we send your order?'}
                     </p>
                     <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-                      <div ref={addressWrapRef} style={{ position: 'relative' }}>
+                      <div>
                         <label style={{ fontFamily: S.sans, fontSize: "0.65rem", fontWeight: 500, letterSpacing: "0.1em", textTransform: "uppercase", color: S.textMid, display: "block", marginBottom: "6px" }}>
                           {getTranslation(language, 'checkout.streetAddress') || 'Street Address'}
                         </label>
                         <input type="text" name="address" id="checkout-address" autoComplete="shipping street-address"
                           value={formData.address} onChange={handleInputChange}
-                          onFocus={() => { if (addressSuggestions.length > 0) setShowAddressSuggestions(true) }}
                           placeholder="123 Main St" className={inputClass(errors.address)} required data-1p-ignore />
-
-                        {isLookingUpAddress && (
-                          <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 30, paddingTop: '8px' }}>
-                            <div style={{ background: '#fff', border: `1px solid ${S.border}`, borderRadius: '10px', padding: '12px 14px', fontFamily: S.sans, fontSize: '0.75rem', color: S.textMid }}>
-                              Searching…
-                            </div>
-                          </div>
-                        )}
-
-                        {showAddressSuggestions && addressSuggestions.length > 0 && (
-                          <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 30, paddingTop: '8px' }}>
-                            <div style={{ background: '#fff', border: `1px solid ${S.border}`, borderRadius: '10px', overflow: 'hidden' }}>
-                              {addressSuggestions.map((s, idx) => (
-                                <button
-                                  key={s.id || idx}
-                                  type="button"
-                                  onClick={() => applyAddressSuggestion(s)}
-                                  style={{
-                                    width: '100%',
-                                    textAlign: 'left',
-                                    padding: '12px 14px',
-                                    fontFamily: S.sans,
-                                    fontSize: '0.8rem',
-                                    fontWeight: 300,
-                                    color: S.dark,
-                                    background: idx === 0 ? '#fff' : '#fff',
-                                    border: 'none',
-                                    cursor: 'pointer',
-                                  }}
-                                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(15,10,4,0.03)' }}
-                                  onMouseLeave={(e) => { e.currentTarget.style.background = '#fff' }}
-                                >
-                                  {s.label}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        )}
                         {errors.address && <p style={{ fontFamily: S.sans, fontSize: "0.65rem", color: "#dc2626", marginTop: "6px" }}>{errors.address}</p>}
                       </div>
 
