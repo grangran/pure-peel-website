@@ -101,6 +101,9 @@ const orderConfirmationTemplateEN = (order, trackingUrl) => {
 <body>
   <div class="container">
     <div class="header">
+      <div style="text-align:center;padding:0 0 16px;">
+        <img src="${shopUrl}/images/logo.png" alt="Pure Peel Co." width="80" style="width:80px;height:auto;display:block;margin:0 auto;" />
+      </div>
       <h1>Order Confirmed</h1>
       <p>Thank you for your order — we're so glad you're here.</p>
     </div>
@@ -227,6 +230,9 @@ const orderConfirmationTemplateFR = (order, trackingUrl) => {
 <body>
   <div class="container">
     <div class="header">
+      <div style="text-align:center;padding:0 0 16px;">
+        <img src="${shopUrl}/images/logo.png" alt="Pure Peel Co." width="80" style="width:80px;height:auto;display:block;margin:0 auto;" />
+      </div>
       <h1>Commande confirmée</h1>
       <p>Merci pour votre commande — nous sommes ravis de vous compter parmi nous.</p>
     </div>
@@ -631,6 +637,9 @@ const shippingNotificationTemplate = (order, trackingNumber) => {
 <body>
   <div class="container">
     <div class="header">
+      <div style="text-align:center;padding:0 0 16px;">
+        <img src="${shopUrl}/images/logo.png" alt="Pure Peel Co." width="80" style="width:80px;height:auto;display:block;margin:0 auto;" />
+      </div>
       <h1>📦 Your Order Has Shipped!</h1>
     </div>
     
@@ -696,6 +705,9 @@ const adminNotificationTemplate = (order) => {
 <body>
   <div class="container">
     <div class="header">
+      <div style="text-align:center;padding:0 0 16px;">
+        <img src="${shopUrl}/images/logo.png" alt="Pure Peel Co." width="80" style="width:80px;height:auto;display:block;margin:0 auto;" />
+      </div>
       <h1>🛒 New Order Received</h1>
     </div>
     
@@ -1033,6 +1045,9 @@ const contactFormTemplate = (name, email, inquiryType, message) => {
     <body>
       <div class="container">
         <div class="header">
+          <div style="text-align:center;padding:0 0 16px;">
+            <img src="${shopUrl}/images/logo.png" alt="Pure Peel Co." width="80" style="width:80px;height:auto;display:block;margin:0 auto;" />
+          </div>
           <h1 style="margin: 0;">New Contact Form Submission</h1>
           <p style="margin: 10px 0 0 0;">Pure Peel Co. Website</p>
         </div>
