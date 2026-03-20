@@ -135,7 +135,7 @@ function normalizeCountry(country = '') {
  * auto-select the cheapest available rate for US shipments.
  */
 function getPostageType(countryCode) {
-  if (countryCode === 'CA') return 'chit_chats_canada_tracked'
+  if (countryCode === 'CA') return 'chit_chats_select'
   if (countryCode === 'US') return 'unknown' // paired with cheapest_postage_type_requested
   return 'chit_chats_international_tracked'
 }
@@ -160,48 +160,35 @@ export function getShippingRates(destination, cartItems = []) {
   const { weight } = calculateWeight(cartItems)
 
   if (country === 'US') {
-    // Chit Chats US rates are dramatically cheaper than Canada Post
-    // Base ~$6-9 USD converted to CAD, plus weight
+    // Chit Chats US rates via USPS — flat rate based on weight
     const base = weight <= 0.5 ? 9.00 : weight <= 1.0 ? 11.00 : 14.00
-
     return {
       options: [
         {
-          id:           'chitchats-us-standard',
-          name:         'Standard (USPS)',
-          price:        base,
+          id:            'chitchats-us-standard',
+          name:          'Tracked (USPS)',
+          price:         base,
           estimatedDays: 7,
-          description:  'Tracked delivery to the US via USPS (5–10 business days)',
-        },
-        {
-          id:           'chitchats-us-expedited',
-          name:         'Expedited (USPS Priority)',
-          price:        Math.round((base + 6) * 100) / 100,
-          estimatedDays: 4,
-          description:  'Faster tracked delivery to the US (3–5 business days)',
+          description:   'Fully tracked delivery to the US via USPS (5-10 business days)',
         },
       ],
     }
   }
 
-  // Canadian domestic
-  const base = weight <= 0.5 ? 8.00 : weight <= 1.0 ? 10.00 : 13.00
-
+  // Canadian domestic — Chit Chats Select only.
+  // Select is available nationwide at $5-7 for our package size.
+  // Cheaper AND faster than Canada Tracked so no reason to offer both.
+  // Flat $5.50 covers real cost across all provinces with minimal variance.
+  // Rates verified via Chit Chats estimator (Mar 2026):
+  //   GTA $5.05, Ottawa $5.86, Sudbury $6.52, Calgary $5.45, Vancouver $6.35, Halifax $6.39
   return {
     options: [
       {
-        id:           'chitchats-canada-tracked',
-        name:         'Tracked Parcel',
-        price:        base,
-        estimatedDays: 4,
-        description:  'Tracked delivery within Canada (3–6 business days)',
-      },
-      {
-        id:           'chitchats-canada-expedited',
-        name:         'Expedited Tracked',
-        price:        Math.round((base + 5) * 100) / 100,
+        id:            'chitchats-select',
+        name:          'Tracked Shipping',
+        price:         5.50,
         estimatedDays: 2,
-        description:  'Faster tracked delivery within Canada (2–3 business days)',
+        description:   'Fully tracked delivery within Canada (2 business days)',
       },
     ],
   }

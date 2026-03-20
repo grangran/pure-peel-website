@@ -1668,6 +1668,61 @@ app.get('/api/checkout-session/:sessionId', apiLimiter, validateCheckoutSessionI
 
 // Old webhook endpoint removed - now handled above before express.json()
 
+// Address autocomplete for checkout (best-effort; used to auto-fill city/state/postal)
+// Uses OpenStreetMap Nominatim to avoid requiring an extra API key.
+app.get('/api/address-autocomplete', apiLimiter, async (req, res) => {
+  try {
+    const q = String(req.query.q || '').trim()
+    if (!q || q.length < 3) return res.json({ suggestions: [] })
+
+    const country = String(req.query.country || '').trim()
+    let countryCodes = 'ca,us'
+    if (country === 'Canada') countryCodes = 'ca'
+    if (country === 'United States') countryCodes = 'us'
+
+    const userAgent = process.env.USER_AGENT || `Pure Peel Co. (${process.env.ADMIN_EMAIL || 'support@purepeelco.com'})`
+    const url =
+      `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=6&countrycodes=${countryCodes}` +
+      `&q=${encodeURIComponent(q)}`
+
+    const resp = await fetch(url, {
+      headers: {
+        'User-Agent': userAgent,
+        'Accept': 'application/json',
+      },
+    })
+
+    if (!resp.ok) {
+      return res.json({ suggestions: [] })
+    }
+
+    const results = await resp.json()
+    const suggestions = (results || []).slice(0, 5).map(r => {
+      const addr = r.address || {}
+      const street = [addr.house_number, addr.road].filter(Boolean).join(' ').trim() ||
+        addr.road || addr.neighbourhood || r.display_name || ''
+
+      const city =
+        addr.city || addr.town || addr.village || addr.hamlet || addr.municipality || ''
+
+      return {
+        id: String(r.place_id || r.osm_id || r.placeId || r.display_name || ''),
+        label: r.display_name || street,
+        street,
+        city,
+        province: addr.state || addr.province || '',
+        postalCode: addr.postcode || '',
+        country: addr.country || '',
+      }
+    })
+
+    res.json({ suggestions })
+  } catch (error) {
+    // Autocomplete is best-effort; never block checkout on this.
+    res.json({ suggestions: [] })
+  }
+})
+
 // Chit Chats shipping rate estimates (see utils/chitchatsShipping.js)
 // Following OWASP best practices: rate limiting + schema-based validation
 app.post('/api/get-shipping-rates', shippingLimiter, validateShippingRates, async (req, res) => {
