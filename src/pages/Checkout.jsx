@@ -447,7 +447,6 @@ export default function Checkout() {
     const codeUpper = code.toUpperCase().trim()
     const validCodes = {
       'PEEL26FS': { discount: 100, type: 'shipping' },
-      'WELCOME10': { discount: 10, type: 'percentage' },
     }
     if (validCodes[codeUpper]) {
       const promo = validCodes[codeUpper]

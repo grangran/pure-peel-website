@@ -328,120 +328,6 @@ const orderConfirmationTemplate = (order, trackingUrl, language = 'en') => {
     : orderConfirmationTemplateEN(order, trackingUrl)
 }
 
-// Welcome email (10% off) - English
-const welcomeEmailTemplateEN = (promoCode = 'WELCOME10') => {
-  const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
-  const unsubUrl = `${shopUrl}/unsubscribe`
-  return `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <style>
-    body { font-family: ${emailTheme.sans}; line-height: 1.6; color: ${emailTheme.dark}; margin: 0; }
-    .container { max-width: 560px; margin: 0 auto; }
-    .header { background: ${emailTheme.cream}; padding: 48px 40px 32px; text-align: left; }
-    .eyebrow { font-family: ${emailTheme.sans}; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(200,90,8,0.7); margin-bottom: 20px; }
-    h1 { font-family: ${emailTheme.serif}; font-size: 32px; font-weight: 300; font-style: italic; color: ${emailTheme.dark}; margin: 0 0 16px; line-height: 1.3; }
-    .content { background: ${emailTheme.cream}; padding: 0 40px 48px; }
-    .lead { font-size: 16px; color: ${emailTheme.dark}; margin: 0 0 28px; line-height: 1.7; font-weight: 300; }
-    .code-box { background: #fff; border: 1px solid rgba(232,200,74,0.4); border-radius: 12px; padding: 24px 32px; text-align: center; margin: 0 0 32px; }
-    .code-label { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: ${emailTheme.textMid}; margin: 0 0 8px; }
-    .code { font-family: 'Courier New', monospace; font-size: 26px; font-weight: 700; color: ${emailTheme.dark}; letter-spacing: 0.12em; margin: 0 0 8px; }
-    .code-desc { font-size: 13px; color: ${emailTheme.gold}; margin: 0; }
-    .cta { display: inline-block; background: linear-gradient(135deg, #f5e6a3 0%, #e8c84a 55%, #d4a832 100%); color: ${emailTheme.dark}; text-align: center; padding: 16px 32px; border-radius: 100px; font-family: ${emailTheme.sans}; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; margin: 0 0 40px; }
-    .footer { border-top: 1px solid ${emailTheme.border}; padding: 24px 40px; font-size: 12px; color: ${emailTheme.textLight}; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <p class="eyebrow">Welcome to Pure Peel Co.</p>
-      <h1>A little something<br/>for joining us.</h1>
-    </div>
-    <div class="content">
-      <p class="lead">Thanks for signing up. Here's your welcome discount — use it on your first order:</p>
-      <div class="code-box">
-        <p class="code-label">Your discount code</p>
-        <p class="code">${promoCode}</p>
-        <p class="code-desc">10% off your first order</p>
-      </div>
-      <div style="text-align: center;">
-        <a href="${shopUrl}" class="cta">Shop Now</a>
-      </div>
-    </div>
-    <div class="footer">
-      <p style="margin: 0;">You're receiving this because you signed up at purepeelco.com.</p>
-      <p style="margin: 8px 0 0 0;">Pure Peel Co. — Premium dehydrated citrus, made in Canada.</p>
-      <p style="margin: 10px 0 0 0;">
-        <a href="${unsubUrl}" style="color: ${emailTheme.gold}; text-decoration: underline;">Unsubscribe</a>
-        &nbsp;&middot;&nbsp;
-        <a href="${shopUrl}/privacy" style="color: ${emailTheme.gold}; text-decoration: underline;">Privacy Policy</a>
-      </p>
-    </div>
-  </div>
-</body>
-</html>
-  `
-}
-
-// Welcome email (10% off) - French
-const welcomeEmailTemplateFR = (promoCode = 'WELCOME10') => {
-  const shopUrl = process.env.FRONTEND_URL || 'https://purepeelco.com'
-  const unsubUrl = `${shopUrl}/unsubscribe`
-  return `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <style>
-    body { font-family: ${emailTheme.sans}; line-height: 1.6; color: ${emailTheme.dark}; margin: 0; }
-    .container { max-width: 560px; margin: 0 auto; }
-    .header { background: ${emailTheme.cream}; padding: 48px 40px 32px; text-align: left; }
-    .eyebrow { font-family: ${emailTheme.sans}; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(200,90,8,0.7); margin-bottom: 20px; }
-    h1 { font-family: ${emailTheme.serif}; font-size: 32px; font-weight: 300; font-style: italic; color: ${emailTheme.dark}; margin: 0 0 16px; line-height: 1.3; }
-    .content { background: ${emailTheme.cream}; padding: 0 40px 48px; }
-    .lead { font-size: 16px; color: ${emailTheme.dark}; margin: 0 0 28px; line-height: 1.7; font-weight: 300; }
-    .code-box { background: #fff; border: 1px solid rgba(232,200,74,0.4); border-radius: 12px; padding: 24px 32px; text-align: center; margin: 0 0 32px; }
-    .code-label { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: ${emailTheme.textMid}; margin: 0 0 8px; }
-    .code { font-family: 'Courier New', monospace; font-size: 26px; font-weight: 700; color: ${emailTheme.dark}; letter-spacing: 0.12em; margin: 0 0 8px; }
-    .code-desc { font-size: 13px; color: ${emailTheme.gold}; margin: 0; }
-    .cta { display: inline-block; background: linear-gradient(135deg, #f5e6a3 0%, #e8c84a 55%, #d4a832 100%); color: ${emailTheme.dark}; text-align: center; padding: 16px 32px; border-radius: 100px; font-family: ${emailTheme.sans}; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; margin: 0 0 40px; }
-    .footer { border-top: 1px solid ${emailTheme.border}; padding: 24px 40px; font-size: 12px; color: ${emailTheme.textLight}; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <p class="eyebrow">Bienvenue chez Pure Peel Co.</p>
-      <h1>Un petit quelque chose<br/>pour vous remercier.</h1>
-    </div>
-    <div class="content">
-      <p class="lead">Merci de vous être inscrit. Voici votre réduction de bienvenue — à utiliser sur votre première commande :</p>
-      <div class="code-box">
-        <p class="code-label">Votre code promo</p>
-        <p class="code">${promoCode}</p>
-        <p class="code-desc">10 % de réduction sur votre première commande</p>
-      </div>
-      <div style="text-align: center;">
-        <a href="${shopUrl}" class="cta">Magasiner</a>
-      </div>
-    </div>
-    <div class="footer">
-      <p style="margin: 0;">Vous recevez ceci car vous vous êtes inscrit sur purepeelco.com.</p>
-      <p style="margin: 8px 0 0 0;">Pure Peel Co. — Agrumes déshydratés, fabriqués au Canada.</p>
-      <p style="margin: 10px 0 0 0;">
-        <a href="${unsubUrl}" style="color: ${emailTheme.gold}; text-decoration: underline;">Se désabonner</a>
-        &nbsp;&middot;&nbsp;
-        <a href="${shopUrl}/privacy" style="color: ${emailTheme.gold}; text-decoration: underline;">Politique de confidentialité</a>
-      </p>
-    </div>
-  </div>
-</body>
-</html>
-  `
-}
-
 const welcomeListEmailTemplateEN = () => {
   const shopUrl     = process.env.FRONTEND_URL || 'https://purepeelco.com'
   const unsubUrl    = `${shopUrl}/unsubscribe`
@@ -1320,28 +1206,18 @@ export const getOrderConfirmationPreview = (language = 'en') => {
   return orderConfirmationTemplate(mockOrder, trackingUrl, language)
 }
 
-export const getWelcomeEmailPreview = (language = 'en', source = 'popup') => {
-  const isPopup = source === 'popup'
-  if (isPopup) {
-    const promoCode = process.env.WELCOME_PROMO_CODE || 'WELCOME10'
-    return language === 'fr' ? welcomeEmailTemplateFR(promoCode) : welcomeEmailTemplateEN(promoCode)
-  }
+export const getWelcomeEmailPreview = (language = 'en', source = 'inline') => {
   return language === 'fr' ? welcomeListEmailTemplateFR() : welcomeListEmailTemplateEN()
 }
 
-// Send welcome email to new subscribers (template depends on source: popup = 10% off, inline = list confirmation)
+// Send welcome email to new subscribers (single list-style template)
 export const sendWelcomeEmail = async (email, options = {}) => {
-  const { language = 'en', source = 'inline', promoCode = process.env.WELCOME_PROMO_CODE || 'WELCOME10' } = options
-  const isPopup = source === 'popup'
+  const { language = 'en' } = options
   try {
-    const htmlContent = isPopup
-      ? (language === 'fr' ? welcomeEmailTemplateFR(promoCode) : welcomeEmailTemplateEN(promoCode))
-      : (language === 'fr' ? welcomeListEmailTemplateFR() : welcomeListEmailTemplateEN())
-    const subject = isPopup
-      ? (language === 'fr' ? 'Votre code 10 % de réduction vous attend | Pure Peel Co.' : 'Your 10% off code is inside | Pure Peel Co.')
-      : (language === 'fr'
-          ? (process.env.LIST_WELCOME_SUBJECT_FR || 'La garniture qui a sauvé mon souper')
-          : (process.env.LIST_WELCOME_SUBJECT_EN || 'The garnish that saved my dinner party'))
+    const htmlContent = language === 'fr' ? welcomeListEmailTemplateFR() : welcomeListEmailTemplateEN()
+    const subject = language === 'fr'
+      ? (process.env.LIST_WELCOME_SUBJECT_FR || 'La garniture qui a sauvé mon souper')
+      : (process.env.LIST_WELCOME_SUBJECT_EN || 'The garnish that saved my dinner party')
 
     if (resend && process.env.RESEND_FROM_EMAIL) {
       const fromDisplay = process.env.RESEND_FROM_EMAIL.includes('<') ? process.env.RESEND_FROM_EMAIL : `Pure Peel Co. <${process.env.RESEND_FROM_EMAIL}>`
@@ -1351,7 +1227,7 @@ export const sendWelcomeEmail = async (email, options = {}) => {
         subject,
         html: htmlContent,
         headers: { 'X-Entity-Ref-ID': `welcome-${Date.now()}` },
-        tags: [{ name: 'welcome', value: isPopup ? '10-off-popup' : 'list' }]
+        tags: [{ name: 'welcome', value: 'list' }]
       })
       if (error) {
         console.error('❌ Welcome email Resend error:', error.message || JSON.stringify(error))
@@ -1376,7 +1252,7 @@ export const sendWelcomeEmail = async (email, options = {}) => {
         'List-Unsubscribe': `<${process.env.FRONTEND_URL || 'https://purepeelco.com'}/unsubscribe>`,
         'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
       },
-      tags: [{ name: 'welcome', value: isPopup ? '10-off-popup' : 'list' }]
+      tags: [{ name: 'welcome', value: 'list' }]
     })
 
     const transporter = getTransporter()
