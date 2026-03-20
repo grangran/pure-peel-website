@@ -381,7 +381,7 @@ const welcomeListEmailTemplateEN = () => {
           <tr>
             <td align="center" style="padding:0 0 16px;">
               <img
-                src="${shopUrl}/images/logo-dark.png"
+                src="${shopUrl}/images/logo.png"
                 alt="Pure Peel Co."
                 width="80"
                 style="width:80px;height:auto;display:block;"
@@ -521,7 +521,7 @@ const welcomeListEmailTemplateFR = () => {
           <tr>
             <td align="center" style="padding:0 0 16px;">
               <img
-                src="${shopUrl}/images/logo-dark.png"
+                src="${shopUrl}/images/logo.png"
                 alt="Pure Peel Co."
                 width="80"
                 style="width:80px;height:auto;display:block;"
