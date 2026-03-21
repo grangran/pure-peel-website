@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { useScrollReveal } from "../hooks/useScrollReveal"
 import { useLanguage } from "../context/LanguageContext"
 import { getTranslation } from "../utils/translations"
+import { getApiBaseUrl } from "../utils/apiBaseUrl"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Skeleton from "../components/Skeleton"
 
@@ -46,12 +47,7 @@ export default function OrderTracking() {
   const { language }            = useLanguage()
   const [sectionRef]            = useScrollReveal({ threshold: 0.1 })
 
-  const getApiUrl = () => {
-    if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL.replace(/\/$/, '')
-    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') return window.location.origin
-    return 'http://localhost:3001'
-  }
-  const API_URL = getApiUrl()
+  const API_URL = getApiBaseUrl()
 
   const DEV_ORDER_ID = 'PP-DEV-12345678'
 

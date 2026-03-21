@@ -3,6 +3,7 @@ import Nav from "../components/Nav"
 import Footer from "../components/Footer"
 import { useLanguage } from "../context/LanguageContext"
 import { getTranslation } from "../utils/translations"
+import { getApiBaseUrl } from "../utils/apiBaseUrl"
 
 const S = {
   serif: "'Cormorant Garamond', Georgia, serif",
@@ -15,9 +16,7 @@ const S = {
 }
 
 function getApiUrl() {
-  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL.replace(/\/$/, "")
-  if (typeof window !== "undefined" && window.location.hostname !== "localhost") return window.location.origin
-  return "http://localhost:3001"
+  return getApiBaseUrl()
 }
 
 export default function Unsubscribe() {

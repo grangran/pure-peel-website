@@ -243,10 +243,20 @@ export async function createChitChatsLabel(order) {
 
   try {
     const addr     = order.shipping?.address || {}
-    const country  = resolveDestinationCountry(addr)
+    let country    = resolveDestinationCountry(addr)
+    if (!country || country.length !== 2) country = 'CA'
     const province = normalizeProvince(addr.state || addr.province || '')
 
     const { weight, box } = calculateWeight(order.items || [])
+
+    const declaredValue = (() => {
+      const t = parseFloat(order.total)
+      if (!Number.isNaN(t) && t > 0) return t.toFixed(2)
+      const items = order.items || []
+      const sum = items.reduce((s, i) => s + (parseFloat(i.total) || (parseFloat(i.price) || 0) * (i.quantity || 1)), 0)
+      return (sum > 0 ? sum : 1).toFixed(2)
+    })()
+    const valueCurrency = String(order.currency || 'CAD').toLowerCase() === 'usd' ? 'usd' : 'cad'
 
     // ── Step 1: Create the shipment ──────────────────────────────────────────
     const postageType = getPostageType(country)
@@ -273,7 +283,8 @@ export async function createChitChatsLabel(order) {
       to_phone:        order.customer?.phone || '',
       to_email:        order.customer?.email || '',
 
-      // Package
+      // Package (package_type / value / value_currency are required by Chit Chats API)
+      package_type:   'parcel',
       weight_unit:    'kg',
       weight:         weight.toFixed(3),
       size_unit:      'cm',
@@ -282,6 +293,8 @@ export async function createChitChatsLabel(order) {
       size_z:         box.height,
       package_contents: 'merchandise',
       description:    'Dehydrated citrus slices',
+      value:          declaredValue,
+      value_currency: valueCurrency,
 
       // Postage
       postage_type:   postageType,

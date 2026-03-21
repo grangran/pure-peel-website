@@ -3,6 +3,7 @@ import { useScrollReveal } from "../hooks/useScrollReveal"
 import { useLanguage } from "../context/LanguageContext"
 import { getTranslation } from "../utils/translations"
 import { trackContactFormSubmit } from "../utils/analytics"
+import { getApiBaseUrl } from "../utils/apiBaseUrl"
 import LoadingSpinner from "./LoadingSpinner"
 
 const S = {
@@ -52,7 +53,7 @@ export default function ContactForm() {
     e.preventDefault()
     setIsSubmitting(true); setSubmitStatus(null)
     try {
-      const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
+      const API_URL = getApiBaseUrl()
       const response = await fetch(`${API_URL}/api/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

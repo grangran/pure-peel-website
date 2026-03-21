@@ -5,6 +5,7 @@ import { useLanguage } from "../context/LanguageContext"
 import { useCurrency } from "../context/CurrencyContext"
 import { getTranslation, translateVariantLabel } from "../utils/translations"
 import { trackCheckoutStarted, trackPurchase } from "../utils/analytics"
+import { getApiBaseUrl } from "../utils/apiBaseUrl"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Skeleton from "../components/Skeleton"
 import PageLoader from "../components/PageLoader"
@@ -257,7 +258,7 @@ export default function Checkout() {
     if (!formData.postalCode || !formData.province || !formData.city || !formData.country) return
     setLoadingShipping(true); setShippingError(null)
     try {
-      const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
+      const API_URL = getApiBaseUrl()
       let controller = null, timeoutId = null, isAborted = false
       if (typeof AbortController !== 'undefined') {
         controller = new AbortController()
@@ -496,7 +497,7 @@ export default function Checkout() {
     trackCheckoutStarted(cartItems, total)
     setIsSubmitting(true); setStripeError(null)
     try {
-      const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
+      const API_URL = getApiBaseUrl()
       let response
       try {
         const orderId = `PP-${Date.now().toString().slice(-8)}`
@@ -543,7 +544,7 @@ export default function Checkout() {
   const handlePaymentSuccess = async (sessionId) => {
     try {
       setIsSubmitting(true)
-      const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3001').replace(/\/$/, '')
+      const API_URL = getApiBaseUrl()
       if (!sessionId || !sessionId.match(/^cs_[a-zA-Z0-9_]+$/)) throw new Error('Invalid checkout session ID')
       const response = await fetch(`${API_URL}/api/checkout-session/${sessionId}`)
       if (!response.ok) {

@@ -159,6 +159,13 @@ export const saveOrder = (orderData) => {
         return existingOrder //Return existing order instead of creating duplicate 
       }
     }
+    if (orderData.stripePaymentIntentId) {
+      const byPi = orders.find(o => o.stripePaymentIntentId === orderData.stripePaymentIntentId)
+      if (byPi) {
+        console.log('Order already exists for this payment intent:', byPi.id)
+        return byPi
+      }
+    }
     
  
     //Generate order ID if not provided 

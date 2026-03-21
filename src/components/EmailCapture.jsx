@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useScrollReveal } from "../hooks/useScrollReveal"
 import { useLanguage } from "../context/LanguageContext"
+import { getApiBaseUrl } from "../utils/apiBaseUrl"
 
 export default function EmailCapture() {
   const [sectionRef, isSectionVisible] = useScrollReveal({ threshold: 0.2 })
@@ -36,8 +37,7 @@ export default function EmailCapture() {
     if (!email || !email.includes("@")) return
     setStatus("loading")
     try {
-      // Default to production backend if `VITE_API_URL` isn't injected in the build.
-      const API_URL = (import.meta.env.VITE_API_URL || "https://pure-peel-website.onrender.com").replace(/\/$/, "")
+      const API_URL = getApiBaseUrl()
       const res = await fetch(`${API_URL}/api/subscribe`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

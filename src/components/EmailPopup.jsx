@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import { useLanguage } from "../context/LanguageContext"
+import { getApiBaseUrl } from "../utils/apiBaseUrl"
 
 const CONFIG = {
   scrollDepthThreshold: 0.5,
@@ -186,7 +187,7 @@ export default function EmailPopup() {
     setErrorDetail("")
     track(CONFIG.analytics.submitted, { language })
     try {
-      const API_URL = (import.meta.env.VITE_API_URL || "https://pure-peel-website.onrender.com").replace(/\/$/, "")
+      const API_URL = getApiBaseUrl()
       const res = await fetch(`${API_URL}/api/subscribe`, {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
