@@ -2,12 +2,26 @@ import express from 'express'
 import cors from 'cors'
 import Stripe from 'stripe'
 import dotenv from 'dotenv'
-import rateLimit from 'express-rate-limit'
+import rateLimit, { ipKeyGenerator } from 'express-rate-limit'
 import { body, param, query, validationResult } from 'express-validator'
 import fs from 'fs'
 import path from 'path'
 import { Resend } from 'resend'
-import { saveOrder, getAllOrders, getOrderById, updateOrderStatus, getOrderStats, markEmailSent, hasEmailBeenSent, updateOrderTracking } from './utils/orderStorage.js'
+import {
+  saveOrder,
+  getAllOrders,
+  getAllOrdersAsync,
+  getOrderByIdAsync,
+  findOrderByStripeSessionId,
+  persistOrder,
+  updateOrderStatus,
+  getOrderStats,
+  markEmailSent,
+  hasEmailBeenSent,
+  updateOrderTracking,
+  initDatabase,
+  warmCache,
+} from './utils/orderStorage.js'
 import { hasSubscriber, addSubscriber, getSubscribers, removeSubscriber } from './utils/subscriberStorage.js'
 import { verifyUnsubscribeToken } from './utils/unsubscribeToken.js'
 import { sendOrderConfirmation, sendShippingNotification, sendAdminNotification, sendContactForm, sendWelcomeEmail, getOrderConfirmationPreview, getWelcomeEmailPreview } from './utils/emailService.js'
@@ -72,16 +86,14 @@ app.use((req, res, next) => {
 // Custom key generator for user-based rate limiting
 // Combines IP address with user identifier (email) when available
 const generateRateLimitKey = (req) => {
-  const ip = req.ip || req.connection.remoteAddress
-  // Try to get user identifier from request body (email) for user-based limiting
+  const rawIp = req.ip || req.socket?.remoteAddress || ''
+  const ip = ipKeyGenerator(rawIp)
   let userIdentifier = ''
   if (req.body?.shippingInfo?.email) {
     userIdentifier = req.body.shippingInfo.email.toLowerCase().trim()
   } else if (req.body?.email) {
     userIdentifier = req.body.email.toLowerCase().trim()
   }
-  
-  // Return combined key for user-based limiting, or IP-only fallback
   return userIdentifier ? `${ip}:${userIdentifier}` : ip
 }
 
@@ -180,7 +192,7 @@ app.use(cors(corsOptions))
  */
 async function fulfillStripeCheckoutOrder(savedOrder) {
   if (!savedOrder?.id) return
-  let order = getOrderById(savedOrder.id) || savedOrder
+  let order = (await getOrderByIdAsync(savedOrder.id)) || savedOrder
 
   const autoCreateLabels = process.env.AUTO_CREATE_SHIPPING_LABELS !== 'false'
   if (autoCreateLabels && !order.trackingNumber) {
@@ -188,7 +200,7 @@ async function fulfillStripeCheckoutOrder(savedOrder) {
     try {
       const labelResult = await createChitChatsLabel(order)
       if (labelResult.success && labelResult.trackingNumber) {
-        updateOrderTracking(order.id, {
+        await updateOrderTracking(order.id, {
           trackingNumber: labelResult.trackingNumber,
           trackingUrl: labelResult.trackingUrl,
           labelUrl: labelResult.labelUrl,
@@ -197,13 +209,13 @@ async function fulfillStripeCheckoutOrder(savedOrder) {
           pin: labelResult.pin
         })
         console.log('✅ Chit Chats label created:', labelResult.trackingNumber)
-        order = getOrderById(order.id) || order
-        const shippingSent = hasEmailBeenSent(order.id, 'shipping')
+        order = (await getOrderByIdAsync(order.id)) || order
+        const shippingSent = await hasEmailBeenSent(order.id, 'shipping')
         if (!shippingSent) {
           try {
             const shippingEmailResult = await sendShippingNotification(order, labelResult.trackingNumber)
             if (shippingEmailResult.success) {
-              markEmailSent(order.id, 'shipping')
+              await markEmailSent(order.id, 'shipping')
               console.log('✅ Shipping notification email sent successfully')
             } else {
               console.log('⚠️  Shipping notification email not sent:', shippingEmailResult.reason || shippingEmailResult.error)
@@ -225,15 +237,15 @@ async function fulfillStripeCheckoutOrder(savedOrder) {
     console.log('ℹ️  Chit Chats label already present for order:', order.id)
   }
 
-  order = getOrderById(order.id) || order
+  order = (await getOrderByIdAsync(order.id)) || order
   console.log('📧 Attempting to send email notifications for order:', order.id)
   console.log('   Customer email:', order.customer?.email)
 
-  if (!hasEmailBeenSent(order.id, 'confirmation')) {
+  if (!(await hasEmailBeenSent(order.id, 'confirmation'))) {
     try {
       const emailResult = await sendOrderConfirmation(order)
       if (emailResult.success) {
-        markEmailSent(order.id, 'confirmation')
+        await markEmailSent(order.id, 'confirmation')
         console.log('✅ Customer email sent successfully')
       } else {
         console.log('⚠️  Customer email not sent:', emailResult.reason || emailResult.error)
@@ -245,11 +257,11 @@ async function fulfillStripeCheckoutOrder(savedOrder) {
     console.log('ℹ️  Customer confirmation email already sent, skipping')
   }
 
-  if (!hasEmailBeenSent(order.id, 'admin')) {
+  if (!(await hasEmailBeenSent(order.id, 'admin'))) {
     try {
       const adminResult = await sendAdminNotification(order)
       if (adminResult.success) {
-        markEmailSent(order.id, 'admin')
+        await markEmailSent(order.id, 'admin')
         console.log('✅ Admin email sent successfully')
       } else {
         console.log('⚠️  Admin email not sent:', adminResult.reason || adminResult.error)
@@ -335,9 +347,7 @@ app.post('/api/webhook', webhookLimiter, express.raw({ type: 'application/json' 
         const isPaidOrFree = fullSession.payment_status === 'paid' || 
                             (isFreeOrder && (fullSession.payment_status === 'no_payment_required' || fullSession.payment_status === 'unpaid'))
 
-        // Check if order already exists by Stripe session ID (GET /api/checkout-session may have saved first)
-        const allOrders = getAllOrders()
-        const existingOrder = allOrders.find(o => o.stripeSessionId === fullSession.id)
+        const existingOrder = await findOrderByStripeSessionId(fullSession.id)
 
         if (!isPaidOrFree) {
           console.log('ℹ️  Skipping order — checkout session not paid:', fullSession.id, fullSession.payment_status)
@@ -433,7 +443,7 @@ app.post('/api/webhook', webhookLimiter, express.raw({ type: 'application/json' 
             paymentStatus: fullSession.payment_status,
             paymentMethod: fullSession.payment_method_types?.[0] || 'card'
           }
-          const savedOrder = saveOrder(orderData)
+          const savedOrder = await saveOrder(orderData)
           console.log('Order saved:', savedOrder.id)
           await fulfillStripeCheckoutOrder(savedOrder)
         } else {
@@ -462,17 +472,15 @@ app.post('/api/webhook', webhookLimiter, express.raw({ type: 'application/json' 
       try {
         const charge = event.data.object
         const refund = event.data.object.refunds?.data?.[0] || event.data.object
-        
-        // Find order by charge ID or payment intent
-        const orders = getAllOrders()
-        const order = orders.find(o => 
-          o.stripeChargeId === charge.id || 
+
+        const orders = await getAllOrdersAsync()
+        const order = orders.find(o =>
+          o.stripeChargeId === charge.id ||
           o.stripePaymentIntentId === charge.payment_intent ||
           o.stripeSessionId === charge.metadata?.session_id
         )
-        
+
         if (order) {
-          // Update order with refund information
           const refundAmount = refund.amount ? refund.amount / 100 : charge.amount_refunded / 100
           const refundData = {
             refundId: refund.id || `refund_${Date.now()}`,
@@ -482,14 +490,10 @@ app.post('/api/webhook', webhookLimiter, express.raw({ type: 'application/json' 
             status: refund.status || 'succeeded',
             createdAt: new Date(refund.created * 1000).toISOString()
           }
-          
-          // Add refund to order
-          if (!order.refunds) {
-            order.refunds = []
-          }
+
+          if (!order.refunds) order.refunds = []
           order.refunds.push(refundData)
-          
-          // Update order status if fully refunded
+
           const totalRefunded = order.refunds.reduce((sum, r) => sum + r.amount, 0)
           if (totalRefunded >= order.total) {
             order.status = 'refunded'
@@ -497,18 +501,10 @@ app.post('/api/webhook', webhookLimiter, express.raw({ type: 'application/json' 
           } else if (totalRefunded > 0) {
             order.refundStatus = 'partial'
           }
-          
+
           order.updatedAt = new Date().toISOString()
-          
-          // Save updated order
-          const allOrders = getAllOrders()
-          const orderIndex = allOrders.findIndex(o => o.id === order.id)
-          if (orderIndex !== -1) {
-            allOrders[orderIndex] = order
-            const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json')
-            fs.writeFileSync(ORDERS_FILE, JSON.stringify(allOrders, null, 2))
-            console.log('✅ Order updated with refund information:', order.id)
-          }
+          await persistOrder(order)
+          console.log('✅ Order updated with refund information:', order.id)
         } else {
           console.log('⚠️  Order not found for refunded charge:', charge.id)
         }
@@ -1400,9 +1396,7 @@ app.get('/api/checkout-session/:sessionId', apiLimiter, validateCheckoutSessionI
       expand: ['line_items']
     })
     
-    // Check if order already exists by Stripe session ID
-    const allOrders = getAllOrders()
-    const existingOrder = allOrders.find(o => o.stripeSessionId === session.id)
+    const existingOrder = await findOrderByStripeSessionId(session.id)
     
     // If order doesn't exist and payment is successful (or free order), save it (fallback if webhook didn't fire)
     const isFreeOrder = (session.amount_total || 0) === 0
@@ -1511,7 +1505,7 @@ app.get('/api/checkout-session/:sessionId', apiLimiter, validateCheckoutSessionI
           paymentStatus: session.payment_status,
           paymentMethod: session.payment_method_types?.[0] || 'card'
         }
-        const savedOrder = saveOrder(orderData)
+        const savedOrder = await saveOrder(orderData)
         console.log('📋 Order persisted from GET /api/checkout-session (fallback):', savedOrder.id, '— emails/labels run from checkout.session.completed webhook')
       } catch (saveError) {
         console.error('Error saving order from checkout verification:', saveError)
@@ -1806,19 +1800,10 @@ app.get('/api/admin/subscribers', authenticateAdmin, (req, res) => {
 })
 
 // Get all orders (admin only)
-app.get('/api/admin/orders', authenticateAdmin, (req, res) => {
+app.get('/api/admin/orders', authenticateAdmin, async (req, res) => {
   try {
     const { status, limit } = req.query
-    let orders = getAllOrders()
-    
-    if (status) {
-      orders = orders.filter(order => order.status === status)
-    }
-    
-    if (limit) {
-      orders = orders.slice(0, parseInt(limit))
-    }
-    
+    const orders = await getAllOrdersAsync({ status, limit: limit ? parseInt(limit) : undefined })
     res.json({ orders })
   } catch (error) {
     console.error('Error fetching orders:', error)
@@ -1827,9 +1812,9 @@ app.get('/api/admin/orders', authenticateAdmin, (req, res) => {
 })
 
 // Get order by ID (admin only)
-app.get('/api/admin/orders/:orderId', authenticateAdmin, (req, res) => {
+app.get('/api/admin/orders/:orderId', authenticateAdmin, async (req, res) => {
   try {
-    const order = getOrderById(req.params.orderId)
+    const order = await getOrderByIdAsync(req.params.orderId)
     if (!order) {
       return res.status(404).json({ error: 'Order not found' })
     }
@@ -1850,16 +1835,16 @@ app.patch('/api/admin/orders/:orderId/status', authenticateAdmin, async (req, re
       return res.status(400).json({ error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` })
     }
     
-    const order = updateOrderStatus(req.params.orderId, status)
+    const order = await updateOrderStatus(req.params.orderId, status)
     
     // If order is being marked as shipped, send shipping notification (only if not already sent)
     if (status === 'shipped') {
-      const shippingSent = hasEmailBeenSent(order.id, 'shipping')
+      const shippingSent = await hasEmailBeenSent(order.id, 'shipping')
       if (!shippingSent) {
         try {
           const result = await sendShippingNotification(order, trackingNumber || null)
           if (result.success) {
-            markEmailSent(order.id, 'shipping')
+            await markEmailSent(order.id, 'shipping')
             console.log('✅ Shipping notification email sent')
           }
         } catch (emailError) {
@@ -1879,9 +1864,9 @@ app.patch('/api/admin/orders/:orderId/status', authenticateAdmin, async (req, re
 })
 
 // Get order statistics (admin only)
-app.get('/api/admin/stats', authenticateAdmin, (req, res) => {
+app.get('/api/admin/stats', authenticateAdmin, async (req, res) => {
   try {
-    const stats = getOrderStats()
+    const stats = await getOrderStats()
     res.json({ stats })
   } catch (error) {
     console.error('Error fetching stats:', error)
@@ -1896,7 +1881,7 @@ app.post('/api/admin/orders/:orderId/refund', authenticateAdmin, async (req, res
       return res.status(500).json({ error: 'Stripe is not configured' })
     }
 
-    const order = getOrderById(req.params.orderId)
+    const order = await getOrderByIdAsync(req.params.orderId)
     if (!order) {
       return res.status(404).json({ error: 'Order not found' })
     }
@@ -1965,14 +1950,7 @@ app.post('/api/admin/orders/:orderId/refund', authenticateAdmin, async (req, res
 
     order.updatedAt = new Date().toISOString()
 
-    // Save updated order
-    const allOrders = getAllOrders()
-    const orderIndex = allOrders.findIndex(o => o.id === order.id)
-    if (orderIndex !== -1) {
-      allOrders[orderIndex] = order
-      const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json')
-      fs.writeFileSync(ORDERS_FILE, JSON.stringify(allOrders, null, 2))
-    }
+    await persistOrder(order)
 
     console.log('✅ Refund created successfully:', refund.id)
 
@@ -1991,9 +1969,9 @@ app.post('/api/admin/orders/:orderId/refund', authenticateAdmin, async (req, res
 })
 
 // Get refund information for an order (admin only)
-app.get('/api/admin/orders/:orderId/refunds', authenticateAdmin, (req, res) => {
+app.get('/api/admin/orders/:orderId/refunds', authenticateAdmin, async (req, res) => {
   try {
-    const order = getOrderById(req.params.orderId)
+    const order = await getOrderByIdAsync(req.params.orderId)
     if (!order) {
       return res.status(404).json({ error: 'Order not found' })
     }
@@ -2058,28 +2036,25 @@ app.post('/api/order-lookup', orderLookupLimiter, validateOrderLookup, async (re
 
     const normalizedOrderId = sanitizeOrderIdForLookup(orderId)
 
-    // Try exact match first
-    let order = getOrderById(normalizedOrderId)
-    
-    // If not found, try with different formats
+    let order = await getOrderByIdAsync(normalizedOrderId)
+
     if (!order) {
-      // Try with original format
-      order = getOrderById(orderId.trim())
-      
-      // If still not found, try searching all orders for partial match
-      if (!order) {
-        const allOrders = getAllOrders()
-        order = allOrders.find(o => 
-          o.id?.toUpperCase() === normalizedOrderId ||
-          o.id?.replace(/[^A-Z0-9-]/g, '').toUpperCase() === normalizedOrderId.replace(/[^A-Z0-9-]/g, '').toUpperCase()
-        )
-      }
+      order = await getOrderByIdAsync(orderId.trim())
     }
 
     if (!order) {
+      const allOrders = await getAllOrdersAsync()
+      order = allOrders.find(o =>
+        o.id?.toUpperCase() === normalizedOrderId ||
+        o.id?.replace(/[^A-Z0-9-]/g, '').toUpperCase() === normalizedOrderId.replace(/[^A-Z0-9-]/g, '').toUpperCase()
+      )
+    }
+
+    if (!order) {
+      const allOrders = await getAllOrdersAsync()
       console.log('❌ Order not found:', normalizedOrderId)
-      console.log('   Total orders in database:', getAllOrders().length)
-      console.log('   Recent order IDs:', getAllOrders().slice(0, 5).map(o => o.id))
+      console.log('   Total orders in database:', allOrders.length)
+      console.log('   Recent order IDs:', allOrders.slice(0, 5).map(o => o.id))
       return res.status(404).json({ 
         error: 'Order not found. Please check your order number and try again. If you just placed the order, it may take a few moments to appear.' 
       })
@@ -2358,7 +2333,11 @@ app.post('/api/subscribe', apiLimiter, async (req, res) => {
   }
 })
 
-app.listen(PORT, () => {
+const startServer = async () => {
+  await initDatabase()
+  await warmCache()
+
+  app.listen(PORT, () => {
   console.log(`\n🚀 Server running on http://localhost:${PORT}`)
   console.log(`Health check: http://localhost:${PORT}/api/health\n`)
   
@@ -2387,5 +2366,10 @@ app.listen(PORT, () => {
     console.log('  Or add EMAIL_USER and EMAIL_PASSWORD for Gmail/SMTP')
   }
   console.log('')
-})
+  })
+}
 
+startServer().catch((err) => {
+  console.error('❌ Failed to start server:', err)
+  process.exit(1)
+})

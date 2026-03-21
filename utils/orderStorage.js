@@ -1,149 +1,13 @@
 /**
- * ORDER STORAGE UTILITY 
- * 
- * Purpose: Manages order data in a JSON file (acts like a simple database)
- * This is the "Order CRUD + Business Logic" layer for the backend 
- * 
- * Key Responsibilities: 
- * - Store customer orders (after Stripe payment succeeds) 
- * - Track order status (pending -> processing -> shipped -> delivered) 
- * - Prevent duplicate order creation (checks Stripe session ID) 
- * - Track with emails have been sent (confirmation, admin, shipping) 
- * -Store tracking numbers and shipping labels 
- * -Generate order statistics for admin dashboard 
- *  
- * Data Storage: 
- * -Location: /data/orders.json 
- * -Format: JSON array of order objects
- * File-based (simple, but should migrate to database when scaling)
- * 
- * Used By: 
- * -server.js webhook handler (creates orders when payment succeeds)
- * -server.js admin API endpoints (view/update orders)
- * -server.js order lookup endpoint (customers check order status)
- * 
- * Related Files: 
- * -productStorage.js (similar pattern for products)
- * -emailService.js (reads emailsSent tracking to prevent duplicates)
- * -chitchatsShipping.js (updates orders with tracking info)
- * -server.js (uses all these functions) 
- * 
+ * Order storage — PostgreSQL (Render or any DATABASE_URL).
+ *
+ * Set DATABASE_URL in .env. On startup, initDatabase() creates the schema.
  */
 
-import fs from 'fs'   //File system operations 
-import path from 'path' //Path manipulatiion 
-import { fileURLToPath } from 'url' //ES module compatibility 
+import pg from 'pg'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const { Pool } = pg
 
-// Path to orders JSON file (in project root/data directory)
-//Uses process.cwd() instead of __dirname to ensure correct path regardless of where server runs from 
-const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json')
-
-
-//===========================================
-//FILE INITIALIZATION 
-//===========================================
-/**
- * Ensure data directory exists 
- * Creates /data folder if it doesn't exist 
- */
-const ensureDataDirectory = () => {
-  const dataDir = path.join(process.cwd(), 'data')
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true }) //recursive: creates parent dirs if needed 
-  }
-}
-/**
- * Initialize orders file if it doesn't exist 
- * Creates empty orders.json file on first run 
- * 
- * Why: Prevents "file not found" errors when starting fresh server 
- */
-const initializeOrdersFile = () => {
-  ensureDataDirectory()
-  if (!fs.existsSync(ORDERS_FILE)) {
-    fs.writeFileSync(ORDERS_FILE, JSON.stringify([], null, 2)) //Empty array, pretty formatted 
-  }
-}
-
-//===========================================
-//READ OPERATIONS 
-//===========================================
-/**
- * Read all orders from the JSON file 
- * 
- * @returns {Array} Array of order objects (newest first)
- * Used by: 
- * -GET /api/admin/orders (admin dashboard) - view all orders) 
- * - saveOrder (to check for duplicates)
- *  -getOrderStats (to calculate statistics)
- * 
- * Example return: 
- * [
- * {
- * id: "PP-12345678",
- * stripeSessionId: "cs_test_...", 
- * customer: {name: "John Doe", email: "john@example.com},
- * items: [...],
- * total 36.00,
- * status: "shipped",
- * trackingNumber "1234567890",
- * emailsSent: { confirmation: true, admin: true, shipping: true},
- * createdAt: "2024-01-01-01T00:00:00.000Z", 
- * updatedAt: "20254-01-02T00:00:00.000Z"
- * }
- * ]
- */
-export const getAllOrders = () => {
-  try {
-    initializeOrdersFile() //Ensure file exists
-    const data = fs.readFileSync(ORDERS_FILE, 'utf8') 
-    return JSON.parse(data)
-  } catch (error) {
-    console.error('Error reading orders:', error)
-    return [] //Return empty array on error
-  }
-}
-
-//===========================================
-// WRITE OPERATIONS (CREATE) 
-//===========================================
-/**
- * Save a new order (usually from Stripe webhook)
- * 
- * @param {Object} orderData - Order data from Stripe checkout session 
- * @returns {Object} Saved order object 
- * 
- * Used by: 
- * -POST /api/webhook (Stripe webhook - when payment succeeds)
- * -GET /api/checkout-session/:sessionId (fallback if webhook missed)
- * 
- * Duplicate prevention:
- * - Checks if order with same Stripe sessions ID already exists
- * -Returns existing order instead of creating duplicate
- * -Important: Stripe can send webhooks multiple times!
- * 
- * Order ID Generation: 
- * - Uses provided ID if available (from frontend metadata) 
- * - Falls back to: PP-[8-digit timestamp]
- * - Example: PP-12345678
- * 
- * Email Tracking: 
- * - Initiaizes emailsSent object to prevent duplicate emails 
- * - {confirmationL false, admin: false, shipping: false }
- * 
- * Example usage: 
- * saveOrder ({
- * stripeSessionId: "cs_test...",
- * customer: {name: "John Doe", email: "john@example.com"},
- * items: [...],
- * total: 36.00
- * })
- */
-
-/** Stripe sometimes returns payment_intent as string id or expanded object — normalize for dedupe. */
 function normalizeStripePaymentIntentId(pi) {
   if (pi == null || pi === '') return ''
   if (typeof pi === 'string') return pi
@@ -151,205 +15,360 @@ function normalizeStripePaymentIntentId(pi) {
   return String(pi)
 }
 
-export const saveOrder = (orderData) => {
+const pool = process.env.DATABASE_URL
+  ? new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: process.env.DATABASE_URL.includes('localhost')
+        ? false
+        : { rejectUnauthorized: false },
+      max: 10,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 10000,
+    })
+  : null
+
+if (pool) {
+  pool.on('error', (err) => {
+    console.error('PostgreSQL pool error:', err.message)
+  })
+}
+
+/** In-memory mirror for cheap reads; refreshed on writes and warmCache */
+let _ordersCache = []
+
+export function getAllOrders() {
+  return _ordersCache
+}
+
+export function getOrderById(id) {
+  if (!id) return null
+  return _ordersCache.find((o) => o.id === id) || null
+}
+
+function bumpCache(order) {
+  if (!order?.id) return
+  const i = _ordersCache.findIndex((o) => o.id === order.id)
+  if (i >= 0) _ordersCache[i] = order
+  else _ordersCache.unshift(order)
+}
+
+export function rowToOrder(row) {
+  if (!row) return null
+  const d = row.data
+  const data = typeof d === 'string' ? JSON.parse(d) : d
+  const ca = row.created_at
+  const ua = row.updated_at
+  return {
+    ...data,
+    id: row.id,
+    status: row.status || data?.status || 'pending',
+    stripeSessionId: row.stripe_session_id || data?.stripeSessionId,
+    stripePaymentIntentId: row.stripe_payment_intent || data?.stripePaymentIntentId,
+    createdAt: ca instanceof Date ? ca.toISOString() : ca || data?.createdAt,
+    updatedAt: ua instanceof Date ? ua.toISOString() : ua || data?.updatedAt,
+  }
+}
+
+export async function initDatabase() {
+  if (!pool) {
+    console.error('❌ DATABASE_URL is not set — orders API cannot run. Add PostgreSQL URL to .env')
+    throw new Error('DATABASE_URL required')
+  }
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS orders (
+      id                     TEXT PRIMARY KEY,
+      stripe_session_id      TEXT,
+      stripe_payment_intent  TEXT,
+      data                   JSONB NOT NULL,
+      status                 TEXT DEFAULT 'pending',
+      created_at             TIMESTAMPTZ DEFAULT NOW(),
+      updated_at             TIMESTAMPTZ DEFAULT NOW()
+    )
+  `)
+
+  await pool.query(`
+    CREATE INDEX IF NOT EXISTS idx_orders_stripe_session
+      ON orders (stripe_session_id) WHERE stripe_session_id IS NOT NULL
+  `)
+  await pool.query(`
+    CREATE INDEX IF NOT EXISTS idx_orders_stripe_pi
+      ON orders (stripe_payment_intent) WHERE stripe_payment_intent IS NOT NULL
+  `)
+  await pool.query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_stripe_session_unique
+      ON orders (stripe_session_id) WHERE stripe_session_id IS NOT NULL AND stripe_session_id <> ''
+  `)
+  await pool.query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_stripe_pi_unique
+      ON orders (stripe_payment_intent) WHERE stripe_payment_intent IS NOT NULL AND stripe_payment_intent <> ''
+  `)
+  await pool.query(`
+    CREATE INDEX IF NOT EXISTS idx_orders_status ON orders (status)
+  `)
+  await pool.query(`
+    CREATE INDEX IF NOT EXISTS idx_orders_created ON orders (created_at DESC)
+  `)
+
+  console.log('✅ PostgreSQL orders table ready')
+}
+
+export async function warmCache() {
+  _ordersCache = await getAllOrdersAsync()
+  console.log(`✅ Order cache warmed — ${_ordersCache.length} orders loaded`)
+}
+
+export async function findOrderByStripeSessionId(sessionId) {
+  if (!pool || !sessionId) return null
+  const { rows } = await pool.query(
+    'SELECT * FROM orders WHERE stripe_session_id = $1 LIMIT 1',
+    [sessionId]
+  )
+  const o = rowToOrder(rows[0])
+  if (o) bumpCache(o)
+  return o
+}
+
+export async function getAllOrdersAsync({ status, limit } = {}) {
+  if (!pool) return []
   try {
-    initializeOrdersFile()
-    const sessionId = orderData.stripeSessionId || ''
-    const piNorm = normalizeStripePaymentIntentId(orderData.stripePaymentIntentId)
-
-    const findDuplicate = (orders) => {
-      if (sessionId) {
-        const bySession = orders.find(o => o.stripeSessionId === sessionId)
-        if (bySession) return bySession
-      }
-      if (piNorm) {
-        const byPi = orders.find(o => normalizeStripePaymentIntentId(o.stripePaymentIntentId) === piNorm)
-        if (byPi) return byPi
-      }
-      return null
+    let query = 'SELECT * FROM orders'
+    const params = []
+    if (status) {
+      params.push(status)
+      query += ` WHERE status = $${params.length}`
     }
-
-    // Re-read + re-check a few times to narrow race between webhook and GET /api/checkout-session
-    for (let i = 0; i < 3; i++) {
-      const batch = getAllOrders()
-      const dup = findDuplicate(batch)
-      if (dup) {
-        console.log('Order already exists:', dup.id)
-        return dup
-      }
+    query += ' ORDER BY created_at DESC'
+    if (limit) {
+      params.push(limit)
+      query += ` LIMIT $${params.length}`
     }
+    const { rows } = await pool.query(query, params)
+    const orders = rows.map(rowToOrder)
+    _ordersCache = orders
+    return orders
+  } catch (err) {
+    console.error('getAllOrdersAsync error:', err.message)
+    return []
+  }
+}
 
-    const orders = getAllOrders()
-    const dupFinal = findDuplicate(orders)
-    if (dupFinal) {
-      console.log('Order already exists:', dupFinal.id)
-      return dupFinal
+export async function getOrderByIdAsync(id) {
+  if (!pool || !id) return null
+  try {
+    const cached = _ordersCache.find((o) => o.id === id)
+    if (cached) return cached
+
+    const { rows } = await pool.query('SELECT * FROM orders WHERE id = $1 LIMIT 1', [id])
+    const o = rowToOrder(rows[0])
+    if (o) bumpCache(o)
+    return o
+  } catch (err) {
+    console.error('getOrderByIdAsync error:', err.message)
+    return null
+  }
+}
+
+/**
+ * Insert or return existing order (dedupe by Stripe session id or payment intent id).
+ */
+export async function saveOrder(orderData) {
+  if (!pool) throw new Error('DATABASE_URL not configured')
+
+  const sessionId = orderData.stripeSessionId || ''
+  const piNorm = normalizeStripePaymentIntentId(orderData.stripePaymentIntentId)
+
+  if (sessionId) {
+    const { rows } = await pool.query(
+      'SELECT * FROM orders WHERE stripe_session_id = $1 LIMIT 1',
+      [sessionId]
+    )
+    if (rows[0]) {
+      const existing = rowToOrder(rows[0])
+      console.log('Order already exists:', existing.id)
+      bumpCache(existing)
+      return existing
     }
-
-    //Generate order ID if not provided 
-    //Frontend should provide ID in metadata, but this is fallback 
-    const orderId = orderData.id || `PP-${Date.now().toString().slice(-8)}` //PP-12345678
-    
-    //Create new order obejct with defaults
-    const newOrder = {
-      id: orderId,
-      ...orderData,
-      stripePaymentIntentId: piNorm || orderData.stripePaymentIntentId,
-      createdAt: orderData.createdAt || new Date().toISOString(),
-      status: orderData.status || 'pending', // pending, processing, shipped, delivered, cancelled
-      
-      //Email tracking (prevents sending duplicate emails)
-      emailsSent: {
-        confirmation: false,  //Customer order confirmation email
-        admin: false,         //Admin notification email
-        shipping: false       //Customer shipping notification email
-      }
+  }
+  if (piNorm) {
+    const { rows } = await pool.query(
+      'SELECT * FROM orders WHERE stripe_payment_intent = $1 LIMIT 1',
+      [piNorm]
+    )
+    if (rows[0]) {
+      const existing = rowToOrder(rows[0])
+      console.log('Order already exists:', existing.id)
+      bumpCache(existing)
+      return existing
     }
+  }
 
-    // Final read before write (narrows lost-update races across instances; cheap on single instance)
-    const latest = getAllOrders()
-    const dupBeforeWrite = findDuplicate(latest)
-    if (dupBeforeWrite) {
-      console.log('Order already exists (pre-write check):', dupBeforeWrite.id)
-      return dupBeforeWrite
-    }
+  const orderId = orderData.id || `PP-${Date.now().toString().slice(-8)}`
+  const newOrder = {
+    ...orderData,
+    id: orderId,
+    stripePaymentIntentId: piNorm || orderData.stripePaymentIntentId,
+    emailsSent: orderData.emailsSent || {
+      confirmation: false,
+      admin: false,
+      shipping: false,
+    },
+    createdAt: orderData.createdAt || new Date().toISOString(),
+    status: orderData.status || 'pending',
+  }
 
-    //Add to beginning of array (newest orders first)
-    latest.unshift(newOrder)
-    fs.writeFileSync(ORDERS_FILE, JSON.stringify(latest, null, 2))
+  try {
+    await pool.query(
+      `INSERT INTO orders (id, stripe_session_id, stripe_payment_intent, data, status)
+       VALUES ($1, $2, $3, $4::jsonb, $5)`,
+      [
+        orderId,
+        sessionId || null,
+        piNorm || null,
+        JSON.stringify(newOrder),
+        newOrder.status,
+      ]
+    )
+    bumpCache(newOrder)
     console.log('Order saved:', newOrder.id)
     return newOrder
-  } catch (error) {
-    console.error('Error saving order:', error)
-    throw error
-  }
-}
-
-//===========================================
-//READ OPERATIONS (SINGLE ORDER) 
-//===========================================
-/**
- * Get a single order by its ID
- * @param {string} orderId - Order ID (e.g. PP-12345678)
- * @returns {Object|undefined} Order object or undefined if not found
- * 
- * Used by: 
- * - GET /api/admin/orders/:orderId (admin view order details) 
- * - POST /api/order-lookup (customer lookup their order)
- * -updateOrderStatus (to find order before updating) 
- * -hasEmailBeenSent (to check email status) 
- * 
- * Example: 
- * getOrderById("PP-12345678") -> { id: "PP-12345678", ...}
- * getOrderById("invalid") -> undefined 
- */
-
-
-export const getOrderById = (orderId) => {
-  const orders = getAllOrders()
-  return orders.find(order => order.id === orderId)
-}
-
-//===========================================
-//UPDATE OPERATIONS (ORDER STATUS) 
-//===========================================
-export const updateOrderStatus = (orderId, status) => {
-  try {
-    const orders = getAllOrders()
-    const orderIndex = orders.findIndex(order => order.id === orderId)
-    if (orderIndex === -1) {
-      throw new Error('Order not found')
-    }
-    orders[orderIndex].status = status
-    orders[orderIndex].updatedAt = new Date().toISOString()
-    fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2))
-    return orders[orderIndex]
-  } catch (error) {
-    console.error('Error updating order:', error)
-    throw error
-  }
-}
-
-// Update order with tracking information
-export const updateOrderTracking = (orderId, trackingData) => {
-  try {
-    const orders = getAllOrders()
-    const orderIndex = orders.findIndex(order => order.id === orderId)
-    if (orderIndex === -1) {
-      throw new Error('Order not found')
-    }
-    orders[orderIndex].trackingNumber = trackingData.trackingNumber
-    orders[orderIndex].trackingUrl = trackingData.trackingUrl
-    orders[orderIndex].shippingCarrier = trackingData.carrier
-    orders[orderIndex].labelUrl = trackingData.labelUrl
-    orders[orderIndex].shipmentId = trackingData.shipmentId
-    orders[orderIndex].pin = trackingData.pin
-    orders[orderIndex].status = 'processing' // Update status to processing when label is created
-    orders[orderIndex].updatedAt = new Date().toISOString()
-    fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2))
-    console.log('✅ Order tracking updated:', orderId, trackingData.trackingNumber)
-    return orders[orderIndex]
-  } catch (error) {
-    console.error('Error updating order tracking:', error)
-    throw error
-  }
-}
-
-// Mark email as sent for an order
-export const markEmailSent = (orderId, emailType) => {
-  try {
-    const orders = getAllOrders()
-    const orderIndex = orders.findIndex(order => order.id === orderId)
-    if (orderIndex === -1) {
-      throw new Error('Order not found')
-    }
-    if (!orders[orderIndex].emailsSent) {
-      orders[orderIndex].emailsSent = {
-        confirmation: false,
-        admin: false,
-        shipping: false
+  } catch (e) {
+    if (e.code === '23505') {
+      const { rows } = await pool.query(
+        `SELECT * FROM orders WHERE stripe_session_id = $1
+         OR ($2::text IS NOT NULL AND stripe_payment_intent = $2) LIMIT 1`,
+        [sessionId || null, piNorm || null]
+      )
+      const existing = rowToOrder(rows[0])
+      if (existing) {
+        bumpCache(existing)
+        return existing
       }
     }
-    orders[orderIndex].emailsSent[emailType] = true
-    orders[orderIndex].updatedAt = new Date().toISOString()
-    fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2))
-    return orders[orderIndex]
-  } catch (error) {
-    console.error('Error marking email as sent:', error)
-    throw error
+    throw e
   }
 }
 
-// Check if email was already sent
-export const hasEmailBeenSent = (orderId, emailType) => {
-  try {
-    const order = getOrderById(orderId)
-    if (!order || !order.emailsSent) {
-      return false
+/** Persist full order object (e.g. after refund webhook). */
+export async function persistOrder(order) {
+  if (!pool || !order?.id) throw new Error('persistOrder: invalid order')
+  await pool.query(
+    `UPDATE orders SET data = $1::jsonb, status = $2, stripe_session_id = COALESCE($3, stripe_session_id),
+     stripe_payment_intent = COALESCE($4, stripe_payment_intent), updated_at = NOW() WHERE id = $5`,
+    [
+      JSON.stringify(order),
+      order.status || 'pending',
+      order.stripeSessionId || null,
+      normalizeStripePaymentIntentId(order.stripePaymentIntentId) || null,
+      order.id,
+    ]
+  )
+  bumpCache(order)
+  return order
+}
+
+export async function updateOrderStatus(id, status) {
+  const order = await getOrderByIdAsync(id)
+  if (!order) throw new Error(`Order ${id} not found`)
+
+  const updated = { ...order, status, updatedAt: new Date().toISOString() }
+  await pool.query(
+    `UPDATE orders SET status = $1, data = $2::jsonb, updated_at = NOW() WHERE id = $3`,
+    [status, JSON.stringify(updated), id]
+  )
+  bumpCache(updated)
+  return updated
+}
+
+export async function updateOrderTracking(id, trackingData) {
+  const order = (await getOrderByIdAsync(id)) || { id }
+  const updated = {
+    ...order,
+    ...trackingData,
+    updatedAt: new Date().toISOString(),
+    status: order.status === 'pending' ? 'processing' : order.status,
+  }
+  await pool.query(
+    `UPDATE orders SET data = $1::jsonb, status = $2, updated_at = NOW() WHERE id = $3`,
+    [JSON.stringify(updated), updated.status, id]
+  )
+  bumpCache(updated)
+  return updated
+}
+
+export async function hasEmailBeenSent(orderId, emailType) {
+  const order = await getOrderByIdAsync(orderId)
+  return order?.emailsSent?.[emailType] === true
+}
+
+export async function markEmailSent(orderId, emailType) {
+  const order = await getOrderByIdAsync(orderId)
+  if (!order) {
+    console.warn('markEmailSent: order not found', orderId)
+    return
+  }
+  if (!order.emailsSent) order.emailsSent = {}
+  order.emailsSent[emailType] = true
+  order.updatedAt = new Date().toISOString()
+  await pool.query(
+    `UPDATE orders SET data = $1::jsonb, status = COALESCE($2, status), updated_at = NOW() WHERE id = $3`,
+    [JSON.stringify(order), order.status || null, orderId]
+  )
+  bumpCache(order)
+}
+
+export async function getOrderStats() {
+  if (!pool) {
+    return {
+      total: 0,
+      pending: 0,
+      processing: 0,
+      shipped: 0,
+      delivered: 0,
+      cancelled: 0,
+      refunded: 0,
+      totalRevenue: '0.00',
+      avgOrderValue: '0.00',
     }
-    return order.emailsSent[emailType] === true
-  } catch (error) {
-    console.error('Error checking email status:', error)
-    return false
+  }
+  try {
+    const { rows } = await pool.query(`
+      SELECT
+        COUNT(*)                                          AS total,
+        COUNT(*) FILTER (WHERE status = 'pending')       AS pending,
+        COUNT(*) FILTER (WHERE status = 'processing')    AS processing,
+        COUNT(*) FILTER (WHERE status = 'shipped')       AS shipped,
+        COUNT(*) FILTER (WHERE status = 'delivered')     AS delivered,
+        COUNT(*) FILTER (WHERE status = 'cancelled')     AS cancelled,
+        COUNT(*) FILTER (WHERE status = 'refunded')      AS refunded,
+        COALESCE(SUM((data->>'total')::numeric), 0)      AS total_revenue,
+        COALESCE(AVG((data->>'total')::numeric), 0)      AS avg_order_value
+      FROM orders
+    `)
+    const r = rows[0]
+    return {
+      total: parseInt(r.total, 10),
+      pending: parseInt(r.pending, 10),
+      processing: parseInt(r.processing, 10),
+      shipped: parseInt(r.shipped, 10),
+      delivered: parseInt(r.delivered, 10),
+      cancelled: parseInt(r.cancelled, 10),
+      refunded: parseInt(r.refunded, 10),
+      totalRevenue: parseFloat(r.total_revenue).toFixed(2),
+      avgOrderValue: parseFloat(r.avg_order_value).toFixed(2),
+    }
+  } catch (err) {
+    console.error('getOrderStats error:', err.message)
+    return {
+      total: 0,
+      pending: 0,
+      processing: 0,
+      shipped: 0,
+      delivered: 0,
+      cancelled: 0,
+      refunded: 0,
+      totalRevenue: '0.00',
+      avgOrderValue: '0.00',
+    }
   }
 }
-
-// Get orders by status
-export const getOrdersByStatus = (status) => {
-  const orders = getAllOrders()
-  return orders.filter(order => order.status === status)
-}
-
-// Get order statistics
-export const getOrderStats = () => {
-  const orders = getAllOrders()
-  return {
-    total: orders.length,
-    pending: orders.filter(o => o.status === 'pending').length,
-    processing: orders.filter(o => o.status === 'processing').length,
-    shipped: orders.filter(o => o.status === 'shipped').length,
-    delivered: orders.filter(o => o.status === 'delivered').length,
-    totalRevenue: orders.reduce((sum, order) => sum + (order.total || 0), 0)
-  }
-}
-
