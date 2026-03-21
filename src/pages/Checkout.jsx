@@ -373,7 +373,7 @@ export default function Checkout() {
                 id: 'chitchats-select',
                 name: 'Tracked Shipping',
                 description: 'Fully tracked delivery within Canada (2 business days)',
-                price: 5.50,
+                price: 6.99,
                 estimatedDays: 2,
               },
             ]

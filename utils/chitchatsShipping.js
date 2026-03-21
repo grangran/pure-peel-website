@@ -181,7 +181,12 @@ function getPostageType(countryCode) {
  * @returns {{ options: Array }}
  */
 export function getShippingRates(destination, cartItems = []) {
-  const country = normalizeCountry(destination.country || 'Canada')
+  const country = resolveDestinationCountry({
+    country: destination.country,
+    country_code: destination.country_code,
+    postal_code: destination.postalCode || destination.postal_code,
+    postalCode: destination.postalCode,
+  })
   const { weight } = calculateWeight(cartItems)
 
   if (country === 'US') {
@@ -203,7 +208,7 @@ export function getShippingRates(destination, cartItems = []) {
   // Canadian domestic — Chit Chats Select only.
   // Select is available nationwide at $5-7 for our package size.
   // Cheaper AND faster than Canada Tracked so no reason to offer both.
-  // Flat $5.50 covers real cost across all provinces with minimal variance.
+  // Flat $6.99 covers real cost across all provinces with a small buffer for packaging.
   // Rates verified via Chit Chats estimator (Mar 2026):
   //   GTA $5.05, Ottawa $5.86, Sudbury $6.52, Calgary $5.45, Vancouver $6.35, Halifax $6.39
   return {
@@ -211,7 +216,7 @@ export function getShippingRates(destination, cartItems = []) {
       {
         id:            'chitchats-select',
         name:          'Tracked Shipping',
-        price:         5.50,
+        price:         6.99,
         estimatedDays: 2,
         description:   'Fully tracked delivery within Canada (2 business days)',
       },
