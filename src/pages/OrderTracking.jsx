@@ -81,7 +81,13 @@ export default function OrderTracking() {
       })
       const data = await response.json()
       if (response.ok) { setOrder(data.order); setError(null) }
-      else { setError(data.error || 'Failed to find order'); setOrder(null) }
+      else {
+        const validationHint = Array.isArray(data.errors) && data.errors.length > 0
+          ? data.errors.map(e => e.message).filter(Boolean).join(' ')
+          : ''
+        setError(validationHint || data.error || data.message || 'Failed to find order')
+        setOrder(null)
+      }
     } catch (err) {
       setError(err.message?.includes('Failed to fetch') || err.message?.includes('NetworkError')
         ? 'Unable to connect to server. Please check your internet connection and try again.'

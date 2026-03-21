@@ -841,10 +841,13 @@ const validateContactForm = [
 ]
 
 // Order lookup validation schema
+// Order IDs are normalized to uppercase in the handler; allow mixed case in input.
+// Do not normalizeEmail here — stored orders keep Stripe's email as-is; comparing with
+// normalizeEmail() on input only caused false "email does not match" for some addresses.
 const validateOrderLookup = [
-  body('orderId').trim().isLength({ min: 1, max: 50 }).matches(/^[A-Z0-9\-]+$/)
-    .withMessage('Order ID must be 1-50 characters and contain only uppercase letters, numbers, and hyphens'),
-  body('email').trim().isEmail().normalizeEmail().isLength({ max: 255 })
+  body('orderId').trim().isLength({ min: 1, max: 50 }).matches(/^[A-Za-z0-9\-]+$/)
+    .withMessage('Order ID must be 1-50 characters (letters, numbers, hyphens only)'),
+  body('email').trim().isEmail().isLength({ max: 255 })
     .withMessage('Valid email address is required'),
   
   rejectUnexpectedFields(['orderId', 'email']),
@@ -2247,13 +2250,24 @@ app.post('/api/order-lookup', orderLookupLimiter, validateOrderLookup, async (re
       })
     }
 
-    // Verify email matches order email (case-insensitive)
-    if (order.customer?.email?.toLowerCase() !== email.toLowerCase()) {
-      console.log('❌ Email mismatch:', {
-        provided: email.substring(0, 3) + '***',
-        expected: order.customer?.email ? order.customer.email.substring(0, 3) + '***' : 'missing'
+    // Verify email matches order email (trim + case only — same as Stripe stores)
+    const storedEmail = (order.customer?.email || '').trim().toLowerCase()
+    const providedEmail = (email || '').trim().toLowerCase()
+    if (!storedEmail || storedEmail === 'n/a') {
+      console.log('❌ Order has no usable customer email on file:', order.id)
+      return res.status(403).json({
+        error: 'This order has no email on file for verification. Please contact us at orders@purepeelco.com with your order number.',
       })
-      return res.status(403).json({ error: 'Email does not match this order. Please use the email address you used when placing the order.' })
+    }
+    if (storedEmail !== providedEmail) {
+      console.log('❌ Email mismatch:', {
+        provided: providedEmail.substring(0, 3) + '***',
+        expected: storedEmail.substring(0, 3) + '***',
+      })
+      return res.status(403).json({
+        error:
+          'Email does not match this order. Use the same email you entered at checkout (the one Stripe charged / confirmed).',
+      })
     }
 
     console.log('✅ Order lookup successful:', order.id)
