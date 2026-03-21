@@ -307,6 +307,13 @@ app.post('/api/webhook', webhookLimiter, express.raw({ type: 'application/json' 
                   } else {
                     console.error('⚠️ WARNING: Both Stripe and form addresses are missing!')
                   }
+                } else {
+                  // Stripe sometimes returns line1/city/postal but omits country — carriers need ISO country
+                  const metaCountry = fullSession.metadata?.shipping_address_country
+                  if ((!addr.country || String(addr.country).trim() === '') && (metaCountry || '').trim()) {
+                    addr = { ...addr, country: metaCountry.trim() }
+                    console.log('📋 Merged shipping country from checkout metadata (webhook):', metaCountry.trim())
+                  }
                 }
                 
                 return addr
@@ -1597,6 +1604,12 @@ app.get('/api/checkout-session/:sessionId', apiLimiter, validateCheckoutSessionI
                   console.log('✅ Using form address as fallback (checkout session):', { city: addr.city, province: addr.province, postal: addr.postal_code })
                 } else {
                   console.error('⚠️ WARNING: Both Stripe and form addresses are missing (checkout session)!')
+                }
+              } else {
+                const metaCountry = session.metadata?.shipping_address_country
+                if ((!addr.country || String(addr.country).trim() === '') && (metaCountry || '').trim()) {
+                  addr = { ...addr, country: metaCountry.trim() }
+                  console.log('📋 Merged shipping country from checkout metadata (session):', metaCountry.trim())
                 }
               }
               

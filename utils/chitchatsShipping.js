@@ -112,13 +112,38 @@ function normalizeProvince(province = '') {
 }
 
 /**
- * Map country name to 2-letter ISO code.
+ * Map country name to 2-letter ISO code (empty if unknown).
  */
 function normalizeCountry(country = '') {
-  const lower = country.toLowerCase().trim()
+  const s = String(country || '').trim()
+  if (!s) return ''
+  const lower = s.toLowerCase()
   if (lower === 'united states' || lower === 'us' || lower === 'usa') return 'US'
   if (lower === 'canada' || lower === 'ca') return 'CA'
-  return country.toUpperCase().trim().substring(0, 2)
+  if (lower.includes('united state')) return 'US'
+  if (lower.includes('canada')) return 'CA'
+  if (/^[a-z]{2}$/i.test(s)) return s.toUpperCase()
+  return ''
+}
+
+/**
+ * Guess CA vs US from postal/ZIP when country missing (Stripe occasionally omits country).
+ */
+function inferCountryFromPostal(postalRaw) {
+  const compact = String(postalRaw || '').replace(/\s/g, '').toUpperCase()
+  if (/^\d{5}(-?\d{4})?$/.test(compact)) return 'US'
+  if (/^[A-Z]\d[A-Z]\d[A-Z]\d$/.test(compact)) return 'CA'
+  return ''
+}
+
+function resolveDestinationCountry(addr) {
+  let code = normalizeCountry(addr.country || addr.country_code || '')
+  if (!code) code = inferCountryFromPostal(addr.postal_code || addr.postalCode || '')
+  if (!code) {
+    console.warn('⚠️ Chit Chats: no country on address; defaulting to CA. Check Stripe/metadata shipping fields.')
+    code = 'CA'
+  }
+  return code
 }
 
 /**
@@ -212,8 +237,8 @@ export async function createChitChatsLabel(order) {
   }
 
   try {
-    const addr    = order.shipping?.address || {}
-    const country = normalizeCountry(addr.country || 'Canada')
+    const addr     = order.shipping?.address || {}
+    const country  = resolveDestinationCountry(addr)
     const province = normalizeProvince(addr.state || addr.province || '')
 
     const { weight, box } = calculateWeight(order.items || [])
