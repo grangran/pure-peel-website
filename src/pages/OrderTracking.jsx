@@ -3,6 +3,7 @@ import { useScrollReveal } from "../hooks/useScrollReveal"
 import { useLanguage } from "../context/LanguageContext"
 import { getTranslation } from "../utils/translations"
 import { getApiBaseUrl } from "../utils/apiBaseUrl"
+import { sanitizeOrderIdForLookup } from "../../utils/emailMatch.js"
 import LoadingSpinner from "../components/LoadingSpinner"
 import Skeleton from "../components/Skeleton"
 
@@ -53,6 +54,8 @@ export default function OrderTracking() {
 
   const doLookup = async (lookupOrderId, lookupEmail) => {
     setLoading(true); setError(null); setSearched(true); setOrder(null)
+    const oid = sanitizeOrderIdForLookup(lookupOrderId)
+    const em = (lookupEmail || '').trim()
     try {
       // Dev-only: mock order so you can test confirmation + tracking without backend (any email for PP-DEV-* orders)
       if (import.meta.env.DEV && lookupOrderId.trim().toUpperCase().startsWith('PP-DEV')) {
@@ -73,7 +76,7 @@ export default function OrderTracking() {
       const response = await fetch(`${API_URL}/api/order-lookup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId: lookupOrderId, email: lookupEmail }),
+        body: JSON.stringify({ orderId: oid, email: em }),
       })
       const data = await response.json()
       if (response.ok) { setOrder(data.order); setError(null) }

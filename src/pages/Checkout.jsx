@@ -546,12 +546,25 @@ export default function Checkout() {
       setIsSubmitting(true)
       const API_URL = getApiBaseUrl()
       if (!sessionId || !sessionId.match(/^cs_[a-zA-Z0-9_]+$/)) throw new Error('Invalid checkout session ID')
-      const response = await fetch(`${API_URL}/api/checkout-session/${sessionId}`)
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: `Server error: ${response.status}` }))
-        throw new Error(errorData.error || errorData.message || `Failed to fetch session: ${response.status}`)
+
+      // One shared fetch per sessionId (Strict Mode double effect, remounts). Do not delete the promise
+      // while other callers may still be awaiting it.
+      const w = typeof window !== 'undefined' ? window : null
+      const inflight = w && (w.__ppCheckoutSessionJsonPromise ||= {})
+      const loadSession = async () => {
+        const response = await fetch(`${API_URL}/api/checkout-session/${sessionId}`)
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ error: `Server error: ${response.status}` }))
+          throw new Error(errorData.error || errorData.message || `Failed to fetch session: ${response.status}`)
+        }
+        return response.json()
       }
-      const session = await response.json()
+      const session =
+        inflight && inflight[sessionId]
+          ? await inflight[sessionId]
+          : await (inflight
+              ? (inflight[sessionId] = loadSession())
+              : loadSession())
       const isFreeOrder = (session.amount_total || 0) === 0
       const isPaidOrFree = session.payment_status === 'paid' || (isFreeOrder && ['no_payment_required','unpaid'].includes(session.payment_status))
       if (isPaidOrFree) {

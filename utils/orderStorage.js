@@ -143,31 +143,49 @@ export const getAllOrders = () => {
  * })
  */
 
+/** Stripe sometimes returns payment_intent as string id or expanded object — normalize for dedupe. */
+function normalizeStripePaymentIntentId(pi) {
+  if (pi == null || pi === '') return ''
+  if (typeof pi === 'string') return pi
+  if (typeof pi === 'object' && pi.id) return pi.id
+  return String(pi)
+}
+
 export const saveOrder = (orderData) => {
   try {
     initializeOrdersFile()
+    const sessionId = orderData.stripeSessionId || ''
+    const piNorm = normalizeStripePaymentIntentId(orderData.stripePaymentIntentId)
+
+    const findDuplicate = (orders) => {
+      if (sessionId) {
+        const bySession = orders.find(o => o.stripeSessionId === sessionId)
+        if (bySession) return bySession
+      }
+      if (piNorm) {
+        const byPi = orders.find(o => normalizeStripePaymentIntentId(o.stripePaymentIntentId) === piNorm)
+        if (byPi) return byPi
+      }
+      return null
+    }
+
+    // Re-read + re-check a few times to narrow race between webhook and GET /api/checkout-session
+    for (let i = 0; i < 3; i++) {
+      const batch = getAllOrders()
+      const dup = findDuplicate(batch)
+      if (dup) {
+        console.log('Order already exists:', dup.id)
+        return dup
+      }
+    }
+
     const orders = getAllOrders()
-  
-    //===========================================
-    //DUPLICATE PREVENTION
-    //Check if order with same Stripe session ID already exists 
-    //===========================================
-    if (orderData.stripeSessionId) {
-      const existingOrder = orders.find(o => o.stripeSessionId === orderData.stripeSessionId)
-      if (existingOrder) {
-        console.log('Order already exists:', existingOrder.id)
-        return existingOrder //Return existing order instead of creating duplicate 
-      }
+    const dupFinal = findDuplicate(orders)
+    if (dupFinal) {
+      console.log('Order already exists:', dupFinal.id)
+      return dupFinal
     }
-    if (orderData.stripePaymentIntentId) {
-      const byPi = orders.find(o => o.stripePaymentIntentId === orderData.stripePaymentIntentId)
-      if (byPi) {
-        console.log('Order already exists for this payment intent:', byPi.id)
-        return byPi
-      }
-    }
-    
- 
+
     //Generate order ID if not provided 
     //Frontend should provide ID in metadata, but this is fallback 
     const orderId = orderData.id || `PP-${Date.now().toString().slice(-8)}` //PP-12345678
@@ -175,7 +193,8 @@ export const saveOrder = (orderData) => {
     //Create new order obejct with defaults
     const newOrder = {
       id: orderId,
-      ...orderData, //Spread all order data from Stripe
+      ...orderData,
+      stripePaymentIntentId: piNorm || orderData.stripePaymentIntentId,
       createdAt: orderData.createdAt || new Date().toISOString(),
       status: orderData.status || 'pending', // pending, processing, shipped, delivered, cancelled
       
@@ -187,11 +206,17 @@ export const saveOrder = (orderData) => {
       }
     }
 
+    // Final read before write (narrows lost-update races across instances; cheap on single instance)
+    const latest = getAllOrders()
+    const dupBeforeWrite = findDuplicate(latest)
+    if (dupBeforeWrite) {
+      console.log('Order already exists (pre-write check):', dupBeforeWrite.id)
+      return dupBeforeWrite
+    }
+
     //Add to beginning of array (newest orders first)
-    orders.unshift(newOrder) // unshift = add to start, push = add to end 
-    
-    //Write entire orders array back to file
-    fs.writeFileSync(ORDERS_FILE, JSON.stringify(orders, null, 2))
+    latest.unshift(newOrder)
+    fs.writeFileSync(ORDERS_FILE, JSON.stringify(latest, null, 2))
     console.log('Order saved:', newOrder.id)
     return newOrder
   } catch (error) {

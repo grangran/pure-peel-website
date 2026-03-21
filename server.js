@@ -13,6 +13,8 @@ import { verifyUnsubscribeToken } from './utils/unsubscribeToken.js'
 import { sendOrderConfirmation, sendShippingNotification, sendAdminNotification, sendContactForm, sendWelcomeEmail, getOrderConfirmationPreview, getWelcomeEmailPreview } from './utils/emailService.js'
 import { createChitChatsLabel, getShippingRates } from './utils/chitchatsShipping.js'
 import { getAllProducts, getProductById, saveProduct, updateProduct, deleteProduct, bulkSaveProducts } from './utils/productStorage.js'
+import { normalizeEmailForLookup, sanitizeOrderIdForLookup } from './utils/emailMatch.js'
+import { isStripeWebhookEventProcessed, markStripeWebhookEventProcessed } from './utils/stripeWebhookDedupe.js'
 
 dotenv.config()
 
@@ -171,6 +173,95 @@ const healthLimiter = rateLimit({
 // Middleware
 app.use(cors(corsOptions))
 
+/**
+ * Chit Chats label + customer / admin / shipping emails.
+ * Idempotent via hasEmailBeenSent and skipping label creation when tracking already exists.
+ * Used when the order row exists — whether this webhook created it or GET /api/checkout-session won a race.
+ */
+async function fulfillStripeCheckoutOrder(savedOrder) {
+  if (!savedOrder?.id) return
+  let order = getOrderById(savedOrder.id) || savedOrder
+
+  const autoCreateLabels = process.env.AUTO_CREATE_SHIPPING_LABELS !== 'false'
+  if (autoCreateLabels && !order.trackingNumber) {
+    console.log('📦 Attempting to create Chit Chats label for order:', order.id)
+    try {
+      const labelResult = await createChitChatsLabel(order)
+      if (labelResult.success && labelResult.trackingNumber) {
+        updateOrderTracking(order.id, {
+          trackingNumber: labelResult.trackingNumber,
+          trackingUrl: labelResult.trackingUrl,
+          labelUrl: labelResult.labelUrl,
+          shipmentId: labelResult.shipmentId,
+          carrier: labelResult.carrier,
+          pin: labelResult.pin
+        })
+        console.log('✅ Chit Chats label created:', labelResult.trackingNumber)
+        order = getOrderById(order.id) || order
+        const shippingSent = hasEmailBeenSent(order.id, 'shipping')
+        if (!shippingSent) {
+          try {
+            const shippingEmailResult = await sendShippingNotification(order, labelResult.trackingNumber)
+            if (shippingEmailResult.success) {
+              markEmailSent(order.id, 'shipping')
+              console.log('✅ Shipping notification email sent successfully')
+            } else {
+              console.log('⚠️  Shipping notification email not sent:', shippingEmailResult.reason || shippingEmailResult.error)
+            }
+          } catch (shippingEmailError) {
+            console.error('❌ Error sending shipping notification email:', shippingEmailError.message)
+          }
+        }
+      } else {
+        console.log('⚠️  Chit Chats label creation failed:', labelResult.error || 'Unknown error')
+        console.log('   Order will be saved without tracking number. Label can be created manually later.')
+      }
+    } catch (labelError) {
+      console.error('❌ Error creating Chit Chats label:', labelError.message)
+    }
+  } else if (!autoCreateLabels) {
+    console.log('ℹ️  Automatic label creation is disabled (AUTO_CREATE_SHIPPING_LABELS=false)')
+  } else if (order.trackingNumber) {
+    console.log('ℹ️  Chit Chats label already present for order:', order.id)
+  }
+
+  order = getOrderById(order.id) || order
+  console.log('📧 Attempting to send email notifications for order:', order.id)
+  console.log('   Customer email:', order.customer?.email)
+
+  if (!hasEmailBeenSent(order.id, 'confirmation')) {
+    try {
+      const emailResult = await sendOrderConfirmation(order)
+      if (emailResult.success) {
+        markEmailSent(order.id, 'confirmation')
+        console.log('✅ Customer email sent successfully')
+      } else {
+        console.log('⚠️  Customer email not sent:', emailResult.reason || emailResult.error)
+      }
+    } catch (emailError) {
+      console.error('❌ Error sending customer email:', emailError.message)
+    }
+  } else {
+    console.log('ℹ️  Customer confirmation email already sent, skipping')
+  }
+
+  if (!hasEmailBeenSent(order.id, 'admin')) {
+    try {
+      const adminResult = await sendAdminNotification(order)
+      if (adminResult.success) {
+        markEmailSent(order.id, 'admin')
+        console.log('✅ Admin email sent successfully')
+      } else {
+        console.log('⚠️  Admin email not sent:', adminResult.reason || adminResult.error)
+      }
+    } catch (emailError) {
+      console.error('❌ Error sending admin email:', emailError.message)
+    }
+  } else {
+    console.log('ℹ️  Admin notification email already sent, skipping')
+  }
+}
+
 // IMPORTANT: Webhook endpoint must be BEFORE express.json() middleware
 // Stripe webhooks require the raw body for signature verification
 // Apply rate limiting to webhook endpoint (following OWASP best practices)
@@ -203,6 +294,10 @@ app.post('/api/webhook', webhookLimiter, express.raw({ type: 'application/json' 
   // Handle the event
   switch (event.type) {
     case 'checkout.session.completed':
+      if (isStripeWebhookEventProcessed(event.id)) {
+        console.log('ℹ️  Duplicate Stripe webhook delivery skipped (already processed):', event.id)
+        break
+      }
       const session = event.data.object
       console.log('📦 Checkout session completed:', session.id)
       console.log('   Payment status:', session.payment_status)
@@ -240,11 +335,13 @@ app.post('/api/webhook', webhookLimiter, express.raw({ type: 'application/json' 
         const isPaidOrFree = fullSession.payment_status === 'paid' || 
                             (isFreeOrder && (fullSession.payment_status === 'no_payment_required' || fullSession.payment_status === 'unpaid'))
 
-        // Check if order already exists by Stripe session ID
+        // Check if order already exists by Stripe session ID (GET /api/checkout-session may have saved first)
         const allOrders = getAllOrders()
         const existingOrder = allOrders.find(o => o.stripeSessionId === fullSession.id)
 
-        if (!existingOrder && isPaidOrFree) {
+        if (!isPaidOrFree) {
+          console.log('ℹ️  Skipping order — checkout session not paid:', fullSession.id, fullSession.payment_status)
+        } else if (!existingOrder) {
           // Use order_id from metadata (set during checkout session creation)
           const orderIdFromMetadata = fullSession.metadata?.order_id || session.metadata?.order_id
           
@@ -338,98 +435,12 @@ app.post('/api/webhook', webhookLimiter, express.raw({ type: 'application/json' 
           }
           const savedOrder = saveOrder(orderData)
           console.log('Order saved:', savedOrder.id)
-          
-          // Automatically create Chit Chats shipping label (if enabled)
-          const autoCreateLabels = process.env.AUTO_CREATE_SHIPPING_LABELS !== 'false' // Default to true
-          if (autoCreateLabels) {
-            console.log('📦 Attempting to create Chit Chats label for order:', savedOrder.id)
-            try {
-              const labelResult = await createChitChatsLabel(savedOrder)
-              if (labelResult.success && labelResult.trackingNumber) {
-                // Update order with tracking information
-                updateOrderTracking(savedOrder.id, {
-                  trackingNumber: labelResult.trackingNumber,
-                  trackingUrl: labelResult.trackingUrl,
-                  labelUrl: labelResult.labelUrl,
-                  shipmentId: labelResult.shipmentId,
-                  carrier: labelResult.carrier,
-                  pin: labelResult.pin
-                })
-                console.log('✅ Chit Chats label created:', labelResult.trackingNumber)
-                
-                // Reload order to get updated tracking info
-                const updatedOrder = getOrderById(savedOrder.id)
-                
-                // Send shipping notification email with tracking number
-                const shippingSent = hasEmailBeenSent(savedOrder.id, 'shipping')
-                if (!shippingSent) {
-                  try {
-                    const shippingEmailResult = await sendShippingNotification(updatedOrder, labelResult.trackingNumber)
-                    if (shippingEmailResult.success) {
-                      markEmailSent(savedOrder.id, 'shipping')
-                      console.log('✅ Shipping notification email sent successfully')
-                    } else {
-                      console.log('⚠️  Shipping notification email not sent:', shippingEmailResult.reason || shippingEmailResult.error)
-                    }
-                  } catch (shippingEmailError) {
-                    console.error('❌ Error sending shipping notification email:', shippingEmailError.message)
-                  }
-                }
-              } else {
-                console.log('⚠️  Chit Chats label creation failed:', labelResult.error || 'Unknown error')
-                console.log('   Order will be saved without tracking number. Label can be created manually later.')
-                console.log('   To disable automatic label creation, set AUTO_CREATE_SHIPPING_LABELS=false')
-              }
-            } catch (labelError) {
-              console.error('❌ Error creating Chit Chats label:', labelError.message)
-              console.log('   Order will be saved without tracking number. Label can be created manually later.')
-              console.log('   To disable automatic label creation, set AUTO_CREATE_SHIPPING_LABELS=false')
-            }
-          } else {
-            console.log('ℹ️  Automatic label creation is disabled (AUTO_CREATE_SHIPPING_LABELS=false)')
-          }
-          
-          // Send email notifications (only if not already sent)
-          console.log('📧 Attempting to send email notifications for order:', savedOrder.id)
-          console.log('   Customer email:', savedOrder.customer?.email)
-          
-          const confirmationSent = hasEmailBeenSent(savedOrder.id, 'confirmation')
-          const adminSent = hasEmailBeenSent(savedOrder.id, 'admin')
-          
-          if (!confirmationSent) {
-            try {
-              const emailResult = await sendOrderConfirmation(savedOrder)
-              if (emailResult.success) {
-                markEmailSent(savedOrder.id, 'confirmation')
-                console.log('✅ Customer email sent successfully')
-              } else {
-                console.log('⚠️  Customer email not sent:', emailResult.reason || emailResult.error)
-              }
-            } catch (emailError) {
-              console.error('❌ Error sending customer email:', emailError.message)
-            }
-          } else {
-            console.log('ℹ️  Customer confirmation email already sent, skipping')
-          }
-          
-          if (!adminSent) {
-            try {
-              const adminResult = await sendAdminNotification(savedOrder)
-              if (adminResult.success) {
-                markEmailSent(savedOrder.id, 'admin')
-                console.log('✅ Admin email sent successfully')
-              } else {
-                console.log('⚠️  Admin email not sent:', adminResult.reason || adminResult.error)
-              }
-            } catch (emailError) {
-              console.error('❌ Error sending admin email:', emailError.message)
-            }
-          } else {
-            console.log('ℹ️  Admin notification email already sent, skipping')
-          }
+          await fulfillStripeCheckoutOrder(savedOrder)
         } else {
-          console.log('Order already exists:', fullSession.id.replace('cs_', 'PP-'))
+          console.log('Order already in database (likely from checkout success verify):', existingOrder.id, fullSession.id)
+          await fulfillStripeCheckoutOrder(existingOrder)
         }
+        markStripeWebhookEventProcessed(event.id)
       } catch (error) {
         console.error('Error saving order from webhook:', error)
       }
@@ -707,7 +718,9 @@ const validateContactForm = [
 // Do not normalizeEmail here — stored orders keep Stripe's email as-is; comparing with
 // normalizeEmail() on input only caused false "email does not match" for some addresses.
 const validateOrderLookup = [
-  body('orderId').trim().isLength({ min: 1, max: 50 }).matches(/^[A-Za-z0-9\-]+$/)
+  body('orderId')
+    .customSanitizer((v) => (typeof v === 'string' ? sanitizeOrderIdForLookup(v) : v))
+    .isLength({ min: 1, max: 50 }).matches(/^[A-Z0-9\-]+$/)
     .withMessage('Order ID must be 1-50 characters (letters, numbers, hyphens only)'),
   body('email').trim().isEmail().isLength({ max: 255 })
     .withMessage('Valid email address is required'),
@@ -1499,46 +1512,7 @@ app.get('/api/checkout-session/:sessionId', apiLimiter, validateCheckoutSessionI
           paymentMethod: session.payment_method_types?.[0] || 'card'
         }
         const savedOrder = saveOrder(orderData)
-        
-        // Send email notifications (only if not already sent)
-        console.log('📧 Attempting to send email notifications for order:', savedOrder.id)
-        console.log('   Customer email:', savedOrder.customer?.email)
-        
-        // Check if emails were already sent (prevent duplicates)
-        const confirmationSent = hasEmailBeenSent(savedOrder.id, 'confirmation')
-        const adminSent = hasEmailBeenSent(savedOrder.id, 'admin')
-        
-        if (!confirmationSent) {
-          try {
-            const emailResult = await sendOrderConfirmation(savedOrder)
-            if (emailResult.success) {
-              markEmailSent(savedOrder.id, 'confirmation')
-              console.log('✅ Customer email sent successfully')
-            } else {
-              console.log('⚠️  Customer email not sent:', emailResult.reason || emailResult.error)
-            }
-          } catch (emailError) {
-            console.error('❌ Error sending customer email:', emailError.message)
-          }
-        } else {
-          console.log('ℹ️  Customer confirmation email already sent, skipping')
-        }
-        
-        if (!adminSent) {
-          try {
-            const adminResult = await sendAdminNotification(savedOrder)
-            if (adminResult.success) {
-              markEmailSent(savedOrder.id, 'admin')
-              console.log('✅ Admin email sent successfully')
-            } else {
-              console.log('⚠️  Admin email not sent:', adminResult.reason || adminResult.error)
-            }
-          } catch (emailError) {
-            console.error('❌ Error sending admin email:', emailError.message)
-          }
-        } else {
-          console.log('ℹ️  Admin notification email already sent, skipping')
-        }
+        console.log('📋 Order persisted from GET /api/checkout-session (fallback):', savedOrder.id, '— emails/labels run from checkout.session.completed webhook')
       } catch (saveError) {
         console.error('Error saving order from checkout verification:', saveError)
         // Don't fail the request if order save fails
@@ -2082,8 +2056,7 @@ app.post('/api/order-lookup', orderLookupLimiter, validateOrderLookup, async (re
 
     console.log('🔍 Order lookup request:', { orderId, email: email ? email.substring(0, 3) + '***' : 'missing' })
 
-    // Normalize order ID (remove spaces, ensure uppercase)
-    const normalizedOrderId = orderId.trim().toUpperCase()
+    const normalizedOrderId = sanitizeOrderIdForLookup(orderId)
 
     // Try exact match first
     let order = getOrderById(normalizedOrderId)
@@ -2112,16 +2085,18 @@ app.post('/api/order-lookup', orderLookupLimiter, validateOrderLookup, async (re
       })
     }
 
-    // Verify email matches order email (trim + case only — same as Stripe stores)
+    // Verify email matches (Gmail: dots / +tags ignored — see normalizeEmailForLookup)
     const storedEmail = (order.customer?.email || '').trim().toLowerCase()
     const providedEmail = (email || '').trim().toLowerCase()
+    const storedNorm = normalizeEmailForLookup(order.customer?.email || '')
+    const providedNorm = normalizeEmailForLookup(email || '')
     if (!storedEmail || storedEmail === 'n/a') {
       console.log('❌ Order has no usable customer email on file:', order.id)
       return res.status(403).json({
         error: 'This order has no email on file for verification. Please contact us at orders@purepeelco.com with your order number.',
       })
     }
-    if (storedEmail !== providedEmail) {
+    if (storedNorm !== providedNorm && storedEmail !== providedEmail) {
       console.log('❌ Email mismatch:', {
         provided: providedEmail.substring(0, 3) + '***',
         expected: storedEmail.substring(0, 3) + '***',
