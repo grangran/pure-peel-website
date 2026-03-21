@@ -191,29 +191,15 @@ export default function ShippingReturns() {
           {/* Canada */}
           <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
             <span style={{ fontSize: "1.4rem" }}>🇨🇦</span>
-            <SubTitle>Canada-Wide Shipping</SubTitle>
+            <SubTitle>{getTranslation(language, 'shipping.shippingInfo.regions.canadaTitle')}</SubTitle>
           </div>
-          <BodyText>We ship from Canada to all provinces and territories across the country.</BodyText>
+          <BodyText>{getTranslation(language, 'shipping.shippingInfo.regions.canadaIntro')}</BodyText>
 
           <ShippingMethodCard
-            icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={S.textMid} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>}
-            name={getTranslation(language, 'shipping.shippingInfo.methods.regular.name')}
-            description={getTranslation(language, 'shipping.shippingInfo.methods.regular.description')}
-            time={getTranslation(language, 'shipping.shippingInfo.methods.regular.time')}
-            priceNote={getTranslation(language, 'shipping.shippingInfo.methods.priceNote')}
-          />
-          <ShippingMethodCard
-            icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={S.orange} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>}
-            name={getTranslation(language, 'shipping.shippingInfo.methods.expedited.name')}
-            description={getTranslation(language, 'shipping.shippingInfo.methods.expedited.description')}
-            time={getTranslation(language, 'shipping.shippingInfo.methods.expedited.time')}
-            priceNote={getTranslation(language, 'shipping.shippingInfo.methods.priceNote')}
-          />
-          <ShippingMethodCard
-            icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={S.orange} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>}
-            name={getTranslation(language, 'shipping.shippingInfo.methods.xpresspost.name')}
-            description={getTranslation(language, 'shipping.shippingInfo.methods.xpresspost.description')}
-            time={getTranslation(language, 'shipping.shippingInfo.methods.xpresspost.time')}
+            icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={S.orange} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>}
+            name={getTranslation(language, 'shipping.shippingInfo.methods.canadaTracked.name')}
+            description={getTranslation(language, 'shipping.shippingInfo.methods.canadaTracked.description')}
+            time={getTranslation(language, 'shipping.shippingInfo.methods.canadaTracked.time')}
             priceNote={getTranslation(language, 'shipping.shippingInfo.methods.priceNote')}
             highlight
           />
@@ -223,34 +209,20 @@ export default function ShippingReturns() {
           {/* USA */}
           <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
             <span style={{ fontSize: "1.4rem" }}>🇺🇸</span>
-            <SubTitle>United States-Wide Shipping</SubTitle>
+            <SubTitle>{getTranslation(language, 'shipping.shippingInfo.regions.usTitle')}</SubTitle>
           </div>
-          <BodyText>We ship to all 50 states. Select 'United States' as your country during checkout to see available options.</BodyText>
+          <BodyText>{getTranslation(language, 'shipping.shippingInfo.regions.usIntro')}</BodyText>
 
           <ShippingMethodCard
-            icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={S.textMid} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>}
-            name="Tracked Packet — USA"
-            description="Standard delivery to US with tracking"
-            time="4–7 business days"
-            priceNote={getTranslation(language, 'shipping.shippingInfo.methods.priceNote')}
-          />
-          <ShippingMethodCard
-            icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={S.orange} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>}
-            name="Xpresspost — USA"
-            description="Faster delivery with tracking and insurance"
-            time="2–3 business days"
-            priceNote={getTranslation(language, 'shipping.shippingInfo.methods.priceNote')}
-          />
-          <ShippingMethodCard
-            icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={S.orange} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>}
-            name="Priority Worldwide — USA"
-            description="Express delivery with signature confirmation"
-            time="1–2 business days"
+            icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={S.orange} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>}
+            name={getTranslation(language, 'shipping.shippingInfo.methods.usTracked.name')}
+            description={getTranslation(language, 'shipping.shippingInfo.methods.usTracked.description')}
+            time={getTranslation(language, 'shipping.shippingInfo.methods.usTracked.time')}
             priceNote={getTranslation(language, 'shipping.shippingInfo.methods.priceNote')}
             highlight
           />
           <BodyText style={{ marginTop: "12px", fontSize: "0.72rem", fontStyle: "italic" }}>
-            Prices shown in <strong style={{ fontWeight: 500, color: S.dark }}>{currency}</strong>. Delivery times are estimates. Fulfilled through Chit Chats; US orders are delivered by USPS.
+            {getTranslation(language, 'shipping.shippingInfo.fulfillmentNote')}
           </BodyText>
 
           <Divider />
@@ -276,13 +248,14 @@ export default function ShippingReturns() {
           {/* Shipping Costs */}
           <SubTitle>{getTranslation(language, 'shipping.shippingCosts.title')}</SubTitle>
           <InfoBox>
-            <p style={{ fontFamily: S.sans, fontSize: "0.72rem", fontWeight: 500, color: S.dark, marginBottom: "10px" }}>How Shipping Costs Work</p>
+            <p style={{ fontFamily: S.sans, fontSize: "0.72rem", fontWeight: 500, color: S.dark, marginBottom: "10px" }}>
+              {getTranslation(language, 'shipping.shippingCosts.howTitle')}
+            </p>
             <BulletList items={[
-              "Shipping costs are calculated automatically at checkout based on your destination",
-              "Rates vary by location, package weight, and selected shipping method",
-              `Canada: Calculated at checkout by destination and method`,
-              `United States: Calculated at checkout by destination and method`,
-              `All prices shown in ${currency} — use the currency selector in the nav to switch`,
+              getTranslation(language, 'shipping.shippingCosts.bullet1'),
+              getTranslation(language, 'shipping.shippingCosts.bullet2'),
+              getTranslation(language, 'shipping.shippingCosts.bullet3'),
+              getTranslation(language, 'shipping.shippingCosts.bullet4'),
             ]} />
           </InfoBox>
           <BodyText>{getTranslation(language, 'shipping.shippingCosts.text1')}</BodyText>
@@ -320,7 +293,7 @@ export default function ShippingReturns() {
           <SubTitle>{getTranslation(language, 'shipping.internationalShipping.title')}</SubTitle>
           <BodyText>
             {getTranslation(language, 'shipping.internationalShipping.text1')}{' '}
-            <a href="/contact?inquiryType=shipping" style={{ color: S.orange, fontWeight: 400 }}>shipping@purepeelco.com</a>.
+            <a href="mailto:orders@purepeelco.com" style={{ color: S.orange, fontWeight: 400 }}>orders@purepeelco.com</a>.
           </BodyText>
           <BodyText>{getTranslation(language, 'shipping.internationalShipping.text2')}</BodyText>
         </div>
@@ -350,7 +323,7 @@ export default function ShippingReturns() {
           <InfoBox>
             <ol style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "12px" }}>
               {[
-                <>{getTranslation(language, 'shipping.returns.howWeResolve.step1')} <a href="/contact?inquiryType=support" style={{ color: S.orange, fontWeight: 400 }}>support@purepeelco.com</a> {getTranslation(language, 'shipping.returns.howWeResolve.step1Text')}</>,
+                <>{getTranslation(language, 'shipping.returns.howWeResolve.step1')} <a href="mailto:orders@purepeelco.com" style={{ color: S.orange, fontWeight: 400 }}>orders@purepeelco.com</a> {getTranslation(language, 'shipping.returns.howWeResolve.step1Text')}</>,
                 getTranslation(language, 'shipping.returns.howWeResolve.step2'),
                 getTranslation(language, 'shipping.returns.howWeResolve.step3'),
                 getTranslation(language, 'shipping.returns.howWeResolve.step4'),
@@ -420,7 +393,7 @@ export default function ShippingReturns() {
           <InfoBox>
             <p style={{ fontFamily: S.sans, fontSize: "0.78rem", fontWeight: 400, color: S.dark, marginBottom: "4px" }}>
               {getTranslation(language, 'shipping.returns.needHelp.email')}{' '}
-              <a href="/contact?inquiryType=support" style={{ color: S.orange, fontWeight: 300 }}>support@purepeelco.com</a>
+              <a href="mailto:orders@purepeelco.com" style={{ color: S.orange, fontWeight: 300 }}>orders@purepeelco.com</a>
             </p>
             <p style={{ fontFamily: S.sans, fontSize: "0.72rem", fontWeight: 300, color: S.textLight, lineHeight: 1.6 }}>
               {getTranslation(language, 'shipping.returns.needHelp.text2')}
@@ -479,14 +452,14 @@ export default function ShippingReturns() {
 
           <InfoBox>
             {[
-              { label: getTranslation(language, 'shipping.contact.shippingInquiries'), email: "shipping@purepeelco.com", type: "shipping" },
-              { label: getTranslation(language, 'shipping.contact.productIssues'),     email: "support@purepeelco.com",  type: "support" },
-              { label: getTranslation(language, 'shipping.contact.generalInquiries'), email: "info@purepeelco.com",     type: "general" },
-              { label: getTranslation(language, 'shipping.contact.bulkOrders'),       email: "orders@purepeelco.com",   type: "bulk" },
+              { label: getTranslation(language, 'shipping.contact.shippingInquiries'), email: "orders@purepeelco.com", type: "shipping" },
+              { label: getTranslation(language, 'shipping.contact.productIssues'),     email: "orders@purepeelco.com", type: "support" },
+              { label: getTranslation(language, 'shipping.contact.generalInquiries'), email: "info@purepeelco.com",   type: "general" },
+              { label: getTranslation(language, 'shipping.contact.bulkOrders'),       email: "orders@purepeelco.com", type: "bulk" },
             ].map((item, i) => (
               <p key={i} style={{ fontFamily: S.sans, fontSize: "0.78rem", fontWeight: 300, color: S.textMid, marginBottom: "8px", lineHeight: 1.6 }}>
                 <strong style={{ fontWeight: 500, color: S.dark }}>{item.label}</strong>{' '}
-                <a href={`/contact?inquiryType=${item.type}`} style={{ color: S.orange, fontWeight: 300 }}>{item.email}</a>
+                <a href={`mailto:${item.email}`} style={{ color: S.orange, fontWeight: 300 }}>{item.email}</a>
               </p>
             ))}
             <p style={{ fontFamily: S.sans, fontSize: "0.7rem", fontWeight: 300, color: S.textLight, marginTop: "12px" }}>

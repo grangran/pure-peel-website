@@ -358,11 +358,11 @@ export default function OrderTracking() {
             <div style={{ paddingTop: "20px", textAlign: "center" }}>
               <p style={{ fontFamily: S.sans, fontSize: "0.72rem", fontWeight: 300, color: S.textMid }}>
                 {getTranslation(language, 'orderTracking.questions')}{' '}
-                <a href="/contact?inquiryType=support"
+                <a href="mailto:orders@purepeelco.com"
                   style={{ color: S.orange, fontWeight: 400, textDecoration: "none" }}
                   onMouseEnter={e => e.target.style.textDecoration = "underline"}
                   onMouseLeave={e => e.target.style.textDecoration = "none"}
-                >support@purepeelco.com</a>
+                >orders@purepeelco.com</a>
               </p>
             </div>
           </div>

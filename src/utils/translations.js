@@ -185,15 +185,15 @@ export const translations = {
           questions: [
             {
               question: "How long does shipping take?",
-              answer: "Shipping times vary by service and destination:\n\nCanada:\n• Regular Parcel: 2-5 business days\n• Expedited Parcel: 1-3 business days\n• Xpresspost: Next business day\n\nUnited States:\n• Tracked Packet - USA: 4-7 business days\n• Xpresspost - USA: 2-3 business days\n• Priority Worldwide - USA: 1-2 business days\n\nShipping times are calculated from when your order ships, not when you place it. Orders placed before 2:00 PM EST (Monday-Friday) are typically processed the same day. Orders placed Saturday-Sunday are processed the following Monday. Prices are calculated at checkout based on your destination, package weight, and selected shipping method."
+              answer: "We fulfill orders through Chit Chats:\n\nCanada — Chit Chats Select (tracked): about 2 business days on average; exact time varies by region.\nUnited States — USPS via Chit Chats (tracked): about 5–10 business days; customs can add time.\n\nShipping times start when your order ships, not when you place it. Orders placed before 2:00 PM EST (Monday–Friday) are usually processed the same day; weekend orders ship the following Monday. Your checkout total includes an estimated shipping line based on address and cart weight."
             },
             {
               question: "Do you ship to the United States?",
-              answer: "Yes! We ship to all 50 US states. Select \"United States\" as your country during checkout to see available shipping options (standard and expedited USPS-tracked services).\n\nOrders are fulfilled through Chit Chats and delivered in the US via USPS. Prices are estimated at checkout based on destination, package weight, and the option you select."
+              answer: "Yes! We ship to all 50 US states. Select United States at checkout for our tracked USPS option fulfilled through Chit Chats.\n\nYou’ll see the estimated shipping cost before you pay. Tracking is included; follow updates from Chit Chats and USPS using the link in your confirmation email."
             },
             {
               question: "How much does shipping cost?",
-              answer: "Shipping costs are calculated automatically at checkout based on your destination, package weight, and selected shipping method. Rates vary by location, weight, and destination:\n\n• Canada: Prices are calculated dynamically at checkout\n• United States: Prices are calculated dynamically at checkout\n\nAll prices are shown in CAD (use the currency selector to switch to USD). You'll see exact shipping costs at checkout before completing your purchase."
+              answer: "Shipping is estimated at checkout from your postal or ZIP code and cart weight. We use flat-rate style estimates aligned with Chit Chats:\n\n• Canada: one tracked option (Chit Chats Select) at a flat nationwide rate\n• United States: one tracked option; the estimate increases with package weight\n\nSwitch between CAD and USD in the site menu to match how prices are shown. The amount on your order is what you agree to at checkout."
             },
             {
               question: "When will my order ship?",
@@ -201,7 +201,7 @@ export const translations = {
             },
             {
               question: "How can I track my order?",
-              answer: "Once your order ships, you'll receive a tracking number via email. You can track your package in two ways:\n\n• Use our order tracking page: Enter your order number and email address\n• Use the tracking link in your email when provided, or the carrier's site (e.g. USPS for many US shipments) with your tracking number"
+              answer: "Once your order ships, you'll receive a tracking number via email. You can:\n\n• Use our Track Order page with your order number and email\n• Open the tracking link in your shipping email (Chit Chats and/or USPS for US deliveries)"
             }
           ]
         },
@@ -241,11 +241,11 @@ export const translations = {
           questions: [
             {
               question: "What is your return policy?",
-              answer: "Due to food safety regulations and hygiene concerns, we do not accept returns or exchanges on food products. However, we stand behind the quality of our products. If you receive a damaged, defective, or incorrect product, please contact us immediately at support@purepeelco.com with your order number and photos of the issue. We will replace any product that is damaged, defective, or incorrect at no cost to you, or issue a full refund at your request."
+              answer: "Due to food safety regulations and hygiene concerns, we do not accept returns or exchanges on food products. However, we stand behind the quality of our products. If you receive a damaged, defective, or incorrect product, please contact us immediately at orders@purepeelco.com with your order number and photos of the issue. We will replace any product that is damaged, defective, or incorrect at no cost to you, or issue a full refund at your request."
             },
             {
               question: "Can I get a refund or return my order?",
-              answer: "We offer refunds for orders that are damaged, defective, incorrect, or lost in transit. Due to food safety regulations, we cannot accept returns of opened food products. However, if you experience any issues with your order, please contact us immediately at support@purepeelco.com within 48 hours of delivery with your order number and photos of the issue (if applicable). We will work with you to resolve the issue by offering either a replacement or a full refund. You do not need to return the original product - we'll process your refund or replacement right away."
+              answer: "We offer refunds for orders that are damaged, defective, incorrect, or lost in transit. Due to food safety regulations, we cannot accept returns of opened food products. However, if you experience any issues with your order, please contact us immediately at orders@purepeelco.com within 48 hours of delivery with your order number and photos of the issue (if applicable). We will work with you to resolve the issue by offering either a replacement or a full refund. You do not need to return the original product - we'll process your refund or replacement right away."
             }
           ]
         },
@@ -277,7 +277,7 @@ export const translations = {
           questions: [
             {
               question: "How do I contact customer service?",
-              answer: "You can reach us at:\n• General Inquiries: info@purepeelco.com\n• Product Issues & Support: support@purepeelco.com\n• Shipping Inquiries: shipping@purepeelco.com\n• Bulk Orders: orders@purepeelco.com\n• Contact Form: Use the contact form on our website\n\nOur customer service team is available 7 days a week, Monday - Sunday, 9:00 AM - 5:00 PM EST. We typically respond to emails within 24-48 hours."
+              answer: "You can reach us at:\n• General Inquiries: info@purepeelco.com\n• Orders, shipping & product support: orders@purepeelco.com\n• Bulk Orders: orders@purepeelco.com\n• Contact Form: Use the contact form on our website\n\nOur customer service team is available 7 days a week, Monday - Sunday, 9:00 AM - 5:00 PM EST. We typically respond to emails within 24-48 hours."
             },
             {
               question: "Do you have a physical store?",
@@ -293,7 +293,7 @@ export const translations = {
             },
             {
               question: "Do you ship internationally?",
-              answer: "Currently, we ship to Canada and the United States. For international shipping inquiries, please contact us at shipping@purepeelco.com."
+              answer: "Currently, we ship to Canada and the United States. For international shipping inquiries, please contact us at orders@purepeelco.com."
             }
           ]
         }
@@ -513,26 +513,27 @@ export const translations = {
       subtitle: "Information about our shipping methods and return policy",
       shippingInfo: {
         title: "Shipping Information",
+        regions: {
+          canadaTitle: "Canada-wide shipping",
+          canadaIntro: "We ship from Ontario to every province and territory. Canadian orders use Chit Chats Select — fully tracked nationwide (not Canada Post retail counter services).",
+          usTitle: "United States shipping",
+          usIntro: "We ship to all 50 states. Choose United States at checkout to see the tracked USPS option fulfilled through Chit Chats.",
+        },
+        fulfillmentNote: "Prices follow the currency you select in the site menu (CAD or USD). Delivery times are estimates. US-bound packages are tracked through Chit Chats until they reach USPS.",
         methods: {
           title: "Shipping Methods",
-          regular: {
-            name: "Regular Parcel",
-            time: "2-5 business days",
-            description: "Standard delivery within Canada with tracking"
+          canadaTracked: {
+            name: "Tracked shipping (Chit Chats Select)",
+            time: "~2 business days (estimates vary by region)",
+            description: "One nationwide tracked service for Canada — labels and routing through Chit Chats.",
           },
-          expedited: {
-            name: "Expedited Parcel",
-            time: "1-3 business days",
-            description: "Faster delivery with tracking and signature confirmation (guaranteed delivery)"
+          usTracked: {
+            name: "Tracked (USPS via Chit Chats)",
+            time: "~5–10 business days (estimates)",
+            description: "Fully tracked delivery to the US. Chit Chats hands off to USPS; exact USPS service is selected for the best rate at label purchase.",
           },
-          xpresspost: {
-            name: "Xpresspost",
-            time: "Next business day",
-            description: "Express delivery with signature confirmation and priority handling (guaranteed, major centers)"
-          },
-          priceNote: "Prix calculé à la caisse",
-          priceNote: "Price calculated at checkout"
-        }
+          priceNote: "Price calculated at checkout",
+        },
       },
       shippingTimes: {
         title: "Shipping Times",
@@ -541,19 +542,24 @@ export const translations = {
         schedule1: "Orders placed Monday-Friday before 2:00 PM EST: Processed within 24 hours",
         schedule2: "Orders placed Saturday-Sunday: Processed the following Monday",
         schedule3: "Holiday orders: May experience additional processing delays",
-        text2: "Shipping times are calculated from the date your order ships, not from the date you place your order. You will receive a shipping confirmation email with a tracking number once your order has been shipped. Delivery times vary by distance and destination - local deliveries are typically faster, while cross-country shipments may take longer.",
-        note: "Note: Shipping times may be longer during peak seasons (holidays, special promotions) or due to weather, carrier delays, or remote locations. Tracked service delivery estimates vary by distance. We will notify you by email if there are significant delays."
+        text2: "Shipping times are calculated from the date your order ships, not from the date you place your order. You will receive a shipping confirmation email with tracking once your order ships. Delivery times vary by distance — Chit Chats and USPS provide tracking updates on their portals.",
+        note: "Note: Times may be longer during peak seasons, weather, or carrier delays. We will email you if there is an unusual delay."
       },
       shippingCosts: {
         title: "Shipping Costs",
-        text1: "Shipping costs are calculated based on your location, package weight, and selected shipping method. Rates are displayed at checkout before you complete your purchase.",
-        text2: "All orders require shipping fees. Rates are calculated dynamically at checkout based on your destination, package weight, and selected shipping method. Remote locations (Yukon, Northwest Territories, Nunavut) may have additional surcharges applied."
+        text1: "Shipping is quoted at checkout from your address and cart. We use flat estimated rates aligned with Chit Chats (our label and fulfillment partner) — not live Canada Post retail quotes.",
+        text2: "Canada: one tracked option at a flat rate nationwide. United States: one tracked option; the estimated price increases with total package weight. Switch CAD/USD in the nav to match how prices are shown.",
+        howTitle: "How shipping costs work",
+        bullet1: "Rates are estimated at checkout from your destination postal or ZIP code and cart weight.",
+        bullet2: "Canada — Chit Chats Select: flat tracked rate for the whole country.",
+        bullet3: "United States — USPS via Chit Chats: tiered estimate by weight (exact postage is purchased when we buy the label).",
+        bullet4: "You always see the shipping line item before you pay.",
       },
       orderTracking: {
         title: "Order Tracking",
         text1: "Once your order ships, you will receive an email with a tracking number. You can track your package using:",
         item1: "The tracking link provided in your shipping confirmation email",
-        item2: "The carrier tracking link in your email (when provided):",
+        item2: "The tracking link in your email (Chit Chats and/or USPS for US orders):",
         item3: "Our order tracking page:",
         trackYourOrder: "Track Your Order",
         text2: "Tracking information is typically available within 24 hours of shipment. If you don't receive a tracking number within 3 business days, please contact us."
@@ -564,21 +570,21 @@ export const translations = {
         damagedItems: "Damaged Items: Take photos of the damaged package and items, then contact us within 48 hours of delivery",
         lostPackages: "Lost Packages: Contact us if your package hasn't arrived within 7-12 business days of the expected delivery date (depending on shipping method)",
         incorrectItems: "Incorrect Items: Contact us immediately if you received the wrong items",
-        text2: "We will work with our shipping partners to resolve the issue and will replace or refund your order as appropriate. You can choose between a replacement or a full refund. We may require photos or additional information to process your claim."
+        text2: "We will work with Chit Chats and the carrier to resolve the issue and will replace or refund your order as appropriate. You can choose between a replacement or a full refund. We may require photos or additional information to process your claim."
       },
       internationalShipping: {
         title: "International Shipping",
-        text1: "We currently ship to Canada and the United States. For shipping to other countries, please contact us at",
+        text1: "We currently ship to Canada and the United States. For other countries, please contact us at",
         text2: "International shipping rates and delivery times vary by destination. We will provide a shipping quote upon request."
       },
       usShipping: {
         title: "Shipping to the United States",
-        text1: "We now ship from Canada to the United States! Select 'United States' as your country during checkout to see available shipping options.",
-        text2: "US shipping options typically include:",
-        item1: "Standard (USPS tracked): about 5–10 business days — price estimated at checkout",
-        item2: "Expedited (USPS Priority): faster tracked delivery — price estimated at checkout",
-        item3: "Rates reflect Chit Chats + USPS services; exact service may vary by shipment.",
-        note: "All prices are in Canadian dollars (CAD). Delivery times are estimates and may vary by destination and customs. US orders are fulfilled through Chit Chats and delivered by USPS."
+        text1: "We ship from Canada to all 50 US states. Select United States at checkout for the tracked USPS option fulfilled through Chit Chats.",
+        text2: "What to expect:",
+        item1: "One tracked option to the US — delivered by USPS after Chit Chats exports your package.",
+        item2: "Estimated delivery about 5–10 business days; customs may add time.",
+        item3: "Checkout shows a weight-based estimate; we purchase the actual Chit Chats / USPS label when your order ships.",
+        note: "Prices are shown in the currency you select (CAD or USD). Delivery times are estimates. US orders are fulfilled through Chit Chats and delivered by USPS."
       },
       returns: {
         title: "Issue Resolution & Product Replacement",
@@ -708,7 +714,7 @@ export const translations = {
         title: "Returns and Refunds",
         text: "Due to food safety regulations and hygiene concerns, we do not accept returns or exchanges on food products. However, we stand behind the quality of our products and offer refunds or replacements for:",
         noReturns: "Returns are not accepted for food safety reasons (opened products cannot be returned)",
-        qualityGuarantee: "If you receive a damaged, defective, or incorrect product, contact us immediately at support@purepeelco.com with your order number and photos of the issue",
+        qualityGuarantee: "If you receive a damaged, defective, or incorrect product, contact us immediately at orders@purepeelco.com with your order number and photos of the issue",
         replacement: "We will replace any product that is damaged, defective, or incorrect at no cost to you, or issue a full refund at your request",
         refunds: "Refunds are available for damaged, defective, incorrect, or lost products - contact us within 48 hours of delivery",
         contact: "Please contact us within 48 hours of delivery if you experience any issues with your order"
@@ -1069,15 +1075,15 @@ export const translations = {
           questions: [
             {
               question: "Combien de temps prend l'expédition?",
-              answer: "Les délais d'expédition varient selon le service et la destination:\n\nCanada:\n• Colis Régulier: 2-5 jours ouvrables\n• Colis Accéléré: 1-3 jours ouvrables\n• Poste Xpress: Le jour ouvrable suivant\n\nÉtats-Unis:\n• Colis Suivi - USA: 4-7 jours ouvrables\n• Poste Xpress - USA: 2-3 jours ouvrables\n• Priorité Mondiale - USA: 1-2 jours ouvrables\n\nLes délais d'expédition sont calculés à partir du moment où votre commande est expédiée, et non lorsque vous la passez. Les commandes passées avant 14h00 HNE (lundi-vendredi) sont généralement traitées le jour même. Les commandes passées samedi-dimanche sont traitées le lundi suivant. Les prix sont calculés à la caisse en fonction de votre destination, du poids du colis et de la méthode d'expédition sélectionnée."
+              answer: "Nous traitons les commandes via Chit Chats :\n\nCanada — Chit Chats Select (suivi) : environ 2 jours ouvrables en moyenne ; le délai exact varie selon la région.\nÉtats-Unis — USPS via Chit Chats (suivi) : environ 5 à 10 jours ouvrables ; les douanes peuvent ajouter du délai.\n\nLe délai commence à l'expédition, pas à la commande. Les commandes avant 14 h HNE (lundi–vendredi) sont en général traitées le jour même ; les commandes du week-end partent le lundi suivant. Le total à la caisse inclut une estimation d'expédition selon l'adresse et le poids du panier."
             },
             {
               question: "Livrez-vous aux États-Unis?",
-              answer: "Oui! Nous livrons dans les 50 États américains. Sélectionnez « États-Unis » comme pays lors du paiement pour voir les options d'expédition (services suivis USPS, standard ou accéléré).\n\nLes commandes sont traitées via Chit Chats et livrées aux États-Unis par USPS. Les prix affichés à la caisse sont des estimations selon la destination, le poids et l'option choisie."
+              answer: "Oui! Nous livrons dans les 50 États. Sélectionnez États-Unis à la caisse pour l'option USPS suivie via Chit Chats.\n\nVous verrez le coût estimé avant de payer. Le suivi est inclus ; suivez les mises à jour via Chit Chats et USPS grâce au lien dans votre courriel de confirmation."
             },
             {
               question: "Combien coûte l'expédition?",
-              answer: "Les coûts d'expédition sont calculés automatiquement au paiement en fonction de votre destination, du poids du colis et de la méthode d'expédition sélectionnée. Les tarifs varient selon l'emplacement, le poids et la destination:\n\n• Canada: Les prix sont calculés dynamiquement à la caisse\n• États-Unis: Les prix sont calculés dynamiquement à la caisse\n\nTous les prix sont affichés en CAD (utilisez le sélecteur de devise pour passer à USD). Vous verrez les coûts d'expédition exacts au paiement avant de finaliser votre achat."
+              answer: "L'expédition est estimée à la caisse à partir du code postal ou ZIP et du poids du panier. Nous utilisons des estimations alignées sur Chit Chats :\n\n• Canada : une option suivie (Chit Chats Select) à tarif forfaitaire national\n• États-Unis : une option suivie ; l'estimation augmente avec le poids du colis\n\nBasculez entre CAD et USD dans le menu du site. Le montant figurant sur votre commande est celui accepté au paiement."
             },
             {
               question: "Quand ma commande sera-t-elle expédiée?",
@@ -1085,7 +1091,7 @@ export const translations = {
             },
             {
               question: "Comment puis-je suivre ma commande?",
-              answer: "Une fois que votre commande est expédiée, vous recevrez un numéro de suivi par courriel. Vous pouvez suivre votre colis de deux façons :\n\n• Utilisez notre page de suivi : entrez votre numéro de commande et votre adresse courriel\n• Utilisez le lien de suivi dans votre courriel lorsqu'il est fourni, ou le site du transporteur (p. ex. USPS pour plusieurs envois vers les États-Unis) avec votre numéro"
+              answer: "Une fois votre commande expédiée, vous recevrez un numéro de suivi par courriel. Vous pouvez :\n\n• Utiliser notre page Suivre la commande avec le numéro de commande et votre courriel\n• Ouvrir le lien de suivi dans votre courriel d'expédition (Chit Chats et/ou USPS pour les livraisons aux États-Unis)"
             }
           ]
         },
@@ -1125,11 +1131,11 @@ export const translations = {
           questions: [
             {
               question: "Quelle est votre politique de retour?",
-              answer: "En raison des réglementations sur la salubrité des aliments et des préoccupations d'hygiène, nous n'acceptons pas les retours ou les échanges sur les produits alimentaires. Cependant, nous garantissons la qualité de nos produits. Si vous recevez un produit endommagé, défectueux ou incorrect, veuillez nous contacter immédiatement à support@purepeelco.com avec votre numéro de commande et des photos du problème. Nous remplacerons tout produit endommagé, défectueux ou incorrect sans frais pour vous, ou nous émettrons un remboursement complet à votre demande."
+              answer: "En raison des réglementations sur la salubrité des aliments et des préoccupations d'hygiène, nous n'acceptons pas les retours ou les échanges sur les produits alimentaires. Cependant, nous garantissons la qualité de nos produits. Si vous recevez un produit endommagé, défectueux ou incorrect, veuillez nous contacter immédiatement à orders@purepeelco.com avec votre numéro de commande et des photos du problème. Nous remplacerons tout produit endommagé, défectueux ou incorrect sans frais pour vous, ou nous émettrons un remboursement complet à votre demande."
             },
             {
               question: "Puis-je obtenir un remboursement ou retourner ma commande?",
-              answer: "Nous offrons des remboursements pour les commandes endommagées, défectueuses, incorrectes ou perdues en transit. En raison des réglementations sur la salubrité des aliments, nous ne pouvons pas accepter les retours de produits alimentaires ouverts. Cependant, si vous rencontrez des problèmes avec votre commande, veuillez nous contacter immédiatement à support@purepeelco.com dans les 48 heures suivant la livraison avec votre numéro de commande et des photos du problème (le cas échéant). Nous travaillerons avec vous pour résoudre le problème en offrant soit un remplacement, soit un remboursement complet. Vous n'avez pas besoin de retourner le produit original - nous traiterons votre remboursement ou remplacement immédiatement."
+              answer: "Nous offrons des remboursements pour les commandes endommagées, défectueuses, incorrectes ou perdues en transit. En raison des réglementations sur la salubrité des aliments, nous ne pouvons pas accepter les retours de produits alimentaires ouverts. Cependant, si vous rencontrez des problèmes avec votre commande, veuillez nous contacter immédiatement à orders@purepeelco.com dans les 48 heures suivant la livraison avec votre numéro de commande et des photos du problème (le cas échéant). Nous travaillerons avec vous pour résoudre le problème en offrant soit un remplacement, soit un remboursement complet. Vous n'avez pas besoin de retourner le produit original - nous traiterons votre remboursement ou remplacement immédiatement."
             }
           ]
         },
@@ -1161,7 +1167,7 @@ export const translations = {
           questions: [
             {
               question: "Comment contacter le service client?",
-              answer: "Vous pouvez nous joindre à:\n• Demandes générales: info@purepeelco.com\n• Problèmes de produits et support: support@purepeelco.com\n• Demandes d'expédition: shipping@purepeelco.com\n• Commandes en gros: orders@purepeelco.com\n• Formulaire de Contact: Utilisez le formulaire de contact sur notre site Web\n\nNotre équipe de service client est disponible 7 jours par semaine, Lundi - Dimanche, 9h00 - 17h00 HNE. Nous répondons généralement aux courriels dans les 24-48 heures."
+              answer: "Vous pouvez nous joindre à:\n• Demandes générales: info@purepeelco.com\n• Commandes, expédition et support produit: orders@purepeelco.com\n• Commandes en gros: orders@purepeelco.com\n• Formulaire de contact: utilisez le formulaire sur notre site\n\nNotre équipe de service client est disponible 7 jours par semaine, lundi - dimanche, 9 h - 17 h HNE. Nous répondons généralement aux courriels dans les 24 à 48 heures."
             },
             {
               question: "Avez-vous un magasin physique?",
@@ -1177,7 +1183,7 @@ export const translations = {
             },
             {
               question: "Livrez-vous à l'international?",
-              answer: "Actuellement, nous livrons au Canada et aux États-Unis. Pour les demandes d'expédition internationale, veuillez nous contacter à shipping@purepeelco.com."
+              answer: "Actuellement, nous livrons au Canada et aux États-Unis. Pour les demandes d'expédition internationale, veuillez nous contacter à orders@purepeelco.com."
             }
           ]
         }
@@ -1461,24 +1467,27 @@ export const translations = {
       subtitle: "Informations sur nos méthodes d'expédition et notre politique de retour",
       shippingInfo: {
         title: "Informations d'Expédition",
+        regions: {
+          canadaTitle: "Livraison au Canada",
+          canadaIntro: "Nous expédions depuis l'Ontario vers toutes les provinces et territoires. Les commandes canadiennes utilisent Chit Chats Select — entièrement suivies partout au pays (ce ne sont pas les services de comptoir Postes Canada au détail).",
+          usTitle: "Livraison aux États-Unis",
+          usIntro: "Nous livrons dans les 50 États. Choisissez États-Unis à la caisse pour voir l'option USPS suivie, traitée via Chit Chats.",
+        },
+        fulfillmentNote: "Les prix suivent la devise choisie dans le menu du site (CAD ou USD). Les délais sont des estimations. Les colis vers les États-Unis sont suivis via Chit Chats jusqu'au transfert à USPS.",
         methods: {
           title: "Méthodes d'Expédition",
-          regular: {
-            name: "Colis Régulier",
-            time: "2-5 jours ouvrables",
-            description: "Livraison standard au Canada avec suivi"
+          canadaTracked: {
+            name: "Expédition suivie (Chit Chats Select)",
+            time: "~2 jours ouvrables (varie selon la région)",
+            description: "Un seul service national suivi pour le Canada — étiquettes et acheminement via Chit Chats.",
           },
-          expedited: {
-            name: "Colis Accéléré",
-            time: "1-3 jours ouvrables",
-            description: "Livraison plus rapide avec suivi et confirmation de signature (livraison garantie)"
+          usTracked: {
+            name: "Suivi (USPS via Chit Chats)",
+            time: "~5 à 10 jours ouvrables (estimations)",
+            description: "Livraison entièrement suivie aux États-Unis. Chit Chats confie le colis à USPS ; le service USPS exact est choisi pour le meilleur tarif à l'achat de l'étiquette.",
           },
-          xpresspost: {
-            name: "Xpresspost",
-            time: "Prochain jour ouvrable",
-            description: "Livraison express avec confirmation de signature et traitement prioritaire (garantie, centres majeurs)"
-          }
-        }
+          priceNote: "Prix calculé à la caisse",
+        },
       },
       shippingTimes: {
         title: "Délais d'Expédition",
@@ -1487,19 +1496,24 @@ export const translations = {
         schedule1: "Commandes passées lundi-vendredi avant 14 h 00 HNE : Traitées dans les 24 heures",
         schedule2: "Commandes passées samedi-dimanche : Traitées le lundi suivant",
         schedule3: "Commandes de jours fériés : Peuvent subir des retards de traitement supplémentaires",
-        text2: "Les délais d'expédition sont calculés à partir de la date d'expédition de votre commande, et non de la date à laquelle vous passez votre commande. Vous recevrez un e-mail de confirmation d'expédition avec un numéro de suivi une fois votre commande expédiée. Les délais de livraison varient selon la distance et la destination - les livraisons locales sont généralement plus rapides, tandis que les expéditions transcontinentales peuvent prendre plus de temps.",
-        note: "Note : Les délais peuvent être plus longs en période de pointe (fêtes, promotions), par météo, retards des transporteurs ou emplacements éloignés. Les estimations varient selon la distance. Nous vous informerons par courriel en cas de retard important."
+        text2: "Les délais d'expédition sont calculés à partir de la date d'envoi, et non de la date de commande. Vous recevrez un courriel de confirmation avec suivi une fois la commande expédiée. Les délais varient selon la distance — Chit Chats et USPS affichent les mises à jour sur leurs portails.",
+        note: "Note : Les délais peuvent s'allonger en période de pointe, par météo ou retards des transporteurs. Nous vous écrirons en cas de retard inhabituel."
       },
       shippingCosts: {
         title: "Frais d'Expédition",
-        text1: "Les frais d'expédition sont calculés en fonction de votre emplacement, du poids du colis et de la méthode d'expédition sélectionnée. Les tarifs sont affichés à la caisse avant de finaliser votre achat.",
-        text2: "Toutes les commandes nécessitent des frais d'expédition. Les tarifs sont calculés dynamiquement à la caisse en fonction de votre destination, du poids du colis et de la méthode d'expédition sélectionnée. Les emplacements éloignés (Yukon, Territoires du Nord-Ouest, Nunavut) peuvent avoir des frais supplémentaires appliqués."
+        text1: "Les frais d'expédition sont indiqués à la caisse selon votre adresse et votre panier. Nous utilisons des tarifs forfaitaires estimés alignés sur Chit Chats (notre partenaire d'étiquettes) — pas les tarifs détail Postes Canada en direct.",
+        text2: "Canada : une option suivie à tarif forfaitaire partout au pays. États-Unis : une option suivie ; l'estimation augmente avec le poids du colis. Basculez CAD/USD dans la navigation pour la devise affichée.",
+        howTitle: "Comment fonctionnent les frais d'expédition",
+        bullet1: "Les tarifs sont estimés à la caisse à partir du code postal ou ZIP et du poids du panier.",
+        bullet2: "Canada — Chit Chats Select : tarif forfaitaire suivi pour tout le pays.",
+        bullet3: "États-Unis — USPS via Chit Chats : estimation par paliers de poids (le tarif exact est payé à l'achat de l'étiquette).",
+        bullet4: "Vous voyez toujours la ligne expédition avant de payer.",
       },
       orderTracking: {
         title: "Suivi de Commande",
         text1: "Une fois votre commande expédiée, vous recevrez un e-mail avec un numéro de suivi. Vous pouvez suivre votre colis en utilisant :",
         item1: "Le lien de suivi fourni dans votre e-mail de confirmation d'expédition",
-        item2: "Le lien de suivi du transporteur dans votre courriel (lorsque fourni) :",
+        item2: "Le lien de suivi dans votre courriel (Chit Chats et/ou USPS pour les commandes vers les États-Unis) :",
         item3: "Notre page de suivi de commande :",
         trackYourOrder: "Suivre Votre Commande",
         text2: "Les informations de suivi sont généralement disponibles dans les 24 heures suivant l'expédition. Si vous ne recevez pas de numéro de suivi dans les 3 jours ouvrables, veuillez nous contacter."
@@ -1510,21 +1524,21 @@ export const translations = {
         damagedItems: "Articles Endommagés : Prenez des photos du colis et des articles endommagés, puis contactez-nous dans les 48 heures suivant la livraison",
         lostPackages: "Colis Perdus : Contactez-nous si votre colis n'est pas arrivé dans les 7-12 jours ouvrables suivant la date de livraison prévue (selon la méthode d'expédition)",
         incorrectItems: "Articles Incorrects : Contactez-nous immédiatement si vous avez reçu les mauvais articles",
-        text2: "Nous travaillerons avec nos partenaires d'expédition pour résoudre le problème et remplacer ou rembourser votre commande selon le cas. Vous pouvez choisir entre un remplacement ou un remboursement complet. Nous pouvons demander des photos ou des informations supplémentaires pour traiter votre réclamation."
+        text2: "Nous travaillerons avec Chit Chats et le transporteur pour résoudre le problème et remplacer ou rembourser votre commande selon le cas. Vous pouvez choisir entre un remplacement ou un remboursement complet. Nous pouvons demander des photos ou des informations supplémentaires pour traiter votre réclamation."
       },
       internationalShipping: {
         title: "Expédition Internationale",
-        text1: "Nous expédions actuellement au Canada et aux États-Unis. Pour l'expédition vers d'autres pays, veuillez nous contacter à",
+        text1: "Nous expédions actuellement au Canada et aux États-Unis. Pour d'autres pays, veuillez nous contacter à",
         text2: "Les tarifs et délais d'expédition internationale varient selon la destination. Nous fournirons un devis d'expédition sur demande."
       },
       usShipping: {
         title: "Expédition aux États-Unis",
-        text1: "Nous expédions maintenant du Canada vers les États-Unis ! Sélectionnez 'États-Unis' comme pays lors de la caisse pour voir les options d'expédition disponibles.",
-        text2: "Les options vers les États-Unis comprennent notamment :",
-        item1: "Standard (USPS suivi) : environ 5 à 10 jours ouvrables — prix estimé à la caisse",
-        item2: "Accéléré (USPS Priority) : livraison suivie plus rapide — prix estimé à la caisse",
-        item3: "Les tarifs reflètent les services Chit Chats + USPS ; le service exact peut varier.",
-        note: "Tous les prix sont en dollars canadiens (CAD). Les délais sont des estimations et peuvent varier selon la destination et les douanes. Les envois vers les États-Unis passent par Chit Chats et sont livrés par USPS."
+        text1: "Nous expédions du Canada vers les 50 États. Sélectionnez États-Unis à la caisse pour l'option USPS suivie via Chit Chats.",
+        text2: "À prévoir :",
+        item1: "Une seule option suivie vers les États-Unis — livrée par USPS après export par Chit Chats.",
+        item2: "Livraison estimée environ 5 à 10 jours ouvrables ; les douanes peuvent ajouter du délai.",
+        item3: "La caisse affiche une estimation selon le poids ; nous achetons l'étiquette Chit Chats / USPS réelle à l'expédition.",
+        note: "Les prix suivent la devise sélectionnée (CAD ou USD). Les délais sont des estimations. Les commandes vers les États-Unis passent par Chit Chats et sont livrées par USPS."
       },
       returns: {
         title: "Résolution des Problèmes et Remplacement de Produit",
@@ -1654,7 +1668,7 @@ export const translations = {
         title: "Retours et Remboursements",
         text: "En raison des réglementations sur la salubrité des aliments et des préoccupations d'hygiène, nous n'acceptons pas les retours ou les échanges sur les produits alimentaires. Cependant, nous garantissons la qualité de nos produits et offrons des remboursements ou des remplacements pour :",
         noReturns: "Les retours ne sont pas acceptés pour des raisons de salubrité des aliments (les produits ouverts ne peuvent pas être retournés)",
-        qualityGuarantee: "Si vous recevez un produit endommagé, défectueux ou incorrect, contactez-nous immédiatement à support@purepeelco.com avec votre numéro de commande et des photos du problème",
+        qualityGuarantee: "Si vous recevez un produit endommagé, défectueux ou incorrect, contactez-nous immédiatement à orders@purepeelco.com avec votre numéro de commande et des photos du problème",
         replacement: "Nous remplacerons tout produit endommagé, défectueux ou incorrect sans frais pour vous, ou nous émettrons un remboursement complet à votre demande",
         refunds: "Les remboursements sont disponibles pour les produits endommagés, défectueux, incorrects ou perdus - contactez-nous dans les 48 heures suivant la livraison",
         contact: "Veuillez nous contacter dans les 48 heures suivant la livraison si vous rencontrez des problèmes avec votre commande"
