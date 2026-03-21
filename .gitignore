@@ -32,3 +32,4 @@ dist-ssr
 # Order data (contains customer information)
 /data/
 
+.vercel
