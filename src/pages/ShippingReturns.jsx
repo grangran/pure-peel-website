@@ -452,7 +452,7 @@ export default function ShippingReturns() {
 
           <InfoBox>
             {[
-              { label: getTranslation(language, 'shipping.contact.shippingInquiries'), email: "orders@purepeelco.com", type: "shipping" },
+              { label: getTranslation(language, 'shipping.contact.shippingInquiries'), email: "shipping@purepeelco.com", type: "shipping" },
               { label: getTranslation(language, 'shipping.contact.productIssues'),     email: "orders@purepeelco.com", type: "support" },
               { label: getTranslation(language, 'shipping.contact.generalInquiries'), email: "info@purepeelco.com",   type: "general" },
               { label: getTranslation(language, 'shipping.contact.bulkOrders'),       email: "orders@purepeelco.com", type: "bulk" },
