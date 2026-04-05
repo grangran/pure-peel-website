@@ -5,49 +5,49 @@ const defaultImage = '/images/driedcitrusbanner.jpg'
 
 export const seoData = {
   home: {
-    title: 'Pure Peel Co. | Premium Dehydrated Citrus Slices',
-    description: 'Pure Peel Co. - Premium dehydrated citrus slices made in Canada. 100% Natural • No Preservatives • Perfect for cocktails, tea, and gourmet garnishes. Shop Orange, Pink Orange, and Lime slices.',
-    keywords: 'pure peel, purepeelco, pure peel co, dehydrated citrus, dried orange slices, dehydrated lime, cocktail garnish, tea garnish, Canadian made, natural food, gourmet garnish',
+    title: 'Pure Peel Co. | Premium Dehydrated Citrus Slices – Made in Canada',
+    description: 'Premium dehydrated citrus and fruit slices, made in Canada with no preservatives. Perfect for cocktails, charcuterie, and tea. Shop orange, lemon, lime, pink orange, and apple slices.',
+    keywords: 'dehydrated citrus slices Canada, dried orange slices, cocktail garnish Canada, dehydrated lemon slices, dried lime slices, charcuterie garnish, Canadian made fruit garnish, pure peel co',
     image: defaultImage,
     url: '/',
     type: 'website'
   },
   orange: {
-    title: 'Dehydrated Orange Slices | Pure Peel Co.',
-    description: 'Sweet, zesty, and aromatic dehydrated orange slices. Ideal for classic cocktails like Old Fashioneds and mimosas, adds natural sweetness to tea, and pairs beautifully with cheeses on charcuterie boards. Made in Canada with 100% natural ingredients. Available in multiple sizes.',
-    keywords: 'dehydrated orange, dried orange slices, orange garnish, cocktail garnish, natural orange, Canadian made',
+    title: 'Dehydrated Orange Slices | Cocktail Garnish | Pure Peel Co.',
+    description: 'Sweet, zesty, and aromatic dehydrated orange slices. Ideal for Old Fashioneds, mimosas, and tea. Pairs beautifully with cheeses on charcuterie boards. Made in Canada with 100% natural ingredients. Available in multiple sizes.',
+    keywords: 'dehydrated orange slices Canada, buy dried orange slices, orange cocktail garnish, Old Fashioned garnish, dried orange wheels, Canadian made, natural orange slices',
     image: '/images/orange.jpg',
     url: '/orange',
     type: 'product',
   },
   pinkOrange: {
-    title: 'Dehydrated Pink Orange Slices | Pure Peel Co.',
-    description: 'Beautiful pink orange slices, dehydrated to preserve color and flavor. Perfect for premium cocktails and spritzes, elevates tea presentations with stunning color, and creates eye-catching gourmet displays. Made in Canada, 100% natural.',
-    keywords: 'dehydrated pink orange, pink orange slices, pink orange garnish, cocktail garnish, natural pink orange',
+    title: 'Dehydrated Pink Orange Slices | Cocktail Garnish | Pure Peel Co.',
+    description: 'Stunning pink orange slices, slow-dehydrated to preserve their blush colour and bright citrus flavour. A showstopping garnish for spritzes, cocktails, and charcuterie boards. Made in Canada, 100% natural.',
+    keywords: 'pink orange slices, dehydrated pink orange, cocktail garnish Canada, pink citrus garnish, dried citrus wheels, premium garnish Canada',
     image: '/images/pink-orange.jpg',
     url: '/pink-orange',
     type: 'product',
   },
   lime: {
-    title: 'Dehydrated Lime Slices | Pure Peel Co.',
-    description: 'Bright, crisp, and refreshing dehydrated lime slices. Essential for margaritas, mojitos, and gin & tonics. Adds a zesty kick to iced tea and cuts through rich flavors on charcuterie boards. Made in Canada with 100% natural ingredients. Available in multiple sizes.',
-    keywords: 'dehydrated lime, dried lime slices, lime garnish, cocktail garnish, natural lime, Canadian made',
+    title: 'Dehydrated Lime Slices | Cocktail Garnish | Pure Peel Co.',
+    description: 'Bright, crisp, and refreshing dehydrated lime slices. Essential for margaritas, mojitos, and gin & tonics. Adds a zesty kick to iced tea and cuts through rich flavors on charcuterie boards. Made in Canada with 100% natural ingredients.',
+    keywords: 'dehydrated lime slices Canada, dried lime wheels, margarita garnish, mojito garnish, gin tonic garnish, buy lime garnish Canada, natural lime slices',
     image: '/images/lime.jpg',
     url: '/lime',
     type: 'product',
   },
   lemon: {
-    title: 'Dehydrated Lemon Slices | Pure Peel Co.',
-    description: 'Tart, zesty, and refreshing dehydrated lemon slices. Perfect for lemon drops, whiskey sours, and classic tea pairings. Brightens charcuterie boards and complements creamy cheeses. Made in Canada with 100% natural ingredients. Available in multiple sizes.',
-    keywords: 'dehydrated lemon, dried lemon slices, lemon garnish, cocktail garnish, natural lemon, Canadian made',
+    title: 'Dehydrated Lemon Slices | Cocktail Garnish | Pure Peel Co.',
+    description: 'Tart, zesty, and refreshing dehydrated lemon slices. Perfect for lemon drops, whiskey sours, and classic tea pairings. Brightens charcuterie boards and complements creamy cheeses. Made in Canada with 100% natural ingredients.',
+    keywords: 'dehydrated lemon slices Canada, dried lemon wheels, buy lemon garnish, whiskey sour garnish, lemon cocktail garnish, Canadian made, natural lemon slices',
     image: '/images/lemon-product.jpg',
     url: '/lemon',
     type: 'product',
   },
   apple: {
-    title: 'Dehydrated Apple Slices | Pure Peel Co.',
-    description: 'Crisp, sweet, and aromatic dehydrated apple slices. Perfect for snacks and charcuterie boards. Made in Canada with 100% natural ingredients. Available in multiple sizes.',
-    keywords: 'dehydrated apple, dried apple slices, apple garnish, cocktail garnish, natural apple, Canadian made',
+    title: 'Dehydrated Apple Slices | Charcuterie & Snack Garnish | Pure Peel Co.',
+    description: 'Crisp, sweet dehydrated apple slices made in Canada with no preservatives. A natural, elegant addition to charcuterie boards, snack plates, and fall cocktails. Available in multiple sizes.',
+    keywords: 'dehydrated apple slices Canada, dried apple slices, charcuterie garnish, natural apple snack, buy dehydrated apple Canada, Canadian made fruit slices',
     image: '/images/apple-product.png',
     url: '/apple',
     type: 'product',
@@ -97,9 +97,9 @@ export const seoData = {
     type: 'website'
   },
   contact: {
-    title: 'Contact Us | Pure Peel Co.',
-    description: 'Contact Pure Peel Co. for inquiries about our premium dehydrated citrus slices, bulk orders, or customer service.',
-    keywords: 'contact, customer service, inquiries, bulk orders',
+    title: 'Contact Us | Pure Peel Co. | Toronto, Canada',
+    description: 'Get in touch with Pure Peel Co. for product inquiries, wholesale and bulk orders, or customer support. Toronto-based, shipping across Canada.',
+    keywords: 'contact Pure Peel Co., wholesale dehydrated citrus, bulk citrus garnish, Toronto food supplier, Canadian citrus garnish',
     image: defaultImage,
     url: '/contact',
     type: 'website'
@@ -107,7 +107,7 @@ export const seoData = {
   faq: {
     title: 'FAQ | Frequently Asked Questions | Pure Peel Co.',
     description: 'Find answers to frequently asked questions about Pure Peel Co. dehydrated citrus slices, shipping, orders, returns, and product usage.',
-    keywords: 'FAQ, frequently asked questions, help, support, dehydrated citrus questions, shipping questions, order questions',
+    keywords: 'Pure Peel Co. FAQ, dehydrated citrus Canada questions, how to use dried citrus, citrus garnish storage, shipping Canada, order help',
     image: defaultImage,
     url: '/faq',
     type: 'website'
@@ -214,4 +214,3 @@ export const organizationData = {
     email: 'info@purepeelco.com'
   }
 }
-
