@@ -19,7 +19,6 @@ export const seoData = {
     image: '/images/orange.jpg',
     url: '/orange',
     type: 'product',
-    noindex: true // Don't index product pages
   },
   pinkOrange: {
     title: 'Dehydrated Pink Orange Slices | Pure Peel Co.',
@@ -28,7 +27,6 @@ export const seoData = {
     image: '/images/pink-orange.jpg',
     url: '/pink-orange',
     type: 'product',
-    noindex: true // Don't index product pages
   },
   lime: {
     title: 'Dehydrated Lime Slices | Pure Peel Co.',
@@ -37,7 +35,6 @@ export const seoData = {
     image: '/images/lime.jpg',
     url: '/lime',
     type: 'product',
-    noindex: true // Don't index product pages
   },
   lemon: {
     title: 'Dehydrated Lemon Slices | Pure Peel Co.',
@@ -46,7 +43,6 @@ export const seoData = {
     image: '/images/lemon-product.jpg',
     url: '/lemon',
     type: 'product',
-    noindex: true // Don't index product pages
   },
   apple: {
     title: 'Dehydrated Apple Slices | Pure Peel Co.',
@@ -55,7 +51,6 @@ export const seoData = {
     image: '/images/apple-product.png',
     url: '/apple',
     type: 'product',
-    noindex: true // Don't index product pages
   },
   checkout: {
     title: 'Checkout | Pure Peel Co.',

@@ -275,7 +275,7 @@ export async function createChitChatsLabel(order) {
       // Recipient
       to_name:         order.shipping?.name || order.customer?.name || '',
       to_address1:     addr.line1 || addr.address1 || '',
-      to_address2:     addr.line2 || addr.address2 || '',
+      to_address2:     addr.line2 || addr.address2 || undefined,
       to_city:         addr.city  || '',
       to_province_code: province,
       to_postal_code:  (addr.postal_code || addr.postalCode || '').replace(/\s/g, ''),
