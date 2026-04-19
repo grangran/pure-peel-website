@@ -70,8 +70,8 @@ const CARD_IMAGES = {
   "pink-orange": "/images/pink-orange-product-card.jpg",
   lime:          "/images/lime-product-card.jpg",
   lemon:         "/images/lemon-product-card.jpg",
-  apple:         "/images/apple-product.JPEG",
-  pineapple:     "/images/pineapple-product.JPEG",
+  apple:         "/images/apple-product-card.jpg",
+  pineapple:     "/images/pinapple-flat.jpg",
 }
 
 function resolveCardImage(productId) {

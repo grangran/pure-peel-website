@@ -48,7 +48,7 @@ export const seoData = {
     title: 'Dehydrated Apple Slices | Charcuterie & Snack Garnish | Pure Peel Co.',
     description: 'Crisp, sweet dehydrated apple slices made in Canada with no preservatives. A natural, elegant addition to charcuterie boards, snack plates, and fall cocktails. Available in multiple sizes.',
     keywords: 'dehydrated apple slices Canada, dried apple slices, charcuterie garnish, natural apple snack, buy dehydrated apple Canada, Canadian made fruit slices',
-    image: '/images/apple-product.JPEG',
+    image: '/images/apple-product-card.jpg',
     url: '/apple',
     type: 'product',
   },

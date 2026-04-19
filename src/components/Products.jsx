@@ -31,12 +31,12 @@ const citrusProducts = [
 const fruitProducts = [
   {
     id: "apple",
-    image: "/images/apple-product.JPEG",
+    image: "/images/apple-product-card.jpg",
     link: "/apple"
   },
   {
     id: "pineapple",
-    image: "/images/pineapple-product.JPEG",
+    image: "/images/pinapple-flat.jpg",
     link: "/pineapple"
   }
 ]
