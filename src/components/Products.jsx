@@ -75,7 +75,7 @@ function ProductCard({ product, index, onProductClick }) {
         )}
         <OptimizedImage
           src={product.image}
-          alt={`${product.name} slices`}
+          alt={`${getTranslation(language, `products.${product.id}.name`)} slices`}
           className={`w-full h-full object-cover object-center transition-all duration-700 group-hover:scale-110 ${
             imageLoading ? 'opacity-0' : 'opacity-100'
           }`}
@@ -84,8 +84,9 @@ function ProductCard({ product, index, onProductClick }) {
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 340px"
           decoding="async"
           onLoad={() => setImageLoading(false)}
-          loading={index === 0 ? "eager" : "lazy"}
-          fetchPriority={index === 0 ? "high" : "auto"}
+          onError={() => setImageLoading(false)}
+          loading={index === 0 || index >= 4 ? "eager" : "lazy"}
+          fetchPriority={index === 0 || index >= 4 ? "high" : "auto"}
         />
         <div className="absolute inset-0 bg-linear-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
       </div>

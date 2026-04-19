@@ -48,10 +48,10 @@ const IMAGE_REGISTRY = {
     ],
   },
   pineapple: {
-    bag: "/images/pinapple-flat.jpg",
+    bag: "/images/pineapple-product.JPEG",
     box: "/images/pineapple-product.JPEG",
     gallery: [
-      "/images/pineapple-product.JPEG",
+      "/images/pinapple-flat.jpg",
     ],
   },
 }

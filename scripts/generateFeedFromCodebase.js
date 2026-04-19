@@ -85,8 +85,8 @@ const sampleProducts = [
     description: "Bright, tropical dehydrated pineapple slices. Sweet-tart and aromatic for cocktails and gourmet boards.",
     showBulkInquiry: true,
     variants: [
-      { id: "pineapple-small", label: "Small Bag — 18 pcs", option: "Small Bag (18 pcs)", price: 7, image: "/images/pinapple-flat.jpg" },
-      { id: "pineapple-medium", label: "Medium Bag — 30 pcs", option: "Medium Bag (30 pcs)", price: 12, image: "/images/pinapple-flat.jpg" }
+      { id: "pineapple-small", label: "Small Bag — 18 pcs", option: "Small Bag (18 pcs)", price: 7, image: "/images/pineapple-product.JPEG" },
+      { id: "pineapple-medium", label: "Medium Bag — 30 pcs", option: "Medium Bag (30 pcs)", price: 12, image: "/images/pineapple-product.JPEG" }
     ]
   }
 ]

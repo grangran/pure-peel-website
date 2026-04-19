@@ -56,7 +56,7 @@ export const seoData = {
     title: 'Dehydrated Pineapple Slices | Cocktail & Charcuterie Garnish | Pure Peel Co.',
     description: 'Bright, tropical dehydrated pineapple slices made in Canada with no preservatives. Bold in tiki and sparkling cocktails, beautiful on cheese boards and dessert plates. Available in multiple sizes.',
     keywords: 'dehydrated pineapple slices Canada, dried pineapple wheels, tiki garnish, cocktail garnish Canada, charcuterie fruit, Canadian made dried fruit',
-    image: '/images/pinapple-flat.jpg',
+    image: '/images/pineapple-product.JPEG',
     url: '/pineapple',
     type: 'product',
   },
