@@ -156,14 +156,36 @@
         "label": "Small Bag — 18 pcs",
         "option": "Small Bag (18 pcs)",
         "price": 7,
-        "image": "/images/apple-product.png"
+        "image": "/images/apple-product.JPEG"
       },
       {
         "id": "apple-medium",
         "label": "Medium Bag — 30 pcs",
         "option": "Medium Bag (30 pcs)",
         "price": 12,
-        "image": "/images/apple-product.png"
+        "image": "/images/apple-product.JPEG"
+      }
+    ]
+  },
+  "pineapple": {
+    "id": "pineapple",
+    "name": "Pineapple",
+    "description": "Bright, tropical, and sweet-tart. A bold garnish for tiki drinks, sparkling cocktails, and sunny cheese boards.",
+    "showBulkInquiry": true,
+    "variants": [
+      {
+        "id": "pineapple-small",
+        "label": "Small Bag — 18 pcs",
+        "option": "Small Bag (18 pcs)",
+        "price": 7,
+        "image": "/images/pineapple-product.JPEG"
+      },
+      {
+        "id": "pineapple-medium",
+        "label": "Medium Bag — 30 pcs",
+        "option": "Medium Bag (30 pcs)",
+        "price": 12,
+        "image": "/images/pineapple-product.JPEG"
       }
     ]
   }

@@ -31,8 +31,13 @@ const citrusProducts = [
 const fruitProducts = [
   {
     id: "apple",
-    image: "/images/apple-product-card.jpg",
+    image: "/images/apple-product.JPEG",
     link: "/apple"
+  },
+  {
+    id: "pineapple",
+    image: "/images/pineapple-product.JPEG",
+    link: "/pineapple"
   }
 ]
 
@@ -155,7 +160,7 @@ export default function Products() {
           <h2  ref={fruitTitleRef} className={`products-section-title text-center mb-12 md:mb-16 transition-all duration-800 ease-out ${ isFruitTitleVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8' }`} style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 300, fontStyle: 'italic', color: '#1c1008', letterSpacing: '-0.01em', }}> {getTranslation(language, 'products.fruitCollection')}
           </h2>
           
-          <div className="flex justify-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto justify-items-center">
             {fruitProducts.map((product, index) => (
               <ProductCard
                 key={product.id}

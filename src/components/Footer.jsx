@@ -130,21 +130,27 @@ export default function Footer() {
                 {getTranslation(language, 'footer.fruitCollection')}
                 </h4>
                 <nav className="flex flex-col gap-3">
-                  <a 
-                  href="/apple"
-                  style={{
-                    fontFamily: "'Jost', sans-serif",
-                    fontSize: "0.78rem",
-                    fontWeight: 300,
-                    color: "rgba(250,247,242,0.4)",
-                    textDecoration: "none",
-                    transition: "color 0.2s ease"
-                  }}
-                  onMouseEnter={(e) => e.target.style.color = "rgba(232,200,74,0.8)"}
-                  onMouseLeave={(e) => e.target.style.color = "rgba(250,247,242,0.4)"}
-                  >
-                    {getTranslation(language, 'products.apple.name')}
-                  </a>
+                  {[
+                    { href: "/apple", label: getTranslation(language, 'products.apple.name') },
+                    { href: "/pineapple", label: getTranslation(language, 'products.pineapple.name') },
+                  ].map(link => (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      style={{
+                        fontFamily: "'Jost', sans-serif",
+                        fontSize: "0.78rem",
+                        fontWeight: 300,
+                        color: "rgba(250,247,242,0.4)",
+                        textDecoration: "none",
+                        transition: "color 0.2s ease"
+                      }}
+                      onMouseEnter={(e) => e.target.style.color = "rgba(232,200,74,0.8)"}
+                      onMouseLeave={(e) => e.target.style.color = "rgba(250,247,242,0.4)"}
+                    >
+                      {link.label}
+                    </a>
+                  ))}
                 </nav>
              </div>
 

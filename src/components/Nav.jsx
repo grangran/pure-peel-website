@@ -181,15 +181,20 @@ export default function Nav() {
                   <div style={{ fontFamily: S.sans, fontSize: "0.55rem", fontWeight: 500, letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(200,90,8,0.55)", marginBottom: "10px" }}>
                     Fruit Collection
                   </div>
-                  <a href="/apple" style={{
-                    display: "block", padding: "7px 0",
-                    fontFamily: S.sans, fontSize: "0.8rem", fontWeight: 300,
-                    color: "rgba(15,10,4,0.65)", textDecoration: "none",
-                    transition: "color 0.15s",
-                  }}
-                    onMouseEnter={e => e.currentTarget.style.color = S.dark}
-                    onMouseLeave={e => e.currentTarget.style.color = "rgba(15,10,4,0.65)"}
-                  >{getTranslation(language, "products.apple.name")}</a>
+                  {[
+                    { href: "/apple", label: getTranslation(language, "products.apple.name") },
+                    { href: "/pineapple", label: getTranslation(language, "products.pineapple.name") },
+                  ].map(item => (
+                    <a key={item.href} href={item.href} style={{
+                      display: "block", padding: "7px 0",
+                      fontFamily: S.sans, fontSize: "0.8rem", fontWeight: 300,
+                      color: "rgba(15,10,4,0.65)", textDecoration: "none",
+                      transition: "color 0.15s",
+                    }}
+                      onMouseEnter={e => e.currentTarget.style.color = S.dark}
+                      onMouseLeave={e => e.currentTarget.style.color = "rgba(15,10,4,0.65)"}
+                    >{item.label}</a>
+                  ))}
                 </div>
               </div>
             </div>
@@ -423,10 +428,15 @@ export default function Nav() {
           <div style={{ fontFamily: S.sans, fontSize: "0.55rem", fontWeight: 500, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(200,90,8,0.55)", margin: "20px 0 14px" }}>
             Fruit Collection
           </div>
-          <a href="/apple"
-            onClick={e => { e.preventDefault(); closeMenu() }}
-            style={{ display: "block", padding: "10px 0", fontFamily: S.sans, fontSize: "1rem", fontWeight: 300, color: S.dark, textDecoration: "none", borderBottom: "1px solid rgba(15,10,4,0.05)" }}
-          >{getTranslation(language, "products.apple.name")}</a>
+          {[
+            { href: "/apple", label: getTranslation(language, "products.apple.name") },
+            { href: "/pineapple", label: getTranslation(language, "products.pineapple.name") },
+          ].map(item => (
+            <a key={item.href} href={item.href}
+              onClick={e => { e.preventDefault(); closeMenu() }}
+              style={{ display: "block", padding: "10px 0", fontFamily: S.sans, fontSize: "1rem", fontWeight: 300, color: S.dark, textDecoration: "none", borderBottom: "1px solid rgba(15,10,4,0.05)" }}
+            >{item.label}</a>
+          ))}
 
           <div style={{ height: "1px", background: "rgba(15,10,4,0.07)", margin: "24px 0" }} />
 

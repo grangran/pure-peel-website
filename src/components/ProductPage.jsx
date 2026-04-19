@@ -41,10 +41,17 @@ const IMAGE_REGISTRY = {
     ],
   },
   apple: {
-    bag: "/images/apple-product.png",
+    bag: "/images/apple-product.JPEG",
     box: "/images/apple-box.jpg",
     gallery: [
       "/images/apple-flat.jpg",
+    ],
+  },
+  pineapple: {
+    bag: "/images/pineapple-product.JPEG",
+    box: "/images/pineapple-product.JPEG",
+    gallery: [
+      "/images/pinapple-flat.jpg",
     ],
   },
 }
@@ -63,7 +70,8 @@ const CARD_IMAGES = {
   "pink-orange": "/images/pink-orange-product-card.jpg",
   lime:          "/images/lime-product-card.jpg",
   lemon:         "/images/lemon-product-card.jpg",
-  apple:         "/images/apple-product-card.jpg",
+  apple:         "/images/apple-product.JPEG",
+  pineapple:     "/images/pineapple-product.JPEG",
 }
 
 function resolveCardImage(productId) {
@@ -184,6 +192,28 @@ const PRODUCT_META = {
       ],
     },
   },
+  pineapple: {
+    collection: "Fruit Collection",
+    hook: "Tropical, bright & unforgettable — sunshine in every slice.",
+    tags: ["Tropical", "Bright", "Sweet-Tart", "Bold"],
+    useCases: ["Tiki & Rum Cocktails", "Sparkling Drinks", "Dessert Boards"],
+    accordions: [
+      { title: "About This Product", body: "Slow-dried to concentrate pineapple's golden sweetness and tangy edge — stunning in mai tais and mojitos, lovely with soft cheese and prosciutto, and addictive straight from the bag." },
+      { title: "Ingredients & Contents", body: "100% Dehydrated Pineapple. Nothing else.\n\nNo preservatives. No added sugars. No artificial anything." },
+      { title: "Storage & Shelf Life", body: "Store in a cool, dry place away from direct sunlight. Once opened, reseal or transfer to an airtight container. Shelf life up to 12 months unopened." },
+    ],
+    fr: {
+      collection: "Collection de fruits",
+      hook: "Tropical, lumineux et inoubliable — un rayon de soleil dans chaque tranche.",
+      tags: ["Tropical", "Lumineux", "Doux-acidule", "Audacieux"],
+      useCases: ["Cocktails tiki et rhum", "Boissons petillantes", "Plateaux dessert"],
+      accordions: [
+        { title: "A propos de ce produit", body: "Dehydratee lentement pour concentrer la douceur doree et la pointe acidulee de l'ananas — superbe dans les cocktails tiki, delicieux avec fromages et charcuteries, irresistible en collation." },
+        { title: "Ingredients et composition", body: "100% Ananas dehydrate. Rien d'autre.\n\nSans conservateurs. Sans sucres ajoutes. Sans rien d'artificiel." },
+        { title: "Conservation et duree de vie", body: "Conservez dans un endroit frais et sec, a l'abri de la lumiere directe du soleil. Duree de conservation jusqu'a 12 mois non ouvert." },
+      ],
+    },
+  },
 }
 
 const RELATED = {
@@ -191,7 +221,8 @@ const RELATED = {
   "pink-orange": ["orange", "lemon", "lime"],
   lime:          ["lemon", "orange", "pink-orange"],
   lemon:         ["orange", "lime", "pink-orange"],
-  apple:         ["orange", "lemon", "lime"],
+  apple:         ["pineapple", "orange", "lemon"],
+  pineapple:     ["apple", "orange", "lime"],
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -84,6 +84,10 @@ export const translations = {
       apple: {
         name: "Apple",
         description: "Crisp and sweet. Perfect for snacks and charcuterie boards."
+      },
+      pineapple: {
+        name: "Pineapple",
+        description: "Bright and tropical. Bold in cocktails and beautiful on boards."
       }
     },
     productDescriptions: {
@@ -92,7 +96,8 @@ export const translations = {
       "pink-orange": "Floral, vibrant, and uniquely beautiful. Perfect for premium cocktails and spritzes, elevates tea presentations with stunning color, and creates eye-catching gourmet displays on charcuterie boards.",
       lime: "Bright, crisp, and refreshing. Essential for margaritas, mojitos, and gin & tonics. Adds a zesty kick to iced tea and cuts through rich flavors on charcuterie boards.",
       lemon: "Tart, zesty, and refreshing. Perfect for lemon drops, whiskey sours, and classic tea pairings. Brightens charcuterie boards and complements creamy cheeses.",
-      apple: "Crisp, sweet, and aromatic. Perfect for healthy snacking, pairs beautifully with cheeses and cured meats on charcuterie boards, and adds natural sweetness to salads and desserts."
+      apple: "Crisp, sweet, and aromatic. Perfect for healthy snacking, pairs beautifully with cheeses and cured meats on charcuterie boards, and adds natural sweetness to salads and desserts.",
+      pineapple: "Bright, tropical, and sweet-tart. Stunning in tiki and sparkling drinks, on cheese boards, and as a sunny snack."
     },
     footer: {
       shop: "Shop",
@@ -974,6 +979,10 @@ export const translations = {
       apple: {
         name: "Pomme",
         description: "Croquant et doux. Parfait pour les collations et les plateaux de charcuterie."
+      },
+      pineapple: {
+        name: "Ananas",
+        description: "Lumineux et tropical. Parfait dans les cocktails et sur les plateaux gourmands."
       }
     },
     productDescriptions: {
@@ -982,7 +991,8 @@ export const translations = {
       "pink-orange": "Floral, vibrant et d'une beauté unique. Parfait pour les cocktails premium et les spritzes, rehausse les présentations de thé avec une couleur éclatante, et crée des présentations gastronomiques accrocheuses sur les plateaux de charcuterie.",
       lime: "Vif, croquant et rafraîchissant. Essentiel pour les margaritas, mojitos et gin & tonics. Ajoute une touche piquante au thé glacé et équilibre les saveurs riches sur les plateaux de charcuterie.",
       lemon: "Acide, piquant et rafraîchissant. Parfait pour les lemon drops, whiskey sours et les accords classiques avec le thé. Égaye les plateaux de charcuterie et complète les fromages crémeux.",
-      apple: "Croquant, doux et aromatique. Parfait pour les collations saines, s'accorde parfaitement avec les fromages et les charcuteries sur les plateaux de charcuterie, et ajoute une douceur naturelle aux salades et desserts."
+      apple: "Croquant, doux et aromatique. Parfait pour les collations saines, s'accorde parfaitement avec les fromages et les charcuteries sur les plateaux de charcuterie, et ajoute une douceur naturelle aux salades et desserts.",
+      pineapple: "Lumineux, tropical et doux-acidulé. Superbe dans les cocktails tiki et pétillants, sur les plateaux de fromages, et en collation ensoleillée."
     },
     footer: {
       shop: "Boutique",

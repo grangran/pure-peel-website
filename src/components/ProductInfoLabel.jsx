@@ -18,6 +18,9 @@ export default function ProductInfoLabel({ productName }) {
     if (nameLower.includes('lemon')) {
       return { en: 'Lemon', fr: 'Citron' }
     }
+    if (nameLower.includes('pineapple')) {
+      return { en: 'Pineapple', fr: 'Ananas' }
+    }
     if (nameLower.includes('apple')) {
       return { en: 'Apple', fr: 'Pomme' }
     }

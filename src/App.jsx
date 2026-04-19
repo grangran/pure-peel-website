@@ -18,6 +18,7 @@ import PinkOrange from "./pages/PinkOrange"
 import Lime from "./pages/Lime"
 import Lemon from "./pages/Lemon"
 import Apple from "./pages/Apple"
+import Pineapple from "./pages/Pineapple"
 import Checkout from "./pages/Checkout"
 import Admin from "./pages/Admin"
 import OrderTracking from "./pages/OrderTracking"
@@ -45,6 +46,8 @@ const getInitialPage = () => {
     return "lemon"
   } else if (path === "/apple" || path === "/apple.html") {
     return "apple"
+  } else if (path === "/pineapple" || path === "/pineapple.html") {
+    return "pineapple"
   } else if (path === "/checkout" || path === "/checkout.html") {
     return "checkout"
   } else if (path === "/admin" || path === "/admin.html") {
@@ -91,6 +94,7 @@ export default function App() {
         '/lime',
         '/lemon',
         '/apple',
+        '/pineapple',
         '/checkout',
         '/admin',
         '/order-tracking',
@@ -119,6 +123,8 @@ export default function App() {
         setCurrentPage("lemon")
       } else if (normalizedPath === "/apple" || normalizedPath === "/apple.html") {
         setCurrentPage("apple")
+      } else if (normalizedPath === "/pineapple" || normalizedPath === "/pineapple.html") {
+        setCurrentPage("pineapple")
       } else if (normalizedPath === "/checkout" || normalizedPath === "/checkout.html") {
         // Always set to checkout, regardless of query parameters
         setCurrentPage("checkout")
@@ -234,6 +240,8 @@ export default function App() {
         return seoData.lemon
       case "apple":
         return seoData.apple
+      case "pineapple":
+        return seoData.pineapple
       case "checkout":
         return seoData.checkout
       case "admin":
@@ -322,6 +330,18 @@ export default function App() {
         <SEO {...currentSEO} />
         <Nav key={`nav-${currentPage}-${navigationKey}`} />
         <Apple key={`apple-${currentPage}-${navigationKey}`} />
+        <Footer key={`footer-${currentPage}-${navigationKey}`} />
+        {CartComponent}
+      </>
+    )
+  }
+
+  if (currentPage === "pineapple") {
+    return (
+      <>
+        <SEO {...currentSEO} />
+        <Nav key={`nav-${currentPage}-${navigationKey}`} />
+        <Pineapple key={`pineapple-${currentPage}-${navigationKey}`} />
         <Footer key={`footer-${currentPage}-${navigationKey}`} />
         {CartComponent}
       </>
