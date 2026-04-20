@@ -54,7 +54,8 @@ export const translations = {
         mediumBag: "Medium Bag",
         largeBag: "Large Bag",
         clearBox: "Clear Box",
-        pcs: "pcs"
+        pcs: "pcs",
+        slices: "slices"
       }
     },
     products: {
@@ -949,7 +950,8 @@ export const translations = {
         mediumBag: "Sac Moyen",
         largeBag: "Grand Sac",
         clearBox: "Boîte Transparente",
-        pcs: "pcs"
+        pcs: "pcs",
+        slices: "tranches"
       }
     },
     products: {
@@ -1877,22 +1879,23 @@ export function getTranslation(language, key) {
 
 export function translateVariantLabel(language, label) {
   const t = (key) => getTranslation(language, `productPage.variants.${key}`)
-  
+  const unit = /slice/i.test(label) ? t('slices') : t('pcs')
+
   if (label.includes('Small Bag')) {
-    const pcs = label.match(/\d+/)?.[0] || ''
-    return `${t('smallBag')} — ${pcs} ${t('pcs')}`
+    const n = label.match(/\d+/)?.[0] || ''
+    return `${t('smallBag')} — ${n} ${unit}`
   }
   if (label.includes('Medium Bag')) {
-    const pcs = label.match(/\d+/)?.[0] || ''
-    return `${t('mediumBag')} — ${pcs} ${t('pcs')}`
+    const n = label.match(/\d+/)?.[0] || ''
+    return `${t('mediumBag')} — ${n} ${unit}`
   }
   if (label.includes('Large Bag')) {
-    const pcs = label.match(/\d+/)?.[0] || ''
-    return `${t('largeBag')} — ${pcs} ${t('pcs')}`
+    const n = label.match(/\d+/)?.[0] || ''
+    return `${t('largeBag')} — ${n} ${unit}`
   }
   if (label.includes('Clear Box')) {
-    const pcs = label.match(/\d+/)?.[0] || ''
-    return `${t('clearBox')} — ${pcs} ${t('pcs')}`
+    const n = label.match(/\d+/)?.[0] || ''
+    return `${t('clearBox')} — ${n} ${unit}`
   }
   return label
 }

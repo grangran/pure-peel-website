@@ -196,7 +196,7 @@ export const productSEO = {
     brand: 'Pure Peel Co.',
     category: 'Food & Beverage > Gourmet Foods > Dehydrated Fruits',
     availability: 'https://schema.org/InStock',
-    priceRange: '$7.00 - $12.00 CAD'
+    priceRange: '$10.00 - $15.00 CAD'
   }
 }
 
