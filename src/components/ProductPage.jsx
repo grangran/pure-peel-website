@@ -51,7 +51,7 @@ const IMAGE_REGISTRY = {
     bag: "/images/pineapple-product.JPEG",
     box: "/images/pineapple-product.JPEG",
     gallery: [
-      "/images/pinapple-flat.jpg",
+      "/images/pineapple-flat.jpg",
     ],
   },
 }
@@ -71,7 +71,7 @@ const CARD_IMAGES = {
   lime:          "/images/lime-product-card.jpg",
   lemon:         "/images/lemon-product-card.jpg",
   apple:         "/images/apple-product-card.jpg",
-  pineapple:     "/images/pinapple-flat.jpg",
+  pineapple:     "/images/pineapple-flat.jpg",
 }
 
 function resolveCardImage(productId) {

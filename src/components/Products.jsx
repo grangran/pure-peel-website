@@ -36,7 +36,7 @@ const fruitProducts = [
   },
   {
     id: "pineapple",
-    image: "/images/pinapple-flat.jpg",
+    image: "/images/pineapple-flat.jpg",
     link: "/pineapple"
   }
 ]
