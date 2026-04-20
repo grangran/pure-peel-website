@@ -8,6 +8,26 @@ import pg from 'pg'
 
 const { Pool } = pg
 
+/** Parse hostname from postgres URL for diagnostics (password not logged). */
+function postgresUrlHostname(connectionString) {
+  if (!connectionString || typeof connectionString !== 'string') return null
+  try {
+    const normalized = connectionString.replace(/^postgres(ql)?:\/\//i, 'http://')
+    return new URL(normalized).hostname || null
+  } catch {
+    return null
+  }
+}
+
+function logDatabaseUrlHints(connectionString) {
+  const host = postgresUrlHostname(connectionString)
+  if (!host || host.includes('.')) return
+  console.warn(
+    `⚠ DATABASE_URL host "${host}" is not a full hostname (no ".domain"). ` +
+      'Render internal URLs (dpg-…-a) only resolve on Render’s private network. If you get ENOTFOUND, set DATABASE_URL to the External Database URL from Render → PostgreSQL → Connect (host ends with e.g. .oregon-postgres.render.com).'
+  )
+}
+
 function normalizeStripePaymentIntentId(pi) {
   if (pi == null || pi === '') return ''
   if (typeof pi === 'string') return pi
@@ -16,15 +36,18 @@ function normalizeStripePaymentIntentId(pi) {
 }
 
 const pool = process.env.DATABASE_URL
-  ? new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.DATABASE_URL.includes('localhost')
-        ? false
-        : { rejectUnauthorized: false },
-      max: 10,
-      idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 10000,
-    })
+  ? (() => {
+      logDatabaseUrlHints(process.env.DATABASE_URL)
+      return new Pool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: process.env.DATABASE_URL.includes('localhost')
+          ? false
+          : { rejectUnauthorized: false },
+        max: 10,
+        idleTimeoutMillis: 30000,
+        connectionTimeoutMillis: 10000,
+      })
+    })()
   : null
 
 if (pool) {

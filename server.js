@@ -2371,5 +2371,10 @@ const startServer = async () => {
 
 startServer().catch((err) => {
   console.error('❌ Failed to start server:', err)
+  if (err.code === 'ENOTFOUND' || err.syscall === 'getaddrinfo') {
+    console.error(
+      'Database hostname could not be resolved. On Render, set DATABASE_URL to the full value from your Postgres service: Connect → copy "External Database URL" (host must end with e.g. .oregon-postgres.render.com). A truncated or partial host will fail DNS.'
+    )
+  }
   process.exit(1)
 })
