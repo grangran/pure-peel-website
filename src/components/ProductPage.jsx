@@ -51,7 +51,7 @@ const IMAGE_REGISTRY = {
     bag: "/images/pineapple-product.JPEG",
     box: "/images/pineapple-product.JPEG",
     gallery: [
-      "/images/pineapple-flat.jpg",
+      "/images/pineapple-flat-product.jpg",
     ],
   },
 }
@@ -198,7 +198,7 @@ const PRODUCT_META = {
     tags: ["Tropical", "Bright", "Sweet-Tart", "Bold"],
     useCases: ["Tiki & Rum Cocktails", "Sparkling Drinks", "Dessert Boards"],
     accordions: [
-      { title: "About This Product", body: "Slow-dried to concentrate pineapple's golden sweetness and tangy edge — stunning in mai tais and mojitos, lovely with soft cheese and prosciutto, and addictive straight from the bag." },
+      { title: "About This Product", body: "Slow-dried to concentrate pineapple's golden sweetness and tangy edge — stunning in mai tais and Pina Colada, lovely with soft cheese and prosciutto, and addictive straight from the bag." },
       { title: "Ingredients & Contents", body: "100% Dehydrated Pineapple. Nothing else.\n\nNo preservatives. No added sugars. No artificial anything." },
       { title: "Storage & Shelf Life", body: "Store in a cool, dry place away from direct sunlight. Once opened, reseal or transfer to an airtight container. Shelf life up to 12 months unopened." },
     ],
@@ -208,7 +208,7 @@ const PRODUCT_META = {
       tags: ["Tropical", "Lumineux", "Doux-acidule", "Audacieux"],
       useCases: ["Cocktails tiki et rhum", "Boissons petillantes", "Plateaux dessert"],
       accordions: [
-        { title: "A propos de ce produit", body: "Dehydratee lentement pour concentrer la douceur doree et la pointe acidulee de l'ananas — superbe dans les cocktails tiki, delicieux avec fromages et charcuteries, irresistible en collation." },
+        { title: "A propos de ce produit", body: "Dehydratee lentement pour concentrer la douceur doree et la pointe acidulee de l'ananas — superbe dans les cocktails tiki, mai tai et piña colada, delicieux avec fromages et charcuteries, irresistible en collation." },
         { title: "Ingredients et composition", body: "100% Ananas dehydrate. Rien d'autre.\n\nSans conservateurs. Sans sucres ajoutes. Sans rien d'artificiel." },
         { title: "Conservation et duree de vie", body: "Conservez dans un endroit frais et sec, a l'abri de la lumiere directe du soleil. Duree de conservation jusqu'a 12 mois non ouvert." },
       ],
