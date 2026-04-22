@@ -51,7 +51,7 @@ const IMAGE_REGISTRY = {
     bag: "/images/pineapple-product.JPEG",
     box: "/images/pineapple-product.JPEG",
     gallery: [
-      "/images/pineapple-flat-product.jpg",
+      "/images/pineapple-flat.jpg",
     ],
   },
 }
