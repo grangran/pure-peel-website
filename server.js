@@ -2334,8 +2334,14 @@ app.post('/api/subscribe', apiLimiter, async (req, res) => {
 })
 
 const startServer = async () => {
-  await initDatabase()
-  await warmCache()
+  try {
+    await initDatabase()
+    await warmCache()
+  } catch (err) {
+    console.warn('⚠ Orders database unavailable — starting server without Postgres-backed order storage.')
+    console.warn('  Checkout/admin order history may be limited until DATABASE_URL is restored or storage is migrated.')
+    console.warn('  Error:', err?.message || err)
+  }
 
   app.listen(PORT, () => {
   console.log(`\n🚀 Server running on http://localhost:${PORT}`)

@@ -5,8 +5,47 @@
  */
 
 import pg from 'pg'
+import fs from 'fs'
+import path from 'path'
 
 const { Pool } = pg
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DB-less fallback (local JSON file)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json')
+
+function ensureOrdersFile() {
+  try {
+    const dir = path.dirname(ORDERS_FILE)
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
+    if (!fs.existsSync(ORDERS_FILE)) fs.writeFileSync(ORDERS_FILE, JSON.stringify([], null, 2))
+  } catch (e) {
+    console.error('Failed to ensure orders file:', e.message)
+  }
+}
+
+function readOrdersFromDisk() {
+  try {
+    ensureOrdersFile()
+    const raw = fs.readFileSync(ORDERS_FILE, 'utf8')
+    const arr = JSON.parse(raw)
+    return Array.isArray(arr) ? arr : []
+  } catch (e) {
+    console.error('Failed to read orders from disk:', e.message)
+    return []
+  }
+}
+
+function writeOrdersToDisk(orders) {
+  try {
+    ensureOrdersFile()
+    fs.writeFileSync(ORDERS_FILE, JSON.stringify(Array.isArray(orders) ? orders : [], null, 2))
+  } catch (e) {
+    console.error('Failed to write orders to disk:', e.message)
+  }
+}
 
 /** Parse hostname from postgres URL for diagnostics (password not logged). */
 function postgresUrlHostname(connectionString) {
@@ -94,8 +133,10 @@ export function rowToOrder(row) {
 
 export async function initDatabase() {
   if (!pool) {
-    console.error('❌ DATABASE_URL is not set — orders API cannot run. Add PostgreSQL URL to .env')
-    throw new Error('DATABASE_URL required')
+    // DB-less mode (file-backed)
+    ensureOrdersFile()
+    console.warn('⚠ DATABASE_URL is not set — using DB-less (file) order storage at', ORDERS_FILE)
+    return
   }
 
   await pool.query(`
@@ -142,7 +183,16 @@ export async function warmCache() {
 }
 
 export async function findOrderByStripeSessionId(sessionId) {
-  if (!pool || !sessionId) return null
+  if (!sessionId) return null
+  if (!pool) {
+    const cached = _ordersCache.find((o) => o?.stripeSessionId === sessionId) || null
+    if (cached) return cached
+    const orders = readOrdersFromDisk()
+    const found = orders.find((o) => o?.stripeSessionId === sessionId) || null
+    if (found) bumpCache(found)
+    return found
+  }
+
   const { rows } = await pool.query(
     'SELECT * FROM orders WHERE stripe_session_id = $1 LIMIT 1',
     [sessionId]
@@ -153,7 +203,14 @@ export async function findOrderByStripeSessionId(sessionId) {
 }
 
 export async function getAllOrdersAsync({ status, limit } = {}) {
-  if (!pool) return []
+  if (!pool) {
+    let orders = readOrdersFromDisk()
+    if (status) orders = orders.filter((o) => o?.status === status)
+    orders.sort((a, b) => (b?.createdAt || '').localeCompare(a?.createdAt || ''))
+    if (limit) orders = orders.slice(0, limit)
+    _ordersCache = orders
+    return orders
+  }
   try {
     let query = 'SELECT * FROM orders'
     const params = []
@@ -196,10 +253,44 @@ export async function getOrderByIdAsync(id) {
  * Insert or return existing order (dedupe by Stripe session id or payment intent id).
  */
 export async function saveOrder(orderData) {
-  if (!pool) throw new Error('DATABASE_URL not configured')
+  if (!orderData) throw new Error('saveOrder: missing orderData')
 
   const sessionId = orderData.stripeSessionId || ''
   const piNorm = normalizeStripePaymentIntentId(orderData.stripePaymentIntentId)
+
+  if (!pool) {
+    // DB-less (file-backed) mode: dedupe against cache/disk, then upsert.
+    const orders = readOrdersFromDisk()
+    const existing =
+      (sessionId ? orders.find((o) => o?.stripeSessionId === sessionId) : null) ||
+      (piNorm ? orders.find((o) => normalizeStripePaymentIntentId(o?.stripePaymentIntentId) === piNorm) : null) ||
+      null
+
+    if (existing) {
+      bumpCache(existing)
+      return existing
+    }
+
+    const orderId = orderData.id || `PP-${Date.now().toString().slice(-8)}`
+    const newOrder = {
+      ...orderData,
+      id: orderId,
+      stripePaymentIntentId: piNorm || orderData.stripePaymentIntentId,
+      emailsSent: orderData.emailsSent || {
+        confirmation: false,
+        admin: false,
+        shipping: false,
+      },
+      createdAt: orderData.createdAt || new Date().toISOString(),
+      status: orderData.status || 'pending',
+    }
+
+    orders.unshift(newOrder)
+    writeOrdersToDisk(orders)
+    bumpCache(newOrder)
+    console.log('Order saved (file):', newOrder.id)
+    return newOrder
+  }
 
   if (sessionId) {
     const { rows } = await pool.query(
@@ -274,7 +365,17 @@ export async function saveOrder(orderData) {
 
 /** Persist full order object (e.g. after refund webhook). */
 export async function persistOrder(order) {
-  if (!pool || !order?.id) throw new Error('persistOrder: invalid order')
+  if (!order?.id) throw new Error('persistOrder: invalid order')
+  if (!pool) {
+    const orders = readOrdersFromDisk()
+    const idx = orders.findIndex((o) => o?.id === order.id)
+    const updated = { ...order, updatedAt: new Date().toISOString() }
+    if (idx >= 0) orders[idx] = updated
+    else orders.unshift(updated)
+    writeOrdersToDisk(orders)
+    bumpCache(updated)
+    return updated
+  }
   await pool.query(
     `UPDATE orders SET data = $1::jsonb, status = $2, stripe_session_id = COALESCE($3, stripe_session_id),
      stripe_payment_intent = COALESCE($4, stripe_payment_intent), updated_at = NOW() WHERE id = $5`,
@@ -295,6 +396,15 @@ export async function updateOrderStatus(id, status) {
   if (!order) throw new Error(`Order ${id} not found`)
 
   const updated = { ...order, status, updatedAt: new Date().toISOString() }
+  if (!pool) {
+    const orders = readOrdersFromDisk()
+    const idx = orders.findIndex((o) => o?.id === id)
+    if (idx >= 0) orders[idx] = updated
+    else orders.unshift(updated)
+    writeOrdersToDisk(orders)
+    bumpCache(updated)
+    return updated
+  }
   await pool.query(
     `UPDATE orders SET status = $1, data = $2::jsonb, updated_at = NOW() WHERE id = $3`,
     [status, JSON.stringify(updated), id]
@@ -310,6 +420,15 @@ export async function updateOrderTracking(id, trackingData) {
     ...trackingData,
     updatedAt: new Date().toISOString(),
     status: order.status === 'pending' ? 'processing' : order.status,
+  }
+  if (!pool) {
+    const orders = readOrdersFromDisk()
+    const idx = orders.findIndex((o) => o?.id === id)
+    if (idx >= 0) orders[idx] = updated
+    else orders.unshift(updated)
+    writeOrdersToDisk(orders)
+    bumpCache(updated)
+    return updated
   }
   await pool.query(
     `UPDATE orders SET data = $1::jsonb, status = $2, updated_at = NOW() WHERE id = $3`,
@@ -333,6 +452,15 @@ export async function markEmailSent(orderId, emailType) {
   if (!order.emailsSent) order.emailsSent = {}
   order.emailsSent[emailType] = true
   order.updatedAt = new Date().toISOString()
+  if (!pool) {
+    const orders = readOrdersFromDisk()
+    const idx = orders.findIndex((o) => o?.id === orderId)
+    if (idx >= 0) orders[idx] = order
+    else orders.unshift(order)
+    writeOrdersToDisk(orders)
+    bumpCache(order)
+    return
+  }
   await pool.query(
     `UPDATE orders SET data = $1::jsonb, status = COALESCE($2, status), updated_at = NOW() WHERE id = $3`,
     [JSON.stringify(order), order.status || null, orderId]
@@ -342,16 +470,29 @@ export async function markEmailSent(orderId, emailType) {
 
 export async function getOrderStats() {
   if (!pool) {
-    return {
-      total: 0,
+    const orders = readOrdersFromDisk()
+    const total = orders.length
+    const counts = {
       pending: 0,
       processing: 0,
       shipped: 0,
       delivered: 0,
       cancelled: 0,
       refunded: 0,
-      totalRevenue: '0.00',
-      avgOrderValue: '0.00',
+    }
+    let revenue = 0
+    orders.forEach((o) => {
+      const s = (o?.status || 'pending').toLowerCase()
+      if (counts[s] != null) counts[s] += 1
+      const t = Number.parseFloat(o?.total)
+      if (Number.isFinite(t)) revenue += t
+    })
+    const avg = total > 0 ? revenue / total : 0
+    return {
+      total,
+      ...counts,
+      totalRevenue: revenue.toFixed(2),
+      avgOrderValue: avg.toFixed(2),
     }
   }
   try {
