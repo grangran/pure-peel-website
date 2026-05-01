@@ -206,7 +206,7 @@ export default function ShippingReturns() {
 
           <Divider />
 
-          {/* USA */}
+          {/* USA shipping section hidden — Canada only for now
           <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
             <span style={{ fontSize: "1.4rem" }}>🇺🇸</span>
             <SubTitle>{getTranslation(language, 'shipping.shippingInfo.regions.usTitle')}</SubTitle>
@@ -226,6 +226,7 @@ export default function ShippingReturns() {
           </BodyText>
 
           <Divider />
+          */}
 
           {/* Shipping Times */}
           <SubTitle>{getTranslation(language, 'shipping.shippingTimes.title')}</SubTitle>

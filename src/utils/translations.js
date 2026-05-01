@@ -191,15 +191,11 @@ export const translations = {
           questions: [
             {
               question: "How long does shipping take?",
-              answer: "We fulfill orders through Chit Chats:\n\nCanada — Chit Chats Select (tracked): about 2 business days on average; exact time varies by region.\nUnited States — USPS via Chit Chats (tracked): about 5–10 business days; customs can add time.\n\nShipping times start when your order ships, not when you place it. Orders placed before 2:00 PM EST (Monday–Friday) are usually processed the same day; weekend orders ship the following Monday. Your checkout total includes an estimated shipping line based on address and cart weight."
-            },
-            {
-              question: "Do you ship to the United States?",
-              answer: "Yes! We ship to all 50 US states. Select United States at checkout for our tracked USPS option fulfilled through Chit Chats.\n\nYou’ll see the estimated shipping cost before you pay. Tracking is included; follow updates from Chit Chats and USPS using the link in your confirmation email."
+              answer: "We fulfill orders through Chit Chats:\n\nCanada — Chit Chats Select (tracked): about 2 business days on average; exact time varies by region.\n\nShipping times start when your order ships, not when you place it. Orders placed before 2:00 PM EST (Monday–Friday) are usually processed the same day; weekend orders ship the following Monday. Your checkout total includes an estimated shipping line based on address and cart weight."
             },
             {
               question: "How much does shipping cost?",
-              answer: "Shipping is estimated at checkout from your postal or ZIP code and cart weight. We use flat-rate style estimates aligned with Chit Chats:\n\n• Canada: one tracked option (Chit Chats Select) at a flat nationwide rate\n• United States: one tracked option; the estimate increases with package weight\n\nSwitch between CAD and USD in the site menu to match how prices are shown. The amount on your order is what you agree to at checkout."
+              answer: "Shipping is estimated at checkout from your Canadian postal code and cart weight. We use flat-rate style estimates aligned with Chit Chats:\n\n• Canada: one tracked option (Chit Chats Select) at a flat nationwide rate\n\nSwitch between CAD and USD in the site menu to match how prices are shown. The amount on your order is what you agree to at checkout."
             },
             {
               question: "When will my order ship?",
@@ -207,7 +203,7 @@ export const translations = {
             },
             {
               question: "How can I track my order?",
-              answer: "Once your order ships, you'll receive a tracking number via email. You can:\n\n• Use our Track Order page with your order number and email\n• Open the tracking link in your shipping email (Chit Chats and/or USPS for US deliveries)"
+              answer: "Once your order ships, you'll receive a tracking number via email. You can:\n\n• Use our Track Order page with your order number and email\n• Open the tracking link in your shipping email from Chit Chats"
             }
           ]
         },
@@ -299,7 +295,7 @@ export const translations = {
             },
             {
               question: "Do you ship internationally?",
-              answer: "Currently, we ship to Canada and the United States. For international shipping inquiries, please contact us at orders@purepeelco.com."
+              answer: "Currently, we ship within Canada only. For other destinations or special arrangements, please contact us at orders@purepeelco.com."
             }
           ]
         }
@@ -525,7 +521,7 @@ export const translations = {
           usTitle: "United States shipping",
           usIntro: "We ship to all 50 states. Choose United States at checkout to see the tracked USPS option fulfilled through Chit Chats.",
         },
-        fulfillmentNote: "Prices follow the currency you select in the site menu (CAD or USD). Delivery times are estimates. US-bound packages are tracked through Chit Chats until they reach USPS.",
+        fulfillmentNote: "Prices follow the currency you select in the site menu (CAD or USD). Delivery times are estimates. Canadian orders are tracked through Chit Chats.",
         methods: {
           title: "Shipping Methods",
           canadaTracked: {
@@ -548,24 +544,24 @@ export const translations = {
         schedule1: "Orders placed Monday-Friday before 2:00 PM EST: Processed within 24 hours",
         schedule2: "Orders placed Saturday-Sunday: Processed the following Monday",
         schedule3: "Holiday orders: May experience additional processing delays",
-        text2: "Shipping times are calculated from the date your order ships, not from the date you place your order. You will receive a shipping confirmation email with tracking once your order ships. Delivery times vary by distance — Chit Chats and USPS provide tracking updates on their portals.",
+        text2: "Shipping times are calculated from the date your order ships, not from the date you place your order. You will receive a shipping confirmation email with tracking once your order ships. Delivery times vary by distance — Chit Chats provides tracking updates on their portal.",
         note: "Note: Times may be longer during peak seasons, weather, or carrier delays. We will email you if there is an unusual delay."
       },
       shippingCosts: {
         title: "Shipping Costs",
         text1: "Shipping is quoted at checkout from your address and cart. We use flat estimated rates aligned with Chit Chats (our label and fulfillment partner) — not live Canada Post retail quotes.",
-        text2: "Canada: one tracked option at a flat rate nationwide. United States: one tracked option; the estimated price increases with total package weight. Switch CAD/USD in the nav to match how prices are shown.",
+        text2: "Canada: one tracked option at a flat rate nationwide. Switch CAD/USD in the nav to match how prices are shown.",
         howTitle: "How shipping costs work",
-        bullet1: "Rates are estimated at checkout from your destination postal or ZIP code and cart weight.",
+        bullet1: "Rates are estimated at checkout from your Canadian postal code and cart weight.",
         bullet2: "Canada — Chit Chats Select: flat tracked rate for the whole country.",
-        bullet3: "United States — USPS via Chit Chats: tiered estimate by weight (exact postage is purchased when we buy the label).",
+        bullet3: "Exact postage is purchased when we buy your shipping label.",
         bullet4: "You always see the shipping line item before you pay.",
       },
       orderTracking: {
         title: "Order Tracking",
         text1: "Once your order ships, you will receive an email with a tracking number. You can track your package using:",
         item1: "The tracking link provided in your shipping confirmation email",
-        item2: "The tracking link in your email (Chit Chats and/or USPS for US orders):",
+        item2: "The tracking link in your email from Chit Chats:",
         item3: "Our order tracking page:",
         trackYourOrder: "Track Your Order",
         text2: "Tracking information is typically available within 24 hours of shipment. If you don't receive a tracking number within 3 business days, please contact us."
@@ -580,7 +576,7 @@ export const translations = {
       },
       internationalShipping: {
         title: "International Shipping",
-        text1: "We currently ship to Canada and the United States. For other countries, please contact us at",
+        text1: "We currently ship within Canada only. For other destinations, please contact us at",
         text2: "International shipping rates and delivery times vary by destination. We will provide a shipping quote upon request."
       },
       usShipping: {
@@ -1087,15 +1083,11 @@ export const translations = {
           questions: [
             {
               question: "Combien de temps prend l'expédition?",
-              answer: "Nous traitons les commandes via Chit Chats :\n\nCanada — Chit Chats Select (suivi) : environ 2 jours ouvrables en moyenne ; le délai exact varie selon la région.\nÉtats-Unis — USPS via Chit Chats (suivi) : environ 5 à 10 jours ouvrables ; les douanes peuvent ajouter du délai.\n\nLe délai commence à l'expédition, pas à la commande. Les commandes avant 14 h HNE (lundi–vendredi) sont en général traitées le jour même ; les commandes du week-end partent le lundi suivant. Le total à la caisse inclut une estimation d'expédition selon l'adresse et le poids du panier."
-            },
-            {
-              question: "Livrez-vous aux États-Unis?",
-              answer: "Oui! Nous livrons dans les 50 États. Sélectionnez États-Unis à la caisse pour l'option USPS suivie via Chit Chats.\n\nVous verrez le coût estimé avant de payer. Le suivi est inclus ; suivez les mises à jour via Chit Chats et USPS grâce au lien dans votre courriel de confirmation."
+              answer: "Nous traitons les commandes via Chit Chats :\n\nCanada — Chit Chats Select (suivi) : environ 2 jours ouvrables en moyenne ; le délai exact varie selon la région.\n\nLe délai commence à l'expédition, pas à la commande. Les commandes avant 14 h HNE (lundi–vendredi) sont en général traitées le jour même ; les commandes du week-end partent le lundi suivant. Le total à la caisse inclut une estimation d'expédition selon l'adresse et le poids du panier."
             },
             {
               question: "Combien coûte l'expédition?",
-              answer: "L'expédition est estimée à la caisse à partir du code postal ou ZIP et du poids du panier. Nous utilisons des estimations alignées sur Chit Chats :\n\n• Canada : une option suivie (Chit Chats Select) à tarif forfaitaire national\n• États-Unis : une option suivie ; l'estimation augmente avec le poids du colis\n\nBasculez entre CAD et USD dans le menu du site. Le montant figurant sur votre commande est celui accepté au paiement."
+              answer: "L'expédition est estimée à la caisse à partir du code postal canadien et du poids du panier. Nous utilisons des estimations alignées sur Chit Chats :\n\n• Canada : une option suivie (Chit Chats Select) à tarif forfaitaire national\n\nBasculez entre CAD et USD dans le menu du site. Le montant figurant sur votre commande est celui accepté au paiement."
             },
             {
               question: "Quand ma commande sera-t-elle expédiée?",
@@ -1103,7 +1095,7 @@ export const translations = {
             },
             {
               question: "Comment puis-je suivre ma commande?",
-              answer: "Une fois votre commande expédiée, vous recevrez un numéro de suivi par courriel. Vous pouvez :\n\n• Utiliser notre page Suivre la commande avec le numéro de commande et votre courriel\n• Ouvrir le lien de suivi dans votre courriel d'expédition (Chit Chats et/ou USPS pour les livraisons aux États-Unis)"
+              answer: "Une fois votre commande expédiée, vous recevrez un numéro de suivi par courriel. Vous pouvez :\n\n• Utiliser notre page Suivre la commande avec le numéro de commande et votre courriel\n• Ouvrir le lien de suivi dans votre courriel d'expédition de Chit Chats"
             }
           ]
         },
@@ -1195,7 +1187,7 @@ export const translations = {
             },
             {
               question: "Livrez-vous à l'international?",
-              answer: "Actuellement, nous livrons au Canada et aux États-Unis. Pour les demandes d'expédition internationale, veuillez nous contacter à orders@purepeelco.com."
+              answer: "Actuellement, nous livrons au Canada uniquement. Pour d'autres destinations ou arrangements spéciaux, veuillez nous contacter à orders@purepeelco.com."
             }
           ]
         }
@@ -1485,7 +1477,7 @@ export const translations = {
           usTitle: "Livraison aux États-Unis",
           usIntro: "Nous livrons dans les 50 États. Choisissez États-Unis à la caisse pour voir l'option USPS suivie, traitée via Chit Chats.",
         },
-        fulfillmentNote: "Les prix suivent la devise choisie dans le menu du site (CAD ou USD). Les délais sont des estimations. Les colis vers les États-Unis sont suivis via Chit Chats jusqu'au transfert à USPS.",
+        fulfillmentNote: "Les prix suivent la devise choisie dans le menu du site (CAD ou USD). Les délais sont des estimations. Les commandes au Canada sont suivies via Chit Chats.",
         methods: {
           title: "Méthodes d'Expédition",
           canadaTracked: {
@@ -1508,24 +1500,24 @@ export const translations = {
         schedule1: "Commandes passées lundi-vendredi avant 14 h 00 HNE : Traitées dans les 24 heures",
         schedule2: "Commandes passées samedi-dimanche : Traitées le lundi suivant",
         schedule3: "Commandes de jours fériés : Peuvent subir des retards de traitement supplémentaires",
-        text2: "Les délais d'expédition sont calculés à partir de la date d'envoi, et non de la date de commande. Vous recevrez un courriel de confirmation avec suivi une fois la commande expédiée. Les délais varient selon la distance — Chit Chats et USPS affichent les mises à jour sur leurs portails.",
+        text2: "Les délais d'expédition sont calculés à partir de la date d'envoi, et non de la date de commande. Vous recevrez un courriel de confirmation avec suivi une fois la commande expédiée. Les délais varient selon la distance — Chit Chats affiche les mises à jour sur son portail.",
         note: "Note : Les délais peuvent s'allonger en période de pointe, par météo ou retards des transporteurs. Nous vous écrirons en cas de retard inhabituel."
       },
       shippingCosts: {
         title: "Frais d'Expédition",
         text1: "Les frais d'expédition sont indiqués à la caisse selon votre adresse et votre panier. Nous utilisons des tarifs forfaitaires estimés alignés sur Chit Chats (notre partenaire d'étiquettes) — pas les tarifs détail Postes Canada en direct.",
-        text2: "Canada : une option suivie à tarif forfaitaire partout au pays. États-Unis : une option suivie ; l'estimation augmente avec le poids du colis. Basculez CAD/USD dans la navigation pour la devise affichée.",
+        text2: "Canada : une option suivie à tarif forfaitaire partout au pays. Basculez CAD/USD dans la navigation pour la devise affichée.",
         howTitle: "Comment fonctionnent les frais d'expédition",
-        bullet1: "Les tarifs sont estimés à la caisse à partir du code postal ou ZIP et du poids du panier.",
+        bullet1: "Les tarifs sont estimés à la caisse à partir du code postal canadien et du poids du panier.",
         bullet2: "Canada — Chit Chats Select : tarif forfaitaire suivi pour tout le pays.",
-        bullet3: "États-Unis — USPS via Chit Chats : estimation par paliers de poids (le tarif exact est payé à l'achat de l'étiquette).",
+        bullet3: "Le tarif exact est payé à l'achat de votre étiquette d'expédition.",
         bullet4: "Vous voyez toujours la ligne expédition avant de payer.",
       },
       orderTracking: {
         title: "Suivi de Commande",
         text1: "Une fois votre commande expédiée, vous recevrez un e-mail avec un numéro de suivi. Vous pouvez suivre votre colis en utilisant :",
         item1: "Le lien de suivi fourni dans votre e-mail de confirmation d'expédition",
-        item2: "Le lien de suivi dans votre courriel (Chit Chats et/ou USPS pour les commandes vers les États-Unis) :",
+        item2: "Le lien de suivi dans votre courriel de Chit Chats :",
         item3: "Notre page de suivi de commande :",
         trackYourOrder: "Suivre Votre Commande",
         text2: "Les informations de suivi sont généralement disponibles dans les 24 heures suivant l'expédition. Si vous ne recevez pas de numéro de suivi dans les 3 jours ouvrables, veuillez nous contacter."
@@ -1540,7 +1532,7 @@ export const translations = {
       },
       internationalShipping: {
         title: "Expédition Internationale",
-        text1: "Nous expédions actuellement au Canada et aux États-Unis. Pour d'autres pays, veuillez nous contacter à",
+        text1: "Nous expédions actuellement au Canada uniquement. Pour d'autres destinations, veuillez nous contacter à",
         text2: "Les tarifs et délais d'expédition internationale varient selon la destination. Nous fournirons un devis d'expédition sur demande."
       },
       usShipping: {

@@ -30,19 +30,6 @@ const canadianProvinces = [
   "Saskatchewan", "Yukon"
 ]
 
-const usStates = [
-  "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
-  "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho",
-  "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana",
-  "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota",
-  "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
-  "New Hampshire", "New Jersey", "New Mexico", "New York",
-  "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon",
-  "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
-  "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington",
-  "West Virginia", "Wisconsin", "Wyoming"
-]
-
 const formatPhoneNumber = (value, country = 'Canada') => {
   const digits = value.replace(/\D/g, '')
   if (digits.length <= 3) return digits
@@ -50,24 +37,16 @@ const formatPhoneNumber = (value, country = 'Canada') => {
   return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`
 }
 
-const formatPostalCode = (value, country = 'Canada') => {
-  if (country === 'United States') {
-    const digits = value.replace(/\D/g, '')
-    if (digits.length <= 5) return digits
-    return `${digits.slice(0, 5)}-${digits.slice(5, 9)}`
-  } else {
-    const cleaned = value.replace(/[^A-Za-z0-9]/gi, '').toUpperCase()
-    if (cleaned.length <= 3) return cleaned
-    return `${cleaned.slice(0, 3)} ${cleaned.slice(3, 6)}`
-  }
+const formatPostalCode = (value) => {
+  const cleaned = value.replace(/[^A-Za-z0-9]/gi, '').toUpperCase()
+  if (cleaned.length <= 3) return cleaned
+  return `${cleaned.slice(0, 3)} ${cleaned.slice(3, 6)}`
 }
 
 const validateEmail    = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 const validatePhone    = (phone) => phone.replace(/\D/g, '').length >= 10
-const validatePostalCode = (postalCode, country = 'Canada') => {
-  if (country === 'United States') return /^\d{5}(-\d{4})?$/.test(postalCode)
-  return /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/.test(postalCode)
-}
+const validatePostalCode = (postalCode) =>
+  /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/.test(postalCode)
 
 // Shared input class
 const inputClass = (hasError) =>
@@ -141,10 +120,18 @@ export default function Checkout() {
     }
   }, [])
 
+  const normalizeCheckoutCountry = (data) => {
+    if (!data || typeof data !== 'object') return data
+    if (data.country === 'United States') {
+      return { ...data, country: 'Canada', province: '', postalCode: '' }
+    }
+    return data
+  }
+
   const loadSavedFormData = () => {
     try {
       const saved = localStorage.getItem('checkoutFormData')
-      if (saved) return JSON.parse(saved)
+      if (saved) return normalizeCheckoutCountry(JSON.parse(saved))
     } catch (error) { console.error('Error loading saved form data:', error) }
     return { firstName: "", lastName: "", email: "", phone: "", address: "", city: "", country: "Canada", province: "", postalCode: "", notes: "" }
   }
@@ -157,7 +144,7 @@ export default function Checkout() {
     try {
       const savedFormData = localStorage.getItem('checkoutFormData')
       if (savedFormData) {
-        const parsed = JSON.parse(savedFormData)
+        const parsed = normalizeCheckoutCountry(JSON.parse(savedFormData))
         setFormData(parsed)
         if (parsed.postalCode && parsed.province && parsed.city && parsed.country) setHasEnteredShippingDetails(true)
       }
@@ -197,14 +184,14 @@ export default function Checkout() {
     const { name, value } = e.target
     let processedValue = value
     if (name === 'phone') processedValue = formatPhoneNumber(value, formData.country)
-    else if (name === 'postalCode') processedValue = formatPostalCode(value, formData.country)
+    else if (name === 'postalCode') processedValue = formatPostalCode(value)
     setFormData(prev => ({ ...prev, [name]: processedValue }))
     if (errors[name]) {
       setErrors(prev => {
         const newErrors = { ...prev }
         if (name === 'email' && validateEmail(processedValue)) delete newErrors[name]
         else if (name === 'phone' && validatePhone(processedValue)) delete newErrors[name]
-        else if (name === 'postalCode' && validatePostalCode(processedValue, formData.country)) delete newErrors[name]
+        else if (name === 'postalCode' && validatePostalCode(processedValue)) delete newErrors[name]
         else if (processedValue.trim() && !['email','phone','postalCode'].includes(name)) delete newErrors[name]
         return newErrors
       })
@@ -226,8 +213,8 @@ export default function Checkout() {
       setErrors(prev => ({ ...prev, email: 'Please enter a valid email address' }))
     else if (name === 'phone' && value && !validatePhone(value))
       setErrors(prev => ({ ...prev, phone: 'Please enter a valid phone number' }))
-    else if (name === 'postalCode' && value && !validatePostalCode(value, formData.country))
-      setErrors(prev => ({ ...prev, postalCode: formData.country === 'United States' ? 'Please enter a valid US ZIP code' : 'Please enter a valid Canadian postal code' }))
+    else if (name === 'postalCode' && value && !validatePostalCode(value))
+      setErrors(prev => ({ ...prev, postalCode: 'Please enter a valid Canadian postal code' }))
   }
 
   const validateForm = () => {
@@ -240,15 +227,11 @@ export default function Checkout() {
     if (!formData.address.trim())   newErrors.address   = "Address is required"
     if (!formData.city.trim())      newErrors.city      = "City is required"
     if (!formData.country)          newErrors.country   = "Country is required"
-    if (!formData.province)         newErrors.province  = formData.country === "United States" ? "State is required" : "Province is required"
+    if (!formData.province)         newErrors.province  = "Province is required"
     if (!formData.postalCode.trim()) {
-      newErrors.postalCode = formData.country === "United States" ? "ZIP code is required" : "Postal code is required"
-    } else {
-      if (formData.country === "United States") {
-        if (!/^\d{5}(-\d{4})?$/.test(formData.postalCode)) newErrors.postalCode = "Please enter a valid US ZIP code"
-      } else {
-        if (!/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/.test(formData.postalCode)) newErrors.postalCode = "Please enter a valid Canadian postal code"
-      }
+      newErrors.postalCode = "Postal code is required"
+    } else if (!/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/.test(formData.postalCode)) {
+      newErrors.postalCode = "Please enter a valid Canadian postal code"
     }
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -359,25 +342,15 @@ export default function Checkout() {
         }
 
         const weight = calculateWeight(cartItems)
-        const defaultOptions = formData.country === 'United States'
-          ? [
-              {
-                id: 'chitchats-us-standard',
-                name: 'Tracked (USPS)',
-                description: 'Fully tracked delivery to the US via USPS (5-10 business days)',
-                price: weight <= 0.5 ? 9.00 : weight <= 1.0 ? 11.00 : 14.00,
-                estimatedDays: 7,
-              },
-            ]
-          : [
-              {
-                id: 'chitchats-select',
-                name: 'Tracked Shipping',
-                description: 'Fully tracked delivery within Canada (2 business days)',
-                price: 6.99,
-                estimatedDays: 2,
-              },
-            ]
+        const defaultOptions = [
+          {
+            id: 'chitchats-select',
+            name: 'Tracked Shipping',
+            description: 'Fully tracked delivery within Canada (2 business days)',
+            price: 6.99,
+            estimatedDays: 2,
+          },
+        ]
         setShippingOptions(defaultOptions); setSelectedShipping(defaultOptions[0])
       } else {
         setShippingError(error.message || 'Unable to calculate shipping. Please try again.')
@@ -927,7 +900,6 @@ export default function Checkout() {
                           value={formData.country} onChange={handleInputChange}
                           className={inputClass(errors.country)} required data-1p-ignore>
                           <option value="Canada">Canada</option>
-                          <option value="United States">United States</option>
                         </select>
                         {errors.country && <p style={{ fontFamily: S.sans, fontSize: "0.65rem", color: "#dc2626", marginTop: "6px" }}>{errors.country}</p>}
                       </div>
@@ -944,26 +916,26 @@ export default function Checkout() {
                         </div>
                         <div>
                           <label style={{ fontFamily: S.sans, fontSize: "0.65rem", fontWeight: 500, letterSpacing: "0.1em", textTransform: "uppercase", color: S.textMid, display: "block", marginBottom: "6px" }}>
-                            {formData.country === "United States" ? (language === 'fr' ? 'État' : 'State') : (language === 'fr' ? 'Province' : 'Province')}
+                            {language === 'fr' ? 'Province' : 'Province'}
                           </label>
                           <select name="province" id="checkout-province" autoComplete="shipping address-level1"
                             value={formData.province} onChange={handleInputChange}
                             className={inputClass(errors.province)} required data-1p-ignore>
-                            <option value="">{formData.country === "United States" ? 'Select state' : 'Select province'}</option>
-                            {(formData.country === "United States" ? usStates : canadianProvinces).map(r => <option key={r} value={r}>{r}</option>)}
+                            <option value="">{language === 'fr' ? 'Sélectionner la province' : 'Select province'}</option>
+                            {canadianProvinces.map(r => <option key={r} value={r}>{r}</option>)}
                           </select>
                           {errors.province && <p style={{ fontFamily: S.sans, fontSize: "0.65rem", color: "#dc2626", marginTop: "6px" }}>{errors.province}</p>}
                         </div>
                         <div>
                           <label style={{ fontFamily: S.sans, fontSize: "0.65rem", fontWeight: 500, letterSpacing: "0.1em", textTransform: "uppercase", color: S.textMid, display: "block", marginBottom: "6px" }}>
-                            {formData.country === "United States" ? 'ZIP Code' : (getTranslation(language, 'checkout.postalCode') || 'Postal Code')}
+                            {getTranslation(language, 'checkout.postalCode') || 'Postal Code'}
                           </label>
                           <input type="text" name="postalCode" id="checkout-postalCode"
                             autoComplete="shipping postal-code"
                             value={formData.postalCode} onChange={handleInputChange} onBlur={handleBlur}
-                            inputMode={formData.country === "United States" ? "numeric" : "text"}
-                            maxLength={formData.country === "United States" ? 10 : 7}
-                            placeholder={formData.country === "United States" ? "12345" : "A1A 1A1"}
+                            inputMode="text"
+                            maxLength={7}
+                            placeholder="A1A 1A1"
                             className={inputClass(errors.postalCode)} required data-1p-ignore />
                           {errors.postalCode && <p style={{ fontFamily: S.sans, fontSize: "0.65rem", color: "#dc2626", marginTop: "6px" }}>{errors.postalCode}</p>}
                         </div>
