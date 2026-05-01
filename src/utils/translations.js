@@ -195,7 +195,7 @@ export const translations = {
             },
             {
               question: "How much does shipping cost?",
-              answer: "Shipping is estimated at checkout from your Canadian postal code and cart weight. We use flat-rate style estimates aligned with Chit Chats:\n\n• Canada: one tracked option (Chit Chats Select) at a flat nationwide rate\n\nSwitch between CAD and USD in the site menu to match how prices are shown. The amount on your order is what you agree to at checkout."
+              answer: "Shipping is estimated at checkout from your Canadian postal code and cart weight. We use flat-rate style estimates aligned with Chit Chats:\n\n• Canada: one tracked option (Chit Chats Select) at a flat nationwide rate\n\nPrices are shown in Canadian dollars (CAD). The amount on your order at checkout is the amount you agree to pay."
             },
             {
               question: "When will my order ship?",
@@ -294,8 +294,8 @@ export const translations = {
               answer: "Yes! We offer wholesale pricing for businesses, restaurants, and bulk orders. Contact us at orders@purepeelco.com to discuss your needs and receive a custom quote."
             },
             {
-              question: "Do you ship internationally?",
-              answer: "Currently, we ship within Canada only. For other destinations or special arrangements, please contact us at orders@purepeelco.com."
+              question: "Do you ship outside Canada?",
+              answer: "We ship within Canada through our online storefront. For other destinations or wholesale arrangements, contact orders@purepeelco.com."
             }
           ]
         }
@@ -346,7 +346,7 @@ export const translations = {
       lastUpdated: "Last updated:",
       introduction: {
         title: "Introduction",
-        text: "Pure Peel Co. (\"we,\" \"our,\" or \"us\") is a Canadian business operating in Ontario, Canada, committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and make purchases. This policy is designed to comply with Canadian privacy laws, including the Personal Information Protection and Electronic Documents Act (PIPEDA) and applicable provincial privacy legislation. For customers in the United States, we also respect applicable US privacy laws. Please read this privacy policy carefully."
+        text: "Pure Peel Co. (\"we,\" \"our,\" or \"us\") is a Canadian business operating in Ontario, Canada, committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and make purchases. This policy is designed to comply with Canadian privacy laws, including the Personal Information Protection and Electronic Documents Act (PIPEDA) and applicable provincial privacy legislation. Please read this privacy policy carefully."
       },
       informationWeCollect: {
         title: "Information We Collect",
@@ -442,19 +442,7 @@ export const translations = {
       },
       crossBorderTransfers: {
         title: "Cross-Border Data Transfers",
-        text: "Your personal information is primarily stored and processed in Canada, in compliance with Canadian privacy laws. However, some third-party service providers we use (such as Stripe for payment processing and Resend for email delivery) may process data in other jurisdictions, including the United States. These service providers are contractually obligated to maintain appropriate security measures and comply with applicable privacy laws, including Canadian privacy requirements. For customers in the United States, your data may be processed by US-based service providers in accordance with applicable US privacy laws. By using our services, you consent to the transfer of your information to these service providers as necessary to fulfill your orders and provide our services."
-      },
-      usPrivacyRights: {
-        title: "United States Privacy Rights",
-        text: "For customers located in the United States, you may have additional privacy rights under applicable US federal and state laws. While we are a Canadian business and primarily governed by Canadian privacy law (PIPEDA), we respect the privacy rights of our US customers:",
-        rights: [
-          "The right to know what personal information we collect, use, and disclose",
-          "The right to request deletion of your personal information (subject to legal obligations and our need to retain certain information for order fulfillment)",
-          "The right to opt-out of the sale of personal information (we do not sell your personal information)",
-          "The right to non-discrimination for exercising your privacy rights"
-        ],
-        california: "California Residents: If you are a California resident, you have additional rights under the California Consumer Privacy Act (CCPA), including the rights listed above. To exercise your California privacy rights, please contact our Privacy Officer using the contact information provided in this Privacy Policy. We will respond to your request within 45 days.",
-        text2: "To exercise your US privacy rights, please contact our Privacy Officer using the contact information provided in this Privacy Policy. We will respond to your request in accordance with applicable US privacy laws."
+        text: "Your personal information is primarily stored and processed in Canada under PIPEDA and applicable provincial law. Certain tools we rely on—notably Stripe (payments) and Resend (transactional email)—may process limited data outside Canada where their systems operate; they must use safeguards and handle data in ways consistent with Canadian privacy obligations. Using our site means you consent to that processing where necessary to fulfill orders and provide support."
       },
       limitingCollection: {
         title: "Limiting Collection",
@@ -497,7 +485,7 @@ export const translations = {
       },
       dataStorage: {
         title: "Data Storage and Location",
-        text: "Your personal information is primarily stored on secure servers located in Canada. We take appropriate measures to ensure that your data is protected and handled in accordance with Canadian privacy laws, including PIPEDA and applicable provincial privacy legislation. Some third-party services we use (such as Stripe for payment processing and Resend for email delivery) may process data in other jurisdictions, including the United States, but they are contractually required to maintain appropriate security measures and comply with applicable privacy laws, including Canadian privacy requirements where applicable."
+        text: "Your personal information is primarily stored on secure servers in Canada under PIPEDA and applicable provincial legislation. Certain third-party services we use for payments (Stripe) and email (Resend) may operate infrastructure outside Canada; they remain contractually required to use safeguards and handle personal information appropriately with respect to Canadian privacy expectations."
       },
       contact: {
         title: "Contact Us - Privacy Inquiries",
@@ -518,10 +506,10 @@ export const translations = {
         regions: {
           canadaTitle: "Canada-wide shipping",
           canadaIntro: "We ship from Ontario to every province and territory. Canadian orders use Chit Chats Select — fully tracked nationwide (not Canada Post retail counter services).",
-          usTitle: "United States shipping",
-          usIntro: "We ship to all 50 states. Choose United States at checkout to see the tracked USPS option fulfilled through Chit Chats.",
+          usTitle: "United States (not offered)",
+          usIntro: "Retail orders ship within Canada only.",
         },
-        fulfillmentNote: "Prices follow the currency you select in the site menu (CAD or USD). Delivery times are estimates. Canadian orders are tracked through Chit Chats.",
+        fulfillmentNote: "Prices are shown in Canadian dollars (CAD). Delivery times are estimates. Orders are fulfilled with tracked domestic service through Chit Chats.",
         methods: {
           title: "Shipping Methods",
           canadaTracked: {
@@ -530,9 +518,9 @@ export const translations = {
             description: "One nationwide tracked service for Canada — labels and routing through Chit Chats.",
           },
           usTracked: {
-            name: "Tracked (USPS via Chit Chats)",
-            time: "~5–10 business days (estimates)",
-            description: "Fully tracked delivery to the US. Chit Chats hands off to USPS; exact USPS service is selected for the best rate at label purchase.",
+            name: "United States (not offered)",
+            time: "—",
+            description: "Retail storefront ships within Canada only. Contact us about wholesale arrangements.",
           },
           priceNote: "Price calculated at checkout",
         },
@@ -550,7 +538,7 @@ export const translations = {
       shippingCosts: {
         title: "Shipping Costs",
         text1: "Shipping is quoted at checkout from your address and cart. We use flat estimated rates aligned with Chit Chats (our label and fulfillment partner) — not live Canada Post retail quotes.",
-        text2: "Canada: one tracked option at a flat rate nationwide. Switch CAD/USD in the nav to match how prices are shown.",
+        text2: "Canada: one tracked option at a flat rate nationwide.",
         howTitle: "How shipping costs work",
         bullet1: "Rates are estimated at checkout from your Canadian postal code and cart weight.",
         bullet2: "Canada — Chit Chats Select: flat tracked rate for the whole country.",
@@ -570,23 +558,23 @@ export const translations = {
         title: "Damaged or Lost Packages",
         text1: "If your package arrives damaged or is lost in transit, please contact us immediately:",
         damagedItems: "Damaged Items: Take photos of the damaged package and items, then contact us within 48 hours of delivery",
-        lostPackages: "Lost Packages: Contact us if your package hasn't arrived within 7-12 business days of the expected delivery date (depending on shipping method)",
+        lostPackages: "Lost Packages: Contact us if your package hasn't arrived within about 12 business days of shipment (tracked domestic service); we will investigate with Chit Chats.",
         incorrectItems: "Incorrect Items: Contact us immediately if you received the wrong items",
         text2: "We will work with Chit Chats and the carrier to resolve the issue and will replace or refund your order as appropriate. You can choose between a replacement or a full refund. We may require photos or additional information to process your claim."
       },
       internationalShipping: {
-        title: "International Shipping",
-        text1: "We currently ship within Canada only. For other destinations, please contact us at",
-        text2: "International shipping rates and delivery times vary by destination. We will provide a shipping quote upon request."
+        title: "Outside Canada",
+        text1: "We ship within Canada only through checkout. For wholesale accounts or unusual requests elsewhere, please contact us at",
+        text2: "Retail addresses outside Canada are not available through our online checkout."
       },
       usShipping: {
-        title: "Shipping to the United States",
-        text1: "We ship from Canada to all 50 US states. Select United States at checkout for the tracked USPS option fulfilled through Chit Chats.",
-        text2: "What to expect:",
-        item1: "One tracked option to the US — delivered by USPS after Chit Chats exports your package.",
-        item2: "Estimated delivery about 5–10 business days; customs may add time.",
-        item3: "Checkout shows a weight-based estimate; we purchase the actual Chit Chats / USPS label when your order ships.",
-        note: "Prices are shown in the currency you select (CAD or USD). Delivery times are estimates. US orders are fulfilled through Chit Chats and delivered by USPS."
+        title: "United States (not offered)",
+        text1: "We do not offer standard retail checkout shipping to United States addresses at this time.",
+        text2: "What to expect for Canadian orders:",
+        item1: "One tracked nationwide option from Ontario.",
+        item2: "Estimated delivery averages about two business days after shipment; regional variation applies.",
+        item3: "Checkout shows estimated shipping based on postal code and weight; we purchase the label when your order ships.",
+        note: "Prices and settlement are in Canadian dollars (CAD). Delivery times are estimates."
       },
       returns: {
         title: "Issue Resolution & Product Replacement",
@@ -676,7 +664,7 @@ export const translations = {
       lastUpdated: "Last updated:",
       introduction: {
         title: "Introduction",
-        text: "Welcome to Pure Peel Co., a Canadian business operating in Ontario, Canada. These Terms of Service (\"Terms\") govern your access to and use of our website and services. By accessing or using our website, placing an order, or making a purchase, you agree to be bound by these Terms. If you do not agree to these Terms, please do not use our website or services. These Terms are governed by Canadian law, with specific provisions for customers in Canada and the United States."
+        text: "Welcome to Pure Peel Co., a Canadian business operating in Ontario, Canada. These Terms of Service (\"Terms\") govern your access to and use of our website and services. By accessing or using our website, placing an order, or making a purchase, you agree to be bound by these Terms. If you do not agree to these Terms, please do not use our website or services. These Terms are governed by Canadian law."
       },
       acceptance: {
         title: "Acceptance of Terms",
@@ -757,12 +745,12 @@ export const translations = {
       },
       disputeResolution: {
         title: "Dispute Resolution",
-        text: "Any dispute, controversy, or claim arising out of or relating to these Terms, or the breach, termination, or validity thereof, shall first be addressed through good faith negotiation. If the dispute cannot be resolved through negotiation within 30 days, the parties agree to submit the dispute to binding arbitration in accordance with the Arbitration Act (Ontario) or, if applicable, the rules of the ADR Institute of Canada. The arbitration shall take place in Ontario, Canada. For customers in the United States, disputes may be resolved through arbitration in accordance with applicable US law, but the primary jurisdiction remains Ontario, Canada. Notwithstanding the foregoing, either party may seek injunctive relief in any court of competent jurisdiction to protect intellectual property rights or to prevent irreparable harm."
+        text: "Any dispute, controversy, or claim arising out of or relating to these Terms, or the breach, termination, or validity thereof, shall first be addressed through good faith negotiation. If the dispute cannot be resolved through negotiation within 30 days, the parties agree to submit the dispute to binding arbitration in accordance with the Arbitration Act (Ontario) or, if applicable, the rules of the ADR Institute of Canada. The arbitration shall take place in Ontario, Canada. Notwithstanding the foregoing, either party may seek injunctive relief in any court of competent jurisdiction to protect intellectual property rights or to prevent irreparable harm."
       },
       governingLaw: {
         title: "Governing Law and Jurisdiction",
-        text: "These Terms shall be governed by and construed in accordance with the laws of the Province of Ontario and the federal laws of Canada applicable therein, without regard to its conflict of law provisions. Any disputes arising from these Terms or your use of our website shall be subject to the exclusive jurisdiction of the courts of Ontario, Canada. For customers located in the United States, while these Terms are governed by Canadian law, you may have additional rights under applicable US consumer protection laws.",
-        consumerProtection: "Consumer Protection: As a Canadian business operating in Ontario, we comply with the Ontario Consumer Protection Act (OCPA) and all applicable Canadian consumer protection legislation. If you are a consumer in Ontario or elsewhere in Canada, you have certain rights and protections under OCPA and provincial consumer protection laws, including the right to receive accurate information about products and services, fair contract terms, and protection against unfair business practices. Customers in the United States may have additional rights under applicable US state and federal consumer protection laws."
+        text: "These Terms shall be governed by and construed in accordance with the laws of the Province of Ontario and the federal laws of Canada applicable therein, without regard to its conflict of law provisions. Any disputes arising from these Terms or your use of our website shall be subject to the exclusive jurisdiction of the courts of Ontario, Canada.",
+        consumerProtection: "Consumer Protection: As a Canadian business operating in Ontario, we comply with the Ontario Consumer Protection Act (OCPA) and all applicable Canadian consumer protection legislation. If you are a consumer in Ontario or elsewhere in Canada, you have certain rights and protections under OCPA and provincial consumer protection laws, including the right to receive accurate information about products and services, fair contract terms, and protection against unfair business practices."
       },
       changes: {
         title: "Changes to Terms",
@@ -1087,7 +1075,7 @@ export const translations = {
             },
             {
               question: "Combien coûte l'expédition?",
-              answer: "L'expédition est estimée à la caisse à partir du code postal canadien et du poids du panier. Nous utilisons des estimations alignées sur Chit Chats :\n\n• Canada : une option suivie (Chit Chats Select) à tarif forfaitaire national\n\nBasculez entre CAD et USD dans le menu du site. Le montant figurant sur votre commande est celui accepté au paiement."
+              answer: "L'expédition est estimée à la caisse à partir du code postal canadien et du poids du panier. Nous utilisons des estimations alignées sur Chit Chats :\n\n• Canada : une option suivie (Chit Chats Select) à tarif forfaitaire national\n\nLes prix sont affichés en dollars canadiens (CAD). Le montant indiqué à la caisse est celui accepté lors du paiement."
             },
             {
               question: "Quand ma commande sera-t-elle expédiée?",
@@ -1186,8 +1174,8 @@ export const translations = {
               answer: "Oui! Nous offrons des prix de gros pour les entreprises, les restaurants et les commandes en gros. Contactez-nous à orders@purepeelco.com pour discuter de vos besoins et recevoir un devis personnalisé."
             },
             {
-              question: "Livrez-vous à l'international?",
-              answer: "Actuellement, nous livrons au Canada uniquement. Pour d'autres destinations ou arrangements spéciaux, veuillez nous contacter à orders@purepeelco.com."
+              question: "Livrez-vous en dehors du Canada ?",
+              answer: "Nous livrons au Canada par la boutique en ligne uniquement. Pour d'autres destinations ou des collaborations de gros, écrivez-nous à orders@purepeelco.com."
             }
           ]
         }
@@ -1238,7 +1226,7 @@ export const translations = {
       lastUpdated: "Dernière mise à jour :",
       introduction: {
         title: "Introduction",
-        text: "Pure Peel Co. (« nous », « notre » ou « nos ») est une entreprise canadienne opérant en Ontario, Canada, engagée à protéger votre vie privée. Cette Politique de Confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous visitez notre site Web et effectuez des achats. Cette politique est conçue pour se conformer aux lois canadiennes sur la confidentialité, y compris la Loi sur la protection des renseignements personnels et les documents électroniques (LPRPDE) et la législation provinciale applicable sur la confidentialité. Pour les clients aux États-Unis, nous respectons également les lois américaines sur la confidentialité applicables. Veuillez lire attentivement cette politique de confidentialité."
+        text: "Pure Peel Co. (« nous », « notre » ou « nos ») est une entreprise canadienne opérant en Ontario, Canada, engagée à protéger votre vie privée. Cette Politique de Confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous visitez notre site Web et effectuez des achats. Cette politique est conçue pour se conformer aux lois canadiennes sur la confidentialité, y compris la Loi sur la protection des renseignements personnels et les documents électroniques (LPRPDE) et la législation provinciale applicable sur la confidentialité. Veuillez lire attentivement cette politique de confidentialité."
       },
       informationWeCollect: {
         title: "Informations que Nous Collectons",
@@ -1343,7 +1331,7 @@ export const translations = {
       },
       crossBorderTransfers: {
         title: "Transferts Transfrontaliers de Données",
-        text: "Vos informations personnelles sont principalement stockées et traitées au Canada. Cependant, certains fournisseurs de services tiers que nous utilisons (tels que Stripe pour le traitement des paiements et Resend pour la livraison d'e-mails) peuvent traiter des données dans d'autres juridictions, y compris les États-Unis. Ces fournisseurs de services sont contractuellement tenus de maintenir des mesures de sécurité appropriées et de se conformer aux lois sur la confidentialité applicables. En utilisant nos services, vous consentez au transfert de vos informations à ces fournisseurs de services selon les besoins pour exécuter vos commandes et fournir nos services."
+        text: "Vos informations personnelles sont surtout stockées et traitées au Canada, conformément à la LPRPDE et à la loi provinciale. Certains prestataires (notamment Stripe pour les paiements et Resend pour les courriels transactionnels) peuvent traiter des données limitées à l'étranger, là où leur infrastructure fonctionne ; ils sont liés contractuellement à des garanties compatibles avec les obligations canadiennes. En utilisant le site vous consentez à ce traitement lorsque nécessaire pour traiter vos commandes et vous accompagner."
       },
       californiaPrivacy: {
         title: "Droits à la Confidentialité de la Californie (CCPA)",
@@ -1404,30 +1392,6 @@ export const translations = {
         item2: "Nous contactant directement à",
         text2: "Veuillez noter que même si vous vous désinscrivez des communications marketing, nous pouvons toujours vous envoyer des e-mails transactionnels liés à vos commandes, tels que des confirmations de commande et des notifications d'expédition."
       },
-      dataPortability: {
-        title: "Portabilité des Données",
-        text: "Vous avez le droit de recevoir vos informations personnelles dans un format structuré, couramment utilisé et lisible par machine. Si vous souhaitez recevoir une copie de vos informations personnelles dans un format portable, veuillez contacter notre Responsable de la Protection de la Vie Privée. Nous fournirons vos informations dans les 30 jours suivant votre demande, sous réserve de vérification de votre identité."
-      },
-      automatedDecisionMaking: {
-        title: "Prise de Décision Automatisée",
-        text: "Nous n'utilisons pas de processus de prise de décision automatisée, y compris le profilage, qui aurait des effets juridiques ou similaires sur vous. Toutes les décisions concernant vos commandes, le service client et les communications sont prises par du personnel humain."
-      },
-      crossBorderTransfers: {
-        title: "Transferts Transfrontaliers de Données",
-        text: "Vos informations personnelles sont principalement stockées et traitées au Canada, en conformité avec les lois canadiennes sur la confidentialité. Cependant, certains fournisseurs de services tiers que nous utilisons (tels que Stripe pour le traitement des paiements et Resend pour la livraison d'e-mails) peuvent traiter des données dans d'autres juridictions, y compris les États-Unis. Ces fournisseurs de services sont contractuellement tenus de maintenir des mesures de sécurité appropriées et de se conformer aux lois sur la confidentialité applicables, y compris les exigences canadiennes en matière de confidentialité. Pour les clients aux États-Unis, vos données peuvent être traitées par des fournisseurs de services basés aux États-Unis conformément aux lois américaines sur la confidentialité applicables. En utilisant nos services, vous consentez au transfert de vos informations à ces fournisseurs de services selon les besoins pour exécuter vos commandes et fournir nos services."
-      },
-      usPrivacyRights: {
-        title: "Droits à la Confidentialité aux États-Unis",
-        text: "Pour les clients situés aux États-Unis, vous pouvez avoir des droits supplémentaires à la confidentialité en vertu des lois fédérales et étatiques américaines applicables. Bien que nous soyons une entreprise canadienne et principalement régis par la loi canadienne sur la confidentialité (LPRPDE), nous respectons les droits à la vie privée de nos clients américains :",
-        rights: [
-          "Le droit de savoir quelles informations personnelles nous collectons, utilisons et divulguons",
-          "Le droit de demander la suppression de vos informations personnelles (sous réserve d'obligations légales et de notre besoin de conserver certaines informations pour l'exécution des commandes)",
-          "Le droit de refuser la vente d'informations personnelles (nous ne vendons pas vos informations personnelles)",
-          "Le droit à la non-discrimination pour avoir exercé vos droits à la vie privée"
-        ],
-        california: "Résidents de la Californie : Si vous êtes résident de la Californie, vous avez des droits supplémentaires en vertu de la California Consumer Privacy Act (CCPA), y compris les droits énumérés ci-dessus. Pour exercer vos droits à la confidentialité de la Californie, veuillez contacter notre Responsable de la Protection de la Vie Privée en utilisant les informations de contact fournies dans cette Politique de Confidentialité. Nous répondrons à votre demande dans les 45 jours.",
-        text2: "Pour exercer vos droits à la confidentialité aux États-Unis, veuillez contacter notre Responsable de la Protection de la Vie Privée en utilisant les informations de contact fournies dans cette Politique de Confidentialité. Nous répondrons à votre demande conformément aux lois américaines sur la confidentialité applicables."
-      },
       dataSecurity: {
         title: "Sécurité des Données",
         text: "Nous mettons en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos informations personnelles. Cependant, aucune méthode de transmission sur Internet ou de stockage électronique n'est sécurisée à 100 %. Bien que nous nous efforcions d'utiliser des moyens commercialement acceptables pour protéger vos informations, nous ne pouvons pas garantir une sécurité absolue."
@@ -1453,7 +1417,7 @@ export const translations = {
       },
       dataStorage: {
         title: "Stockage et Emplacement des Données",
-        text: "Vos informations personnelles sont principalement stockées sur des serveurs sécurisés situés au Canada. Nous prenons des mesures appropriées pour garantir que vos données sont protégées et traitées conformément aux lois canadiennes sur la confidentialité, y compris la LPRPDE et la législation provinciale applicable sur la confidentialité. Certains services tiers que nous utilisons (tels que Stripe pour le traitement des paiements et Resend pour la livraison d'e-mails) peuvent traiter des données dans d'autres juridictions, y compris les États-Unis, mais ils sont contractuellement tenus de maintenir des mesures de sécurité appropriées et de se conformer aux lois sur la confidentialité applicables, y compris les exigences canadiennes en matière de confidentialité le cas échéant."
+        text: "Vos informations personnelles sont conservées avant tout au Canada sous la LPRPDE et la loi provinciale. Certains services tiers utilisés pour les paiements (Stripe) et les courriels (Resend) peuvent exploiter une infrastructure hors du Canada ; ils restent tenus contractuellement d'appliquer des mesures compatibles avec les attentes raisonnables en matière de confidentialité au Canada."
       },
       contact: {
         title: "Nous Contacter - Demandes de Confidentialité",
@@ -1474,10 +1438,10 @@ export const translations = {
         regions: {
           canadaTitle: "Livraison au Canada",
           canadaIntro: "Nous expédions depuis l'Ontario vers toutes les provinces et territoires. Les commandes canadiennes utilisent Chit Chats Select — entièrement suivies partout au pays (ce ne sont pas les services de comptoir Postes Canada au détail).",
-          usTitle: "Livraison aux États-Unis",
-          usIntro: "Nous livrons dans les 50 États. Choisissez États-Unis à la caisse pour voir l'option USPS suivie, traitée via Chit Chats.",
+          usTitle: "États-Unis (non offert)",
+          usIntro: "Les commandes de détail sont expédiées au Canada seulement.",
         },
-        fulfillmentNote: "Les prix suivent la devise choisie dans le menu du site (CAD ou USD). Les délais sont des estimations. Les commandes au Canada sont suivies via Chit Chats.",
+        fulfillmentNote: "Les prix sont affichés en dollars canadiens (CAD). Les délais sont des estimations. L'expédition est suivie au pays via Chit Chats.",
         methods: {
           title: "Méthodes d'Expédition",
           canadaTracked: {
@@ -1486,9 +1450,9 @@ export const translations = {
             description: "Un seul service national suivi pour le Canada — étiquettes et acheminement via Chit Chats.",
           },
           usTracked: {
-            name: "Suivi (USPS via Chit Chats)",
-            time: "~5 à 10 jours ouvrables (estimations)",
-            description: "Livraison entièrement suivie aux États-Unis. Chit Chats confie le colis à USPS ; le service USPS exact est choisi pour le meilleur tarif à l'achat de l'étiquette.",
+            name: "États-Unis (non offert)",
+            time: "—",
+            description: "La boutique de détail expédie uniquement dans le Canada. Contactez-nous pour le gros.",
           },
           priceNote: "Prix calculé à la caisse",
         },
@@ -1506,7 +1470,7 @@ export const translations = {
       shippingCosts: {
         title: "Frais d'Expédition",
         text1: "Les frais d'expédition sont indiqués à la caisse selon votre adresse et votre panier. Nous utilisons des tarifs forfaitaires estimés alignés sur Chit Chats (notre partenaire d'étiquettes) — pas les tarifs détail Postes Canada en direct.",
-        text2: "Canada : une option suivie à tarif forfaitaire partout au pays. Basculez CAD/USD dans la navigation pour la devise affichée.",
+        text2: "Canada : une option suivie à tarif forfaitaire partout au pays.",
         howTitle: "Comment fonctionnent les frais d'expédition",
         bullet1: "Les tarifs sont estimés à la caisse à partir du code postal canadien et du poids du panier.",
         bullet2: "Canada — Chit Chats Select : tarif forfaitaire suivi pour tout le pays.",
@@ -1526,23 +1490,23 @@ export const translations = {
         title: "Colis Endommagés ou Perdus",
         text1: "Si votre colis arrive endommagé ou est perdu en transit, veuillez nous contacter immédiatement :",
         damagedItems: "Articles Endommagés : Prenez des photos du colis et des articles endommagés, puis contactez-nous dans les 48 heures suivant la livraison",
-        lostPackages: "Colis Perdus : Contactez-nous si votre colis n'est pas arrivé dans les 7-12 jours ouvrables suivant la date de livraison prévue (selon la méthode d'expédition)",
+        lostPackages: "Colis perdus : contactez-nous si votre colis n'est pas arrivé dans les quelque 12 jours ouvrables suivant l'expédition (suivi domestique au Canada) ; nous enquêtons avec Chit Chats.",
         incorrectItems: "Articles Incorrects : Contactez-nous immédiatement si vous avez reçu les mauvais articles",
         text2: "Nous travaillerons avec Chit Chats et le transporteur pour résoudre le problème et remplacer ou rembourser votre commande selon le cas. Vous pouvez choisir entre un remplacement ou un remboursement complet. Nous pouvons demander des photos ou des informations supplémentaires pour traiter votre réclamation."
       },
       internationalShipping: {
-        title: "Expédition Internationale",
-        text1: "Nous expédions actuellement au Canada uniquement. Pour d'autres destinations, veuillez nous contacter à",
-        text2: "Les tarifs et délais d'expédition internationale varient selon la destination. Nous fournirons un devis d'expédition sur demande."
+        title: "Hors Canada",
+        text1: "Nous livrons au Canada seulement par la boutique en ligne. Pour des comptes de gros ou des demandes particulières ailleurs, écrivez-nous à",
+        text2: "Une adresse hors Canada ne peut pas être utilisée comme adresse de détail à la caisse."
       },
       usShipping: {
-        title: "Expédition aux États-Unis",
-        text1: "Nous expédions du Canada vers les 50 États. Sélectionnez États-Unis à la caisse pour l'option USPS suivie via Chit Chats.",
-        text2: "À prévoir :",
-        item1: "Une seule option suivie vers les États-Unis — livrée par USPS après export par Chit Chats.",
-        item2: "Livraison estimée environ 5 à 10 jours ouvrables ; les douanes peuvent ajouter du délai.",
-        item3: "La caisse affiche une estimation selon le poids ; nous achetons l'étiquette Chit Chats / USPS réelle à l'expédition.",
-        note: "Les prix suivent la devise sélectionnée (CAD ou USD). Les délais sont des estimations. Les commandes vers les États-Unis passent par Chit Chats et sont livrées par USPS."
+        title: "États-Unis (non offert)",
+        text1: "Nous n'offrons pas l'expédition de détail aux adresses américaines dans la boutique en ligne pour le moment.",
+        text2: "À prévoir pour les commandes au Canada :",
+        item1: "Une option suivie nationale depuis l'Ontario.",
+        item2: "Délai moyen d'environ deux jours ouvrables après expédition ; la région peut varier.",
+        item3: "La caisse estime selon code postal et poids ; nous achetons l'étiquette lors de la préparation de la commande.",
+        note: "Les prix sont en dollars canadiens (CAD). Les délais sont des estimations."
       },
       returns: {
         title: "Résolution des Problèmes et Remplacement de Produit",
@@ -1632,7 +1596,7 @@ export const translations = {
       lastUpdated: "Dernière mise à jour :",
       introduction: {
         title: "Introduction",
-        text: "Bienvenue chez Pure Peel Co., une entreprise canadienne opérant en Ontario, Canada. Ces Conditions d'utilisation (« Conditions ») régissent votre accès et votre utilisation de notre site Web et de nos services. En accédant ou en utilisant notre site Web, en passant une commande ou en effectuant un achat, vous acceptez d'être lié par ces Conditions. Si vous n'acceptez pas ces Conditions, veuillez ne pas utiliser notre site Web ou nos services. Ces Conditions sont régies par la loi canadienne, avec des dispositions spécifiques pour les clients au Canada et aux États-Unis."
+        text: "Bienvenue chez Pure Peel Co., une entreprise canadienne opérant en Ontario, Canada. Ces Conditions d'utilisation (« Conditions ») régissent votre accès et votre utilisation de notre site Web et de nos services. En accédant ou en utilisant notre site Web, en passant une commande ou en effectuant un achat, vous acceptez d'être lié par ces Conditions. Si vous n'acceptez pas ces Conditions, veuillez ne pas utiliser notre site Web ou nos services. Ces Conditions sont régies par le droit canadien."
       },
       acceptance: {
         title: "Acceptation des Conditions",
@@ -1713,12 +1677,12 @@ export const translations = {
       },
       disputeResolution: {
         title: "Résolution des Litiges",
-        text: "Tout litige, controverse ou réclamation découlant de ou liée à ces Conditions, ou à la violation, la résiliation ou la validité de celles-ci, sera d'abord traitée par une négociation de bonne foi. Si le litige ne peut pas être résolu par négociation dans les 30 jours, les parties conviennent de soumettre le litige à un arbitrage contraignant conformément à la Loi sur l'arbitrage (Ontario) ou, le cas échéant, aux règles de l'Institut canadien de résolution des différends. L'arbitrage aura lieu en Ontario, Canada. Pour les clients aux États-Unis, les litiges peuvent être résolus par arbitrage conformément à la loi américaine applicable, mais la juridiction principale reste l'Ontario, Canada. Nonobstant ce qui précède, toute partie peut demander une injonction devant tout tribunal compétent pour protéger les droits de propriété intellectuelle ou pour prévenir un préjudice irréparable."
+        text: "Tout litige, controverse ou réclamation découlant de ou liée à ces Conditions, ou à la violation, la résiliation ou la validité de celles-ci, sera d'abord traitée par une négociation de bonne foi. Si le litige ne peut pas être résolu par négociation dans les 30 jours, les parties conviennent de soumettre le litige à un arbitrage contraignant conformément à la Loi sur l'arbitrage (Ontario) ou, le cas échéant, aux règles de l'Institut canadien de résolution des différends. L'arbitrage aura lieu en Ontario, Canada. Nonobstant ce qui précède, toute partie peut demander une injonction devant tout tribunal compétent pour protéger les droits de propriété intellectuelle ou pour prévenir un préjudice irréparable."
       },
       governingLaw: {
         title: "Loi Applicable et Juridiction",
-        text: "Ces Conditions seront régies et interprétées conformément aux lois de la province de l'Ontario et aux lois fédérales du Canada applicables, sans égard à ses dispositions de conflit de lois. Tout litige découlant de ces Conditions ou de votre utilisation de notre site Web sera soumis à la juridiction exclusive des tribunaux de l'Ontario, Canada. Pour les clients situés aux États-Unis, bien que ces Conditions soient régies par la loi canadienne, vous pouvez avoir des droits supplémentaires en vertu des lois américaines de protection du consommateur applicables.",
-        consumerProtection: "Protection du Consommateur : En tant qu'entreprise canadienne opérant en Ontario, nous nous conformons à la Loi sur la protection du consommateur de l'Ontario (LPCO) et à toute la législation canadienne de protection du consommateur applicable. Si vous êtes un consommateur en Ontario ou ailleurs au Canada, vous avez certains droits et protections en vertu de la LPCO et des lois provinciales de protection du consommateur, notamment le droit de recevoir des informations exactes sur les produits et services, des conditions contractuelles équitables et une protection contre les pratiques commerciales déloyales. Les clients aux États-Unis peuvent avoir des droits supplémentaires en vertu des lois américaines fédérales et étatiques de protection du consommateur applicables."
+        text: "Ces Conditions seront régies et interprétées conformément aux lois de la province de l'Ontario et aux lois fédérales du Canada applicables, sans égard à ses dispositions de conflit de lois. Tout litige découlant de ces Conditions ou de votre utilisation de notre site Web sera soumis à la juridiction exclusive des tribunaux de l'Ontario, Canada.",
+        consumerProtection: "Protection du consommateur : en tant qu'entreprise canadienne opérant en Ontario, nous nous conformons à la Loi sur la protection du consommateur de l'Ontario (LPCO) et à la législation canadienne de protection du consommateur applicable. Si vous êtes un consommateur en Ontario ou ailleurs au Canada, vous avez certains droits et protections conformément à la LPCO et aux lois provinciales, notamment le droit à des informations exactes sur les produits et services, des conditions contractuelles équitables et une protection contre les pratiques commerciales déloyales."
       },
       changes: {
         title: "Modifications des Conditions",

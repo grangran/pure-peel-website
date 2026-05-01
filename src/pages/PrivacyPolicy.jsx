@@ -263,15 +263,6 @@ export default function PrivacyPolicy() {
 
           <Divider />
 
-          {/* US Privacy Rights */}
-          <SectionTitle>{getTranslation(language, 'privacy.usPrivacyRights.title')}</SectionTitle>
-          <Body>{getTranslation(language, 'privacy.usPrivacyRights.text')}</Body>
-          <BulletList items={getTranslation(language, 'privacy.usPrivacyRights.rights')} />
-          <Body>{getTranslation(language, 'privacy.usPrivacyRights.california')}</Body>
-          <Body>{getTranslation(language, 'privacy.usPrivacyRights.text2')}</Body>
-
-          <Divider />
-
           {/* Marketing Communications */}
           <SectionTitle>{getTranslation(language, 'privacy.marketingCommunications.title')}</SectionTitle>
           <Body>{getTranslation(language, 'privacy.marketingCommunications.text1')}</Body>

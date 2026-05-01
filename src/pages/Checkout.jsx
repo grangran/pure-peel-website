@@ -59,7 +59,7 @@ const inputClass = (hasError) =>
 export default function Checkout() {
   const { cartItems, getCartTotal, clearCart, setIsCartOpen } = useCart()
   const { language } = useLanguage()
-  const { currency, convertPrice, formatPrice, exchangeRate } = useCurrency()
+  const { currency, exchangeRate } = useCurrency()
   const [currentStep, setCurrentStep] = useState(1)
 
   useEffect(() => {
@@ -466,7 +466,7 @@ export default function Checkout() {
     const shippingCAD  = calculateShipping()
     const tax          = 0
     const totalCAD     = Math.max(0, subtotalCAD + shippingCAD + tax - promoCodeDiscount)
-    const total        = currency === 'USD' ? convertPrice(totalCAD) : totalCAD
+    const total        = totalCAD
     trackCheckoutStarted(cartItems, total)
     setIsSubmitting(true); setStripeError(null)
     try {
@@ -587,10 +587,8 @@ export default function Checkout() {
     : subtotalCAD
 
   const formatPriceWithCurrency = (priceCAD) => {
-    const convertedPrice = convertPrice(priceCAD)
-    const numericValue   = parseFloat(convertedPrice.toFixed(2))
-    let currentCurrency  = currency?.toUpperCase() || 'CAD'
-    return currentCurrency === 'USD' ? `$${numericValue.toFixed(2)} USD` : `$${numericValue.toFixed(2)} CAD`
+    const numericValue = parseFloat(Number(priceCAD).toFixed(2))
+    return `$${numericValue.toFixed(2)} CAD`
   }
 
   // ── Empty cart ────────────────────────────────────────────────────────────

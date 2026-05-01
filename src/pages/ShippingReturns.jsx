@@ -1,7 +1,5 @@
-import { useEffect, useState } from "react"
 import { useScrollReveal } from "../hooks/useScrollReveal"
 import { useLanguage } from "../context/LanguageContext"
-import { useCurrency } from "../context/CurrencyContext"
 import { getTranslation } from "../utils/translations"
 
 const S = {
@@ -128,31 +126,6 @@ function ShippingMethodCard({ icon, name, description, time, priceNote, highligh
 export default function ShippingReturns() {
   const [sectionRef] = useScrollReveal({ threshold: 0.1 })
   const { language } = useLanguage()
-  const { currency: contextCurrency, setCurrency, convertPrice } = useCurrency()
-  const [currency, setLocalCurrency] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('currency')
-      return (stored === 'CAD' || stored === 'USD') ? stored : 'CAD'
-    }
-    return 'CAD'
-  })
-
-  const formatPriceWithCurrency = (priceCAD) => {
-    const converted = convertPrice(priceCAD)
-    const val = parseFloat(converted.toFixed(2))
-    return currency === 'USD' ? `$${val.toFixed(2)} USD` : `$${val.toFixed(2)} CAD`
-  }
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('currency')
-      if (stored && (stored === 'CAD' || stored === 'USD')) {
-        if (stored !== currency) { setLocalCurrency(stored); setCurrency(stored) }
-      } else if (contextCurrency && contextCurrency !== currency) {
-        setLocalCurrency(contextCurrency)
-      }
-    }
-  }, [contextCurrency, currency, setCurrency])
 
   const BoxIcon = ({ svg }) => (
     <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: S.creamDark, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -162,7 +135,7 @@ export default function ShippingReturns() {
 
   return (
     <section
-      key={`shipping-returns-${currency}`}
+      key={`shipping-returns-${language}`}
       ref={sectionRef}
       style={{ background: S.cream, minHeight: "100vh", padding: "80px 20px 96px" }}
     >
@@ -203,6 +176,10 @@ export default function ShippingReturns() {
             priceNote={getTranslation(language, 'shipping.shippingInfo.methods.priceNote')}
             highlight
           />
+
+          <BodyText style={{ marginTop: "12px", fontSize: "0.72rem", fontStyle: "italic" }}>
+            {getTranslation(language, 'shipping.shippingInfo.fulfillmentNote')}
+          </BodyText>
 
           <Divider />
 
