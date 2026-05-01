@@ -115,11 +115,7 @@ export default function AboutTeaser() {
             href="/about"
             className="group inline-flex items-center gap-4 transition-all duration-300"
             style={{ textDecoration: 'none' }}
-            onClick={(e) => {
-              e.preventDefault()
-              window.history.pushState({ page: '/about' }, '', '/about')
-              window.dispatchEvent(new Event('hashchange'))
-            }}
+
           >
             <span
               className="group-hover:border-amber-400"

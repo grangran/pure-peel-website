@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react"
 import { useCart } from "./context/CartContext"
 import Nav from "./components/Nav"
 import Hero from "./components/Hero"
+import Wholesale from "./pages/Wholesale"
 import WhyPurePeel from "./components/WhyPurePeel"
 import EmailCapture from "./components/EmailCapture"
 import EmailPopup from "./components/EmailPopup"
@@ -66,6 +67,8 @@ const getInitialPage = () => {
     return "faq"
   } else if (path === "/about" || path === "/about.html") {
     return "about"
+  } else if (path === "/wholesale" || path === "/wholesale.html") {
+    return "wholesale"
   } else if (path === "/unsubscribe" || path === "/unsubscribe.html") {
     return "unsubscribe"
   } else {
@@ -75,18 +78,15 @@ const getInitialPage = () => {
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState(getInitialPage)
-  // Use timestamp instead of counter to ensure unique keys even with rapid navigation
   const [navigationKey, setNavigationKey] = useState(() => Date.now())
   const navigationKeyRef = useRef(Date.now())
   const { isCartOpen, setIsCartOpen } = useCart()
 
   useEffect(() => {
-    // Handle browser navigation
     const handleRoute = (event) => {
       const path = window.location.pathname
-      const normalizedPath = path.replace(/\/$/, '') // Remove trailing slash
-      
-      // List of valid routes
+      const normalizedPath = path.replace(/\/$/, '')
+
       const validRoutes = [
         '/',
         '/orange',
@@ -103,14 +103,12 @@ export default function App() {
         '/terms',
         '/terms-of-service',
         '/contact',
-        '/faq'
+        '/faq',
+        '/about',
+        '/wholesale',
+        '/unsubscribe',
       ]
-      
-      // Check if path is a valid route (ignore query parameters)
-      const isValidRoute = validRoutes.includes(normalizedPath) || 
-                          normalizedPath.endsWith('.html') ||
-                          normalizedPath === ''
-      
+
       if (normalizedPath === "/" || normalizedPath === "" || normalizedPath === "/index.html") {
         setCurrentPage("home")
       } else if (normalizedPath === "/orange" || normalizedPath === "/orange.html") {
@@ -126,7 +124,6 @@ export default function App() {
       } else if (normalizedPath === "/pineapple" || normalizedPath === "/pineapple.html") {
         setCurrentPage("pineapple")
       } else if (normalizedPath === "/checkout" || normalizedPath === "/checkout.html") {
-        // Always set to checkout, regardless of query parameters
         setCurrentPage("checkout")
       } else if (normalizedPath === "/admin" || normalizedPath === "/admin.html") {
         setCurrentPage("admin")
@@ -144,72 +141,51 @@ export default function App() {
         setCurrentPage("faq")
       } else if (normalizedPath === "/about" || normalizedPath === "/about.html") {
         setCurrentPage("about")
+      } else if (normalizedPath === "/wholesale" || normalizedPath === "/wholesale.html") {
+        setCurrentPage("wholesale")
       } else if (normalizedPath === "/unsubscribe" || normalizedPath === "/unsubscribe.html") {
         setCurrentPage("unsubscribe")
       } else {
-        // Invalid route - show 404
         setCurrentPage("not-found")
       }
-      
-      // Scroll to top when page changes
+
       window.scrollTo({ top: 0, behavior: 'instant' })
-      
-      // Update navigation key with timestamp + microsecond precision to force complete remount
-      // Using performance.now() for higher precision than Date.now() to ensure uniqueness
-      // even with rapid back/forward navigation
-      // Update ref immediately and state synchronously to ensure React sees the change
+
       const newKey = performance.now()
       navigationKeyRef.current = newKey
       setNavigationKey(newKey)
     }
 
-    // Handle initial route and Stripe redirects
     handleRoute()
-    
-    // Listen for browser back/forward - browser fires popstate automatically
-    // Use a flag to prevent multiple rapid calls from batching
+
     let isNavigating = false
     window.addEventListener("popstate", (e) => {
-      if (isNavigating) return // Prevent rapid-fire calls
+      if (isNavigating) return
       isNavigating = true
-      // Process immediately - browser has already updated the URL
       handleRoute(e)
-      // Reset flag after a brief delay to allow next navigation
-      setTimeout(() => {
-        isNavigating = false
-      }, 50)
+      setTimeout(() => { isNavigating = false }, 50)
     })
-    
-    // Handle browser back/forward cache (bfcache) restoration
-    // When browser restores a page from cache, we need to re-initialize
+
     const handlePageShow = (e) => {
-      // If page was restored from bfcache, force a route update
       if (e.persisted) {
-        // Force remount by updating navigation key with new timestamp
         setNavigationKey(Date.now())
-        // Re-run route handler to ensure correct page is displayed
         handleRoute()
       }
     }
     window.addEventListener("pageshow", handlePageShow)
-    
-    // Also handle hash changes (some redirects use hash)
     window.addEventListener("hashchange", handleRoute)
 
-    // Intercept link clicks
     const handleClick = (e) => {
       const link = e.target.closest("a")
       if (link && link.href) {
         const url = new URL(link.href)
         if (url.origin === window.location.origin) {
           e.preventDefault()
-          // Push state and update route - browser will handle popstate naturally
           window.history.pushState({ page: url.pathname }, "", url.pathname)
           handleRoute()
         }
       }
     }
-
     document.addEventListener("click", handleClick)
 
     return () => {
@@ -220,62 +196,42 @@ export default function App() {
     }
   }, [])
 
-  // Scroll to top when page changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [currentPage])
 
   const CartComponent = <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
 
-  // Get SEO data for current page
   const getSEOData = () => {
     switch (currentPage) {
-      case "orange":
-        return seoData.orange
-      case "pink-orange":
-        return seoData.pinkOrange
-      case "lime":
-        return seoData.lime
-      case "lemon":
-        return seoData.lemon
-      case "apple":
-        return seoData.apple
-      case "pineapple":
-        return seoData.pineapple
-      case "checkout":
-        return seoData.checkout
-      case "admin":
-        return seoData.admin
-      case "order-tracking":
-        return seoData.orderTracking
-      case "privacy":
-        return seoData.privacy
-      case "shipping-returns":
-        return seoData.shippingReturns
-      case "terms":
-        return seoData.terms
-      case "faq":
-        return seoData.faq
-      case "not-found":
-        return seoData.notFound
-      case "unsubscribe":
-        return seoData.unsubscribe
-      default:
-        return seoData.home
+      case "orange":          return seoData.orange
+      case "pink-orange":     return seoData.pinkOrange
+      case "lime":            return seoData.lime
+      case "lemon":           return seoData.lemon
+      case "apple":           return seoData.apple
+      case "pineapple":       return seoData.pineapple
+      case "checkout":        return seoData.checkout
+      case "admin":           return seoData.admin
+      case "order-tracking":  return seoData.orderTracking
+      case "privacy":         return seoData.privacy
+      case "shipping-returns":return seoData.shippingReturns
+      case "terms":           return seoData.terms
+      case "faq":             return seoData.faq
+      case "not-found":       return seoData.notFound
+      case "unsubscribe":     return seoData.unsubscribe
+      case "wholesale":       return seoData.wholesale || seoData.home
+      default:                return seoData.home
     }
   }
 
   const currentSEO = getSEOData()
 
-  // Track page views when route changes
   useEffect(() => {
     const pageTitle = currentSEO.title || document.title
     const pageUrl = window.location.pathname + window.location.search
     trackPageView(pageUrl, pageTitle)
   }, [currentPage, currentSEO.title])
 
-  // Render based on current page
-  // Use key prop with currentPage to force remount when page changes, ensuring fresh state
   if (currentPage === "orange") {
     return (
       <>
@@ -436,6 +392,7 @@ export default function App() {
       </>
     )
   }
+
   if (currentPage === "about") {
     return (
       <>
@@ -443,6 +400,18 @@ export default function App() {
         <Nav key={`nav-${currentPage}-${navigationKey}`} />
         <About key={`about-${currentPage}-${navigationKey}`} />
         <Footer key={`footer-${currentPage}-${navigationKey}`} />
+      </>
+    )
+  }
+
+  if (currentPage === "wholesale") {
+    return (
+      <>
+        <SEO {...currentSEO} />
+        <Nav key={`nav-${currentPage}-${navigationKey}`} />
+        <Wholesale key={`wholesale-${currentPage}-${navigationKey}`} />
+        <Footer key={`footer-${currentPage}-${navigationKey}`} />
+        {CartComponent}
       </>
     )
   }
@@ -485,4 +454,3 @@ export default function App() {
     </>
   )
 }
-

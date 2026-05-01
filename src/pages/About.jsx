@@ -61,7 +61,7 @@ function Eyebrow({ children, visible, delay = 0, light = false }) {
 // ── Stats ───────────────────────────────────────────────────────────
 const statsEN = [
   { value: "10+", label: "Hours per batch" },
-  { value: "5",   label: "Citrus varieties" },
+  { value: "6",   label: "Varieties" },
   { value: "100%", label: "Real fruit" },
   { value: "0",   label: "Preservatives" },
 ]
