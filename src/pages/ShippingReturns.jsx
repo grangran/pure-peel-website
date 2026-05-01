@@ -94,15 +94,18 @@ function BulletList({ items, icon = "•" }) {
 
 function ShippingMethodCard({ icon, name, description, time, priceNote, highlight = false }) {
   return (
-    <div style={{
-      padding: "16px 20px", borderRadius: "10px",
-      border: highlight ? `1.5px solid rgba(200,90,8,0.4)` : `1px solid ${S.border}`,
-      background: highlight ? "rgba(200,90,8,0.03)" : "#fff",
-      display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "16px",
-      marginBottom: "8px",
-      transition: "border-color 0.2s",
-    }}>
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "12px", flex: 1 }}>
+    <div
+      className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4"
+      style={{
+        padding: "16px 18px",
+        borderRadius: "10px",
+        border: highlight ? `1.5px solid rgba(200,90,8,0.4)` : `1px solid ${S.border}`,
+        background: highlight ? "rgba(200,90,8,0.03)" : "#fff",
+        marginBottom: "8px",
+        transition: "border-color 0.2s",
+      }}
+    >
+      <div className="flex min-w-0 flex-1 items-start gap-3">
         <div style={{
           width: "32px", height: "32px", borderRadius: "8px", flexShrink: 0,
           background: highlight ? "rgba(200,90,8,0.1)" : S.creamDark,
@@ -110,14 +113,16 @@ function ShippingMethodCard({ icon, name, description, time, priceNote, highligh
         }}>
           {icon}
         </div>
-        <div>
+        <div className="min-w-0">
           <p style={{ fontFamily: S.sans, fontSize: "0.82rem", fontWeight: 400, color: S.dark, marginBottom: "3px" }}>{name}</p>
           <p style={{ fontFamily: S.sans, fontSize: "0.7rem", fontWeight: 300, color: S.textLight, lineHeight: 1.6 }}>{description}</p>
         </div>
       </div>
-      <div style={{ textAlign: "right", flexShrink: 0 }}>
-        <p style={{ fontFamily: S.sans, fontSize: "0.78rem", fontWeight: 400, color: S.dark, marginBottom: "2px" }}>{time}</p>
-        <p style={{ fontFamily: S.sans, fontSize: "0.62rem", fontWeight: 300, color: S.textLight }}>{priceNote}</p>
+      <div
+        className="flex w-full shrink-0 flex-row items-baseline justify-between gap-3 border-t border-black/[0.06] pt-3 sm:w-auto sm:flex-col sm:items-end sm:justify-start sm:gap-1 sm:border-t-0 sm:pt-0 sm:text-right"
+      >
+        <p style={{ fontFamily: S.sans, fontSize: "0.78rem", fontWeight: 400, color: S.dark, margin: 0 }}>{time}</p>
+        <p style={{ fontFamily: S.sans, fontSize: "0.62rem", fontWeight: 300, color: S.textLight, margin: 0 }}>{priceNote}</p>
       </div>
     </div>
   )
@@ -137,13 +142,10 @@ export default function ShippingReturns() {
     <section
       key={`shipping-returns-${language}`}
       ref={sectionRef}
-      style={{
-        background: S.cream,
-        minHeight: "100vh",
-        padding: "80px 20px max(112px, calc(32px + env(safe-area-inset-bottom, 0px)))",
-      }}
+      className="box-border min-h-dvh pb-[max(10rem,calc(4rem+env(safe-area-inset-bottom,0px)))] px-5 pt-[5rem] selection:bg-orange-100 sm:pb-28 sm:px-6"
+      style={{ background: S.cream }}
     >
-      <div style={{ maxWidth: "800px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "800px", margin: "0 auto", paddingBottom: "8px" }}>
 
         {/* Page header */}
         <div style={{ textAlign: "center", marginBottom: "56px" }}>
@@ -457,8 +459,12 @@ export default function ShippingReturns() {
           </InfoBox>
         </div>
 
-        
-
+        {/* Keeps last lines clear of Safari/Chrome dynamic toolbars */}
+        <div
+          aria-hidden
+          className="pointer-events-none shrink-0"
+          style={{ height: "max(72px, env(safe-area-inset-bottom, 0px))" }}
+        />
       </div>
     </section>
   )
