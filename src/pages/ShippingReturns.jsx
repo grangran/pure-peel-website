@@ -137,7 +137,11 @@ export default function ShippingReturns() {
     <section
       key={`shipping-returns-${language}`}
       ref={sectionRef}
-      style={{ background: S.cream, minHeight: "100vh", padding: "80px 20px 96px" }}
+      style={{
+        background: S.cream,
+        minHeight: "100vh",
+        padding: "80px 20px max(112px, calc(32px + env(safe-area-inset-bottom, 0px)))",
+      }}
     >
       <div style={{ maxWidth: "800px", margin: "0 auto" }}>
 
@@ -177,7 +181,14 @@ export default function ShippingReturns() {
             highlight
           />
 
-          <BodyText style={{ marginTop: "12px", fontSize: "0.72rem", fontStyle: "italic" }}>
+          <BodyText style={{
+            marginTop: "12px",
+            marginBottom: "4px",
+            fontSize: "0.72rem",
+            fontStyle: "italic",
+            lineHeight: 1.65,
+            paddingBottom: "4px",
+          }}>
             {getTranslation(language, 'shipping.shippingInfo.fulfillmentNote')}
           </BodyText>
 

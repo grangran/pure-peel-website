@@ -509,7 +509,7 @@ export const translations = {
           usTitle: "United States (not offered)",
           usIntro: "Retail orders ship within Canada only.",
         },
-        fulfillmentNote: "Prices are shown in Canadian dollars (CAD). Delivery times are estimates. Orders are fulfilled with tracked domestic service through Chit Chats.",
+        fulfillmentNote: "Prices in CAD. Delivery times are estimates. Canada-wide tracked shipping via Chit Chats.",
         methods: {
           title: "Shipping Methods",
           canadaTracked: {
@@ -1441,7 +1441,7 @@ export const translations = {
           usTitle: "États-Unis (non offert)",
           usIntro: "Les commandes de détail sont expédiées au Canada seulement.",
         },
-        fulfillmentNote: "Les prix sont affichés en dollars canadiens (CAD). Les délais sont des estimations. L'expédition est suivie au pays via Chit Chats.",
+        fulfillmentNote: "Prix en CAD. Délais estimatifs. Expédition suivie partout au Canada via Chit Chats.",
         methods: {
           title: "Méthodes d'Expédition",
           canadaTracked: {
