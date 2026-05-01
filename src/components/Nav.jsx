@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react"
 import { useCart } from "../context/CartContext"
 import { useLanguage } from "../context/LanguageContext"
-import { useCurrency } from "../context/CurrencyContext"
 import { getTranslation } from "../utils/translations"
 import OptimizedImage from "./OptimizedImage"
 
@@ -18,14 +17,12 @@ export default function Nav() {
   const [isScrolled, setIsScrolled]         = useState(true)
   const [isShopOpen, setIsShopOpen]         = useState(false)
   const [isLangOpen, setIsLangOpen]         = useState(false)
-  const [isCurrencyOpen, setIsCurrencyOpen] = useState(false)
   const [badgeUpdated, setBadgeUpdated]     = useState(false)
   const [navHeight, setNavHeight]           = useState(72)
   const [currentPath, setCurrentPath]       = useState(window.location.pathname)
 
   const { cartCount, setIsCartOpen }        = useCart()
   const { language, setLanguage }           = useLanguage()
-  const { currency, setCurrency }           = useCurrency()
 
   // Nav height
   useEffect(() => {
@@ -67,7 +64,6 @@ export default function Nav() {
   useEffect(() => {
     setIsMenuOpen(false)
     setIsLangOpen(false)
-    setIsCurrencyOpen(false)
     setIsShopOpen(false)
   }, [])
 
@@ -83,7 +79,7 @@ export default function Nav() {
   }, [])
 
   const closeMenu = () => setIsMenuOpen(false)
-  const closeAll  = () => { setIsShopOpen(false); setIsLangOpen(false); setIsCurrencyOpen(false) }
+  const closeAll  = () => { setIsShopOpen(false); setIsLangOpen(false) }
 
   const handleLinkClick = (e, targetId) => {
     e.preventDefault()
@@ -125,7 +121,7 @@ export default function Nav() {
             {/* Shop dropdown */}
             <div
               className="relative"
-              onMouseEnter={() => { setIsShopOpen(true); setIsLangOpen(false); setIsCurrencyOpen(false) }}
+              onMouseEnter={() => { setIsShopOpen(true); setIsLangOpen(false) }}
               onMouseLeave={() => setIsShopOpen(false)}
             >
               <button style={linkStyle({ display: "flex", alignItems: "center", gap: "5px" })}
@@ -229,53 +225,14 @@ export default function Nav() {
           {/* ── RIGHT: utilities ── */}
           <div className="flex items-center gap-2 md:gap-4">
 
-            {/* Currency — desktop only */}
-            <div className="relative hidden md:block">
-              <button
-                onClick={() => { setIsCurrencyOpen(p => !p); setIsLangOpen(false); setIsShopOpen(false) }}
-                style={linkStyle({ display: "flex", alignItems: "center", gap: "4px" })}
-                onMouseEnter={e => e.currentTarget.style.color = linkHover}
-                onMouseLeave={e => e.currentTarget.style.color = linkColor}
-              >
-                {currency}
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
-                  style={{ stroke: linkColor, transition: "transform 0.2s", transform: isCurrencyOpen ? "rotate(180deg)" : "none" }}>
-                  <path d="M19 9l-7 7-7-7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </button>
-              {isCurrencyOpen && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setIsCurrencyOpen(false)} />
-                  <div style={{
-                    position: "absolute", right: 0, top: "calc(100% + 12px)",
-                    background: "#faf8f5", borderRadius: "12px",
-                    border: "1px solid rgba(15,10,4,0.08)",
-                    boxShadow: "0 12px 36px rgba(15,10,4,0.1)",
-                    padding: "8px", minWidth: "160px", zIndex: 100,
-                  }}>
-                    {[{ val: "CAD", label: "CAD — Canadian Dollar" }, { val: "USD", label: "USD — US Dollar" }].map(c => (
-                      <button key={c.val} onClick={() => { setCurrency(c.val); setIsCurrencyOpen(false) }}
-                        style={{
-                          display: "block", width: "100%", textAlign: "left",
-                          padding: "9px 14px", borderRadius: "8px", border: "none",
-                          background: currency === c.val ? "rgba(200,90,8,0.06)" : "transparent",
-                          fontFamily: S.sans, fontSize: "0.76rem", fontWeight: currency === c.val ? 500 : 300,
-                          color: currency === c.val ? S.orange : "rgba(15,10,4,0.65)",
-                          cursor: "pointer", transition: "background 0.15s",
-                        }}
-                        onMouseEnter={e => { if (currency !== c.val) e.currentTarget.style.background = "rgba(15,10,4,0.04)" }}
-                        onMouseLeave={e => { if (currency !== c.val) e.currentTarget.style.background = "transparent" }}
-                      >{c.label}</button>
-                    ))}
-                  </div>
-                </>
-              )}
+            <div className="hidden md:flex items-center" aria-label="Prices in Canadian dollars">
+              <span style={linkStyle({ cursor: "default" })}>CAD</span>
             </div>
 
             {/* Language — desktop only */}
             <div className="relative hidden md:block">
               <button
-                onClick={() => { setIsLangOpen(p => !p); setIsCurrencyOpen(false); setIsShopOpen(false) }}
+                onClick={() => { setIsLangOpen(p => !p); setIsShopOpen(false) }}
                 style={linkStyle({ display: "flex", alignItems: "center", gap: "4px" })}
                 onMouseEnter={e => e.currentTarget.style.color = linkHover}
                 onMouseLeave={e => e.currentTarget.style.color = linkColor}
@@ -386,25 +343,31 @@ export default function Nav() {
       }}>
         <div style={{ padding: "28px 32px 40px" }}>
 
-          {/* Currency + language toggles */}
-          <div style={{ display: "flex", gap: "12px", marginBottom: "28px" }}>
-            {[
-              { options: [{ val: "CAD", label: "CAD" }, { val: "USD", label: "USD" }], current: currency, onChange: setCurrency },
-              { options: [{ val: "en",  label: "EN"  }, { val: "fr",  label: "FR"  }], current: language, onChange: setLanguage },
-            ].map((sel, si) => (
-              <div key={si} style={{ display: "flex", gap: "6px" }}>
-                {sel.options.map(o => (
-                  <button key={o.val} onClick={() => sel.onChange(o.val)} style={{
-                    padding: "6px 12px", borderRadius: "100px",
-                    border: `1px solid ${sel.current === o.val ? "rgba(200,90,8,0.4)" : "rgba(15,10,4,0.1)"}`,
-                    background: sel.current === o.val ? "rgba(200,90,8,0.06)" : "transparent",
-                    fontFamily: S.sans, fontSize: "0.65rem", fontWeight: sel.current === o.val ? 500 : 300,
-                    letterSpacing: "0.1em", color: sel.current === o.val ? S.orange : "rgba(15,10,4,0.5)",
-                    cursor: "pointer",
-                  }}>{o.label}</button>
-                ))}
-              </div>
-            ))}
+          <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap", marginBottom: "28px" }}>
+            <span
+              aria-label="Prices in Canadian dollars"
+              style={{
+                padding: "6px 12px", borderRadius: "100px",
+                border: "1px solid rgba(200,90,8,0.25)",
+                background: "rgba(200,90,8,0.06)",
+                fontFamily: S.sans, fontSize: "0.65rem", fontWeight: 500,
+                letterSpacing: "0.12em", color: S.orange,
+              }}
+            >
+              CAD
+            </span>
+            <div style={{ display: "flex", gap: "6px" }}>
+              {[{ val: "en", label: "EN" }, { val: "fr", label: "FR" }].map(o => (
+                <button key={o.val} type="button" onClick={() => setLanguage(o.val)} style={{
+                  padding: "6px 12px", borderRadius: "100px",
+                  border: `1px solid ${language === o.val ? "rgba(200,90,8,0.4)" : "rgba(15,10,4,0.1)"}`,
+                  background: language === o.val ? "rgba(200,90,8,0.06)" : "transparent",
+                  fontFamily: S.sans, fontSize: "0.65rem", fontWeight: language === o.val ? 500 : 300,
+                  letterSpacing: "0.1em", color: language === o.val ? S.orange : "rgba(15,10,4,0.5)",
+                  cursor: "pointer",
+                }}>{o.label}</button>
+              ))}
+            </div>
           </div>
 
           <div style={{ height: "1px", background: "rgba(15,10,4,0.07)", marginBottom: "24px" }} />

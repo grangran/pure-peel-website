@@ -10,7 +10,9 @@ const CACHE_DURATION = 60 * 60 * 1000
 export function CurrencyProvider({ children }) {
   const [currency, setCurrency] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('currency') || 'CAD'
+      const stored = localStorage.getItem('currency') || 'CAD'
+      if (stored === 'USD') return 'CAD'
+      return stored === 'CAD' ? stored : 'CAD'
     }
     return 'CAD'
   })
