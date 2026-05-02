@@ -480,7 +480,6 @@ function VariantSelector({ variants, selectedId, onChange, language }) {
           const label     = translateVariantLabel(language, v.label)
           const [size, count] = label.split("—").map(s => s.trim())
           const isBox     = v.id?.includes("clearbox")
-          const isPopular = v.label?.toLowerCase().includes("small")
           const priceStr  = v.price % 1 === 0 ? `$${v.price}` : `$${v.price.toFixed(2)}`
 
           return (
@@ -505,11 +504,12 @@ function VariantSelector({ variants, selectedId, onChange, language }) {
                 <span style={{ fontFamily: C.sans, fontSize: "0.76rem", fontWeight: isSel ? 500 : 400, color: C.dark }}>{size}</span>
                 <span style={{ fontFamily: C.sans, fontSize: "0.76rem", fontWeight: isSel ? 500 : 400, color: isSel ? C.dark : C.textMid }}>{priceStr}</span>
               </div>
-              {count && <div style={{ fontFamily: C.sans, fontSize: "0.58rem", fontWeight: 300, color: C.textLight, marginBottom: (isPopular || isBox) ? "6px" : "0" }}>{count}</div>}
-              <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
-                {isPopular && <span style={{ fontFamily: C.sans, fontSize: "0.46rem", fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase", color: C.orange, whiteSpace: "nowrap" }}>{getTranslation(language, "productPage.mostPopular")}</span>}
-                {isBox     && <span style={{ fontFamily: C.sans, fontSize: "0.46rem", fontWeight: 400, letterSpacing: "0.06em", textTransform: "uppercase", color: C.textLight, whiteSpace: "nowrap" }}>{getTranslation(language, "productPage.giftReady")}</span>}
-              </div>
+              {count && <div style={{ fontFamily: C.sans, fontSize: "0.58rem", fontWeight: 300, color: C.textLight, marginBottom: isBox ? "6px" : "0" }}>{count}</div>}
+              {isBox && (
+                <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                  <span style={{ fontFamily: C.sans, fontSize: "0.46rem", fontWeight: 400, letterSpacing: "0.06em", textTransform: "uppercase", color: C.textLight, whiteSpace: "nowrap" }}>{getTranslation(language, "productPage.giftReady")}</span>
+                </div>
+              )}
             </button>
           )
         })}
