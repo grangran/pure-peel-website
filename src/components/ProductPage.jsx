@@ -194,7 +194,7 @@ const PRODUCT_META = {
   },
   pineapple: {
     collection: "Fruit Collection",
-    hook: "Tropical, bright & unforgettable — sunshine in every slice.",
+    hook: "Tropical, bright & unforgettable — counted in pcs.",
     tags: ["Tropical", "Bright", "Sweet-Tart", "Bold"],
     useCases: ["Tiki & Rum Cocktails", "Sparkling Drinks", "Dessert Boards"],
     accordions: [
@@ -204,7 +204,7 @@ const PRODUCT_META = {
     ],
     fr: {
       collection: "Collection de fruits",
-      hook: "Tropical, lumineux et inoubliable — un rayon de soleil dans chaque tranche.",
+      hook: "Tropical, lumineux et inoubliable — vendu au compte de pcs.",
       tags: ["Tropical", "Lumineux", "Doux-acidule", "Audacieux"],
       useCases: ["Cocktails tiki et rhum", "Boissons petillantes", "Plateaux dessert"],
       accordions: [

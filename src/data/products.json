@@ -175,15 +175,15 @@
     "variants": [
       {
         "id": "pineapple-small",
-        "label": "Small Bag — 25 slices",
-        "option": "Small Bag (25 slices)",
+        "label": "Small Bag — 25 pcs",
+        "option": "Small Bag (25 pcs)",
         "price": 10,
         "image": "/images/pineapple-product.JPEG"
       },
       {
         "id": "pineapple-medium",
-        "label": "Medium Bag — 40 slices",
-        "option": "Medium Bag (40 slices)",
+        "label": "Medium Bag — 40 pcs",
+        "option": "Medium Bag (40 pcs)",
         "price": 15,
         "image": "/images/pineapple-product.JPEG"
       }

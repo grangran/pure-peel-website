@@ -82,11 +82,11 @@ const sampleProducts = [
   {
     id: "pineapple",
     name: "Pineapple",
-    description: "Bright, tropical dehydrated pineapple slices. Sweet-tart and aromatic for cocktails and gourmet boards.",
+    description: "Bright, tropical dehydrated pineapple. Sweet-tart and aromatic for cocktails and gourmet boards. Bag sizes listed in pcs.",
     showBulkInquiry: true,
     variants: [
-      { id: "pineapple-small", label: "Small Bag — 25 slices", option: "Small Bag (25 slices)", price: 10, image: "/images/pineapple-product.JPEG" },
-      { id: "pineapple-medium", label: "Medium Bag — 40 slices", option: "Medium Bag (40 slices)", price: 15, image: "/images/pineapple-product.JPEG" }
+      { id: "pineapple-small", label: "Small Bag — 25 pcs", option: "Small Bag (25 pcs)", price: 10, image: "/images/pineapple-product.JPEG" },
+      { id: "pineapple-medium", label: "Medium Bag — 40 pcs", option: "Medium Bag (40 pcs)", price: 15, image: "/images/pineapple-product.JPEG" }
     ]
   }
 ]

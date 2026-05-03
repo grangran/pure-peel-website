@@ -6,7 +6,7 @@ const defaultImage = '/images/driedcitrusbanner.jpg'
 export const seoData = {
   home: {
     title: 'Pure Peel Co. | Premium Dehydrated Citrus Slices – Made in Canada',
-    description: 'Premium dehydrated citrus and fruit slices, made in Canada with no preservatives. Perfect for cocktails, charcuterie, and tea. Shop orange, lemon, lime, pink orange, apple, and pineapple slices.',
+    description: 'Premium dehydrated citrus and fruit slices, made in Canada with no preservatives. Perfect for cocktails, charcuterie, and tea. Shop orange, lemon, lime, pink orange, apple, and pineapple (pcs).',
     keywords: 'dehydrated citrus slices Canada, dried orange slices, cocktail garnish Canada, dehydrated lemon slices, dried lime slices, charcuterie garnish, Canadian made fruit garnish, pure peel co',
     image: defaultImage,
     url: '/',
@@ -53,9 +53,9 @@ export const seoData = {
     type: 'product',
   },
   pineapple: {
-    title: 'Dehydrated Pineapple Slices | Cocktail & Charcuterie Garnish | Pure Peel Co.',
-    description: 'Bright, tropical dehydrated pineapple slices made in Canada with no preservatives. Bold in tiki and sparkling cocktails, beautiful on cheese boards and dessert plates. Available in multiple sizes.',
-    keywords: 'dehydrated pineapple slices Canada, dried pineapple wheels, tiki garnish, cocktail garnish Canada, charcuterie fruit, Canadian made dried fruit',
+    title: 'Dehydrated Pineapple (pcs) | Cocktail & Charcuterie Garnish | Pure Peel Co.',
+    description: 'Bright, tropical dehydrated pineapple made in Canada with no preservatives. Bag sizes in pcs. Bold in tiki and sparkling cocktails, beautiful on cheese boards and dessert plates.',
+    keywords: 'dehydrated pineapple Canada, dried pineapple pieces, pineapple pcs, tiki garnish, cocktail garnish Canada, charcuterie fruit, Canadian made dried fruit',
     image: '/images/pineapple-product.JPEG',
     url: '/pineapple',
     type: 'product',
@@ -191,8 +191,8 @@ export const productSEO = {
     priceRange: '$7.20 - $12.00 CAD'
   },
   pineapple: {
-    name: 'Dehydrated Pineapple Slices',
-    description: 'Bright, tropical dehydrated pineapple slices. Sweet-tart and aromatic — ideal for cocktails, mocktails, and gourmet boards.',
+    name: 'Dehydrated Pineapple (pcs)',
+    description: 'Bright, tropical dehydrated pineapple, counted in pcs per bag. Sweet-tart and aromatic — ideal for cocktails, mocktails, and gourmet boards.',
     brand: 'Pure Peel Co.',
     category: 'Food & Beverage > Gourmet Foods > Dehydrated Fruits',
     availability: 'https://schema.org/InStock',
