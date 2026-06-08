@@ -9,7 +9,7 @@ import { getTranslation, translateVariantLabel } from "../utils/translations"
 // ─────────────────────────────────────────────────────────────────────────────
 const IMAGE_REGISTRY = {
   orange: {
-    bag: "/images/orange-product.png",
+    bag: "/images/orangev1.png",
     box: "/images/orange-box.jpg",
     gallery: [
       "/images/orange-flat.jpg",
@@ -66,7 +66,7 @@ function resolveImages(productId, variantId, variantImageFallback = null) {
 }
 
 const CARD_IMAGES = {
-  orange:        "/images/orange-product-card.jpg",
+  orange:        "/images/orangev1.png",
   "pink-orange": "/images/pink-orange-product-card.jpg",
   lime:          "/images/lime-product-card.jpg",
   lemon:         "/images/lemon-product-card.jpg",
