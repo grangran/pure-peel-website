@@ -17,7 +17,7 @@ const IMAGE_REGISTRY = {
     ],
   },
   "pink-orange": {
-    bag: "/images/pink-orange-product.png",
+    bag: "/images/pink-orangev1.png",
     box: "/images/pink-orange-box.jpg",
     gallery: [
       "/images/pink-orange-flat.jpg",
@@ -25,7 +25,7 @@ const IMAGE_REGISTRY = {
     ],
   },
   lime: {
-    bag: "/images/lime-product.png",
+    bag: "/images/limev1.png",
     box: "/images/lime-box.jpg",
     gallery: [
       "/images/lime-flat.jpg",
@@ -33,7 +33,7 @@ const IMAGE_REGISTRY = {
     ],
   },
   lemon: {
-    bag: "/images/lemon-product.png",
+    bag: "/images/lemonv1.png",
     box: "/images/lemon-box.jpg",
     gallery: [
       "/images/lemon-flat.jpg",
@@ -41,14 +41,14 @@ const IMAGE_REGISTRY = {
     ],
   },
   apple: {
-    bag: "/images/apple-product.JPEG",
+    bag: "/images/applev1.png",
     box: "/images/apple-box.jpg",
     gallery: [
       "/images/apple-flat.jpg",
     ],
   },
   pineapple: {
-    bag: "/images/pineapple-product.JPEG",
+    bag: "/images/pineapplev1.png",
     box: "/images/pineapple-product.JPEG",
     gallery: [
       "/images/pineapple-flat.jpg",
@@ -67,11 +67,11 @@ function resolveImages(productId, variantId, variantImageFallback = null) {
 
 const CARD_IMAGES = {
   orange:        "/images/orangev1.png",
-  "pink-orange": "/images/pink-orange-product-card.jpg",
-  lime:          "/images/lime-product-card.jpg",
-  lemon:         "/images/lemon-product-card.jpg",
-  apple:         "/images/apple-product-card.jpg",
-  pineapple:     "/images/pineapple-flat.jpg",
+  "pink-orange": "/images/pink-orangev1.png",
+  lime:          "/images/limev1.png",
+  lemon:         "/images/lemonv1.png",
+  apple:         "/images/applev1.png",
+  pineapple:     "/images/pineapplev1.png",
 }
 
 function resolveCardImage(productId) {
