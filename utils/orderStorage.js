@@ -234,7 +234,15 @@ export async function getAllOrdersAsync({ status, limit } = {}) {
 }
 
 export async function getOrderByIdAsync(id) {
-  if (!pool || !id) return null
+  if (!id) return null
+  if (!pool) {
+    const cached = _ordersCache.find((o) => o?.id === id) || null
+    if (cached) return cached
+    const orders = readOrdersFromDisk()
+    const found = orders.find((o) => o?.id === id) || null
+    if (found) bumpCache(found)
+    return found
+  }
   try {
     const cached = _ordersCache.find((o) => o.id === id)
     if (cached) return cached

@@ -112,7 +112,7 @@ export default function Wholesale() {
         <div className="marquee-track flex gap-20 whitespace-nowrap">
           {[...Array(2)].map((_, i) => (
             <div key={i} className="flex gap-20 whitespace-nowrap">
-              {['orange', 'pink orange', 'lemon', 'lime', 'apple', 'orange', 'pink orange'].map((fruit, j) => (
+              {['orange', 'pink orange', 'lemon', 'lime', 'apple', 'pineapple'].map((fruit, j) => (
                 <span key={`${i}-${j}`} className="font-['Cormorant_Garamond'] italic text-[22px] text-[#1a1a1a] opacity-70 flex items-center gap-20">
                   {fruit}
                   <span className="text-[#c85a08] not-italic">•</span>
@@ -123,46 +123,57 @@ export default function Wholesale() {
         </div>
       </div>
 
-      {/* ━━━━━━━━━━ PARTNERS ━━━━━━━━━━ */}
-      <section id="partners" className="px-6 md:px-12 py-24 md:py-36">
-        <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 md:gap-12 mb-16 md:mb-24 items-start">
-          <div className="font-['Cormorant_Garamond'] italic text-[14px] text-[#c85a08]">
-            <div className="block w-10 h-px bg-[#c85a08] mb-3" />
-            no. 01 / partners
-          </div>
-          <h2 className="font-['Cormorant_Garamond'] font-light text-[40px] md:text-[5vw] xl:text-[68px] leading-[1.02] tracking-tight max-w-[880px]">
-            Made for the kind of places
-            <br />
-            <em className="italic">guests remember.</em>
-          </h2>
+ {/* ━━━━━━━━━━ PARTNERS ━━━━━━━━━━ */}
+<section id="partners" className="px-6 md:px-12 py-24 md:py-36">
+  <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 md:gap-12 mb-16 md:mb-24 items-start">
+    <div className="font-['Cormorant_Garamond'] italic text-[14px] text-[#c85a08]">
+      <div className="block w-10 h-px bg-[#c85a08] mb-3" />
+      no. 01 / partners
+    </div>
+    <h2 className="font-['Cormorant_Garamond'] font-light text-[40px] md:text-[5vw] xl:text-[68px] leading-[1.02] tracking-tight max-w-[880px]">
+      Made for the kind of places
+      <br />
+      <em className="italic">guests remember.</em>
+    </h2>
+  </div>
+
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#d9d2c5] border border-[#d9d2c5]">
+    {[
+      { num: 'i', title: <>Bars &amp;<br />cocktail<br />programs</>, body: 'Garnish-ready citrus that holds shape, colour and aroma — service after service.', imgAlt: 'slice on a cocktail rim', imgFile: 'partner-bars.jpg' },
+      { num: 'ii', title: <>Restaurants<br />&amp; hotels</>, body: 'From breakfast trays to dessert plating — a consistent, photogenic finish.', imgAlt: 'slice on a plated dish', imgFile: 'partner-restaurants.jpg' },
+      { num: 'iii', title: <>Mobile<br />bartenders</>, body: 'Travel-light garnish that survives the cooler and shows up on camera.', imgAlt: 'slice in hand', imgFile: 'partner-mobile.jpg' },
+      { num: 'iv', title: <>Caterers<br />&amp; event teams</>, body: 'Consistent quality at scale — for one table, or one thousand.', imgAlt: 'slices arranged on tray', imgFile: 'partner-caterers.jpg' },
+    ].map((p, i) => (
+      <div key={i} className="bg-[#faf7f2] p-9 md:p-12 flex flex-col hover:bg-[#f3ede3] transition-colors duration-300 group">
+        <div className="w-14 h-14 border border-[#1a1a1a] rounded-full flex items-center justify-center font-['Cormorant_Garamond'] italic text-[22px] group-hover:bg-[#1a1a1a] group-hover:text-[#faf7f2] transition-all duration-300 mb-12">
+          {p.num}
         </div>
+        <h3 className="font-['Cormorant_Garamond'] italic font-normal text-[32px] leading-[1.05] mb-4">
+          {p.title}
+        </h3>
+        <p className="text-[13px] leading-[1.5] text-[#3a3530] mb-8">{p.body}</p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#d9d2c5] border border-[#d9d2c5]">
-          {[
-            { num: 'i', title: <>Bars &amp;<br />cocktail<br />programs</>, body: 'Garnish-ready citrus that holds shape, colour and aroma — service after service.', imgLabel: 'slice on a cocktail rim', imgFile: 'partner-bars.jpg' },
-            { num: 'ii', title: <>Restaurants<br />&amp; hotels</>, body: 'From breakfast trays to dessert plating — a consistent, photogenic finish.', imgLabel: 'slice on a plated dish', imgFile: 'partner-restaurants.jpg' },
-            { num: 'iii', title: <>Mobile<br />bartenders</>, body: 'Travel-light garnish that survives the cooler and shows up on camera.', imgLabel: 'slice in hand', imgFile: 'partner-mobile.jpg' },
-            { num: 'iv', title: <>Caterers<br />&amp; event teams</>, body: 'Consistent quality at scale — for one table, or one thousand.', imgLabel: 'slices arranged on tray', imgFile: 'partner-caterers.jpg' },
-          ].map((p, i) => (
-            <div key={i} className="bg-[#faf7f2] p-9 md:p-12 flex flex-col hover:bg-[#f3ede3] transition-colors duration-300 group">
-              <div className="w-14 h-14 border border-[#1a1a1a] rounded-full flex items-center justify-center font-['Cormorant_Garamond'] italic text-[22px] group-hover:bg-[#1a1a1a] group-hover:text-[#faf7f2] transition-all duration-300 mb-12">
-                {p.num}
-              </div>
-              <h3 className="font-['Cormorant_Garamond'] italic font-normal text-[32px] leading-[1.05] mb-4">
-                {p.title}
-              </h3>
-              <p className="text-[13px] leading-[1.5] text-[#3a3530] mb-8">{p.body}</p>
-
-              {/* Image slot — replace the placeholder div with: <img src={`/images/${p.imgFile}`} alt={p.imgLabel} className="w-full h-full object-cover" /> */}
-              <div className="mt-auto aspect-[4/3] bg-[#f3ede3] overflow-hidden flex items-center justify-center relative">
-                <div className="w-[55%] aspect-square border border-dashed border-[#d9d2c5] rounded-full flex items-center justify-center font-['Cormorant_Garamond'] italic text-[12px] text-[#3a3530]/50 text-center px-3 leading-tight">
-                  {p.imgLabel}
-                </div>
-              </div>
+        <div className="mt-auto aspect-[4/3] bg-[#f3ede3] overflow-hidden relative">
+          <img
+            src={`/images/${p.imgFile}`}
+            alt={p.imgAlt}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+              e.currentTarget.nextSibling.style.display = 'flex';
+            }}
+          />
+          {/* Fallback — hidden once image loads */}
+          <div className="absolute inset-0 hidden items-center justify-center">
+            <div className="w-[55%] aspect-square border border-dashed border-[#d9d2c5] rounded-full flex items-center justify-center font-['Cormorant_Garamond'] italic text-[12px] text-[#3a3530]/50 text-center px-3 leading-tight">
+              {p.imgAlt}
             </div>
-          ))}
+          </div>
         </div>
-      </section>
+      </div>
+    ))}
+  </div>
+</section>
 
       {/* ━━━━━━━━━━ ACCOUNTS ━━━━━━━━━━ */}
       <section id="accounts" className="bg-[#1a1a1a] text-[#faf7f2] px-6 md:px-12 py-24 md:py-36">

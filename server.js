@@ -186,6 +186,57 @@ const healthLimiter = rateLimit({
 app.use(cors(corsOptions))
 
 /**
+ * Build shipping address for persisted orders (webhook + success-page verify).
+ * Stripe sometimes omits shipping_details; customer_details.address or session metadata are fallbacks.
+ */
+function resolveCheckoutShippingAddress(session) {
+  const meta = session.metadata || {}
+  let addr = session.shipping_details?.address || session.shipping?.address || {}
+  const cdAddr = session.customer_details?.address
+  const hasLine1 = !!(addr.line1 || addr.line_1)
+
+  if (!hasLine1 && cdAddr && (cdAddr.line1 || cdAddr.line_1)) {
+    addr = { ...cdAddr }
+    console.log('📋 Shipping address from customer_details')
+  }
+
+  if (!(addr.line1 || addr.line_1) || Object.keys(addr).length === 0) {
+    console.log('📋 Shipping address from checkout metadata (form fallback)')
+    addr = {
+      line1: meta.shipping_address_line1 || '',
+      line2: meta.shipping_address_line2 || '',
+      city: meta.shipping_address_city || '',
+      province: meta.shipping_address_province || '',
+      state: meta.shipping_address_province || '',
+      postal_code: meta.shipping_address_postal || '',
+      postalCode: meta.shipping_address_postal || '',
+      country: meta.shipping_address_country || 'Canada',
+    }
+    if (addr.line1) {
+      console.log('✅ Metadata shipping:', { city: addr.city, province: addr.province, postal: addr.postal_code })
+    } else {
+      console.error('⚠️ WARNING: Stripe and metadata shipping addresses are empty')
+    }
+  } else {
+    const metaCountry = meta.shipping_address_country
+    if ((!addr.country || String(addr.country).trim() === '') && (metaCountry || '').trim()) {
+      addr = { ...addr, country: metaCountry.trim() }
+      console.log('📋 Merged shipping country from metadata')
+    }
+  }
+  return addr
+}
+
+function resolveCheckoutShippingName(session) {
+  return (
+    session.shipping_details?.name ||
+    session.customer_details?.name ||
+    session.metadata?.customer_name ||
+    'N/A'
+  )
+}
+
+/**
  * Chit Chats label + customer / admin / shipping emails.
  * Idempotent via hasEmailBeenSent and skipping label creation when tracking already exists.
  * Used when the order row exists — whether this webhook created it or GET /api/checkout-session won a race.
@@ -389,42 +440,8 @@ app.post('/api/webhook', webhookLimiter, express.raw({ type: 'application/json' 
               phone: fullSession.metadata?.customer_phone || fullSession.customer_details?.phone || 'N/A',
             },
             shipping: {
-              name: fullSession.shipping_details?.name || fullSession.customer_details?.name || fullSession.metadata?.customer_name || 'N/A',
-              address: (() => {
-                // First try Stripe's shipping_details address
-                let addr = fullSession.shipping_details?.address || fullSession.shipping?.address || {}
-                
-                // If address is empty (common for free orders), use address from form metadata
-                if ((!addr.line1 && !addr.line_1) || Object.keys(addr).length === 0) {
-                  console.log('📋 Using shipping address from form metadata (Stripe address missing)')
-                  addr = {
-                    line1: fullSession.metadata?.shipping_address_line1 || '',
-                    line2: fullSession.metadata?.shipping_address_line2 || '',
-                    city: fullSession.metadata?.shipping_address_city || '',
-                    province: fullSession.metadata?.shipping_address_province || '',
-                    state: fullSession.metadata?.shipping_address_province || '',
-                    postal_code: fullSession.metadata?.shipping_address_postal || '',
-                    postalCode: fullSession.metadata?.shipping_address_postal || '',
-                    country: fullSession.metadata?.shipping_address_country || 'Canada'
-                  }
-                  
-                  // Log if we're using fallback address
-                  if (addr.line1) {
-                    console.log('✅ Using form address as fallback:', { city: addr.city, province: addr.province, postal: addr.postal_code })
-                  } else {
-                    console.error('⚠️ WARNING: Both Stripe and form addresses are missing!')
-                  }
-                } else {
-                  // Stripe sometimes returns line1/city/postal but omits country — carriers need ISO country
-                  const metaCountry = fullSession.metadata?.shipping_address_country
-                  if ((!addr.country || String(addr.country).trim() === '') && (metaCountry || '').trim()) {
-                    addr = { ...addr, country: metaCountry.trim() }
-                    console.log('📋 Merged shipping country from checkout metadata (webhook):', metaCountry.trim())
-                  }
-                }
-                
-                return addr
-              })(),
+              name: resolveCheckoutShippingName(fullSession),
+              address: resolveCheckoutShippingAddress(fullSession),
               method: fullSession.shipping_cost?.display_name || fullSession.shipping_options?.[0]?.shipping_rate?.display_name || 'Standard Shipping'
             },
             items: fullSession.line_items?.data?.map(item => ({
@@ -452,7 +469,8 @@ app.post('/api/webhook', webhookLimiter, express.raw({ type: 'application/json' 
         }
         markStripeWebhookEventProcessed(event.id)
       } catch (error) {
-        console.error('Error saving order from webhook:', error)
+        console.error('Error saving order from webhook:', error?.message || error)
+        if (error?.stack) console.error(error.stack)
       }
       break
     case 'payment_intent.succeeded': {
@@ -1452,41 +1470,8 @@ app.get('/api/checkout-session/:sessionId', apiLimiter, validateCheckoutSessionI
             phone: session.metadata?.customer_phone || session.customer_details?.phone || 'N/A',
           },
           shipping: {
-            name: session.shipping_details?.name || session.metadata?.customer_name || 'N/A',
-            address: (() => {
-              // First try Stripe's shipping_details address
-              let addr = session.shipping_details?.address || {}
-              
-              // If address is empty (common for free orders), use address from form metadata
-              if ((!addr.line1 && !addr.line_1) || Object.keys(addr).length === 0) {
-                console.log('📋 Using shipping address from form metadata (Stripe address missing - checkout session)')
-                addr = {
-                  line1: session.metadata?.shipping_address_line1 || '',
-                  line2: session.metadata?.shipping_address_line2 || '',
-                  city: session.metadata?.shipping_address_city || '',
-                  province: session.metadata?.shipping_address_province || '',
-                  state: session.metadata?.shipping_address_province || '',
-                  postal_code: session.metadata?.shipping_address_postal || '',
-                  postalCode: session.metadata?.shipping_address_postal || '',
-                  country: session.metadata?.shipping_address_country || 'Canada'
-                }
-                
-                // Log if we're using fallback address
-                if (addr.line1) {
-                  console.log('✅ Using form address as fallback (checkout session):', { city: addr.city, province: addr.province, postal: addr.postal_code })
-                } else {
-                  console.error('⚠️ WARNING: Both Stripe and form addresses are missing (checkout session)!')
-                }
-              } else {
-                const metaCountry = session.metadata?.shipping_address_country
-                if ((!addr.country || String(addr.country).trim() === '') && (metaCountry || '').trim()) {
-                  addr = { ...addr, country: metaCountry.trim() }
-                  console.log('📋 Merged shipping country from checkout metadata (session):', metaCountry.trim())
-                }
-              }
-              
-              return addr
-            })(),
+            name: resolveCheckoutShippingName(session),
+            address: resolveCheckoutShippingAddress(session),
             method: session.shipping_cost?.display_name || 'Standard Shipping'
           },
           items: session.line_items?.data?.map(item => ({
@@ -1506,7 +1491,13 @@ app.get('/api/checkout-session/:sessionId', apiLimiter, validateCheckoutSessionI
           paymentMethod: session.payment_method_types?.[0] || 'card'
         }
         const savedOrder = await saveOrder(orderData)
-        console.log('📋 Order persisted from GET /api/checkout-session (fallback):', savedOrder.id, '— emails/labels run from checkout.session.completed webhook')
+        console.log('📋 Order persisted from GET /api/checkout-session (fallback):', savedOrder.id)
+        try {
+          await fulfillStripeCheckoutOrder(savedOrder)
+        } catch (fulfillErr) {
+          console.error('Error during fulfillment after checkout-session save:', fulfillErr?.message || fulfillErr)
+          if (fulfillErr?.stack) console.error(fulfillErr.stack)
+        }
       } catch (saveError) {
         console.error('Error saving order from checkout verification:', saveError)
         // Don't fail the request if order save fails
