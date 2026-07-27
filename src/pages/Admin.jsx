@@ -144,10 +144,17 @@ export default function Admin() {
   }
 
   const handleStatusChange = async (orderId, newStatus) => {
-    // If marking as shipped, prompt for tracking number
+    // Shipping requires a tracking number. Without one, the customer would get a
+    // "shipped" email with nothing to track — and the sent-flag would then block a
+    // proper resend. So we require it before the status can change or any email fires.
     if (newStatus === 'shipped') {
-      const trackingNumber = prompt('Enter tracking number (optional):')
-      await updateOrderStatus(orderId, newStatus, trackingNumber || null)
+      const trackingNumber = prompt('Enter tracking number (required to mark as shipped):')
+      if (trackingNumber === null) return                 // cancelled — leave status unchanged
+      if (!trackingNumber.trim()) {
+        alert('A tracking number is required to mark an order as shipped.\n\nCreate the label in Chit Chats first, then paste the tracking number here.')
+        return                                             // blank — abort, nothing sent
+      }
+      await updateOrderStatus(orderId, newStatus, trackingNumber.trim())
     } else {
       await updateOrderStatus(orderId, newStatus)
     }
@@ -651,6 +658,14 @@ export default function Admin() {
                       </div>
                     )}
                     <p className="text-sm text-gray-600 mt-2">Method: {selectedOrder.shipping?.method}</p>
+                    {selectedOrder.trackingNumber && (
+                      <p className="text-sm text-gray-600 mt-2">
+                        Tracking: {selectedOrder.trackingNumber}
+                        {selectedOrder.trackingUrl && (
+                          <> — <a href={selectedOrder.trackingUrl} target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:text-amber-800">track →</a></>
+                        )}
+                      </p>
+                    )}
                   </div>
                 </div>
 
