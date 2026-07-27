@@ -26,6 +26,10 @@ export default function Admin() {
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
+  // Format any money value safely. Coerces to a number (backend may send
+  // Postgres numeric as a string) and falls back to 0, so .toFixed can never throw.
+  const money = (v) => Number(v || 0).toFixed(2)
+
   const handleLogin = async (e) => {
     e.preventDefault()
     setLoading(true)
@@ -150,9 +154,9 @@ export default function Admin() {
   }
 
   const handleRefund = async (order) => {
-    const fullRefund = confirm(`Refund full amount of $${order.total.toFixed(2)} ${order.currency}?`)
+    const fullRefund = confirm(`Refund full amount of $${money(order.total)} ${order.currency}?`)
     if (!fullRefund) {
-      const amount = prompt(`Enter refund amount (max $${order.total.toFixed(2)} ${order.currency}):`)
+      const amount = prompt(`Enter refund amount (max $${money(order.total)} ${order.currency}):`)
       if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
         alert('Invalid amount')
         return
@@ -338,7 +342,7 @@ export default function Admin() {
               </div>
               <div className="bg-green-50 rounded-lg p-4">
                 <p className="text-sm text-gray-600 mb-1">Total Revenue</p>
-                <p className="text-2xl font-bold text-green-700">${stats.totalRevenue.toFixed(2)}</p>
+                <p className="text-2xl font-bold text-green-700">${money(stats.totalRevenue)}</p>
               </div>
             </div>
           ) : null)}
@@ -504,7 +508,7 @@ export default function Admin() {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm font-semibold text-gray-900">${order.total?.toFixed(2)} {order.currency}</span>
+                        <span className="text-sm font-semibold text-gray-900">${money(order.total)} {order.currency}</span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
@@ -660,7 +664,7 @@ export default function Admin() {
                           <p className="font-medium text-gray-900">{item.name}</p>
                           <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
                         </div>
-                        <p className="font-semibold text-gray-900">${item.total.toFixed(2)}</p>
+                        <p className="font-semibold text-gray-900">${money(item.total)}</p>
                       </div>
                     ))}
                   </div>
@@ -671,19 +675,19 @@ export default function Admin() {
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Subtotal</span>
-                      <span className="text-gray-900">${selectedOrder.subtotal?.toFixed(2)}</span>
+                      <span className="text-gray-900">${money(selectedOrder.subtotal)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Shipping</span>
-                      <span className="text-gray-900">${selectedOrder.shippingCost?.toFixed(2)}</span>
+                      <span className="text-gray-900">${money(selectedOrder.shippingCost)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Tax</span>
-                      <span className="text-gray-900">${selectedOrder.tax?.toFixed(2)}</span>
+                      <span className="text-gray-900">${money(selectedOrder.tax)}</span>
                     </div>
                     <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray-200">
                       <span className="text-gray-900">Total</span>
-                      <span className="text-gray-900">${selectedOrder.total?.toFixed(2)} {selectedOrder.currency}</span>
+                      <span className="text-gray-900">${money(selectedOrder.total)} {selectedOrder.currency}</span>
                     </div>
                   </div>
                 </div>
@@ -706,7 +710,7 @@ export default function Admin() {
                             <div>
                               <p className="font-medium text-gray-900">Refund #{index + 1}</p>
                               <p className="text-sm text-gray-600">ID: {refund.refundId}</p>
-                              <p className="text-sm text-gray-600">Amount: ${refund.amount.toFixed(2)} {refund.currency.toUpperCase()}</p>
+                              <p className="text-sm text-gray-600">Amount: ${money(refund.amount)} {(refund.currency || '').toUpperCase()}</p>
                               <p className="text-sm text-gray-600">Reason: {refund.reason}</p>
                               <p className="text-sm text-gray-600">Status: {refund.status}</p>
                               <p className="text-xs text-gray-500">Date: {new Date(refund.createdAt).toLocaleString()}</p>
@@ -717,7 +721,7 @@ export default function Admin() {
                     </div>
                     <div className="mt-4 p-3 bg-gray-50 rounded-lg">
                       <p className="text-sm font-medium text-gray-900">
-                        Total Refunded: ${selectedOrder.refunds.reduce((sum, r) => sum + r.amount, 0).toFixed(2)} {selectedOrder.currency}
+                        Total Refunded: ${money(selectedOrder.refunds.reduce((sum, r) => sum + Number(r.amount || 0), 0))} {selectedOrder.currency}
                       </p>
                     </div>
                   </div>
@@ -750,10 +754,10 @@ export default function Admin() {
               <div className="p-6 space-y-4">
                 <div>
                   <p className="text-sm text-gray-600 mb-2">Order: {refundingOrder.id}</p>
-                  <p className="text-sm text-gray-600 mb-2">Total: ${refundingOrder.total.toFixed(2)} {refundingOrder.currency}</p>
+                  <p className="text-sm text-gray-600 mb-2">Total: ${money(refundingOrder.total)} {refundingOrder.currency}</p>
                   {refundingOrder.refunds && refundingOrder.refunds.length > 0 && (
                     <p className="text-sm text-red-600 mb-2">
-                      Already refunded: ${refundingOrder.refunds.reduce((sum, r) => sum + r.amount, 0).toFixed(2)}
+                      Already refunded: ${money(refundingOrder.refunds.reduce((sum, r) => sum + Number(r.amount || 0), 0))}
                     </p>
                   )}
                 </div>
@@ -768,7 +772,7 @@ export default function Admin() {
                     max={refundingOrder.total}
                     value={refundAmount}
                     onChange={(e) => setRefundAmount(e.target.value)}
-                    placeholder={`Full refund (${refundingOrder.total.toFixed(2)})`}
+                    placeholder={`Full refund (${money(refundingOrder.total)})`}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
                   />
                   <p className="text-xs text-gray-500 mt-1">Leave empty for full refund</p>
@@ -810,4 +814,3 @@ export default function Admin() {
     </section>
   )
 }
-

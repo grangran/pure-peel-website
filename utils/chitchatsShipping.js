@@ -263,25 +263,24 @@ export async function createChitChatsLabel(order) {
     const isUS        = country === 'US'
 
     const shipmentPayload = {
-      // Sender (your address)
-      from_name:         ORIGIN.name,
-      from_address1:     ORIGIN.address1,
-      from_city:         ORIGIN.city,
-      from_province_code: ORIGIN.province,
-      from_postal_code:  ORIGIN.postalCode.replace(/\s/g, ''),
-      from_country_code: ORIGIN.country,
-      from_phone:        ORIGIN.phone,
+    // Sender / return address (Chit Chats uses return_ prefix)
+    return_name:          ORIGIN.name,
+    return_address_1:     ORIGIN.address1,
+    return_city:          ORIGIN.city,
+    return_province_code: ORIGIN.province,
+    return_postal_code:   ORIGIN.postalCode.replace(/\s/g, ''),
+    return_phone:         ORIGIN.phone,
 
-      // Recipient
-      to_name:         order.shipping?.name || order.customer?.name || '',
-      to_address1:     addr.line1 || addr.address1 || '',
-      to_address2:     addr.line2 || addr.address2 || undefined,
-      to_city:         addr.city  || '',
-      to_province_code: province,
-      to_postal_code:  (addr.postal_code || addr.postalCode || '').replace(/\s/g, ''),
-      to_country_code: country,
-      to_phone:        order.customer?.phone || '',
-      to_email:        order.customer?.email || '',
+    // Recipient
+    name:          order.shipping?.name || order.customer?.name || '',
+    address_1:     addr.line1 || addr.address1 || '',
+    address_2:     addr.line2 || addr.address2 || undefined,
+    city:          addr.city  || '',
+    province_code: province,
+    postal_code:   (addr.postal_code || addr.postalCode || '').replace(/\s/g, ''),
+    country_code:  country,
+    phone:         order.customer?.phone || '',
+    email:         order.customer?.email || '',
 
       // Package (package_type / value / value_currency are required by Chit Chats API)
       package_type:   'parcel',
